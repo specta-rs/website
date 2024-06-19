@@ -52,7 +52,7 @@ export function Hero() {
         </h2>
       </div>
 
-      <div class="flex space-x-4 pt-20">
+      <div class="flex space-x-4 pt-20 pb-4">
         <HeroItem name="Specta" logoHref="/logo.png" logoAlt="Specta Logo">
           Export your Rust types to any language!
         </HeroItem>
