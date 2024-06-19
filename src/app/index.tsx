@@ -2,7 +2,7 @@ import type { ParentProps } from "solid-js";
 
 export function Navbar() {
   return (
-    <div class="backdrop-blur-sm w-full h-16 px-4 flex items-center justify-between">
+    <div class="backdrop-blur-sm w-full h-16 px-4 flex items-center justify-between fixed top-0">
       <h1 class="font-bold text-3xl">Specta-rs</h1>
 
       <div class="flex items-center space-x-4">
