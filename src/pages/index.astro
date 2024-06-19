@@ -1,5 +1,5 @@
 ---
-
+import "@fontsource-variable/raleway";
 ---
 
 <html lang="en" class="h-full w-full">
@@ -9,55 +9,77 @@
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <title>Specta</title>
+
+    <style>
+      body {
+        background-image: linear-gradient(
+            to bottom,
+            transparent 90%,
+            rgb(30 41 59) 10%
+          ),
+          linear-gradient(to right, #0e111a 90%, rgb(30 41 59) 10%);
+        background-size:
+          5px 5px,
+          5px 5px;
+
+        font-family: "Raleway", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 600;
+        font-style: normal;
+      }
+    </style>
   </head>
-  <body class="h-full w-full">
-    <div class="mt-32 sm:mt-28">
-      <div class="mx-auto max-w-7xl px-6 lg:px-8 flex">
-        <div class="mx-auto max-w-3xl sm:text-center">
-          <h1
-            class="mt-2 text-center text-4xl sm:text-6xl font-bold tracking-tight text-gray-900"
-          >
+  <body class="h-full w-full text-white">
+    <div class="backdrop-blur-sm w-full h-16 px-4 flex items-center">
+      <h1 class="font-bold text-3xl">Specta</h1>
+    </div>
+
+    <main class="px-4 md:px-12">
+      <div class="pt-[20vh] flex flex-col justify-center space-y-4">
+        <h1 class="text-6xl md:text-8xl">Specta-rs</h1>
+        <h2 class="text-3xl md:text-4xl">
+          Rust crates for building better webapps
+        </h2>
+      </div>
+
+      <div class="flex space-x-4 pt-20">
+        <div
+          class="bg-[#0E111A]/80 border rounded-lg flex flex-col items-center p-4"
+        >
+          <img src="/logo.png" alt="Specta Logo" class="max-h-48" />
+          <h2 class="mt-2 mb-2 text-center text-xl sm:text-3xl tracking-tight">
             Specta
-          </h1>
-          <p
-            class="mt-2 mb-20 text-center text-xl sm:text-3xl tracking-tight text-gray-900"
-          >
-            Rust crates for building better webapps.
+          </h2>
+          <p class="text-slate-200 font-semibold text-center">
+            Export your Rust types to any language!
           </p>
+        </div>
 
-          <div class="flex w-full">
-            <div>
-              <img src="/logo.png" alt="Specta Logo" class="max-w-68" />
-              <h2
-                class="mt-2 mb-2 text-center text-xl sm:text-3xl tracking-tight text-gray-900"
-              >
-                Specta
-              </h2>
-              <p>Export your Rust types!</p>
-            </div>
+        <div
+          class="bg-[#0E111A]/80 border rounded-lg flex flex-col items-center p-4"
+        >
+          <img src="/rspc-logo.png" alt="Specta Logo" class="max-h-48" />
+          <h2 class="mt-2 mb-2 text-center text-xl sm:text-3xl tracking-tight">
+            rspc
+          </h2>
+          <p class="text-slate-200 font-semibold text-center">
+            A framework for building <br /> typesafe web backends in Rust
+          </p>
+        </div>
 
-            <div>
-              <img src="/rspc-logo.png" alt="rspc Logo" class="max-w-72" />
-              <h2
-                class="mt-2 mb-2 text-center text-xl sm:text-3xl tracking-tight text-gray-900"
-              >
-                rspc
-              </h2>
-              <p>A framework for building typesafe web backends in Rust</p>
-            </div>
-
-            <div>
-              <img src="/logo.png" alt="Tauri Specta Logo" class="max-w-68" />
-              <h2
-                class="mt-2 mb-2 text-center text-xl sm:text-3xl tracking-tight text-gray-900"
-              >
-                Tauri Specta
-              </h2>
-              <p>Completely typesafe Tauri commands</p>
-            </div>
-          </div>
+        <div
+          class="bg-[#0E111A]/80 border rounded-lg flex flex-col items-center p-4"
+        >
+          <!-- TODO: Icon that doesn't break Tauri's guideline -->
+          <div class="h-full max-h-48 bg-white"></div>
+          <h2 class="mt-2 mb-2 text-center text-xl sm:text-3xl tracking-tight">
+            Tauri Specta
+          </h2>
+          <p class="text-slate-200 font-semibold text-center">
+            Completely typesafe Tauri <br /> commands
+          </p>
         </div>
       </div>
-    </div>
+    </main>
   </body>
 </html>
