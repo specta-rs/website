@@ -1,4 +1,5 @@
 ---
+import { Hero, Navbar } from "../app";
 import "@fontsource-variable/raleway";
 ---
 
@@ -30,56 +31,7 @@ import "@fontsource-variable/raleway";
     </style>
   </head>
   <body class="h-full w-full text-white">
-    <div class="backdrop-blur-sm w-full h-16 px-4 flex items-center">
-      <h1 class="font-bold text-3xl">Specta</h1>
-    </div>
-
-    <main class="px-4 md:px-12">
-      <div class="pt-[20vh] flex flex-col justify-center space-y-4">
-        <h1 class="text-6xl md:text-8xl">Specta-rs</h1>
-        <h2 class="text-3xl md:text-4xl">
-          Rust crates for building better webapps
-        </h2>
-      </div>
-
-      <div class="flex space-x-4 pt-20">
-        <div
-          class="bg-[#0E111A]/80 border rounded-lg flex flex-col items-center p-4"
-        >
-          <img src="/logo.png" alt="Specta Logo" class="max-h-48" />
-          <h2 class="mt-2 mb-2 text-center text-xl sm:text-3xl tracking-tight">
-            Specta
-          </h2>
-          <p class="text-slate-200 font-semibold text-center">
-            Export your Rust types to any language!
-          </p>
-        </div>
-
-        <div
-          class="bg-[#0E111A]/80 border rounded-lg flex flex-col items-center p-4"
-        >
-          <img src="/rspc-logo.png" alt="Specta Logo" class="max-h-48" />
-          <h2 class="mt-2 mb-2 text-center text-xl sm:text-3xl tracking-tight">
-            rspc
-          </h2>
-          <p class="text-slate-200 font-semibold text-center">
-            A framework for building <br /> typesafe web backends in Rust
-          </p>
-        </div>
-
-        <div
-          class="bg-[#0E111A]/80 border rounded-lg flex flex-col items-center p-4"
-        >
-          <!-- TODO: Icon that doesn't break Tauri's guideline -->
-          <div class="h-full max-h-48 bg-white"></div>
-          <h2 class="mt-2 mb-2 text-center text-xl sm:text-3xl tracking-tight">
-            Tauri Specta
-          </h2>
-          <p class="text-slate-200 font-semibold text-center">
-            Completely typesafe Tauri <br /> commands
-          </p>
-        </div>
-      </div>
-    </main>
+    <Navbar />
+    <Hero />
   </body>
 </html>
