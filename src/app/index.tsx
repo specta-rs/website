@@ -3,7 +3,7 @@ import type { ParentProps } from "solid-js";
 export function Navbar() {
   return (
     <div class="backdrop-blur-sm w-full h-16 px-4 flex items-center justify-between fixed top-0">
-      <h1 class="font-bold text-3xl">Specta-rs</h1>
+      <h1 class="font-bold text-3xl">specta-rs</h1>
 
       <div class="flex items-center space-x-4">
         <a href="https://github.com/specta-rs">
@@ -46,9 +46,9 @@ export function Hero() {
   return (
     <main class="px-4 md:px-12">
       <div class="pt-[20vh] flex flex-col justify-center space-y-4">
-        <h1 class="text-6xl md:text-8xl">Specta-rs</h1>
+        <h1 class="text-6xl md:text-8xl">specta-rs</h1>
         <h2 class="text-3xl md:text-4xl">
-          Rust crates for building better webapps
+          Rust crates for building better web apps
         </h2>
       </div>
 
@@ -76,7 +76,12 @@ function HeroItem(
   return (
     <div class="bg-[#0E111A]/80 border rounded-lg flex flex-col items-center p-4">
       {props.logoHref ? (
-        <img src={props.logoHref} alt={props.logoAlt} class="max-h-48" />
+        <img
+          src={props.logoHref}
+          alt={props.logoAlt}
+          draggable="false"
+          class="max-h-48"
+        />
       ) : (
         <div class="h-full max-h-48 bg-white"></div>
       )}
