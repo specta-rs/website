@@ -26,15 +26,13 @@ const routes = [
 			})),
 			{
 				path: "/*",
-				// TODO: 404
-				component: () => <h1>404: Not Found</h1>,
+				component: lazy(() => import("./app/404")),
 			},
 		],
 	},
 	{
 		path: "/*",
-		// TODO: 404
-		component: () => <h1>404: Not Found</h1>,
+		component: lazy(() => import("./app/404")),
 	},
 ] satisfies RouteDefinition[];
 
