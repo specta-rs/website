@@ -1,14 +1,41 @@
 ---
 import { App, getRoutes } from "../app";
+import { getCollection } from "astro:content";
+import type { Navigation } from "../app/docs";
 import "@fontsource-variable/raleway";
 
-export function getStaticPaths() {
-	return getRoutes().map((slug) => ({
-		params: {
-			slug,
-		},
-	}));
+async function generateNavigation() {
+	const docs = await getCollection("docs");
+	const result: Record<string, Navigation[number]> = {};
+	for (const doc of docs) {
+		const [headingSlug] = doc.slug.split("/");
+		if (!(headingSlug in result))
+			result[headingSlug] = {
+				title: headingSlug,
+				links: [],
+			};
+
+		result[headingSlug].links.push({
+			title: doc.data.title,
+			href: doc.slug,
+		});
+	}
+	return Object.values(result);
 }
+
+export async function getStaticPaths() {
+	const docs = await getCollection("docs");
+
+	return [...getRoutes(), ...docs.map((doc) => `/docs/${doc.slug}`)].map(
+		(slug) => ({
+			params: {
+				slug,
+			},
+		}),
+	);
+}
+
+const navigation = await generateNavigation();
 ---
 
 <html lang="en" class="h-full w-full">
@@ -46,6 +73,6 @@ export function getStaticPaths() {
     </style>
   </head>
   <body class="h-full w-full text-white pt-16 overflow-y-hidden">
-    <App path={Astro.url.pathname} />
+    <App path={Astro.url.pathname} navigation={navigation} client:idle />
   </body>
 </html>
