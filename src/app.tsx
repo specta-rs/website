@@ -11,12 +11,14 @@ const routes = [
 	},
 	{
 		path: "/docs",
-		component: lazy(() => import("./app/docs")), // TODO: This should be a redirect to the first doc
-	},
-	{
-		path: "/docs",
 		component: lazy(() => import("./app/docs")),
 		children: [
+			{
+				path: "/",
+				component: lazy(() =>
+					import("./app/docs").then((m) => ({ default: m.Redirect })),
+				),
+			},
 			...Object.entries(manifest).map(([path, component]) => ({
 				path,
 				// biome-ignore lint/suspicious/noExplicitAny:

@@ -1,5 +1,5 @@
 import { useContext, type ParentProps } from "solid-js";
-import { useLocation } from "@solidjs/router";
+import { Navigate, useLocation } from "@solidjs/router";
 import clsx from "clsx";
 import { NavigationCtx } from "../util/navctx";
 
@@ -55,5 +55,16 @@ export default function Page(props: ParentProps) {
 				</div>
 			</div>
 		</div>
+	);
+}
+
+export function Redirect() {
+	return (
+		<>
+			<Navigate href="/docs/project/mission" />
+			<noscript>
+				<meta http-equiv="refresh" content="0.0;url=/docs/project/mission" />
+			</noscript>
+		</>
 	);
 }
