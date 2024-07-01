@@ -1,17 +1,21 @@
 export function Navbar() {
 	return (
-		<div class="backdrop-blur-sm w-full h-16 px-4 flex items-center justify-between fixed top-0">
-			<h1 class="font-bold text-3xl">specta-rs</h1>
+		<>
+			<div class="backdrop-blur-sm w-full h-16 px-4 flex items-center justify-between fixed top-0">
+				<a href="/">
+					<h1 class="font-bold text-3xl">specta-rs</h1>
+				</a>
 
-			<div class="flex items-center space-x-4">
-				<a href="https://github.com/specta-rs">
-					<GitHubLogo />
-				</a>
-				<a href="https://discord.com/invite/JgqH8b4ycw">
-					<DiscordLogo />
-				</a>
+				<div class="flex items-center space-x-4">
+					<a href="https://github.com/specta-rs">
+						<GitHubLogo />
+					</a>
+					<a href="https://discord.com/invite/JgqH8b4ycw">
+						<DiscordLogo />
+					</a>
+				</div>
 			</div>
-		</div>
+		</>
 	);
 }
 
