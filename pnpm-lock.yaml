@@ -20,6 +20,9 @@ importers:
       '@fontsource-variable/raleway':
         specifier: ^5.0.20
         version: 5.0.20
+      '@solidjs/router':
+        specifier: ^0.13.6
+        version: 0.13.6(solid-js@1.8.18)
       astro:
         specifier: ^4.11.3
         version: 4.11.3(typescript@5.5.2)
@@ -663,6 +666,11 @@ packages:
 
   '@shikijs/core@1.10.0':
     resolution: {integrity: sha512-BZcr6FCmPfP6TXaekvujZcnkFmJHZ/Yglu97r/9VjzVndQA56/F4WjUKtJRQUnK59Wi7p/UTAOekMfCJv7jnYg==}
+
+  '@solidjs/router@0.13.6':
+    resolution: {integrity: sha512-CdpFsBYoiJ/FQ4wZIamj3KEFRkmrYu5sVXM6PouNkmSENta1YJamsm9wa/VjaPmkw2RsnDnO0UvZ705v6EgOXQ==}
+    peerDependencies:
+      solid-js: ^1.8.6
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -2785,6 +2793,10 @@ snapshots:
     optional: true
 
   '@shikijs/core@1.10.0': {}
+
+  '@solidjs/router@0.13.6(solid-js@1.8.18)':
+    dependencies:
+      solid-js: 1.8.18
 
   '@types/babel__core@7.20.5':
     dependencies:
