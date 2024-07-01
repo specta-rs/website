@@ -32,6 +32,12 @@ export async function getStaticPaths() {
 }
 
 const navigation = await generateNavigation();
+
+// When using `build { format: "file" }` the prerender will target `.html` which is not what Solid Router expects.
+// In production Cloudflare Pages will strip the `.html`
+const path = Astro.url.pathname.endsWith(".html")
+	? Astro.url.pathname.slice(0, -5)
+	: Astro.url.pathname;
 ---
 
 <html lang="en" class="h-full w-full">
