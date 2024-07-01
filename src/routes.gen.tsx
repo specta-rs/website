@@ -3,5 +3,7 @@
 
 export const manifest = {
 	"/tauri-specta/todo": () => import("./content/docs/tauri-specta/todo.md?markdown"),
+	"/tauri-specta/v1": () => import("./content/docs/tauri-specta/v1.md?markdown"),
+	"/tauri-specta/v2": () => import("./content/docs/tauri-specta/v2.md?markdown"),
 	"/project/mission": () => import("./content/docs/project/mission.md?markdown"),
 } satisfies Record<string, () => unknown>;
