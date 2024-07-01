@@ -18,6 +18,7 @@
 		"@fontsource-variable/raleway": "^5.0.20",
 		"@solidjs/router": "^0.13.6",
 		"astro": "^4.11.3",
+		"clsx": "^2.1.1",
 		"solid-js": "^1.8.18",
 		"tailwindcss": "^3.4.4",
 		"typescript": "^5.5.2"
