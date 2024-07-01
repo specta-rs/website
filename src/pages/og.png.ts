@@ -34,8 +34,8 @@ export async function GET() {
 									props: {
 										// TODO: It would be nice if these could from straight from the FS but Satori is annoying.
 										src: "https://raw.githubusercontent.com/specta-rs/website/main/src/images/logo.png",
-										width: "300px",
-										height: "200px",
+										width: "600px",
+										height: "400px",
 									},
 								},
 							],
@@ -47,7 +47,7 @@ export async function GET() {
 							style: {
 								display: "flex",
 								fontFamily: "Raleway",
-								fontSize: 65,
+								fontSize: 130,
 								fontStyle: "normal",
 								color: "white",
 							},
@@ -68,9 +68,9 @@ export async function GET() {
 								display: "flex",
 								flexDirection: "column",
 								fontFamily: "Raleway",
-								fontSize: 28,
+								fontSize: 54,
 								fontStyle: "normal",
-								marginTop: -20,
+								marginTop: -40,
 								color: "white",
 							},
 							children: [
@@ -87,8 +87,8 @@ export async function GET() {
 			},
 		},
 		{
-			width: 800,
-			height: 400,
+			width: 1600,
+			height: 800,
 			fonts: [
 				{
 					name: "Roboto",
