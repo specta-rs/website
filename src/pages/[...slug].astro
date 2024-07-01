@@ -75,6 +75,6 @@ const path = Astro.url.pathname.endsWith(".html")
     </style>
   </head>
   <body class="h-full w-full text-white pt-16 overflow-y-hidden">
-    <App path={Astro.url.pathname} navigation={navigation} client:idle />
+    <App path={path} navigation={navigation} client:idle />
   </body>
 </html>
