@@ -1,8 +1,10 @@
 import { Router, type RouteDefinition } from "@solidjs/router";
-import { lazy } from "solid-js";
+import { createContext, lazy } from "solid-js";
 import { Navbar } from "./components/Navbar";
-import { NavigationCtx, type Navigation } from "./app/docs"; // TODO: Importing `NavigationCtx` breaks lazy loading!
+import type { Navigation } from "./app/docs";
 import { manifest } from "./routes.gen";
+
+export const NavigationCtx = createContext<Navigation>();
 
 const routes = [
 	{

@@ -1,6 +1,7 @@
-import { createContext, useContext, type ParentProps } from "solid-js";
+import { useContext, type ParentProps } from "solid-js";
 import { useLocation } from "@solidjs/router";
 import clsx from "clsx";
+import { NavigationCtx } from "../app";
 
 export type Navigation = {
 	title: string;
@@ -9,8 +10,6 @@ export type Navigation = {
 		href: string;
 	}[];
 }[];
-
-export const NavigationCtx = createContext<Navigation>();
 
 function Navigation() {
 	const location = useLocation();
