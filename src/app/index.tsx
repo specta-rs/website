@@ -62,7 +62,11 @@ export function Hero() {
 					A framework for building typesafe web backends in Rust
 				</HeroItem>
 
-				<HeroItem name="tauri-specta" logoAlt="Tauri Specta Logo">
+				<HeroItem
+					name="tauri-specta"
+					logoHref="/tauri-specta-logo.png"
+					logoAlt="Tauri Specta Logo"
+				>
 					Completely typesafe Tauri commands and events
 				</HeroItem>
 			</div>
