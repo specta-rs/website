@@ -58,7 +58,8 @@ const path = Astro.url.pathname.endsWith(".html")
     
     <meta property="og:title" content="specta-rs" />
     <meta property="og:description" content="Rust crates for building better web apps" />
-    <meta property="og:image" content={`${Astro.site!.origin}/og.png`} />
+    <meta property="og:url" content={Astro.site!.origin} />
+    <meta property="og:image" content={`${Astro.site!.origin}/opengraph.png`} />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1600" />
     <meta property="og:image:height" content="800" />
