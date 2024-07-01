@@ -42,15 +42,17 @@ function Navigation() {
 
 export default function Page(props: ParentProps) {
 	return (
-		<div class="flex">
+		<div class="flex w-full">
 			<div class="bg-[#1e293b]/85 overflow-y-auto overflow-x-hidden h-[calc(100vh-70px)] w-64">
 				<div class="p-4">
 					<Navigation />
 				</div>
 			</div>
 
-			<div class="p-4 prose prose-invert lg:prose-md prose-white">
-				{props.children}
+			<div class="flex-grow p-4 overflow-x-hidden h-[calc(100vh-70px)] flex justify-center">
+				<div class="prose prose-invert lg:prose-md prose-white">
+					{props.children}
+				</div>
 			</div>
 		</div>
 	);
