@@ -24,15 +24,11 @@ async function generateNavigation() {
 }
 
 export async function getStaticPaths() {
-	const docs = await getCollection("docs");
-
-	return [...getRoutes(), ...docs.map((doc) => `/docs/${doc.slug}`)].map(
-		(slug) => ({
-			params: {
-				slug,
-			},
-		}),
-	);
+	return getRoutes().map((slug) => ({
+		params: {
+			slug,
+		},
+	}));
 }
 
 const navigation = await generateNavigation();

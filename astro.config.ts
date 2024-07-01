@@ -5,6 +5,11 @@ import solidJs from "@astrojs/solid-js";
 // https://astro.build/config
 export default defineConfig({
 	integrations: [tailwind(), solidJs()],
+	build: {
+		// This is to ensure `/404.html` over `/404/index.html` for Cloudflare Pages.
+		// This will help Cloudflare Pages find the closest match for a 404 page.
+		format: "file",
+	},
 	vite: {
 		plugins: [generateContentManifest(), solidMarkdownEntrypoint()],
 	},
