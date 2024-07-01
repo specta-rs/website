@@ -1,15 +1,7 @@
 import { useContext, type ParentProps } from "solid-js";
 import { useLocation } from "@solidjs/router";
 import clsx from "clsx";
-import { NavigationCtx } from "../app";
-
-export type Navigation = {
-	title: string;
-	links: {
-		title: string;
-		href: string;
-	}[];
-}[];
+import { NavigationCtx } from "../util/navctx";
 
 function Navigation() {
 	const location = useLocation();
@@ -51,7 +43,7 @@ function Navigation() {
 export default function Page(props: ParentProps) {
 	return (
 		<div class="flex">
-			<div class="bg-[#1e293b]/70 overflow-y-auto overflow-x-hidden h-[calc(100vh-70px)] w-64">
+			<div class="bg-[#1e293b]/85 overflow-y-auto overflow-x-hidden h-[calc(100vh-70px)] w-64">
 				<div class="p-4">
 					<Navigation />
 				</div>

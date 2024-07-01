@@ -1,10 +1,8 @@
 import { Router, type RouteDefinition } from "@solidjs/router";
-import { createContext, lazy } from "solid-js";
+import { lazy } from "solid-js";
 import { Navbar } from "./components/Navbar";
-import type { Navigation } from "./app/docs";
 import { manifest } from "./routes.gen";
-
-export const NavigationCtx = createContext<Navigation>();
+import { NavigationCtx, type Navigation } from "./util/navctx";
 
 const routes = [
 	{
