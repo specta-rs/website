@@ -1,6 +1,7 @@
 import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 import solidJs from "@astrojs/solid-js";
+import arraybuffer from "vite-plugin-arraybuffer";
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,7 +12,11 @@ export default defineConfig({
 		format: "file",
 	},
 	vite: {
-		plugins: [generateContentManifest(), solidMarkdownEntrypoint()],
+		plugins: [
+			generateContentManifest(),
+			solidMarkdownEntrypoint(),
+			arraybuffer(),
+		],
 	},
 });
 
