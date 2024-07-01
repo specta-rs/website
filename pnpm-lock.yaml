@@ -13,10 +13,10 @@ importers:
         version: 0.7.0(typescript@5.5.2)
       '@astrojs/solid-js':
         specifier: ^4.4.0
-        version: 4.4.0(solid-js@1.8.18)(vite@5.3.2)
+        version: 4.4.0(solid-js@1.8.18)(vite@5.3.2(@types/node@20.14.9))
       '@astrojs/tailwind':
         specifier: ^5.1.0
-        version: 5.1.0(astro@4.11.3(typescript@5.5.2))(tailwindcss@3.4.4)
+        version: 5.1.0(astro@4.11.3(@types/node@20.14.9)(typescript@5.5.2))(tailwindcss@3.4.4)
       '@fontsource-variable/raleway':
         specifier: ^5.0.20
         version: 5.0.20
@@ -25,7 +25,7 @@ importers:
         version: 0.13.6(solid-js@1.8.18)
       astro:
         specifier: ^4.11.3
-        version: 4.11.3(typescript@5.5.2)
+        version: 4.11.3(@types/node@20.14.9)(typescript@5.5.2)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -42,6 +42,12 @@ importers:
       '@biomejs/biome':
         specifier: ^1.8.3
         version: 1.8.3
+      '@types/node':
+        specifier: ^20.14.9
+        version: 20.14.9
+      vite:
+        specifier: ^5.3.2
+        version: 5.3.2(@types/node@20.14.9)
 
 packages:
 
@@ -707,6 +713,9 @@ packages:
 
   '@types/nlcst@2.0.3':
     resolution: {integrity: sha512-vSYNSDe6Ix3q+6Z7ri9lyWqgGhJTmzRjZRqyq15N0Z/1/UnVsno9G/N40NBijoYx2seFDIl0+B2mgAb9mezUCA==}
+
+  '@types/node@20.14.9':
+    resolution: {integrity: sha512-06OCtnTXtWOZBJlRApleWndH4JsRVs1pDCc8dLSQp+7PpUpX3ePdHyeNSFTeSe7FtKyQkrlPvHwJOW3SLd8Oyg==}
 
   '@types/unist@3.0.2':
     resolution: {integrity: sha512-dqId9J8K/vGi5Zr7oo212BGii5m3q5Hxlkwy3WpYuKPklmBEvsbMYYyLxAQpSffdLl/gdW0XUpKWFvYmyoWCoQ==}
@@ -1976,6 +1985,9 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+
   unified@11.0.5:
     resolution: {integrity: sha512-xKvGhPWw3k84Qjh8bI3ZeJjqnyadK+GEFtazSfZv/rKeTkTjOJho6mFqh2SM96iIcZokxiOpg78GazTSg8+KHA==}
 
@@ -2300,18 +2312,18 @@ snapshots:
     dependencies:
       prismjs: 1.29.0
 
-  '@astrojs/solid-js@4.4.0(solid-js@1.8.18)(vite@5.3.2)':
+  '@astrojs/solid-js@4.4.0(solid-js@1.8.18)(vite@5.3.2(@types/node@20.14.9))':
     dependencies:
       solid-js: 1.8.18
-      vite-plugin-solid: 2.10.2(solid-js@1.8.18)(vite@5.3.2)
+      vite-plugin-solid: 2.10.2(solid-js@1.8.18)(vite@5.3.2(@types/node@20.14.9))
     transitivePeerDependencies:
       - '@testing-library/jest-dom'
       - supports-color
       - vite
 
-  '@astrojs/tailwind@5.1.0(astro@4.11.3(typescript@5.5.2))(tailwindcss@3.4.4)':
+  '@astrojs/tailwind@5.1.0(astro@4.11.3(@types/node@20.14.9)(typescript@5.5.2))(tailwindcss@3.4.4)':
     dependencies:
-      astro: 4.11.3(typescript@5.5.2)
+      astro: 4.11.3(@types/node@20.14.9)(typescript@5.5.2)
       autoprefixer: 10.4.19(postcss@8.4.39)
       postcss: 8.4.39
       postcss-load-config: 4.0.2(postcss@8.4.39)
@@ -2844,6 +2856,10 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.2
 
+  '@types/node@20.14.9':
+    dependencies:
+      undici-types: 5.26.5
+
   '@types/unist@3.0.2': {}
 
   '@ungap/structured-clone@1.2.0': {}
@@ -2949,7 +2965,7 @@ snapshots:
 
   array-iterate@2.0.1: {}
 
-  astro@4.11.3(typescript@5.5.2):
+  astro@4.11.3(@types/node@20.14.9)(typescript@5.5.2):
     dependencies:
       '@astrojs/compiler': 2.8.1
       '@astrojs/internal-helpers': 0.4.1
@@ -3007,8 +3023,8 @@ snapshots:
       tsconfck: 3.1.1(typescript@5.5.2)
       unist-util-visit: 5.0.0
       vfile: 6.0.1
-      vite: 5.3.2
-      vitefu: 0.2.5(vite@5.3.2)
+      vite: 5.3.2(@types/node@20.14.9)
+      vitefu: 0.2.5(vite@5.3.2(@types/node@20.14.9))
       which-pm: 2.2.0
       yargs-parser: 21.1.1
       zod: 3.23.8
@@ -4459,6 +4475,8 @@ snapshots:
 
   typescript@5.5.2: {}
 
+  undici-types@5.26.5: {}
+
   unified@11.0.5:
     dependencies:
       '@types/unist': 3.0.2
@@ -4537,7 +4555,7 @@ snapshots:
       unist-util-stringify-position: 4.0.0
       vfile-message: 4.0.2
 
-  vite-plugin-solid@2.10.2(solid-js@1.8.18)(vite@5.3.2):
+  vite-plugin-solid@2.10.2(solid-js@1.8.18)(vite@5.3.2(@types/node@20.14.9)):
     dependencies:
       '@babel/core': 7.24.7
       '@types/babel__core': 7.20.5
@@ -4545,22 +4563,23 @@ snapshots:
       merge-anything: 5.1.7
       solid-js: 1.8.18
       solid-refresh: 0.6.3(solid-js@1.8.18)
-      vite: 5.3.2
-      vitefu: 0.2.5(vite@5.3.2)
+      vite: 5.3.2(@types/node@20.14.9)
+      vitefu: 0.2.5(vite@5.3.2(@types/node@20.14.9))
     transitivePeerDependencies:
       - supports-color
 
-  vite@5.3.2:
+  vite@5.3.2(@types/node@20.14.9):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.39
       rollup: 4.18.0
     optionalDependencies:
+      '@types/node': 20.14.9
       fsevents: 2.3.3
 
-  vitefu@0.2.5(vite@5.3.2):
+  vitefu@0.2.5(vite@5.3.2(@types/node@20.14.9)):
     optionalDependencies:
-      vite: 5.3.2
+      vite: 5.3.2(@types/node@20.14.9)
 
   volar-service-css@0.0.45(@volar/language-service@2.2.5):
     dependencies:
