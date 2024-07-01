@@ -1,8 +1,13 @@
 ---
 import { App, getRoutes } from "../app";
 import { getCollection } from "astro:content";
-import type { Navigation } from "../app/docs";
+import type { Navigation } from "../util/navctx";
 import "@fontsource-variable/raleway";
+
+const navbarTitle: Record<string, string> = {
+	project: "Project",
+	"tauri-specta": "Tauri Specta",
+};
 
 async function generateNavigation() {
 	const docs = await getCollection("docs");
@@ -11,7 +16,7 @@ async function generateNavigation() {
 		const [headingSlug] = doc.slug.split("/");
 		if (!(headingSlug in result))
 			result[headingSlug] = {
-				title: headingSlug,
+				title: navbarTitle?.[headingSlug] ?? headingSlug,
 				links: [],
 			};
 

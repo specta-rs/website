@@ -50,7 +50,7 @@ export default function Page(props: ParentProps) {
 			</div>
 
 			<div class="flex-grow p-4 overflow-x-hidden h-[calc(100vh-70px)] flex justify-center">
-				<div class="prose prose-invert lg:prose-md prose-white">
+				<div class="prose prose-invert lg:prose-md prose-white lg:min-w-[65ch]">
 					{props.children}
 				</div>
 			</div>
