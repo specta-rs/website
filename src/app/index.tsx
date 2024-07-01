@@ -1,4 +1,7 @@
 import type { ParentProps } from "solid-js";
+import spectaLogo from "../images/logo.png";
+import rspcLogo from "../images/rspc-logo.png";
+import tauriSpectaLogo from "../images/tauri-specta-logo.png";
 
 export default function Page() {
 	return (
@@ -11,17 +14,17 @@ export default function Page() {
 			</div>
 
 			<div class="flex gap-4 flex-col">
-				<HeroItem name="specta" logoHref="/logo.png" logoAlt="Specta Logo">
+				<HeroItem name="specta" logoHref={spectaLogo.src} logoAlt="Specta Logo">
 					Export your Rust types to any language!
 				</HeroItem>
 
-				<HeroItem name="rspc" logoHref="/rspc-logo.png" logoAlt="rspc Logo">
+				<HeroItem name="rspc" logoHref={rspcLogo.src} logoAlt="rspc Logo">
 					A framework for building typesafe web backends in Rust
 				</HeroItem>
 
 				<HeroItem
 					name="tauri-specta"
-					logoHref="/tauri-specta-logo.png"
+					logoHref={tauriSpectaLogo.src}
 					logoAlt="Tauri Specta Logo"
 				>
 					Completely typesafe Tauri commands and events
