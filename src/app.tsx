@@ -39,6 +39,6 @@ export const getRoutes = () => ["/"]; // TODO: routes.map((route) => route.path)
 export const App = (props: { path: string; navigation: Navigation }) => (
 	<NavigationCtx.Provider value={props.navigation}>
 		<Navbar />
-		<Router url={props.path}>{routes}</Router>
+		<Router url={import.meta.env.SSR ? props.path : undefined}>{routes}</Router>
 	</NavigationCtx.Provider>
 );
