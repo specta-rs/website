@@ -56,7 +56,7 @@ const path = Astro.url.pathname.endsWith(".html")
     
     <meta property="og:title" content="specta-rs" />
     <meta property="og:description" content="Rust crates for building better web apps" />
-    <meta property="og:image" content="/og.png" />
+    <meta property="og:image" content={`${Astro.site!.origin}/og.png`} />
 
     <link rel="sitemap" href="/sitemap-index.xml" />
 
