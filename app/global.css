@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background-image: linear-gradient(
+        to bottom,
+        transparent 90%,
+        #171717 10%
+        ),
+        linear-gradient(to right, #171717 90%, #2e2e2e 10%);
+
+    background-size:
+        5px 5px,
+        5px 5px;
+
+    font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* Dark mode scroll bars */
+/* :root {
+    color-scheme: dark;
+} */
