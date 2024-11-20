@@ -2,7 +2,7 @@
 
 The [specta.dev](https://specta.dev) website.
 
-The site is built using [Astro](https://astro.build).
+This site is built using [Next.js](https://nextjs.org) and [Fumadocs](https://fumadocs.vercel.app).
 
 ## Usage
 
