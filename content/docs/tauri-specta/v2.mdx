@@ -2,13 +2,11 @@
 title: v2
 ---
 
-# Tauri Specta v2
-
 ### Installation
 
 > [!WARNING]
 > Tauri Specta v2 is still in beta, until Tauri v2 lands as stable.
-> 
+>
 > However, it's safe to use as long as you lock your versions.
 
 ```bash
@@ -130,6 +128,7 @@ pub struct DemoEvent(String);
 ```
 
 and make sure you register the event with Tauri Specta by adding it to the `collect_events` macro like the following:
+
 ```rust
 .events(tauri_specta::collect_events![DemoEvent]); // This should contain all your events, comma separated.
 ```
@@ -152,11 +151,12 @@ tauri::Builder::default()
 ```
 
 Most methods take a `handle` which can be any of the following types:
- - [`App`](https://docs.rs/tauri/2.0.0-beta.16/tauri/struct.App.html)
- - [`AppHandle`](https://docs.rs/tauri/2.0.0-beta.16/tauri/struct.AppHandle.html)
- - [`Webview`](https://docs.rs/tauri/2.0.0-beta.16/tauri/webview/struct.Webview.html)
- - [`WebviewWindow`](https://docs.rs/tauri/2.0.0-beta.16/tauri/webview/struct.WebviewWindow.html)
- - [`Window`](https://docs.rs/tauri/2.0.0-beta.16/tauri/window/struct.Window.html)
+
+- [`App`](https://docs.rs/tauri/2.0.0-beta.16/tauri/struct.App.html)
+- [`AppHandle`](https://docs.rs/tauri/2.0.0-beta.16/tauri/struct.AppHandle.html)
+- [`Webview`](https://docs.rs/tauri/2.0.0-beta.16/tauri/webview/struct.Webview.html)
+- [`WebviewWindow`](https://docs.rs/tauri/2.0.0-beta.16/tauri/webview/struct.WebviewWindow.html)
+- [`Window`](https://docs.rs/tauri/2.0.0-beta.16/tauri/window/struct.Window.html)
 
 The [`Event`](https://docs.rs/tauri-specta/latest/tauri_specta/trait.Event.html) trait defines all methods that can be used to emit or listen so refer to it.
 
@@ -173,10 +173,10 @@ events.demoEvent.listen((e) => console.log(e));
 events.demoEvent(appWindow).listen((e) => console.log(e));
 
 // Emit to the backend and all windows
-await events.demoEvent.emit("Test")
+await events.demoEvent.emit("Test");
 
 // Emit to a window
-await events.demoEvent(appWindow).emit("Test")
+await events.demoEvent(appWindow).emit("Test");
 ```
 
 ## Extra Types
@@ -192,6 +192,7 @@ let builder = ts::builder()
 ```
 
 `register` only supports [named types](https://docs.rs/specta/2.0.0-rc.12/specta/type/trait.NamedType.html) as otherwise you would run into the following problem:
+
 ```rust
 //     vvv      - What would this be without a name?
 export ... = {};
