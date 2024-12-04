@@ -12,8 +12,8 @@ importers:
         specifier: ^0.13.7
         version: 0.13.7(solid-js@1.9.3)
       '@kobalte/solidbase':
-        specifier: npm:@brendonovich/kobalte__solidbase@^0.0.20
-        version: '@brendonovich/kobalte__solidbase@0.0.20(@algolia/client-search@5.14.2)(@solidjs/router@0.15.1(solid-js@1.9.3))(@solidjs/start@1.0.10(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0)))(acorn@8.14.0)(search-insights@2.17.2)(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0))'
+        specifier: npm:@brendonovich/kobalte__solidbase@^0.0.23
+        version: '@brendonovich/kobalte__solidbase@0.0.23(@algolia/client-search@5.14.2)(@solidjs/router@0.15.1(solid-js@1.9.3))(@solidjs/start@1.0.10(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0)))(acorn@8.14.0)(search-insights@2.17.2)(solid-js@1.9.3)(solid-mdx@0.0.7(solid-js@1.9.3)(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0)))(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0))'
       '@solid-primitives/event-listener':
         specifier: ^2.3.3
         version: 2.3.3(solid-js@1.9.3)
@@ -38,6 +38,9 @@ importers:
       solid-js:
         specifier: ^1.9.3
         version: 1.9.3
+      solid-mdx:
+        specifier: ^0.0.7
+        version: 0.0.7(solid-js@1.9.3)(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0))
       vinxi:
         specifier: ^0.4.3
         version: 0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3)
@@ -211,12 +214,13 @@ packages:
     resolution: {integrity: sha512-Z/yiTPj+lDVnF7lWeKCIJzaIkI0vYO87dMpZ4bg4TDrFe4XXLFWL1TbXU27gBP3QccxV9mZICCrnjnYlJjXHOA==}
     engines: {node: '>=6.9.0'}
 
-  '@brendonovich/kobalte__solidbase@0.0.20':
-    resolution: {integrity: sha512-eutmxPCrs3akUnjXwxdeYNFZE/1YFHtaLcIXEnLCeEQTz4mdaQ9I5j3rh+OPwaPCk3DV4GcdbB1ut5BO6mCrBg==}
+  '@brendonovich/kobalte__solidbase@0.0.23':
+    resolution: {integrity: sha512-oSbxRslvIIB8YVa24BpOkoLPQ/7ZsKntA1Wk8e0juJqujxwflWZhBm0K5KY/yTYeyeF3rqaduAhdQTfnJ84XLw==}
     peerDependencies:
       '@solidjs/router': ^14 | ^15
       '@solidjs/start': ^1.0.8
       solid-js: ^1.9.1
+      solid-mdx: ^0.0.7
       vinxi: ^0.4.3
       vite: ^5.4.8
 
@@ -3914,7 +3918,7 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@brendonovich/kobalte__solidbase@0.0.20(@algolia/client-search@5.14.2)(@solidjs/router@0.15.1(solid-js@1.9.3))(@solidjs/start@1.0.10(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0)))(acorn@8.14.0)(search-insights@2.17.2)(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0))':
+  '@brendonovich/kobalte__solidbase@0.0.23(@algolia/client-search@5.14.2)(@solidjs/router@0.15.1(solid-js@1.9.3))(@solidjs/start@1.0.10(solid-js@1.9.3)(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0)))(acorn@8.14.0)(search-insights@2.17.2)(solid-js@1.9.3)(solid-mdx@0.0.7(solid-js@1.9.3)(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0)))(vinxi@0.4.3(@types/node@22.9.0)(ioredis@5.4.1)(terser@5.36.0)(typescript@5.6.3))(vite@5.4.11(@types/node@22.9.0)(terser@5.36.0))':
     dependencies:
       '@docsearch/css': 3.8.0
       '@docsearch/js': 3.8.0(@algolia/client-search@5.14.2)(search-insights@2.17.2)
