@@ -9,7 +9,7 @@
 	},
 	"dependencies": {
 		"@kobalte/core": "^0.13.7",
-		"@kobalte/solidbase": "npm:@brendonovich/kobalte__solidbase@^0.0.14",
+		"@kobalte/solidbase": "npm:@brendonovich/kobalte__solidbase@^0.0.20",
 		"@solid-primitives/event-listener": "^2.3.3",
 		"@solid-primitives/keyboard": "^1.2.8",
 		"@solid-primitives/platform": "^0.1.2",
