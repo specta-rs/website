@@ -1,7 +1,4 @@
 import { defineConfig } from "@solidjs/start/config";
-import { createWithSolidBase } from "@kobalte/solidbase/config";
-import defaultTheme from "./src/theme";
+import { withSolidBase } from "@kobalte/solidbase/config";
 
-const withSolidBase = createWithSolidBase(defaultTheme);
-
-export default defineConfig(withSolidBase({}, {}));
+export default defineConfig(withSolidBase());
