@@ -2,7 +2,7 @@
 
 The [specta.dev](https://specta.dev) website.
 
-The site is built using [Astro](https://astro.build).
+The site is built using [SolidBase](https://solidbase.netlify.app).
 
 ## Usage
 
