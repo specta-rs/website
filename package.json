@@ -17,12 +17,12 @@
     "@solid-primitives/keyboard": "^1.2.8",
     "@solid-primitives/platform": "^0.1.2",
     "@solidjs/meta": "^0.29.4",
-    "@solidjs/router": "^0.15.1",
+    "@solidjs/router": "^0.15.2",
     "@solidjs/start": "^1.0.10",
-    "solid-devtools": "^0.30.1",
+    "solid-devtools": "^0.31.2",
     "solid-js": "^1.9.3",
     "solid-mdx": "^0.0.7",
-    "vinxi": "^0.4.3"
+    "vinxi": "^0.5.1"
   },
   "engines": {
     "node": ">=18"
