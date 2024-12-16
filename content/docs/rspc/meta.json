@@ -1,5 +1,38 @@
 {
-    "title": "rspc",
-    "icon": "rspcLogo", 
-    "pages": ["...", "[Prisma Client Rust](https://prisma.brendonovich.dev/extra/rspc)"]
+  "root": true,
+  "title": "rspc",
+  "icon": "rspcLogo",
+  "pages": [
+    "index",
+    "quickstart",
+    "...",
+
+    "---Server---",
+    "!server",
+    "./server/router",
+    "./server/concepts",
+    "./server/error-handling",
+    "./server/middleware",
+    "./server/plugins",
+    "./server/selection",
+    "./server/common-errors",
+    "./server/specta",
+
+    "---Client---",
+    "!client",
+    "./client/vanilla",
+    "./client/react",
+    "./client/solid",
+    "./client/svelte",
+
+    "---Integrations---",
+    "!integrations",
+    "./integrations/axum",
+    "./integrations/tauri",
+
+    "---External---",
+    "[Prisma Client Rust](https://prisma.brendonovich.dev/extra/rspc)",
+    "[docsRsLogo][crates.io](https://docs.rs/rspc)",
+    "[npmLogo][npm](https://www.npmjs.com/package/@rspc/client)"
+  ]
 }

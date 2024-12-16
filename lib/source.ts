@@ -3,30 +3,31 @@ import Image from "next/image";
 import { createMDXSource } from "fumadocs-mdx";
 import { loader } from "fumadocs-core/source";
 import { createElement } from "react";
+import { CratesIoLogo, NpmLogo } from "./logos";
 
 export const source = loader({
   baseUrl: "/docs",
   source: createMDXSource(docs, meta),
   icon(icon) {
-    if (!icon) {
-      // You may set a default icon
-      return;
-    }
+    if (!icon) return;
 
-    let src: string;
+    let result: [string, string];
     if (icon === "spectaLogo") {
-      src = "/images/logo.png";
+      result = ["/images/logo.png", "Specta"];
     } else if (icon === "rspcLogo") {
-      src = "/images/rspc-logo.png";
+      result = ["/images/rspc-logo.png", "rspc"];
     } else if (icon === "tauriSpectaLogo") {
-      src = "/images/tauri-specta-logo.png";
-    } else {
-      throw new Error(`Requested unknown icon: ${icon}`);
-    }
+      result = ["/images/tauri-specta-logo.png", "Tauri Specta"];
+    } else if (icon === "docsRsLogo") {
+      return createElement(CratesIoLogo);
+    } else if (icon === "npmLogo") {
+      return createElement(NpmLogo);
+    } else throw new Error(`Requested unknown icon: ${icon}`);
 
+    const [src, alt] = result;
     return createElement(Image, {
       src,
-      alt: "todo",
+      alt,
       width: 24,
       height: 24,
     });

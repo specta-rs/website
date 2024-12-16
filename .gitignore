@@ -26,3 +26,6 @@ yarn-error.log*
 .env*.local
 .vercel
 next-env.d.ts
+
+# next-sitemap
+public/sitemap*.xml

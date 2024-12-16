@@ -1,18 +1,14 @@
 import Link from "next/link";
+import Image from "next/image";
 import { PropsWithChildren } from "react";
 
-// @ts-expect-error
 import spectaLogo from "../../public/images/logo.png";
-// @ts-expect-error
 import rspcLogo from "../../public/images/rspc-logo.png";
-// @ts-expect-error
 import tauriSpectaLogo from "../../public/images/tauri-specta-logo.png";
 
 export default function HomePage() {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
-      {/* w-full flex flex-col text-white overflow-y-hidden items-center justify-center justify-items-center content-center bg-red-500 */}
-      {/* <div className="!h-1/3 w-full bg-red-500">abc def</div> */}
       <main className="px-4 lg:px-12 flex flex-col lg:flex-row justify-center items-center h-full gap-16">
         <div className="flex flex-col gap-4">
           <h1 className="text-6xl lg:text-8xl">specta-rs</h1>
@@ -40,11 +36,22 @@ export default function HomePage() {
             name="specta"
             logoHref={spectaLogo.src}
             logoAlt="Specta Logo"
+            githubHref="https://github.com/specta-rs/specta"
+            documentation="docs.io"
+            documentationHref="https://docs.rs/specta"
+            packageManagerHref="https://crates.io/crates/specta"
           >
             Export your Rust types to any language!
           </HeroItem>
 
-          <HeroItem name="rspc" logoHref={rspcLogo.src} logoAlt="rspc Logo">
+          <HeroItem
+            name="rspc"
+            logoHref={rspcLogo.src}
+            logoAlt="rspc Logo"
+            githubHref="https://github.com/specta-rs/rspc"
+            documentationHref="/docs/rspc"
+            packageManagerHref="https://crates.io/crates/rspc"
+          >
             A framework for building typesafe web backends in Rust
           </HeroItem>
 
@@ -52,6 +59,10 @@ export default function HomePage() {
             name="tauri-specta"
             logoHref={tauriSpectaLogo.src}
             logoAlt="Tauri Specta Logo"
+            githubHref="https://github.com/specta-rs/tauri-specta"
+            // packageManagerHref="https://docs.rs/tauri-specta"
+            documentationHref="/docs/tauri-specta"
+            packageManagerHref="https://crates.io/crates/rspc"
           >
             Completely typesafe Tauri commands and events
           </HeroItem>
@@ -62,20 +73,26 @@ export default function HomePage() {
 }
 
 function HeroItem(
-  props: PropsWithChildren<{ name: string; logoHref?: string; logoAlt: string }>
+  props: PropsWithChildren<{
+    name: string;
+    logoHref?: string;
+    logoAlt: string;
+    githubHref?: string;
+    documentation?: string;
+    documentationHref?: string;
+    packageManager?: string;
+    packageManagerHref?: string;
+  }>,
 ) {
   return (
-    <Link
-      className="bg-[#171717] rounded-lg flex flex-row items-center p-6 gap-4 lg:p-8 lg:gap-8 focus-visible:scale-105 hover:scale-105 transition-transform shadow"
-      href={`https://github.com/specta-rs/${props.name}`}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
+    <div className="bg-[#171717] rounded-lg flex flex-row items-center p-6 gap-4 lg:p-8 lg:gap-8 focus-visible:scale-105 shadow">
       {props.logoHref && (
-        <img
+        <Image
           src={props.logoHref}
           alt={props.logoAlt}
           draggable="false"
+          height={64}
+          width={64}
           className="size-24 lg:size-32 object-contain"
         />
       )}
@@ -85,7 +102,27 @@ function HeroItem(
         <p className="text-slate-200 font-semibold text-sm lg:text-base">
           {props.children}
         </p>
+
+        <div className="flex space-x-3">
+          {props.githubHref ? (
+            <a href={props.githubHref} className="hover:underline">
+              GitHub
+            </a>
+          ) : null}
+
+          {props.documentationHref ? (
+            <Link href={props.documentationHref} className="hover:underline">
+              {props.documentation || "Documentation"}
+            </Link>
+          ) : null}
+
+          {props.packageManagerHref ? (
+            <a href={props.packageManagerHref} className="hover:underline">
+              {props.packageManager || "crates.io"}
+            </a>
+          ) : null}
+        </div>
       </div>
-    </Link>
+    </div>
   );
 }
