@@ -32,7 +32,7 @@ export default async function Image() {
         >
           {/* // TODO: It would be nice if these could from straight from the FS but Satori is annoying. */}
           <img
-            src="https://raw.githubusercontent.com/specta-rs/website/main/src/images/logo.png"
+            src="https://raw.githubusercontent.com/specta-rs/website/main/public/images/logo.png"
             width="600px"
             height="400px"
           />
