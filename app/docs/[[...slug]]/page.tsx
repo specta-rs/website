@@ -38,6 +38,7 @@ export default async function Page(props: {
   );
 }
 
+export const dynamicParams = false;
 export async function generateStaticParams() {
   return source.generateParams();
 }
