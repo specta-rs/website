@@ -29,6 +29,3 @@ next-env.d.ts
 
 # next-sitemap
 public/sitemap*.xml
-
-# Cloudflare
-.worker-next

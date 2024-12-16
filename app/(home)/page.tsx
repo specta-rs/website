@@ -9,9 +9,9 @@ import tauriSpectaLogo from "../../public/images/tauri-specta-logo.png";
 export default function HomePage() {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
-      <main className="px-4 lg:px-12 flex flex-col lg:flex-row justify-center items-center h-full gap-16">
+      <main className="px-4 lg:px-12 grid grid-flow-row lg:grid-flow-col justify-center items-center h-full gap-16">
         <div className="flex flex-col gap-4">
-          <h1 className="text-6xl lg:text-8xl">specta-rs</h1>
+          <h1 className="text-6xl lg:text-8xl hidden sm:block">specta-rs</h1>
           <h2 className="text-3xl lg:text-4xl">
             Rust crates for building better web apps
           </h2>
@@ -60,7 +60,6 @@ export default function HomePage() {
             logoHref={tauriSpectaLogo.src}
             logoAlt="Tauri Specta Logo"
             githubHref="https://github.com/specta-rs/tauri-specta"
-            // packageManagerHref="https://docs.rs/tauri-specta"
             documentationHref="/docs/tauri-specta"
             packageManagerHref="https://crates.io/crates/rspc"
           >
@@ -85,7 +84,7 @@ function HeroItem(
   }>,
 ) {
   return (
-    <div className="bg-[#171717] rounded-lg flex flex-row items-center p-6 gap-4 lg:p-8 lg:gap-8 focus-visible:scale-105 shadow">
+    <div className="bg-neutral-50 dark:bg-[#171717] rounded-lg flex flex-row items-center py-6 px-3 md:px-6 gap-4 md:gap-8 lg:p-8 focus-visible:scale-105 shadow">
       {props.logoHref && (
         <Image
           src={props.logoHref}
@@ -99,11 +98,11 @@ function HeroItem(
 
       <div className="flex flex-col flex-1 gap-2">
         <h2 className="text-xl lg:text-3xl tracking-tight">{props.name}</h2>
-        <p className="text-slate-200 font-semibold text-sm lg:text-base">
+        <p className="text-slate-800 dark:text-slate-200 font-semibold text-sm lg:text-base">
           {props.children}
         </p>
 
-        <div className="flex space-x-3">
+        <div className="flex space-x-3 md:space-x-3 justify-between md:justify-start">
           {props.githubHref ? (
             <a href={props.githubHref} className="hover:underline">
               GitHub
@@ -115,6 +114,8 @@ function HeroItem(
               {props.documentation || "Documentation"}
             </Link>
           ) : null}
+
+          {/* <div className="flex-1" /> */}
 
           {props.packageManagerHref ? (
             <a href={props.packageManagerHref} className="hover:underline">
