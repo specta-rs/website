@@ -3,29 +3,21 @@ title: Quickstart
 ---
 
 import { Step, Steps } from 'fumadocs-ui/components/steps';
-/*
-import { Interpolate, IfFramework } from "../components/Switchers";
-import vscodeIntegrationImg from "../images/vscode-integration.png";
-*/
-import Image from "next/image";
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Pre, CodeBlock } from 'fumadocs-ui/components/codeblock';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-## CLI
-
-Coming soon...
-
-{/* // TODO: Add create rspc-app support here */}
-
-## Manual setup
-
-Get rspc up and running in your own project.
+To get started with rspc you can use the quickstart guide below.
 
 <Steps>
 
 <Step>
 
-### Create new project (optional)
+### Initialise Rust project
 
 If you haven't got a Rust project already setup, create a new one using the following command.
+
+{/* TODO: Add `&&` when copying bash commands */}
 
 ```bash
 cargo new <project-name>
@@ -52,6 +44,8 @@ This command will not exist if your running a Rust version earlier than `1.62.0`
 <Step>
 
 ### Create a router
+
+{/* TODO: Boilerplate for typesafe errors and middleware */}
 
 Go into `src/main.rs` and add the following code:
 
@@ -91,6 +85,13 @@ mod tests {
 
 Now that you have a router your probably wondering how you access it from your frontend. This is done through an rspc integration. I would recommend starting with [Axum](https://github.com/tokio-rs/axum), by following [this](/integrations/axum).
 
+{/* TODO: Include install commands for this too */}
+
+<Tabs groupId="integration" items={['Axum', 'Tauri']} persist>
+  <Tab value="Axum">TODO</Tab>
+  <Tab value="Tauri">TODO</Tab>
+</Tabs>
+
 </Step>
 
 <Step>
@@ -99,66 +100,24 @@ Now that you have a router your probably wondering how you access it from your f
 
 Refer to the [Vanilla](/client), [React](/client/react) or [Solid](/client/solid) documentation for how to use the rspc client in your frontend.
 
-{/* Install the frontend package using the following command:
-
-<Interpolate>
-
-```bash
-pnpm install @rspc/client @rspc/react
-```
-
-</Interpolate>
-
-<IfFramework framework="react">
-
-```tsx copy filename="src/MyComponent.tsx"
-// TODO: Finish example -> show imports
-
-function SomeComponent() {
-  const version = rspc.useQuery(["version"]);
-
-  return (
-    <>
-      <p>{version.data}</p>
-    </>
-  );
-}
-```
-
-</IfFramework>
-
-<IfFramework framework="solid">
-
-```tsx copy filename="src/MyComponent.tsx"
-// TODO: Finish example -> show imports
-
-function SomeComponent() {
-  const version = rspc.createQuery(() => ({
-    queryKey: ["version"],
-  }));
-
-  return (
-    <>
-      <p>{version.data}</p>
-    </>
-  );
-}
-```
-
-</IfFramework> */}
+<Tabs groupId="client" items={['Vanilla', 'React', 'Solid', "Rust"]} persist>
+  <Tab value="Vanilla">TODO</Tab>
+  <Tab value="React">TODO</Tab>
+  <Tab value="Solid">TODO</Tab>
+  <Tab value="Rust">TODO</Tab>
+</Tabs>
 
 </Step>
 
 <Step>
 
-### (Optional) Setup your editor
+### Adding a procedure
 
-If you are using [Visual Studio Code](https://code.visualstudio.com) you can optionally install the [rspc extension](https://marketplace.visualstudio.com/items?itemName=oscartbeaumont.rspc-vscode) for useful code shortcuts.
-
-<br />
-
-{/* TODO: <Image src={vscodeIntegrationImg} alt="rspc VSCode integration" /> */}
+TODO: Explaining adding procedure and using `derive(Type)`
 
 </Step>
 
 </Steps>
+
+## TODO
+ - Using `specta::selection`/`specta::json`

@@ -9,30 +9,36 @@
 
     "---Server---",
     "!server",
+    "./server/procedure",
     "./server/router",
-    "./server/concepts",
-    "./server/error-handling",
-    "./server/middleware",
-    "./server/plugins",
-    "./server/selection",
-    "./server/common-errors",
-    "./server/specta",
+    "./server/integrations",
 
     "---Client---",
     "!client",
     "./client/vanilla",
-    "./client/react",
-    "./client/solid",
-    "./client/svelte",
+    "./client/tanstack-query",
+    "./client/rust",
 
     "---Integrations---",
     "!integrations",
+    "./integrations/http",
     "./integrations/axum",
+    "./integrations/actix-web",
     "./integrations/tauri",
+
+    "---Middleware---",
+    "!middleware",
+    "./middleware/overview",
+    "./middleware/tracing",
+    "./middleware/cache",
+    "./middleware/zer",
+    "./middleware/invalidation",
+    "./middleware/openapi",
 
     "---External---",
     "[Prisma Client Rust](https://prisma.brendonovich.dev/extra/rspc)",
     "[docsRsLogo][crates.io](https://docs.rs/rspc)",
-    "[npmLogo][npm](https://www.npmjs.com/package/@rspc/client)"
+    "[npmLogo][npm](https://www.npmjs.com/package/@rspc/client)",
+    "!internal"
   ]
 }

@@ -9,7 +9,6 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://specta.dev"),
   title: "specta-rs",
   description: "Rust crates for building better web apps",
   authors: [

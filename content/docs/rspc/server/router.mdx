@@ -2,7 +2,7 @@
 title: Router
 ---
 
-A router contains a collection of procedures (queries, mutations or subscriptions) that can be called by a client. A router has many generic arguments which can be configured by the user to match the type of data that the router will be handling. A router is defined as `Router<TCtx, TMeta, TMiddleware>`.
+A router is responsible for collecting up [procedures](./procedures). Once a router is built you are provided with the types for generating the client bindings and the procedure handlers which can be exposed via an [integration](../integrations/axum).
 
 ## TCtx
 
@@ -75,14 +75,6 @@ let router = Router::<MyCtx>::new()
     .build();
 ```
 
-## TMeta
-
-For all intents and purposes keep this `()`. This generic argument does nothing in the current release and may be deprecated in the future.
-
-## TMiddleware
-
-This argument holds the instance of the last middleware builder which you mounted onto your router through a `.middleware(...)` call. You generally don't need to worry about this generic but is what allows the context switching to work.
-
 ## Attaching procedures
 
 Procedures represent a function you define in Rust which can be called from the frontend. You can define them on your routing like the following example.
@@ -138,30 +130,6 @@ let router = <Router>::new()
     .build();
 ```
 
-## Invalidate query
-
-🚧 WIP - [Tracking issue #19](https://github.com/oscartbeaumont/rspc/issues/19)
-
-## Method chaining
-
-When combining multiple operations, you must ensure you chain the method calls or shadow the router variable. This is required due to the way the generics work on the Router.
-
-```rs copy filename="src/main.rs"
-// Chaining method calls
-let router = <Router>::new()
-    .query("version", |t| t(|ctx, input: ()| todo!()))
-    .mutation("createUser", |t| t(|ctx, input: ()| todo!()))
-    .build();
-
-// Shadowing variable
-let router = <Router>::new()
-    .query("version", |t| t(|ctx, input: ()| todo!()))
-    .mutation("createUser", |t| t(|ctx, input: ()| todo!()));
-let router = router
-    .mutation("deleteUser", |t| t(|ctx, input: ()| todo!()));
-let router = router.build();
-```
-
 ## Exporting the Typescript bindings
 
 There are two methods to export the Typescript bindings. You can either use the `export_ts_bindings` configuration option or call the `export_ts` function directly on the build router.
@@ -192,3 +160,11 @@ let router = <Router>::new()
     .query("version", |t| t(|_, _: ()| env!("CARGO_PKG_VERSION")))
     .build();
 ```
+
+## TODO
+
+ - Request context (show putting data into it)
+ - Show how to achieve websocket-scoped context via middleware (we `Clone` the context)
+ - Type exporting
+ - Explain `merge` and `nest`
+ - "Should I use a query or a mutation?" as tip or even Accordion?
