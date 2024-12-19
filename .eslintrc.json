@@ -1,6 +1,6 @@
 {
   "extends": ["next/core-web-vitals", "next/typescript"],
   "rules": {
-    "unused-imports/no-unused-imports": "warn"
+    "@typescript-eslint/no-unused-vars": "warn"
   }
 }
