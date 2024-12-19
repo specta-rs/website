@@ -5,7 +5,6 @@ import { PropsWithChildren } from "react";
 import spectaLogo from "../../public/images/logo.png";
 import rspcLogo from "../../public/images/rspc-logo.png";
 import tauriSpectaLogo from "../../public/images/tauri-specta-logo.png";
-import Script from "next/script";
 
 export const revalidate = 3600;
 
