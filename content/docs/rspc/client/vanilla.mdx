@@ -45,10 +45,25 @@ rspc has multiple different transports which can be used. These dictate how the 
 
 <Callout>Fetch transport does not support subscriptions!</Callout>
 
-Transport build on the standard [Fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) API. This uses HTTP GET and POST requests under the hood.
+Transport is built on the standard [Fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) API.
 
-rspc will generally use a GET request for queries and POST request for
-mutations however this **isn't guaranteed**.
+<details>
+
+<summary>`GET` or `POST`?</summary>
+
+rspc uses:
+
+* `GET` requests for queries
+* `POST` requests for mutations
+
+<Callout type="warn">
+**Important:** While rspc primarily uses `GET` requests for queries,
+it may also use `POST` requests for queries in certain scenarios (similar to how GraphQL operates).
+**Mutations will always use `POST` requests and will never use `GET`.**
+This behavior is an implementation detail and **isn't guaranteed** to remain the same in the future.
+</Callout>
+
+</details>
 
 ```ts /FetchTransport/ copy filename="index.ts"
 import { createClient, FetchTransport } from "@rspc/client";
