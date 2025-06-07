@@ -10,17 +10,38 @@ body {
 }
 
 .dark body {
-    background-image: linear-gradient(to bottom, transparent 90%, #171717 10%),
-        linear-gradient(to right, #171717 90%, #2e2e2e 10%);
+    background-image:
+        linear-gradient(hsl(var(--border) / 0.22) 1px, transparent 1px),
+        linear-gradient(90deg, hsl(var(--border) / 0.22) 1px, transparent 1px),
+        linear-gradient(hsl(var(--border) / 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, hsl(var(--border) / 0.12) 1px, transparent 1px);
     background-size:
-        5px 5px,
-        5px 5px;
+        12px 12px,
+        12px 12px,
+        60px 60px,
+        60px 60px;
+    background-position:
+        -1px -1px,
+        -1px -1px,
+        -1px -1px,
+        -1px -1px;
 }
 
 .light body {
-    background-image: linear-gradient(to bottom, transparent 90%, #a1a1aa 10%),
-        linear-gradient(to right, #f4f4f5 90%, #a1a1aa 10%);
+    background-color: hsl(var(--background));
+    background-image:
+        linear-gradient(hsl(var(--border) / 0.32) 1px, transparent 1px),
+        linear-gradient(90deg, hsl(var(--border) / 0.32) 1px, transparent 1px),
+        linear-gradient(hsl(var(--border) / 0.18) 1px, transparent 1px),
+        linear-gradient(90deg, hsl(var(--border) / 0.18) 1px, transparent 1px);
     background-size:
-        5px 5px,
-        5px 5px;
+        12px 12px,
+        12px 12px,
+        60px 60px,
+        60px 60px;
+    background-position:
+        -1px -1px,
+        -1px -1px,
+        -1px -1px,
+        -1px -1px;
 }
