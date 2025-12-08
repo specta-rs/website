@@ -1,5 +1,3 @@
-import { createPreset } from "fumadocs-ui/tailwind-plugin";
-
 /** @type {import('tailwindcss').Config} */
 const config = {
   content: [
@@ -10,7 +8,10 @@ const config = {
     "./node_modules/fumadocs-ui/dist/**/*.js",
   ],
   darkMode: "class",
-  presets: [createPreset()],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
 };
 
 export default config;

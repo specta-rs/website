@@ -5,5 +5,4 @@ export const { docs, meta } = defineDocs({
 });
 
 export default defineConfig({
-  lastModifiedTime: "git",
 });

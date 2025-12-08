@@ -1,13 +1,13 @@
-import { docs, meta } from "@/.source";
+import { docs, meta } from "../.source/server";
+import { toFumadocsSource } from "fumadocs-mdx/runtime/server";
 import Image from "next/image";
-import { createMDXSource } from "fumadocs-mdx";
 import { loader } from "fumadocs-core/source";
 import { createElement } from "react";
 import { CratesIoLogo, NpmLogo } from "./logos";
 
 export const source = loader({
   baseUrl: "/docs",
-  source: createMDXSource(docs, meta),
+  source: toFumadocsSource(docs, meta),
   icon(icon) {
     if (!icon) return;
 

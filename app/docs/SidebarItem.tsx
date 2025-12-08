@@ -1,11 +1,10 @@
 "use client";
 
 import { CratesIoLogo, NpmLogo } from "@/lib/logos";
-import { type SidebarComponents } from "fumadocs-ui/layouts/docs/shared";
-import { SidebarItem } from "fumadocs-ui/layouts/docs/sidebar";
+import { SidebarItem } from "fumadocs-ui/components/sidebar/base";
 
-export const components: Partial<SidebarComponents> = {
-  Item: ({ item }) => {
+export const components = {
+  Item: ({ item }: any) => {
     // TODO: generalise this and configure it for all revelant links
     if (item.url === "/docs/rspc/client/vanilla") {
       return (

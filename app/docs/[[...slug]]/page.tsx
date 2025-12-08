@@ -21,12 +21,11 @@ export default async function Page(props: {
     <DocsPage
       toc={page.data.toc}
       full={page.data.full}
-      lastUpdate={page.data.lastModified}
       editOnGithub={{
         repo: "website",
         owner: "specta-rs",
         sha: "main",
-        path: `content/docs/${page.file.path}`,
+        path: `content/docs/${page.slugs.join('/')}`,
       }}
     >
       <DocsTitle>{page.data.title}</DocsTitle>
