@@ -10,6 +10,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPageImage, source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
+import { SquarePen } from "lucide-react";
 
 export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   const params = await props.params;
@@ -31,18 +32,20 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
         />
       </DocsBody>
 
-      <a
-        href={`https://github.com/specta-rs/website/blob/main/content/docs/${page.path}`}
-        rel="noreferrer noopener"
-        target="_blank"
-        className="w-fit border rounded-xl p-2 font-medium text-sm text-fd-secondary-foreground bg-fd-secondary transition-colors hover:text-fd-accent-foreground hover:bg-fd-accent"
-      >
-        Edit on GitHub
-      </a>
-
-      {page.data.lastModified && (
-        <PageLastUpdate date={page.data.lastModified} />
-      )}
+      <div className="flex items-center justify-between">
+        <a
+          href={`https://github.com/specta-rs/website/blob/main/content/docs/${page.path}`}
+          rel="noreferrer noopener"
+          target="_blank"
+          className="w-fit border rounded-lg py-1.5 px-2 font-medium text-xs text-fd-secondary-foreground bg-fd-secondary transition-colors hover:text-fd-accent-foreground hover:bg-fd-accent inline-flex items-center gap-1.5"
+        >
+          <SquarePen className="size-3.5" />
+          Edit on GitHub
+        </a>
+        {page.data.lastModified && (
+          <PageLastUpdate date={page.data.lastModified} />
+        )}
+      </div>
     </DocsPage>
   );
 }
