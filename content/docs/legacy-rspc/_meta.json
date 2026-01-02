@@ -1,0 +1,16 @@
+{
+  "---": {
+    "type": "separator",
+    "title": "switchers"
+  },
+  "index": {},
+  "quickstart": {},
+  "server": "Server",
+  "client": "Client",
+  "integrations": "Integrations",
+  "ecosystem": "Ecosystem",
+  "alpha": "1.0.0-rc.x",
+  "brand": {
+    "display": "hidden"
+  }
+}

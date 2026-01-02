@@ -29,7 +29,7 @@ export default function HomePage() {
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
             Export your Rust types to{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#F74C00] to-[#F49600] bg-clip-text text-transparent">
               any language
             </span>
           </h1>
@@ -80,8 +80,8 @@ export default function HomePage() {
 
             <div className="grid md:grid-cols-3 gap-8">
               <div className="space-y-3">
-                <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-blue-500" />
+                <div className="w-12 h-12 rounded-lg bg-[#F74C00]/10 flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-[#F74C00]" />
                 </div>
                 <h3 className="text-xl font-semibold">Type Safety</h3>
                 <p className="text-fd-muted-foreground">
@@ -91,8 +91,8 @@ export default function HomePage() {
               </div>
 
               <div className="space-y-3">
-                <div className="w-12 h-12 rounded-lg bg-cyan-500/10 flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-cyan-500" />
+                <div className="w-12 h-12 rounded-lg bg-[#F49600]/10 flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-[#F49600]" />
                 </div>
                 <h3 className="text-xl font-semibold">Zero Overhead</h3>
                 <p className="text-fd-muted-foreground">
@@ -102,8 +102,8 @@ export default function HomePage() {
               </div>
 
               <div className="space-y-3">
-                <div className="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                  <Code2 className="w-6 h-6 text-purple-500" />
+                <div className="w-12 h-12 rounded-lg bg-[#CE422B]/10 flex items-center justify-center">
+                  <Code2 className="w-6 h-6 text-[#CE422B]" />
                 </div>
                 <h3 className="text-xl font-semibold">Developer Experience</h3>
                 <p className="text-fd-muted-foreground">
@@ -131,7 +131,7 @@ export default function HomePage() {
               {/* Specta Card */}
               <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#F74C00] to-[#F49600] flex items-center justify-center text-white font-bold">
                     S
                   </div>
                   <div>
@@ -174,7 +174,7 @@ export default function HomePage() {
               {/* rspc Card */}
               <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#CE422B] to-[#A83219] flex items-center justify-center text-white font-bold">
                     R
                   </div>
                   <div>
@@ -215,7 +215,7 @@ export default function HomePage() {
               {/* Tauri Specta Card */}
               <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#F49600] to-[#F74C00] flex items-center justify-center text-white font-bold">
                     T
                   </div>
                   <div>
@@ -258,7 +258,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="border-t bg-gradient-to-br from-blue-500/10 to-cyan-500/10">
+      <section className="border-t bg-gradient-to-br from-[#F74C00]/10 to-[#F49600]/10">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold">

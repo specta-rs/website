@@ -1,0 +1,109 @@
+---
+title: Overview
+description: Type-safe bindings for Rust - Generate TypeScript types from Rust code
+---
+
+## What is Specta?
+
+Specta is a powerful Rust library that enables you to export type information from Rust code and generate TypeScript bindings. It bridges the gap between Rust's strong type system and TypeScript, ensuring end-to-end type safety across your full stack applications.
+
+### Key Features
+
+- **Type-Safe Communication**: Automatically generate TypeScript types that match your Rust definitions perfectly
+- **Zero Runtime Overhead**: All type generation happens at build time
+- **Framework Agnostic**: Use Specta as a standalone library or integrate it with popular frameworks
+- **Derive Macros**: Simple `#[derive(Type)]` annotations to export your Rust types
+- **Flexible Export**: Support for functions, structs, enums, and more
+
+### Project Goals
+
+The primary goals of Specta are:
+
+1. **Maintain Type Safety**: Ensure that changes in Rust code are immediately reflected in TypeScript, preventing runtime type errors
+2. **Developer Experience**: Provide an intuitive API that makes cross-language type sharing effortless
+3. **Performance**: Generate types efficiently without impacting build times
+4. **Extensibility**: Allow the community to build powerful frameworks and tools on top of Specta
+
+## Frameworks Built on Specta
+
+Specta powers several production-ready frameworks that make building type-safe applications easier:
+
+<Cards>
+  <Card title="Tauri Specta" href="https://github.com/oscartbeaumont/tauri-specta">
+    Generate type-safe IPC bindings for Tauri applications. Automatically create TypeScript types for your Tauri commands and events.
+  </Card>
+  <Card title="rspc" href="https://github.com/oscartbeaumont/rspc">
+    A blazingly fast tRPC-like client-server framework for Rust. Build type-safe APIs with automatic TypeScript client generation.
+  </Card>
+  <Card title="TauRPC" href="https://github.com/Mat4m0/TauRPC">
+    Type-safe RPC framework for Tauri applications with automatic code generation and runtime validation.
+  </Card>
+</Cards>
+
+## Companies Using Specta
+
+Specta is trusted by companies building production applications:
+
+<div className="grid grid-cols-2 md:grid-cols-4 gap-8 my-8 items-center">
+  <a href="https://www.spacedrive.com/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center grayscale hover:grayscale-0 transition-all">
+    <img src="https://www.spacedrive.com/logo.png" alt="Spacedrive" className="h-12 w-auto" />
+  </a>
+  <a href="https://crabnebula.dev/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center grayscale hover:grayscale-0 transition-all">
+    <img src="https://crabnebula.dev/images/logo.svg" alt="CrabNebula" className="h-12 w-auto" />
+  </a>
+  <a href="https://tauri.app/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center grayscale hover:grayscale-0 transition-all">
+    <img src="https://tauri.app/meta/logo.svg" alt="Tauri" className="h-12 w-auto" />
+  </a>
+  <a href="https://dimension.dev/" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center grayscale hover:grayscale-0 transition-all">
+    <img src="https://dimension.dev/logo.png" alt="Dimension" className="h-12 w-auto" />
+  </a>
+</div>
+
+*Using Specta in production? [Let us know!](https://github.com/oscartbeaumont/specta/discussions)*
+
+## Sponsors
+
+Specta is made possible by the generous support of our sponsors:
+
+### Platinum Sponsors
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+  <a href="https://crabnebula.dev/" target="_blank" rel="noopener noreferrer" className="p-6 border rounded-lg hover:border-primary transition-colors flex items-center gap-4">
+    <img src="https://crabnebula.dev/images/logo.svg" alt="CrabNebula" className="h-16 w-auto" />
+    <div>
+      <div className="font-semibold">CrabNebula</div>
+      <div className="text-sm text-muted-foreground">Cloud infrastructure for desktop apps</div>
+    </div>
+  </a>
+  <a href="https://dimension.dev/" target="_blank" rel="noopener noreferrer" className="p-6 border rounded-lg hover:border-primary transition-colors flex items-center gap-4">
+    <img src="https://dimension.dev/logo.png" alt="Dimension" className="h-16 w-auto" />
+    <div>
+      <div className="font-semibold">Dimension</div>
+      <div className="text-sm text-muted-foreground">Next-generation social network</div>
+    </div>
+  </a>
+</div>
+
+### GitHub Sponsors
+
+<a href="https://github.com/sponsors/oscartbeaumont" target="_blank" rel="noopener noreferrer">
+  <img src="https://raw.githubusercontent.com/oscartbeaumont/static/main/sponsors.svg" alt="GitHub Sponsors" className="w-full" />
+</a>
+
+Want to sponsor Specta? [Become a sponsor on GitHub](https://github.com/sponsors/oscartbeaumont) to help support the project's development.
+
+## Get Started
+
+Ready to add type safety to your Rust projects?
+
+<Cards>
+  <Card title="Installation" href="/docs/installation">
+    Get started with Specta in your Rust project
+  </Card>
+  <Card title="Quick Start" href="/docs/quickstart">
+    Learn the basics with a simple example
+  </Card>
+  <Card title="API Reference" href="/docs/api">
+    Explore the full Specta API
+  </Card>
+</Cards>

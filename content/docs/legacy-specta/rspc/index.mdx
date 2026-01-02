@@ -1,0 +1,50 @@
+---
+title: Overview
+---
+
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+rspc is a typesafe router for Rust which allows you to build end-to-end type safe APIs by generating a typesafe client to call the server from another language.
+
+### Features
+
+- ✅ **Typesafety** - move fast and **eliminate** a whole class of common bugs
+- ✅ **Transport Agnostic** - expose your router via [Axum](https://github.com/tokio-rs/axum), [Tauri](https://tauri.app) or any other official or custom transport.
+- ✅ **Performance** - small runtime footprint so your can get the **full potential of Rust's speed**
+- ✅ **Middleware Ecosystem** - easily extend your procedures with **auth, logging and more**
+
+### Frequently Asked Questions
+
+<Accordions>
+  <Accordion title="Why would I use rspc over my existing web framework?">
+    Due to rspc's opinionated nature we are able to push the boundaries of developer experience and optimisations which a regular web framework is not able to.
+    Although many of rspc's features can be achieved with a regular web framework your going to end up with compromises or end up reinventing rspc instead of building your application.
+
+    Big features:
+     - End to end type safety as a first-class feature.
+     - Client libraries to make calling your server from another language easy.
+     - Ecosystem of middleware for abstracting common patterns.
+     - Better compiler errors
+     - Potentially better performance due to batching and single flight mutations.
+
+  </Accordion>
+
+  <Accordion title="Who is using rspc in production?">
+
+    It is currently being used by the following projects:
+      - [Spacedrive](https://spacedrive.com)
+      - [CrabNebula Cloud](https://crabnebula.dev/cloud)
+      - [Macrograph](https://macrograph.app)
+      - [Twidge](https://github.com/twidgeapp/twidge)
+      - [Chessbook](https://chessbook.com)
+
+  </Accordion>
+
+  <Accordion title="Why would I use Rust instead of Typescript?">
+
+    Although programming language choice is generally informed by the requirements of the project and the team's experience
+    a lot of common reasons come down to the way Rust's strong type system, performance and low-level control allow you to build reliable and fast software that is able to stay maintainable for a long time.
+    rspc is great as your primary API, a microservice or even embedded into your desktop application making working with your Rust backend a breeze when you need it.
+
+  </Accordion>
+</Accordions>
