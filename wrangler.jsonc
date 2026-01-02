@@ -4,6 +4,13 @@
   "name": "specta-website",
   "compatibility_date": "2025-12-31",
   "compatibility_flags": ["nodejs_compat"],
+  // "route": {
+  //   "pattern": "specta.dev",
+  //   "custom_domain": true
+  // },
+  "observability": {
+    "enabled": true
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
