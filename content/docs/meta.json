@@ -1,0 +1,11 @@
+{
+  "pages": [
+    "index",
+    "consulting",
+    "---Frameworks---",
+    "cli",
+    "rspc",
+    "specta",
+    "tauri-specta"
+  ]
+}

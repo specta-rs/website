@@ -1,0 +1,11 @@
+{
+  "title": "Specta",
+  "description": "TODO",
+  "icon": "spectaLogo",
+  "root": true,
+  "pages": [
+    "...",
+    "external:[GitHub](https://github.com/specta-rs/specta)",
+    "external:[docs.rs](https://docs.rs/specta)"
+  ]
+}

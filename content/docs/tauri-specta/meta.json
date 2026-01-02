@@ -1,0 +1,11 @@
+{
+  "title": "Tauri Specta",
+  "description": "TODO",
+  "icon": "tauriSpectaLogo",
+  "root": true,
+  "pages": [
+    "...",
+    "external:[GitHub](https://github.com/specta-rs/tauri-specta)",
+    "external:[docs.rs](https://docs.rs/tauri-specta)"
+  ]
+}

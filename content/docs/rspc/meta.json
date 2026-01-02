@@ -1,0 +1,11 @@
+{
+  "title": "rspc",
+  "description": "TODO",
+  "icon": "rspcLogo",
+  "root": true,
+  "pages": [
+    "...",
+    "external:[GitHub](https://github.com/specta-rs/rspc)",
+    "external:[docs.rs](https://docs.rs/rspc)"
+  ]
+}
