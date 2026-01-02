@@ -7,7 +7,7 @@
     "build": "next build",
     "dev": "next dev",
     "start": "next start",
-    "typecheck": "wrangler types --env-interface CloudflareEnv src/cloudflare-env.d.ts && fumadocs-mdx && next typegen && tsc --noEmit",
+    "typecheck": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts && fumadocs-mdx && next typegen && tsc --noEmit",
     "format": "biome check --write",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"

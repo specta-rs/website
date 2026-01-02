@@ -44,7 +44,7 @@ export default function HomePage() {
             <Link
               href="/docs"
               className={cn(
-                buttonVariants({ variant: "primary" }),
+                buttonVariants({ variant: "default" }),
                 "gap-2 px-6 py-3 text-base",
               )}
             >
@@ -192,7 +192,7 @@ export default function HomePage() {
                   <Link
                     href="/docs/rspc"
                     className={cn(
-                      buttonVariants({ variant: "primary", size: "sm" }),
+                      buttonVariants({ variant: "default", size: "sm" }),
                       "flex-1",
                     )}
                   >
@@ -215,7 +215,7 @@ export default function HomePage() {
               {/* Tauri Specta Card */}
               <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 rounded-lg bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
                     T
                   </div>
                   <div>
@@ -233,7 +233,7 @@ export default function HomePage() {
                   <Link
                     href="/docs/tauri-specta"
                     className={cn(
-                      buttonVariants({ variant: "primary", size: "sm" }),
+                      buttonVariants({ variant: "default", size: "sm" }),
                       "flex-1",
                     )}
                   >
@@ -271,7 +271,7 @@ export default function HomePage() {
               <Link
                 href="/docs"
                 className={cn(
-                  buttonVariants({ variant: "primary" }),
+                  buttonVariants({ variant: "default" }),
                   "gap-2 px-6 py-3 text-base",
                 )}
               >
