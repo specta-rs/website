@@ -6,6 +6,10 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+export const metadata = {
+  metadataBase: new URL("https://specta-website.oscartbeaumont.workers.dev"),
+};
+
 export default function Layout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>

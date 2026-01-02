@@ -29,7 +29,7 @@ export default function HomePage() {
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
             Export your Rust types to{" "}
-            <span className="bg-gradient-to-r from-[#F74C00] to-[#F49600] bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-[#F74C00] to-[#F49600] bg-clip-text text-transparent">
               any language
             </span>
           </h1>
@@ -131,7 +131,7 @@ export default function HomePage() {
               {/* Specta Card */}
               <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#F74C00] to-[#F49600] flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 rounded-lg bg-linear-to-br from-[#F74C00] to-[#F49600] flex items-center justify-center text-white font-bold">
                     S
                   </div>
                   <div>
@@ -258,7 +258,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="border-t bg-gradient-to-br from-[#F74C00]/10 to-[#F49600]/10">
+      <section className="border-t bg-linear-to-br from-[#F74C00]/10 to-[#F49600]/10">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold">
