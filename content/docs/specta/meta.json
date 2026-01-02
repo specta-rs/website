@@ -1,6 +1,0 @@
-{
-  "root": true,
-  "title": "Specta",
-  "icon": "spectaLogo",
-  "pages": ["...", "[docsRsLogo][crates.io](https://docs.rs/specta)"]
-}
