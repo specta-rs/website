@@ -13,7 +13,8 @@
       "!.next",
       "!dist",
       "!build",
-      "!.source"
+      "!.source",
+      "!cloudflare-env.d.ts"
     ]
   },
   "formatter": {
