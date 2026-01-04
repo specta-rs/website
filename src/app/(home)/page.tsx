@@ -274,9 +274,15 @@ function ProjectCard(props: {
       />
 
       <div className="relative z-10 flex flex-col h-full">
+        {props.repo ? (
+          <div className="absolute top-0 right-0">
+            <Stars stars={getGitHubStars(props.repo)} />
+          </div>
+        ) : null}
+
         {/* Logo and title section */}
         <div className="flex items-start gap-4 mb-6">
-          <div className="w-14 h-14 relative flex-shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 group-hover:scale-110 transition-transform duration-300">
+          <div className="w-14 h-14 relative shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 group-hover:scale-110 transition-transform duration-300">
             <Image
               src={props.logo}
               alt={`${props.name} logo`}
@@ -284,11 +290,10 @@ function ProjectCard(props: {
               className="object-contain"
             />
           </div>
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-0 pr-20">
             <h3 className="text-2xl font-bold mb-2 group-hover:text-fd-primary transition-colors">
               {props.name}
             </h3>
-            {props.repo ? <Stars stars={getGitHubStars(props.repo)} /> : null}
           </div>
         </div>
 
@@ -337,13 +342,12 @@ function Stars(props: { stars: Promise<string> }) {
   return (
     <Suspense
       fallback={
-        <div className="h-5 w-20 animate-pulse bg-fd-secondary/50 rounded" />
+        <div className="h-6 w-24 animate-pulse bg-fd-secondary/50 rounded-full" />
       }
     >
-      <div className="flex items-center gap-1.5 text-sm text-fd-muted-foreground animate-in fade-in">
+      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-fd-secondary/50 border border-fd-border text-sm text-fd-muted-foreground animate-in fade-in backdrop-blur-sm">
         <span className="text-yellow-500">★</span>
         <span className="font-medium">{props.stars}</span>
-        <span className="text-xs">stars</span>
       </div>
     </Suspense>
   );
