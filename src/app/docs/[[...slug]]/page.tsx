@@ -15,7 +15,8 @@ import { SquarePen } from "lucide-react";
 export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   const params = await props.params;
   const page = source.getPage(params.slug);
-  if (!page) notFound();
+  if (!page || (process.env.NODE_ENV !== "development" && page.data.hidden))
+    notFound();
 
   const MDX = page.data.body;
 

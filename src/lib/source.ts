@@ -1,9 +1,10 @@
 import { docs } from "fumadocs-mdx:collections/server";
 import { type InferPageType, loader } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
-// import { icons } from "lucide-react";
+import { icons } from "lucide-react";
 import Image from "next/image";
 import { createElement } from "react";
+import { CratesIoLogo, NpmLogo } from "../components/logos";
 
 // See https://fumadocs.dev/docs/headless/source-api for more info
 export const source = loader({
@@ -21,9 +22,13 @@ export const source = loader({
     } else if (icon === "tauriSpectaLogo") {
       result = ["/assets/tauri-specta.png", "Tauri Specta"];
     } else if (icon === "docsRsLogo") {
-      return; // TODO: createElement(CratesIoLogo);
+      return createElement(CratesIoLogo);
     } else if (icon === "npmLogo") {
-      return; // TODO: createElement(NpmLogo);
+      return createElement(NpmLogo);
+    } else if (icon && icon in icons && icons[icon]) {
+      return createElement(icons[icon as keyof typeof icons], {
+        // icon: ,
+      });
     } else throw new Error(`Requested unknown icon: ${icon}`);
 
     const [src, alt] = result;

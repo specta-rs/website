@@ -5,7 +5,7 @@
   "root": true,
   "pages": [
     "...",
-    "external:[GitHub](https://github.com/specta-rs/tauri-specta)",
-    "external:[docs.rs](https://docs.rs/tauri-specta)"
+    "[Github][GitHub](https://github.com/specta-rs/tauri-specta)",
+    "[docsRsLogo][docs.rs](https://docs.rs/tauri-specta)"
   ]
 }
