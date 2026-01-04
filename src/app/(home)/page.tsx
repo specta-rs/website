@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Code2,
@@ -32,6 +33,87 @@ async function getGitHubStars(repo: string): Promise<number> {
   }
 }
 
+interface ProjectCardProps {
+  name: string;
+  logo: string;
+  stars: number;
+  description: string;
+  githubUrl: string;
+  docsUrl?: string;
+  docsrsUrl?: string;
+}
+
+function ProjectCard({
+  name,
+  logo,
+  stars,
+  description,
+  githubUrl,
+  docsUrl,
+  docsrsUrl,
+}: ProjectCardProps) {
+  return (
+    <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 relative">
+          <Image
+            src={logo}
+            alt={`${name} logo`}
+            fill
+            className="object-contain"
+          />
+        </div>
+        <div>
+          <h3 className="text-xl font-bold">{name}</h3>
+          <div className="flex items-center gap-2 text-sm text-fd-muted-foreground">
+            <span>★ {stars.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+      <p className="text-fd-muted-foreground mb-6">{description}</p>
+      <div className="flex gap-2">
+        {docsUrl && (
+          <Link
+            href={docsUrl}
+            className={cn(
+              buttonVariants({ variant: "primary", size: "sm" }),
+              "flex-1",
+            )}
+          >
+            <BookOpen className="w-4 h-4 mr-1" />
+            Docs
+          </Link>
+        )}
+        <a
+          href={githubUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(
+            buttonVariants({
+              variant: "outline",
+              size: "sm",
+            }),
+            docsUrl ? "" : "flex-1",
+          )}
+        >
+          <Github className="w-4 h-4 mr-1" />
+          GitHub
+        </a>
+        {docsrsUrl && (
+          <a
+            href={docsrsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+          >
+            <ExternalLink className="w-4 h-4" />
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default async function HomePage() {
   const [spectaStars, rspcStars, tauriSpectaStars] = await Promise.all([
     getGitHubStars("specta-rs/specta"),
@@ -54,16 +136,16 @@ export default async function HomePage() {
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-            Export your Rust types to{" "}
+            Build better web apps with{" "}
             <span className="bg-linear-to-r from-[#F74C00] to-[#F49600] bg-clip-text text-transparent">
-              any language
+              Rust
             </span>
           </h1>
 
           <p className="text-lg md:text-xl text-fd-muted-foreground max-w-2xl mx-auto">
-            Build typesafe web backends and desktop apps with Rust. Specta
-            automatically generates TypeScript types from your Rust code,
-            ensuring end-to-end type safety.
+            An ecosystem of libraries focused on typesafety, developer
+            experience, modern practices, and scale. Build web backends and
+            desktop apps with end-to-end type safety and confidence.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -89,19 +171,30 @@ export default async function HomePage() {
               <Github className="w-4 h-4" />
               View on GitHub
             </a>
+            <a
+              href="https://discord.com/invite/JgqH8b4ycw"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "gap-2 px-6 py-3 text-base",
+              )}
+            >
+              Join Discord
+            </a>
           </div>
         </div>
       </section>
 
-      {/* Why Specta Section */}
+      {/* Why specta-rs Section */}
       <section className="border-t bg-fd-secondary/20">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-              Why use Specta?
+              Why specta-rs?
             </h2>
             <p className="text-center text-fd-muted-foreground mb-12 text-lg">
-              Build faster and safer with compile-time guarantees
+              An ecosystem built on core principles that matter
             </p>
 
             <div className="grid md:grid-cols-3 gap-8">
@@ -109,32 +202,35 @@ export default async function HomePage() {
                 <div className="w-12 h-12 rounded-lg bg-[#F74C00]/10 flex items-center justify-center">
                   <Shield className="w-6 h-6 text-[#F74C00]" />
                 </div>
-                <h3 className="text-xl font-semibold">Type Safety</h3>
+                <h3 className="text-xl font-semibold">Typesafety</h3>
                 <p className="text-fd-muted-foreground">
-                  Catch bugs at compile time instead of runtime. Your frontend
-                  and backend stay in perfect sync automatically.
+                  Types are inferred end-to-end, allowing you to move quickly
+                  and collaborate while maintaining confidence that your code is
+                  correct.
                 </p>
               </div>
 
               <div className="space-y-3">
                 <div className="w-12 h-12 rounded-lg bg-[#F49600]/10 flex items-center justify-center">
-                  <Zap className="w-6 h-6 text-[#F49600]" />
+                  <Code2 className="w-6 h-6 text-[#F49600]" />
                 </div>
-                <h3 className="text-xl font-semibold">Zero Overhead</h3>
+                <h3 className="text-xl font-semibold">Developer Experience</h3>
                 <p className="text-fd-muted-foreground">
-                  Types are generated at build time with no runtime cost. Get
-                  full IntelliSense and autocomplete in your editor.
+                  Obsessed with simplicity while maintaining flexibility. We
+                  make doing the "right thing" the "easy thing", freeing you to
+                  focus on what matters.
                 </p>
               </div>
 
               <div className="space-y-3">
                 <div className="w-12 h-12 rounded-lg bg-[#CE422B]/10 flex items-center justify-center">
-                  <Code2 className="w-6 h-6 text-[#CE422B]" />
+                  <Zap className="w-6 h-6 text-[#CE422B]" />
                 </div>
-                <h3 className="text-xl font-semibold">Developer Experience</h3>
+                <h3 className="text-xl font-semibold">Scale</h3>
                 <p className="text-fd-muted-foreground">
-                  Simple macros and intuitive APIs. Integrates seamlessly with
-                  existing Rust and TypeScript projects.
+                  Build codebases that scale in performance and maintainability.
+                  Leverage Rust's compile-time checks to reduce risk in large
+                  applications.
                 </p>
               </div>
             </div>
@@ -142,142 +238,45 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Libraries Section */}
+      {/* Projects Section */}
       <section className="border-t">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-              Specta-based Libraries
+              Projects
             </h2>
             <p className="text-center text-fd-muted-foreground mb-12 text-lg">
               Choose the right tool for your project
             </p>
 
             <div className="grid md:grid-cols-3 gap-6">
-              {/* Specta Card */}
-              <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-linear-to-br from-[#F74C00] to-[#F49600] flex items-center justify-center text-white font-bold">
-                    S
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold">specta</h3>
-                    <div className="flex items-center gap-2 text-sm text-fd-muted-foreground">
-                      <span>★ {spectaStars.toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-fd-muted-foreground mb-6">
-                  The core library for exporting Rust types. Use this if you
-                  want to integrate type exports into your own projects.
-                </p>
-                <div className="flex gap-2">
-                  <a
-                    href="https://github.com/specta-rs/specta"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={cn(
-                      buttonVariants({ variant: "outline", size: "sm" }),
-                      "flex-1",
-                    )}
-                  >
-                    <Github className="w-4 h-4 mr-1" />
-                    GitHub
-                  </a>
-                  <a
-                    href="https://docs.rs/specta"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={cn(
-                      buttonVariants({ variant: "ghost", size: "sm" }),
-                    )}
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                </div>
-              </div>
+              <ProjectCard
+                name="Specta"
+                logo="/assets/specta.svg"
+                stars={spectaStars}
+                description="Export your Rust types to TypeScript, JSON Schema and more. The foundation for type-safe communication."
+                githubUrl="https://github.com/specta-rs/specta"
+                docsUrl="/docs/specta"
+                docsrsUrl="https://docs.rs/specta"
+              />
 
-              {/* rspc Card */}
-              <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-linear-to-br from-[#CE422B] to-[#A83219] flex items-center justify-center text-white font-bold">
-                    R
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold">rspc</h3>
-                    <div className="flex items-center gap-2 text-sm text-fd-muted-foreground">
-                      <span>★ {rspcStars.toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-fd-muted-foreground mb-6">
-                  A tRPC-inspired framework for building typesafe web backends
-                  in Rust. Perfect for web APIs and full-stack applications.
-                </p>
-                <div className="flex gap-2">
-                  <Link
-                    href="/docs/rspc"
-                    className={cn(
-                      buttonVariants({ variant: "default", size: "sm" }),
-                      "flex-1",
-                    )}
-                  >
-                    <BookOpen className="w-4 h-4 mr-1" />
-                    Docs
-                  </Link>
-                  <a
-                    href="https://github.com/specta-rs/rspc"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={cn(
-                      buttonVariants({ variant: "outline", size: "sm" }),
-                    )}
-                  >
-                    <Github className="w-4 h-4" />
-                  </a>
-                </div>
-              </div>
+              <ProjectCard
+                name="rspc"
+                logo="/assets/rspc.svg"
+                stars={rspcStars}
+                description="A blazingly fast and typesafe RPC framework for Rust. Build web APIs with end-to-end type safety."
+                githubUrl="https://github.com/specta-rs/rspc"
+                docsUrl="/docs/rspc"
+              />
 
-              {/* Tauri Specta Card */}
-              <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#F49600] to-[#F74C00] flex items-center justify-center text-white font-bold">
-                    T
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold">tauri-specta</h3>
-                    <div className="flex items-center gap-2 text-sm text-fd-muted-foreground">
-                      <span>★ {tauriSpectaStars.toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-fd-muted-foreground mb-6">
-                  Completely typesafe Tauri commands and events. Build desktop
-                  apps with full type safety between Rust and TypeScript.
-                </p>
-                <div className="flex gap-2">
-                  <Link
-                    href="/docs/tauri-specta"
-                    className={cn(
-                      buttonVariants({ variant: "default", size: "sm" }),
-                      "flex-1",
-                    )}
-                  >
-                    <BookOpen className="w-4 h-4 mr-1" />
-                    Docs
-                  </Link>
-                  <a
-                    href="https://github.com/specta-rs/tauri-specta"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={cn(
-                      buttonVariants({ variant: "outline", size: "sm" }),
-                    )}
-                  >
-                    <Github className="w-4 h-4" />
-                  </a>
-                </div>
-              </div>
+              <ProjectCard
+                name="Tauri Specta"
+                logo="/assets/tauri-specta.png"
+                stars={tauriSpectaStars}
+                description="Typesafe Tauri commands with Specta. Build desktop apps with full type safety between Rust and TypeScript."
+                githubUrl="https://github.com/specta-rs/tauri-specta"
+                docsUrl="/docs/tauri-specta"
+              />
             </div>
           </div>
         </div>
@@ -288,10 +287,10 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-bold">
-              Ready to build typesafe apps?
+              Ready to build better web apps?
             </h2>
             <p className="text-lg text-fd-muted-foreground">
-              Join the community and start building with Specta today
+              Join the community and start building with specta-rs today
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

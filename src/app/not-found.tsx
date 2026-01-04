@@ -24,7 +24,7 @@ export default function NotFound() {
             <Link
               href="/"
               className={cn(
-                buttonVariants({ variant: "default" }),
+                buttonVariants({ variant: "primary" }),
                 "gap-2 px-6 py-3 text-base",
               )}
             >

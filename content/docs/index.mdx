@@ -17,16 +17,101 @@ With specta-rs we are setting out to build an ecosystem of crates which enable d
 
 Currently specta-rs contains the following projects:
 
- - [Github][Specta]()
- - [rspc]()
+<div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+  {[
+    {
+      name: "Specta",
+      description: "Export your Rust types to TypeScript, JSON Schema and more",
+      url: "https://github.com/specta-rs/specta",
+      docs: "/docs/specta"
+    },
+    {
+      name: "rspc",
+      description: "A blazingly fast and typesafe RPC framework for Rust",
+      url: "https://github.com/specta-rs/rspc",
+      docs: "/docs/rspc"
+    },
+    {
+      name: "Tauri Specta",
+      description: "Typesafe Tauri commands with Specta",
+      url: "https://github.com/specta-rs/tauri-specta",
+      docs: "/docs/tauri-specta"
+    }
+  ].map((project) => (
+    <div
+      key={project.name}
+      className="p-6 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+    >
+      <h3 className="text-xl font-bold mb-2 text-gray-900 dark:text-gray-100">
+        {project.name}
+      </h3>
+      <p className="text-gray-600 dark:text-gray-400 mb-4">
+        {project.description}
+      </p>
+      <div className="flex gap-3">
+        <a
+          href={project.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+        >
+          GitHub →
+        </a>
+        <a
+          href={project.docs}
+          className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+        >
+          Docs →
+        </a>
+      </div>
+    </div>
+  ))}
+</div>
 
 ## Production users
 
-TODO
+TODO:
+ - Spacedrive
+ - CrabNebula Cloud
+ - Twidge
+ - Reader
+  
 
 ## Sponsors
 
-TODO
+<div className="mt-8">
+  {[
+    {
+      name: "CrabNebula",
+      logo: "https://avatars.githubusercontent.com/u/103866414?s=200&v=4",
+      url: "https://crabnebula.dev",
+      tier: "gold"
+    },
+    {
+      name: "Spacedrive",
+      logo: "https://avatars.githubusercontent.com/u/103801871?s=200&v=4",
+      url: "https://spacedrive.com",
+      tier: "silver"
+    }
+  ].map((sponsor) => (
+    <a
+      key={sponsor.name}
+      href={sponsor.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-3 px-6 py-4 mr-4 mb-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 transition-colors"
+    >
+      <img
+        src={sponsor.logo}
+        alt={sponsor.name}
+        className="w-12 h-12 rounded"
+      />
+      <span className="font-semibold text-gray-900 dark:text-gray-100">
+        {sponsor.name}
+      </span>
+    </a>
+  ))}
+</div>
 
 ### Why Choose Rust?
 
