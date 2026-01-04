@@ -1,3 +1,5 @@
+import clsx from "clsx";
+
 export function CratesIoLogo() {
   return (
     <svg
@@ -30,7 +32,7 @@ export function NpmLogo() {
   );
 }
 
-export function DiscordLogo() {
+export function DiscordLogo(props: { className?: string }) {
   return (
     <svg
       viewBox="0 0 256 199"
@@ -38,7 +40,7 @@ export function DiscordLogo() {
       height="199"
       xmlns="http://www.w3.org/2000/svg"
       preserveAspectRatio="xMidYMid"
-      className="brightness-0 dark:invert hover:brightness-100 dark:hover:invert-0 transition-colors duration-300 ease-in-out"
+      className={props.className}
     >
       <title>Discord</title>
       <path

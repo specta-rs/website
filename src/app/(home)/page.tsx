@@ -6,6 +6,7 @@ import {
   Zap,
   Shield,
   Github,
+  Discord,
   BookOpen,
   ExternalLink,
   Sparkles,
@@ -14,6 +15,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Suspense } from "react";
 import { getGitHubStars } from "@/lib/getGitHubStars";
+import { DiscordLogo } from "@/components/logos";
 
 export default async function HomePage() {
   return (
@@ -28,11 +30,11 @@ export default async function HomePage() {
   );
 }
 
-function HeroSection(props: {}) {
+function HeroSection() {
   return (
     <section className="container mx-auto px-4 py-16 md:py-24 lg:py-32 flex-1">
       <div className="max-w-4xl mx-auto text-center space-y-8">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border bg-fd-secondary/50 text-sm">
+        {/*<div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border bg-fd-secondary/50 text-sm">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
@@ -40,7 +42,7 @@ function HeroSection(props: {}) {
           <span className="text-fd-muted-foreground">
             Rust crates for building better web apps
           </span>
-        </div>
+        </div>*/}
 
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
           Build better web apps with{" "}
@@ -50,9 +52,9 @@ function HeroSection(props: {}) {
         </h1>
 
         <p className="text-lg md:text-xl text-fd-muted-foreground max-w-2xl mx-auto">
-          An ecosystem of libraries focused on typesafety, developer experience,
-          modern practices, and scale. Build web backends and desktop apps with
-          end-to-end type safety and confidence.
+          An ecosystem of crates focused on typesafety, developer experience,
+          modern practices which scales to large codebases allowing you to build
+          faster and deploy with confidence.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -63,21 +65,9 @@ function HeroSection(props: {}) {
               "gap-2 px-6 py-3 text-base",
             )}
           >
-            Get Started
+            Get started
             <ArrowRight className="w-4 h-4" />
           </Link>
-          <a
-            href="https://github.com/specta-rs"
-            target="_blank"
-            rel="noopener"
-            className={cn(
-              buttonVariants({ variant: "outline" }),
-              "gap-2 px-6 py-3 text-base",
-            )}
-          >
-            <Github className="w-4 h-4" />
-            View on GitHub
-          </a>
           <a
             href="https://discord.com/invite/JgqH8b4ycw"
             target="_blank"
@@ -87,6 +77,7 @@ function HeroSection(props: {}) {
               "gap-2 px-6 py-3 text-base",
             )}
           >
+            <DiscordLogo className="brightness-0 dark:invert w-4 h-4" />
             Join Discord
           </a>
         </div>
@@ -95,7 +86,7 @@ function HeroSection(props: {}) {
   );
 }
 
-function WhySpectaRsSection(props: {}) {
+function WhySpectaRsSection() {
   return (
     <section className="border-t bg-fd-secondary/20">
       <div className="container mx-auto px-4 py-16 md:py-24">
@@ -162,7 +153,7 @@ function WhySpectaRsSection(props: {}) {
   );
 }
 
-function ProjectsSection(props: {}) {
+function ProjectsSection() {
   return (
     <section className="border-t">
       <div className="container mx-auto px-4 py-16 md:py-24">
@@ -206,7 +197,7 @@ function ProjectsSection(props: {}) {
   );
 }
 
-function ProductionUsersSection(props: {}) {
+function ProductionUsersSection() {
   return (
     <section className="border-t bg-fd-secondary/20">
       <div className="container mx-auto px-4 py-16 md:py-24">
@@ -242,7 +233,7 @@ function ProductionUsersSection(props: {}) {
   );
 }
 
-function SponsorsSection(props: {}) {
+function SponsorsSection() {
   return (
     <section className="border-t">
       <div className="container mx-auto px-4 py-16 md:py-24">
@@ -293,7 +284,7 @@ function SponsorsSection(props: {}) {
   );
 }
 
-function CTASection(props: {}) {
+function CTASection() {
   return (
     <section className="border-t bg-linear-to-br from-[#F74C00]/10 to-[#F49600]/10">
       <div className="container mx-auto px-4 py-16 md:py-24">
