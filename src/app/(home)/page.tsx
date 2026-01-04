@@ -151,23 +151,27 @@ function WhySpectaRsSection() {
 
 function ProjectsSection() {
   return (
-    <section className="border-t">
-      <div className="container mx-auto px-4 py-16 md:py-24">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-            Projects
-          </h2>
-          <p className="text-center text-fd-muted-foreground mb-12 text-lg">
-            Choose the right tool for your project
-          </p>
+    <section className="border-t bg-fd-secondary/10">
+      <div className="container mx-auto px-4 py-20 md:py-28">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Our Projects
+            </h2>
+            <p className="text-fd-muted-foreground text-lg max-w-2xl mx-auto">
+              A collection of powerful, type-safe tools designed to work
+              seamlessly together
+            </p>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <ProjectCard
               name="Specta"
               repo="specta-rs/specta"
               logo="/assets/specta.svg"
               description="Export your Rust types to any language. The foundation for type-safe communication across your stack."
               docsUrl="/docs/specta"
+              gradient="from-[#F74C00] to-[#F49600]"
             />
 
             <ProjectCard
@@ -176,6 +180,7 @@ function ProjectsSection() {
               logo="/assets/rspc.svg"
               description="A blazingly fast and typesafe RPC framework for Rust. Build web APIs with end-to-end type safety."
               docsUrl="/docs/rspc"
+              gradient="from-[#CE422B] to-[#F74C00]"
             />
 
             <ProjectCard
@@ -184,6 +189,7 @@ function ProjectsSection() {
               logo="/assets/tauri-specta.png"
               description="Typesafe Tauri commands with Specta. Build desktop apps with full type safety between Rust and TypeScript."
               docsUrl="/docs/tauri-specta"
+              gradient="from-[#F49600] to-[#FFC947]"
             />
           </div>
         </div>
@@ -239,53 +245,73 @@ function ProjectCard(props: {
   logo: string;
   description: string;
   docsUrl?: string;
+  gradient?: string;
 }) {
   return (
-    <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow flex flex-col">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 relative">
-          <Image
-            src={props.logo}
-            alt={`${props.name} logo`}
-            fill
-            className="object-contain"
-          />
-        </div>
-        <div>
-          <h3 className="text-xl font-bold">{props.name}</h3>
-
-          {props.repo ? <Stars stars={getGitHubStars(props.repo)} /> : null}
-        </div>
-      </div>
-      <p className="text-fd-muted-foreground mb-6 grow">{props.description}</p>
-      <div className="flex gap-2 mt-auto">
-        {props.docsUrl && (
-          <Link
-            href={props.docsUrl}
-            className={cn(
-              buttonVariants({ variant: "primary", size: "sm" }),
-              "flex-1",
-            )}
-          >
-            <BookOpen className="w-4 h-4 mr-1" />
-            Docs
-          </Link>
+    <div className="group relative border rounded-2xl p-8 bg-fd-card hover:shadow-2xl hover:border-fd-primary/20 transition-all duration-300 flex flex-col overflow-hidden">
+      {/* Gradient accent on hover */}
+      <div
+        className={cn(
+          "absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-300 bg-gradient-to-br",
+          props.gradient || "from-[#F74C00] to-[#F49600]",
         )}
-        <a
-          href={`https://github.com/${props.repo}`}
-          target="_blank"
-          rel="noopener"
-          className={cn(
-            buttonVariants({
-              variant: "outline",
-              size: "sm",
-            }),
-            props.docsUrl ? "" : "flex-1",
+      />
+
+      <div className="relative z-10 flex flex-col h-full">
+        {/* Logo and title section */}
+        <div className="flex items-start gap-4 mb-6">
+          <div className="w-14 h-14 relative flex-shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 group-hover:scale-110 transition-transform duration-300">
+            <Image
+              src={props.logo}
+              alt={`${props.name} logo`}
+              fill
+              className="object-contain"
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-2xl font-bold mb-2 group-hover:text-fd-primary transition-colors">
+              {props.name}
+            </h3>
+            {props.repo ? <Stars stars={getGitHubStars(props.repo)} /> : null}
+          </div>
+        </div>
+
+        {/* Description */}
+        <p className="text-fd-muted-foreground leading-relaxed mb-8 grow">
+          {props.description}
+        </p>
+
+        {/* Action buttons */}
+        <div className="flex gap-3 mt-auto">
+          {props.docsUrl && (
+            <Link
+              href={props.docsUrl}
+              className={cn(
+                buttonVariants({ variant: "primary" }),
+                "flex-1 group/btn px-4 py-2",
+              )}
+            >
+              <BookOpen className="w-4 h-4 mr-2" />
+              Documentation
+            </Link>
           )}
-        >
-          <Github className="w-4 h-4 mr-1" />
-          GitHub
-        </a>
+          {props.repo && (
+            <a
+              href={`https://github.com/${props.repo}`}
+              target="_blank"
+              rel="noopener"
+              className={cn(
+                buttonVariants({
+                  variant: "outline",
+                }),
+                !props.docsUrl ? "flex-1 px-4 py-2" : "px-4 py-2",
+              )}
+            >
+              <Github className="w-4 h-4 mr-2" />
+              GitHub
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -293,9 +319,15 @@ function ProjectCard(props: {
 
 function Stars(props: { stars: Promise<string> }) {
   return (
-    <Suspense>
-      <div className="flex items-center gap-2 text-sm text-fd-muted-foreground animate-in fade-in">
-        <span>★ {props.stars}</span>
+    <Suspense
+      fallback={
+        <div className="h-5 w-20 animate-pulse bg-fd-secondary/50 rounded" />
+      }
+    >
+      <div className="flex items-center gap-1.5 text-sm text-fd-muted-foreground animate-in fade-in">
+        <span className="text-yellow-500">★</span>
+        <span className="font-medium">{props.stars}</span>
+        <span className="text-xs">stars</span>
       </div>
     </Suspense>
   );
