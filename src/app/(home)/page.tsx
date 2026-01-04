@@ -58,7 +58,7 @@ function Hero() {
             href="/docs"
             className={cn(
               buttonVariants({ variant: "primary" }),
-              "gap-2 px-6 py-3 text-base",
+              "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0s_both]",
             )}
           >
             Get started
@@ -70,7 +70,7 @@ function Hero() {
             rel="noopener"
             className={cn(
               buttonVariants({ variant: "outline" }),
-              "gap-2 px-6 py-3 text-base",
+              "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0.2s_both]",
             )}
           >
             <DiscordLogo className="brightness-0 dark:invert w-4 h-4" />
@@ -95,7 +95,7 @@ function Features() {
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
-            <div className="space-y-4">
+            <div className="space-y-4 motion-safe:animate-[fadeIn_0.3s_0s_both]">
               <div className="w-14 h-14 rounded-xl bg-[#F74C00]/10 flex items-center justify-center">
                 <Shield className="w-7 h-7 text-[#F74C00]" />
               </div>
@@ -107,7 +107,7 @@ function Features() {
               </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 motion-safe:animate-[fadeIn_0.3s_0.2s_both]">
               <div className="w-14 h-14 rounded-xl bg-[#F49600]/10 flex items-center justify-center">
                 <Code2 className="w-7 h-7 text-[#F49600]" />
               </div>
@@ -119,7 +119,7 @@ function Features() {
               </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 motion-safe:animate-[fadeIn_0.3s_0.4s_both]">
               <div className="w-14 h-14 rounded-xl bg-[#CE422B]/10 flex items-center justify-center">
                 <Zap className="w-7 h-7 text-[#CE422B]" />
               </div>
@@ -130,7 +130,7 @@ function Features() {
               </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 motion-safe:animate-[fadeIn_0.3s_0.6s_both]">
               <div className="w-14 h-14 rounded-xl bg-[#8B4513]/10 flex items-center justify-center">
                 <Shield className="w-7 h-7 text-[#8B4513]" />
               </div>
@@ -173,6 +173,7 @@ function Projects() {
               docsUrl="/docs/specta"
               gradient="from-[#F74C00] via-[#CC3A00]/60 to-[#F49600]/40"
               accentColor="border-[#F74C00]/20"
+              className="motion-safe:animate-[fadeIn_0.3s_0s_both]"
             />
 
             <ProjectCard
@@ -183,6 +184,7 @@ function Projects() {
               docsUrl="/docs/rspc"
               gradient="from-[#0092DE] via-[#0092DE]/60 to-[#00A4FA]/40"
               accentColor="border-[#0092DE]/20"
+              className="motion-safe:animate-[fadeIn_0.3s_0.2s_both]"
             />
 
             <ProjectCard
@@ -193,6 +195,7 @@ function Projects() {
               docsUrl="/docs/tauri-specta"
               gradient="from-[#FFC131] via-[#FFC131]/60 to-[#FFC947]/40"
               accentColor="border-[#FFC131]/20"
+              className="motion-safe:animate-[fadeIn_0.3s_0.4s_both]"
             />
           </div>
         </div>
@@ -217,7 +220,7 @@ function CTASection() {
               href="/docs"
               className={cn(
                 buttonVariants({ variant: "primary" }),
-                "gap-2 px-6 py-3 text-base",
+                "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0s_both]",
               )}
             >
               Documentation
@@ -229,7 +232,7 @@ function CTASection() {
               rel="noopener"
               className={cn(
                 buttonVariants({ variant: "outline" }),
-                "gap-2 px-6 py-3 text-base",
+                "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0.2s_both]",
               )}
             >
               Join Discord
@@ -250,6 +253,7 @@ function ProjectCard(props: {
   docsUrl?: string;
   gradient?: string;
   accentColor?: string;
+  className?: string;
 }) {
   return (
     <div
@@ -258,6 +262,7 @@ function ProjectCard(props: {
         props.accentColor
           ? `hover:${props.accentColor}`
           : "hover:border-fd-primary/20",
+        props.className,
       )}
     >
       {/* Gradient accent on hover */}
