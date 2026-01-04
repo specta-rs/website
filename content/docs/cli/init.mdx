@@ -1,68 +1,13 @@
 ---
 title: specta init
 description: Initialize a new Specta project with your preferred framework and tools
+hidden: true # TODO
 ---
 
 ## Overview
 
 The `specta init` command scaffolds a new Rust project with Specta configured and ready to use. You can customize your project setup by selecting a web framework, database driver, and additional features.
 
-## Interactive Setup
+## Get started
 
-Use the form below to configure your project and generate the command:
-
-{/* <CliInitForm /> */}
-
-## Command Syntax
-
-```bash
-specta init <project-name> [options]
-```
-
-## Options
-
-### Framework Options
-
-- `--framework axum` - Initialize with Axum web framework
-- `--framework actix` - Initialize with Actix Web framework  
-- `--framework rspc` - Initialize with rspc for type-safe APIs
-- `--framework tauri` - Initialize with Tauri for desktop apps
-
-### Database Options
-
-- `--db sqlx` - Add SQLx for async SQL queries
-- `--db diesel` - Add Diesel ORM
-- `--db seaorm` - Add SeaORM
-
-### Additional Features
-
-- `--tracing` - Include tracing and observability setup
-- `--testing` - Add testing configuration and examples
-- `--docker` - Include Dockerfile and docker-compose.yml
-- `--ci` - Add CI/CD configuration (GitHub Actions)
-
-## Examples
-
-### Basic Project
-
-```bash
-specta init my-app
-```
-
-### Full-Stack API with Axum and SQLx
-
-```bash
-specta init my-api --framework axum --db sqlx --tracing
-```
-
-### Desktop App with Tauri
-
-```bash
-specta init my-desktop-app --framework tauri --testing --docker
-```
-
-### Complete Setup
-
-```bash
-specta init my-project --framework rspc --db seaorm --tracing --testing --docker --ci
-```
+{/* TODO: Interactive form */}

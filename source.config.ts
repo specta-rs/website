@@ -9,6 +9,7 @@ import { z } from "zod";
 
 const extendedSchema = frontmatterSchema.extend({
   hidden: z.boolean().optional(),
+  disableLlmsTxt: z.boolean().optional(),
 });
 
 // You can customise Zod schemas for frontmatter and `meta.json` here

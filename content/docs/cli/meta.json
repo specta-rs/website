@@ -1,6 +1,6 @@
 {
   "title": "CLI",
-  "description": "TODO",
+  "description": "Tools for building backends with Rust",
   "icon": "spectaLogo",
   "root": true,
   "pages": ["index"]

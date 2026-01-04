@@ -11,7 +11,33 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export default function HomePage() {
+async function getGitHubStars(repo: string): Promise<number> {
+  try {
+    const response = await fetch(`https://api.github.com/repos/${repo}`, {
+      headers: {
+        Accept: "application/vnd.github+json",
+      },
+      next: { revalidate: 3600 }, // Cache for 1 hour
+    });
+
+    if (!response.ok) {
+      throw new Error(`GitHub API responded with ${response.status}`);
+    }
+
+    const data = (await response.json()) as { stargazers_count: number };
+    return data.stargazers_count;
+  } catch (error) {
+    console.error(`Failed to fetch stars for ${repo}:`, error);
+    return 0; // Return 0 as fallback
+  }
+}
+
+export default async function HomePage() {
+  const [spectaStars, rspcStars, tauriSpectaStars] = await Promise.all([
+    getGitHubStars("specta-rs/specta"),
+    getGitHubStars("specta-rs/rspc"),
+    getGitHubStars("specta-rs/tauri-specta"),
+  ]);
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -137,7 +163,7 @@ export default function HomePage() {
                   <div>
                     <h3 className="text-xl font-bold">specta</h3>
                     <div className="flex items-center gap-2 text-sm text-fd-muted-foreground">
-                      <span>★ 503</span>
+                      <span>★ {spectaStars.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -180,7 +206,7 @@ export default function HomePage() {
                   <div>
                     <h3 className="text-xl font-bold">rspc</h3>
                     <div className="flex items-center gap-2 text-sm text-fd-muted-foreground">
-                      <span>★ 1,346</span>
+                      <span>★ {rspcStars.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -221,7 +247,7 @@ export default function HomePage() {
                   <div>
                     <h3 className="text-xl font-bold">tauri-specta</h3>
                     <div className="flex items-center gap-2 text-sm text-fd-muted-foreground">
-                      <span>★ 626</span>
+                      <span>★ {tauriSpectaStars.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>

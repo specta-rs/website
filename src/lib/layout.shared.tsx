@@ -17,7 +17,7 @@ export function baseOptions(): BaseLayoutProps {
     nav: {
       title: <SpectaLogoWithRightClickForBrand />,
     },
-    githubUrl: "https://github.com/specta",
+    githubUrl: "https://github.com/specta-rs",
     links: [
       {
         type: "icon",
