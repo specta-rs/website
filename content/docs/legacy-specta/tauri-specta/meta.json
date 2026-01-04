@@ -1,6 +1,0 @@
-{
-  "root": true,
-  "title": "Tauri Specta",
-  "icon": "tauriSpectaLogo",
-  "pages": ["...", "[docsRsLogo][crates.io](https://docs.rs/tauri-specta)"]
-}

@@ -1,0 +1,11 @@
+{
+  "title": "Server",
+  "pages": [
+    "basics",
+    "request",
+    "plugins",
+    "selection",
+    "external:[Specta [docs.rs]](https://docs.rs/specta)",
+    "advanced"
+  ]
+}

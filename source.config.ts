@@ -8,6 +8,7 @@ import lastModified from "fumadocs-mdx/plugins/last-modified";
 import { z } from "zod";
 
 const extendedSchema = frontmatterSchema.extend({
+  longTitle: z.string().optional(),
   hidden: z.boolean().optional(),
   disableLlmsTxt: z.boolean().optional(),
 });

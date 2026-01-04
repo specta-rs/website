@@ -1,6 +1,6 @@
 {
   "title": "Specta",
-  "description": "TODO",
+  "description": "Export your Rust types to any language",
   "icon": "spectaLogo",
   "root": true,
   "pages": [

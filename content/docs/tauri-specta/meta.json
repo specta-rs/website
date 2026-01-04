@@ -1,6 +1,6 @@
 {
   "title": "Tauri Specta",
-  "description": "TODO",
+  "description": "Completely typesafe Tauri commands",
   "icon": "tauriSpectaLogo",
   "root": true,
   "pages": [

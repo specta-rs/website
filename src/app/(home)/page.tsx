@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Suspense } from "react";
+import { type JSX, Suspense } from "react";
 import { getGitHubStars } from "@/lib/getGitHubStars";
 import { DiscordLogo } from "@/components/logos";
 
@@ -57,7 +57,7 @@ function Hero() {
           <Link
             href="/docs"
             className={cn(
-              buttonVariants({ variant: "primary" }),
+              buttonVariants({ variant: "primary", size: "sm" }),
               "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0s_both]",
             )}
           >
@@ -231,47 +231,6 @@ function Projects() {
   );
 }
 
-function CTASection() {
-  return (
-    <section className="border-t bg-linear-to-br from-[#F74C00]/10 to-[#F49600]/10">
-      <div className="container mx-auto px-4 py-16 md:py-24">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <h2 className="text-3xl md:text-4xl font-bold">
-            Ready to build better web apps?
-          </h2>
-          <p className="text-lg text-fd-muted-foreground">
-            Join the community and start building with specta-rs today
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/docs"
-              className={cn(
-                buttonVariants({ variant: "primary" }),
-                "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0s_both]",
-              )}
-            >
-              Documentation
-              <BookOpen className="w-4 h-4" />
-            </Link>
-            <a
-              href="https://discord.com/invite/JgqH8b4ycw"
-              target="_blank"
-              rel="noopener"
-              className={cn(
-                buttonVariants({ variant: "outline" }),
-                "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0.2s_both] bg-fd-background",
-              )}
-            >
-              Join Discord
-              <ExternalLink className="w-4 h-4" />
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function ProjectCard(props: {
   name: string;
   repo?: string;
@@ -368,5 +327,46 @@ function Stars(props: { stars: Promise<string> }) {
         <span className="font-medium">{props.stars}</span>
       </div>
     </Suspense>
+  );
+}
+
+function CTASection() {
+  return (
+    <section className="border-t bg-linear-to-br from-[#F74C00]/10 to-[#F49600]/10">
+      <div className="container mx-auto px-4 py-16 md:py-24">
+        <div className="max-w-3xl mx-auto text-center space-y-6">
+          <h2 className="text-3xl md:text-4xl font-bold">
+            Ready to build better web apps?
+          </h2>
+          <p className="text-lg text-fd-muted-foreground">
+            Join the community and start building with specta-rs today
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/docs"
+              className={cn(
+                buttonVariants({ variant: "primary" }),
+                "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0s_both]",
+              )}
+            >
+              Documentation
+              <BookOpen className="w-4 h-4" />
+            </Link>
+            <a
+              href="https://discord.com/invite/JgqH8b4ycw"
+              target="_blank"
+              rel="noopener"
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0.2s_both] bg-fd-background",
+              )}
+            >
+              Join Discord
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

@@ -15,7 +15,7 @@ export async function GET(
 
   return new ImageResponse(
     <DefaultImage
-      title={page.data.title}
+      title={page.data.longTitle || page.data.title}
       description={page.data.description}
       site="Specta"
     />,

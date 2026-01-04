@@ -1,10 +1,12 @@
 {
   "title": "rspc",
-  "description": "TODO",
+  "description": "A framework for building typesafe web backends in Rust",
   "icon": "rspcLogo",
   "root": true,
   "pages": [
-    "...",
+    "index",
+    "1.0.0-rc.x",
+    "0.3.0",
     "[Github][GitHub](https://github.com/specta-rs/rspc)",
     "[docsRsLogo][docs.rs](https://docs.rs/rspc)"
   ]
