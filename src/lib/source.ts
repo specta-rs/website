@@ -14,13 +14,13 @@ export const source = loader({
   icon(icon) {
     if (!icon) return;
 
-    let result: [string, string];
+    let result: [string, string, string];
     if (icon === "spectaLogo") {
-      result = ["/assets/specta.png", "Specta"];
+      result = ["/assets/specta.png", "Specta", "w-[24px]"];
     } else if (icon === "rspcLogo") {
-      result = ["/assets/rspc.png", "rspc"];
+      result = ["/assets/rspc.png", "rspc", "w-[16px]"];
     } else if (icon === "tauriSpectaLogo") {
-      result = ["/assets/tauri-specta.png", "Tauri Specta"];
+      result = ["/assets/tauri-specta.png", "Tauri Specta", "w-[35px]"];
     } else if (icon === "docsRsLogo") {
       return createElement(CratesIoLogo);
     } else if (icon === "npmLogo") {
@@ -29,12 +29,13 @@ export const source = loader({
       return createElement(icons[icon as keyof typeof icons]);
     } else throw new Error(`Requested unknown icon: ${icon}`);
 
-    const [src, alt] = result;
+    const [src, alt, widthClass] = result;
     return createElement(Image, {
       src,
       alt,
       width: 24,
       height: 24,
+      className: `h-4 ${widthClass}`,
     });
   },
 });
