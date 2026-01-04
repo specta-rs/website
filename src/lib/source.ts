@@ -25,10 +25,8 @@ export const source = loader({
       return createElement(CratesIoLogo);
     } else if (icon === "npmLogo") {
       return createElement(NpmLogo);
-    } else if (icon && icon in icons && icons[icon]) {
-      return createElement(icons[icon as keyof typeof icons], {
-        // icon: ,
-      });
+    } else if (icon && icon in icons && icons[icon as keyof typeof icons]) {
+      return createElement(icons[icon as keyof typeof icons]);
     } else throw new Error(`Requested unknown icon: ${icon}`);
 
     const [src, alt] = result;
