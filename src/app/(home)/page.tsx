@@ -6,10 +6,8 @@ import {
   Zap,
   Shield,
   Github,
-  Discord,
   BookOpen,
   ExternalLink,
-  Sparkles,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -23,8 +21,6 @@ export default async function HomePage() {
       <HeroSection />
       <WhySpectaRsSection />
       <ProjectsSection />
-      <ProductionUsersSection />
-      <SponsorsSection />
       <CTASection />
     </div>
   );
@@ -165,14 +161,13 @@ function ProjectsSection() {
             Choose the right tool for your project
           </p>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             <ProjectCard
               name="Specta"
               repo="specta-rs/specta"
               logo="/assets/specta.svg"
               description="Export your Rust types to any language. The foundation for type-safe communication across your stack."
               docsUrl="/docs/specta"
-              docsrsUrl="https://docs.rs/specta"
             />
 
             <ProjectCard
@@ -190,93 +185,6 @@ function ProjectsSection() {
               description="Typesafe Tauri commands with Specta. Build desktop apps with full type safety between Rust and TypeScript."
               docsUrl="/docs/tauri-specta"
             />
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ProductionUsersSection() {
-  return (
-    <section className="border-t bg-fd-secondary/20">
-      <div className="container mx-auto px-4 py-16 md:py-24">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-            Production Users
-          </h2>
-          <p className="text-center text-fd-muted-foreground mb-12 text-lg">
-            Trusted by teams building ambitious projects
-          </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
-            {[
-              { name: "Spacedrive", url: "https://spacedrive.com" },
-              { name: "CrabNebula Cloud", url: "https://crabnebula.cloud" },
-              { name: "Twidge", url: "https://twidge.app" },
-              { name: "Reader", url: "https://readhq.com" },
-            ].map((user) => (
-              <a
-                key={user.name}
-                href={user.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-lg font-semibold text-fd-muted-foreground hover:text-fd-foreground transition-colors"
-              >
-                {user.name}
-              </a>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function SponsorsSection() {
-  return (
-    <section className="border-t">
-      <div className="container mx-auto px-4 py-16 md:py-24">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
-            Sponsors
-          </h2>
-          <p className="text-center text-fd-muted-foreground mb-12 text-lg">
-            Supported by amazing organizations
-          </p>
-
-          <div className="flex flex-wrap gap-4 justify-center">
-            {[
-              {
-                name: "CrabNebula",
-                logo: "https://avatars.githubusercontent.com/u/103866414?s=200&v=4",
-                url: "https://crabnebula.dev",
-                tier: "gold",
-              },
-              {
-                name: "Spacedrive",
-                logo: "https://avatars.githubusercontent.com/u/103801871?s=200&v=4",
-                url: "https://spacedrive.com",
-                tier: "silver",
-              },
-            ].map((sponsor) => (
-              <a
-                key={sponsor.name}
-                href={sponsor.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 px-6 py-4 rounded-lg border border-fd-border hover:border-fd-foreground/30 bg-fd-card hover:shadow-lg transition-all"
-              >
-                {/*<Image
-                  src={sponsor.logo}
-                  alt={sponsor.name}
-                  width={48}
-                  height={48}
-                  className="rounded"
-                />*/}
-                <span className="font-semibold">{sponsor.name}</span>
-              </a>
-            ))}
           </div>
         </div>
       </div>
@@ -331,10 +239,9 @@ function ProjectCard(props: {
   logo: string;
   description: string;
   docsUrl?: string;
-  docsrsUrl?: string;
 }) {
   return (
-    <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow">
+    <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow flex flex-col">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-10 h-10 relative">
           <Image
@@ -350,8 +257,8 @@ function ProjectCard(props: {
           {props.repo ? <Stars stars={getGitHubStars(props.repo)} /> : null}
         </div>
       </div>
-      <p className="text-fd-muted-foreground mb-6">{props.description}</p>
-      <div className="flex gap-2">
+      <p className="text-fd-muted-foreground mb-6 grow">{props.description}</p>
+      <div className="flex gap-2 mt-auto">
         {props.docsUrl && (
           <Link
             href={props.docsUrl}
@@ -379,16 +286,6 @@ function ProjectCard(props: {
           <Github className="w-4 h-4 mr-1" />
           GitHub
         </a>
-        {props.docsrsUrl && (
-          <a
-            href={props.docsrsUrl}
-            target="_blank"
-            rel="noopener"
-            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
-          >
-            <ExternalLink className="w-4 h-4" />
-          </a>
-        )}
       </div>
     </div>
   );
