@@ -168,9 +168,18 @@ function Projects() {
             <ProjectCard
               name="Specta"
               repo="specta-rs/specta"
-              logo="/assets/specta.svg"
               description="Export your Rust types to any language. The foundation for type-safe communication across your stack."
               docsUrl="/docs/specta"
+              logo={
+                <div className="w-14 h-14 relative shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 group-hover:scale-110 transition-transform duration-300">
+                  <Image
+                    src="/assets/specta.svg"
+                    alt={`Specta logo`}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              }
               gradient="from-[#F74C00] via-[#CC3A00]/60 to-[#F49600]/40"
               accentColor="border-[#F74C00]/20"
               className="motion-safe:animate-[fadeIn_0.3s_0s_both]"
@@ -179,9 +188,18 @@ function Projects() {
             <ProjectCard
               name="rspc"
               repo="specta-rs/rspc"
-              logo="/assets/rspc.svg"
               description="A blazingly fast and typesafe RPC framework for Rust. Build web APIs with end-to-end type safety."
               docsUrl="/docs/rspc"
+              logo={
+                <div className="w-14 h-14 relative shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 group-hover:scale-110 transition-transform duration-300">
+                  <Image
+                    src="/assets/rspc.svg"
+                    alt={`rspc logo`}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              }
               gradient="from-[#0092DE] via-[#0092DE]/60 to-[#00A4FA]/40"
               accentColor="border-[#0092DE]/20"
               className="motion-safe:animate-[fadeIn_0.3s_0.2s_both]"
@@ -190,9 +208,18 @@ function Projects() {
             <ProjectCard
               name="Tauri Specta"
               repo="specta-rs/tauri-specta"
-              logo="/assets/tauri-specta.png"
               description="Typesafe Tauri commands with Specta. Build desktop apps with full type safety between Rust and TypeScript."
               docsUrl="/docs/tauri-specta"
+              logo={
+                <div className="w-22 h-10 relative shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 group-hover:scale-110 transition-transform duration-300 self-center">
+                  <Image
+                    src="/assets/tauri-specta.png"
+                    alt={`Tauri Specta logo`}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              }
               gradient="from-[#FFC131] via-[#FFC131]/60 to-[#FFC947]/40"
               accentColor="border-[#FFC131]/20"
               className="motion-safe:animate-[fadeIn_0.3s_0.4s_both]"
@@ -248,7 +275,7 @@ function CTASection() {
 function ProjectCard(props: {
   name: string;
   repo?: string;
-  logo: string;
+  logo: JSX.Element;
   description: string;
   docsUrl?: string;
   gradient?: string;
@@ -280,16 +307,9 @@ function ProjectCard(props: {
           </div>
         ) : null}
 
-        {/* Logo and title section */}
         <div className="flex items-start gap-4 mb-6">
-          <div className="w-14 h-14 relative shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 group-hover:scale-110 transition-transform duration-300">
-            <Image
-              src={props.logo}
-              alt={`${props.name} logo`}
-              fill
-              className="object-contain h-14"
-            />
-          </div>
+          {props.logo}
+
           <div className="flex-1 min-w-0 pr-20">
             <h3 className="text-2xl font-bold mb-2 group-hover:text-fd-primary transition-colors">
               {props.name}
@@ -297,12 +317,10 @@ function ProjectCard(props: {
           </div>
         </div>
 
-        {/* Description */}
         <p className="text-fd-muted-foreground leading-relaxed mb-8 grow">
           {props.description}
         </p>
 
-        {/* Action buttons */}
         <div className="flex gap-3 mt-auto">
           {props.docsUrl && (
             <Link
