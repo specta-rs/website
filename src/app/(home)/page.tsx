@@ -18,15 +18,15 @@ import { DiscordLogo } from "@/components/logos";
 export default async function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <HeroSection />
-      <WhySpectaRsSection />
-      <ProjectsSection />
+      <Hero />
+      <Features />
+      <Projects />
       <CTASection />
     </div>
   );
 }
 
-function HeroSection() {
+function Hero() {
   return (
     <section className="container mx-auto px-4 py-16 md:py-24 lg:py-32 flex-1">
       <div className="max-w-4xl mx-auto text-center space-y-8">
@@ -82,7 +82,7 @@ function HeroSection() {
   );
 }
 
-function WhySpectaRsSection() {
+function Features() {
   return (
     <section className="border-t bg-fd-secondary/20">
       <div className="container mx-auto px-4 py-20 md:py-28 lg:py-32">
@@ -149,7 +149,7 @@ function WhySpectaRsSection() {
   );
 }
 
-function ProjectsSection() {
+function Projects() {
   return (
     <section className="border-t bg-fd-secondary/10">
       <div className="container mx-auto px-4 py-20 md:py-28">
