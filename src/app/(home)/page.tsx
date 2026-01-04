@@ -232,7 +232,7 @@ function CTASection() {
               rel="noopener"
               className={cn(
                 buttonVariants({ variant: "outline" }),
-                "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0.2s_both]",
+                "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0.2s_both] bg-fd-background",
               )}
             >
               Join Discord

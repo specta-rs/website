@@ -6,7 +6,7 @@ const { rewrite: rewriteLLM } = rewritePath(
   "/llms.mdx/docs{/*path}",
 );
 
-export default function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   if (isMarkdownPreferred(request)) {
     const result = rewriteLLM(request.nextUrl.pathname);
     if (result) return NextResponse.rewrite(new URL(result, request.nextUrl));
@@ -14,3 +14,7 @@ export default function proxy(request: NextRequest) {
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: ["/docs", "/docs/:path*"],
+};
