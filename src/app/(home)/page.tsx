@@ -171,7 +171,8 @@ function ProjectsSection() {
               logo="/assets/specta.svg"
               description="Export your Rust types to any language. The foundation for type-safe communication across your stack."
               docsUrl="/docs/specta"
-              gradient="from-[#F74C00] to-[#F49600]"
+              gradient="from-[#F74C00] via-[#CC3A00]/60 to-[#F49600]/40"
+              accentColor="border-[#F74C00]/20"
             />
 
             <ProjectCard
@@ -180,7 +181,8 @@ function ProjectsSection() {
               logo="/assets/rspc.svg"
               description="A blazingly fast and typesafe RPC framework for Rust. Build web APIs with end-to-end type safety."
               docsUrl="/docs/rspc"
-              gradient="from-[#CE422B] to-[#F74C00]"
+              gradient="from-[#0092DE] via-[#0092DE]/60 to-[#00A4FA]/40"
+              accentColor="border-[#0092DE]/20"
             />
 
             <ProjectCard
@@ -189,7 +191,8 @@ function ProjectsSection() {
               logo="/assets/tauri-specta.png"
               description="Typesafe Tauri commands with Specta. Build desktop apps with full type safety between Rust and TypeScript."
               docsUrl="/docs/tauri-specta"
-              gradient="from-[#F49600] to-[#FFC947]"
+              gradient="from-[#FFC131] via-[#FFC131]/60 to-[#FFC947]/40"
+              accentColor="border-[#FFC131]/20"
             />
           </div>
         </div>
@@ -246,13 +249,21 @@ function ProjectCard(props: {
   description: string;
   docsUrl?: string;
   gradient?: string;
+  accentColor?: string;
 }) {
   return (
-    <div className="group relative border rounded-2xl p-8 bg-fd-card hover:shadow-2xl hover:border-fd-primary/20 transition-all duration-300 flex flex-col overflow-hidden">
+    <div
+      className={cn(
+        "group relative border rounded-2xl p-8 bg-fd-card hover:shadow-2xl transition-all duration-300 flex flex-col overflow-hidden",
+        props.accentColor
+          ? `hover:${props.accentColor}`
+          : "hover:border-fd-primary/20",
+      )}
+    >
       {/* Gradient accent on hover */}
       <div
         className={cn(
-          "absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-300 bg-gradient-to-br",
+          "absolute inset-0 opacity-0 group-hover:opacity-[0.08] transition-opacity duration-300 bg-gradient-to-br",
           props.gradient || "from-[#F74C00] to-[#F49600]",
         )}
       />
