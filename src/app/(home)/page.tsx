@@ -287,7 +287,7 @@ function ProjectCard(props: {
               src={props.logo}
               alt={`${props.name} logo`}
               fill
-              className="object-contain"
+              className="object-contain h-14"
             />
           </div>
           <div className="flex-1 min-w-0 pr-20">

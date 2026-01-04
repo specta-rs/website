@@ -1,7 +1,5 @@
 export async function getGitHubStars(repo: string): Promise<string> {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate delay
-
     const response = await fetch(`https://api.github.com/repos/${repo}`, {
       headers: {
         Accept: "application/vnd.github+json",
