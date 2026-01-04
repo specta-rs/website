@@ -11,115 +11,10 @@ import {
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-async function getGitHubStars(repo: string): Promise<number> {
-  try {
-    const response = await fetch(`https://api.github.com/repos/${repo}`, {
-      headers: {
-        Accept: "application/vnd.github+json",
-      },
-      next: { revalidate: 3600 }, // Cache for 1 hour
-    });
-
-    if (!response.ok) {
-      throw new Error(`GitHub API responded with ${response.status}`);
-    }
-
-    const data = (await response.json()) as { stargazers_count: number };
-    return data.stargazers_count;
-  } catch (error) {
-    console.error(`Failed to fetch stars for ${repo}:`, error);
-    return 0; // Return 0 as fallback
-  }
-}
-
-interface ProjectCardProps {
-  name: string;
-  logo: string;
-  stars: number;
-  description: string;
-  githubUrl: string;
-  docsUrl?: string;
-  docsrsUrl?: string;
-}
-
-function ProjectCard({
-  name,
-  logo,
-  stars,
-  description,
-  githubUrl,
-  docsUrl,
-  docsrsUrl,
-}: ProjectCardProps) {
-  return (
-    <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 relative">
-          <Image
-            src={logo}
-            alt={`${name} logo`}
-            fill
-            className="object-contain"
-          />
-        </div>
-        <div>
-          <h3 className="text-xl font-bold">{name}</h3>
-          <div className="flex items-center gap-2 text-sm text-fd-muted-foreground">
-            <span>★ {stars.toLocaleString()}</span>
-          </div>
-        </div>
-      </div>
-      <p className="text-fd-muted-foreground mb-6">{description}</p>
-      <div className="flex gap-2">
-        {docsUrl && (
-          <Link
-            href={docsUrl}
-            className={cn(
-              buttonVariants({ variant: "primary", size: "sm" }),
-              "flex-1",
-            )}
-          >
-            <BookOpen className="w-4 h-4 mr-1" />
-            Docs
-          </Link>
-        )}
-        <a
-          href={githubUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(
-            buttonVariants({
-              variant: "outline",
-              size: "sm",
-            }),
-            docsUrl ? "" : "flex-1",
-          )}
-        >
-          <Github className="w-4 h-4 mr-1" />
-          GitHub
-        </a>
-        {docsrsUrl && (
-          <a
-            href={docsrsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
-          >
-            <ExternalLink className="w-4 h-4" />
-          </a>
-        )}
-      </div>
-    </div>
-  );
-}
+import { Suspense } from "react";
+import { getGitHubStars } from "@/lib/getGitHubStars";
 
 export default async function HomePage() {
-  const [spectaStars, rspcStars, tauriSpectaStars] = await Promise.all([
-    getGitHubStars("specta-rs/specta"),
-    getGitHubStars("specta-rs/rspc"),
-    getGitHubStars("specta-rs/tauri-specta"),
-  ]);
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -162,7 +57,7 @@ export default async function HomePage() {
             <a
               href="https://github.com/specta-rs"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener"
               className={cn(
                 buttonVariants({ variant: "outline" }),
                 "gap-2 px-6 py-3 text-base",
@@ -174,7 +69,7 @@ export default async function HomePage() {
             <a
               href="https://discord.com/invite/JgqH8b4ycw"
               target="_blank"
-              rel="noopener noreferrer"
+              rel="noopener"
               className={cn(
                 buttonVariants({ variant: "outline" }),
                 "gap-2 px-6 py-3 text-base",
@@ -252,29 +147,26 @@ export default async function HomePage() {
             <div className="grid md:grid-cols-3 gap-6">
               <ProjectCard
                 name="Specta"
+                repo="specta-rs/specta"
                 logo="/assets/specta.svg"
-                stars={spectaStars}
                 description="Export your Rust types to TypeScript, JSON Schema and more. The foundation for type-safe communication."
-                githubUrl="https://github.com/specta-rs/specta"
                 docsUrl="/docs/specta"
                 docsrsUrl="https://docs.rs/specta"
               />
 
               <ProjectCard
                 name="rspc"
+                repo="specta-rs/rspc"
                 logo="/assets/rspc.svg"
-                stars={rspcStars}
                 description="A blazingly fast and typesafe RPC framework for Rust. Build web APIs with end-to-end type safety."
-                githubUrl="https://github.com/specta-rs/rspc"
                 docsUrl="/docs/rspc"
               />
 
               <ProjectCard
                 name="Tauri Specta"
+                repo="specta-rs/tauri-specta"
                 logo="/assets/tauri-specta.png"
-                stars={tauriSpectaStars}
                 description="Typesafe Tauri commands with Specta. Build desktop apps with full type safety between Rust and TypeScript."
-                githubUrl="https://github.com/specta-rs/tauri-specta"
                 docsUrl="/docs/tauri-specta"
               />
             </div>
@@ -306,7 +198,7 @@ export default async function HomePage() {
               <a
                 href="https://discord.com/invite/JgqH8b4ycw"
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="noopener"
                 className={cn(
                   buttonVariants({ variant: "outline" }),
                   "gap-2 px-6 py-3 text-base",
@@ -320,5 +212,84 @@ export default async function HomePage() {
         </div>
       </section>
     </div>
+  );
+}
+
+function ProjectCard(props: {
+  name: string;
+  repo?: string;
+  logo: string;
+  description: string;
+  githubUrl: string;
+  docsrsUrl?: string;
+}) {
+  return (
+    <div className="border rounded-lg p-6 bg-fd-card hover:shadow-lg transition-shadow">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-10 h-10 relative">
+          <Image
+            src={props.logo}
+            alt={`${props.name} logo`}
+            fill
+            className="object-contain"
+          />
+        </div>
+        <div>
+          <h3 className="text-xl font-bold">{props.name}</h3>
+
+          {props.repo ? <Stars stars={getGitHubStars(props.repo)} /> : null}
+        </div>
+      </div>
+      <p className="text-fd-muted-foreground mb-6">{props.description}</p>
+      <div className="flex gap-2">
+        {props.docsUrl && (
+          <Link
+            href={props.docsUrl}
+            className={cn(
+              buttonVariants({ variant: "primary", size: "sm" }),
+              "flex-1",
+            )}
+          >
+            <BookOpen className="w-4 h-4 mr-1" />
+            Docs
+          </Link>
+        )}
+        <a
+          href={`https://github.com/${props.repo}`}
+          target="_blank"
+          rel="noopener"
+          className={cn(
+            buttonVariants({
+              variant: "outline",
+              size: "sm",
+            }),
+            props.docsUrl ? "" : "flex-1",
+          )}
+        >
+          <Github className="w-4 h-4 mr-1" />
+          GitHub
+        </a>
+        {props.docsrsUrl && (
+          <a
+            href={props.docsrsUrl}
+            target="_blank"
+            rel="noopener"
+            className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}
+          >
+            <ExternalLink className="w-4 h-4" />
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Stars(props: { stars: Promise<string> }) {
+  return (
+    <Suspense>
+      <div className="flex items-center gap-2 text-sm text-fd-muted-foreground animate-in fade-in">
+        <span>★ {props.stars}</span>
+      </div>
+    </Suspense>
   );
 }

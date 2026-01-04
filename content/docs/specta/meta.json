@@ -4,7 +4,10 @@
   "icon": "spectaLogo",
   "root": true,
   "pages": [
-    "...",
+    "index",
+    "languages",
+    "framework",
+    "core",
     "[Github][GitHub](https://github.com/specta-rs/specta)",
     "[docsRsLogo][docs.rs](https://docs.rs/specta)"
   ]

@@ -3,9 +3,9 @@
     "index",
     "consulting",
     "---Frameworks---",
-    "cli",
-    "rspc",
     "specta",
-    "tauri-specta"
+    "tauri-specta",
+    "rspc",
+    "cli"
   ]
 }
