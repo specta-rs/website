@@ -8,6 +8,7 @@ import {
   Github,
   BookOpen,
   ExternalLink,
+  Sparkles,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -92,16 +93,16 @@ export default async function HomePage() {
               An ecosystem built on core principles that matter
             </p>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="space-y-3">
                 <div className="w-12 h-12 rounded-lg bg-[#F74C00]/10 flex items-center justify-center">
                   <Shield className="w-6 h-6 text-[#F74C00]" />
                 </div>
                 <h3 className="text-xl font-semibold">Typesafety</h3>
                 <p className="text-fd-muted-foreground">
-                  Types are inferred end-to-end, allowing you to move quickly
-                  and collaborate while maintaining confidence that your code is
-                  correct.
+                  Types should always be inferred end-to-end, allowing you to
+                  move quickly and collaborate while maintaining confidence that
+                  your code is correct.
                 </p>
               </div>
 
@@ -111,9 +112,9 @@ export default async function HomePage() {
                 </div>
                 <h3 className="text-xl font-semibold">Developer Experience</h3>
                 <p className="text-fd-muted-foreground">
-                  Obsessed with simplicity while maintaining flexibility. We
-                  make doing the "right thing" the "easy thing", freeing you to
-                  focus on what matters.
+                  Obsessed with simplicity, while maintaining flexibility. We
+                  build tools that make doing the "right thing" the "easy
+                  thing", freeing you up to focus on the things that matter.
                 </p>
               </div>
 
@@ -121,10 +122,22 @@ export default async function HomePage() {
                 <div className="w-12 h-12 rounded-lg bg-[#CE422B]/10 flex items-center justify-center">
                   <Zap className="w-6 h-6 text-[#CE422B]" />
                 </div>
+                <h3 className="text-xl font-semibold">Modern Practices</h3>
+                <p className="text-fd-muted-foreground">
+                  Embrace the world of modern JavaScript tooling, enabling you
+                  to ship better user experiences than server-driven approaches.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <div className="w-12 h-12 rounded-lg bg-[#8B4513]/10 flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-[#8B4513]" />
+                </div>
                 <h3 className="text-xl font-semibold">Scale</h3>
                 <p className="text-fd-muted-foreground">
-                  Build codebases that scale in performance and maintainability.
-                  Leverage Rust's compile-time checks to reduce risk in large
+                  Build codebases that scale sanely, both in performance and
+                  maintainability. Take advantage of Rust's compile-time checks
+                  and tooling to reduce risk when developing large-scale
                   applications.
                 </p>
               </div>
@@ -169,6 +182,187 @@ export default async function HomePage() {
                 description="Typesafe Tauri commands with Specta. Build desktop apps with full type safety between Rust and TypeScript."
                 docsUrl="/docs/tauri-specta"
               />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Production Users Section */}
+      <section className="border-t bg-fd-secondary/20">
+        <div className="container mx-auto px-4 py-16 md:py-24">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+              Production Users
+            </h2>
+            <p className="text-center text-fd-muted-foreground mb-12 text-lg">
+              Trusted by teams building ambitious projects
+            </p>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
+              {[
+                { name: "Spacedrive", url: "https://spacedrive.com" },
+                { name: "CrabNebula Cloud", url: "https://crabnebula.cloud" },
+                { name: "Twidge", url: "https://twidge.app" },
+                { name: "Reader", url: "https://readhq.com" },
+              ].map((user) => (
+                <a
+                  key={user.name}
+                  href={user.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-lg font-semibold text-fd-muted-foreground hover:text-fd-foreground transition-colors"
+                >
+                  {user.name}
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sponsors Section */}
+      <section className="border-t">
+        <div className="container mx-auto px-4 py-16 md:py-24">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+              Sponsors
+            </h2>
+            <p className="text-center text-fd-muted-foreground mb-12 text-lg">
+              Supported by amazing organizations
+            </p>
+
+            <div className="flex flex-wrap gap-4 justify-center">
+              {[
+                {
+                  name: "CrabNebula",
+                  logo: "https://avatars.githubusercontent.com/u/103866414?s=200&v=4",
+                  url: "https://crabnebula.dev",
+                  tier: "gold",
+                },
+                {
+                  name: "Spacedrive",
+                  logo: "https://avatars.githubusercontent.com/u/103801871?s=200&v=4",
+                  url: "https://spacedrive.com",
+                  tier: "silver",
+                },
+              ].map((sponsor) => (
+                <a
+                  key={sponsor.name}
+                  href={sponsor.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 px-6 py-4 rounded-lg border border-fd-border hover:border-fd-foreground/30 bg-fd-card hover:shadow-lg transition-all"
+                >
+                  {/*<Image
+                    src={sponsor.logo}
+                    alt={sponsor.name}
+                    width={48}
+                    height={48}
+                    className="rounded"
+                  />*/}
+                  <span className="font-semibold">{sponsor.name}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Rust Section */}
+      <section className="border-t bg-fd-secondary/20">
+        <div className="container mx-auto px-4 py-16 md:py-24">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+              Why Choose Rust?
+            </h2>
+            <p className="text-center text-fd-muted-foreground mb-12 text-lg">
+              We are focused on building tooling in Rust but it is not always
+              the right choice for your project. Rust has a lot of advantages
+              such as its strong type system, tooling, high-performance, and
+              memory safety which leads to fewer runtime bugs and makes
+              refactoring and maintaining code easier.
+            </p>
+
+            <div className="space-y-8">
+              <div>
+                <h3 className="text-xl font-semibold mb-4">
+                  The right choice often depends on your situation:
+                </h3>
+                <ul className="space-y-3 text-fd-muted-foreground">
+                  <li className="flex gap-3">
+                    <span className="text-[#F74C00] mt-1">•</span>
+                    <span>
+                      Server-side rendered UI frameworks often necessitate part
+                      or most of your backend to be in Javascript.
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-[#F74C00] mt-1">•</span>
+                    <span>
+                      Libraries like{" "}
+                      <a
+                        href="https://effect.website"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#F74C00] hover:underline"
+                      >
+                        Effect
+                      </a>{" "}
+                      can bring Rust-like benefits without changing languages.
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-[#F74C00] mt-1">•</span>
+                    <span>
+                      Go has a lower learning curve and great standard library
+                      but has weaker error handling and type-checking guarantees
+                      resulting in more unreliable codebases.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-semibold mb-4">
+                  Rust is the right choice if:
+                </h3>
+                <ul className="space-y-3 text-fd-muted-foreground">
+                  <li className="flex gap-3">
+                    <span className="text-[#F74C00] mt-1">•</span>
+                    <span>Your team has Rust expertise</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-[#F74C00] mt-1">•</span>
+                    <span>
+                      Your building a microservice, your frontend is an SPA or
+                      your embedding your API into a native application (Eg.{" "}
+                      <a
+                        href="https://tauri.app"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#F74C00] hover:underline"
+                      >
+                        Tauri
+                      </a>
+                      )
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-[#F74C00] mt-1">•</span>
+                    <span>
+                      Your API needs to do heavy data processing, simulations or
+                      work where performance is critical.
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-[#F74C00] mt-1">•</span>
+                    <span>
+                      Your API needs to do processing where reliability and
+                      security are critical (Eg. banking, healthcare)
+                    </span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -220,7 +414,7 @@ function ProjectCard(props: {
   repo?: string;
   logo: string;
   description: string;
-  githubUrl: string;
+  docsUrl?: string;
   docsrsUrl?: string;
 }) {
   return (
