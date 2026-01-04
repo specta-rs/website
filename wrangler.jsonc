@@ -1,21 +1,23 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "main": ".open-next/worker.js",
-  "name": "specta-website",
+  "main": "./dist/server/serve-cloudflare.js",
+  "name": "specta-website-waku",
   "compatibility_date": "2025-12-31",
   "compatibility_flags": ["nodejs_compat"],
   // https://github.com/pacocoursey/next-themes/issues/370
   // https://opennext.js.org/cloudflare/howtos/keep_names
   "keep_names": false,
   "route": {
-    "pattern": "v2.specta.dev",
+    "pattern": "v2-waku.specta.dev",
     "custom_domain": true
   },
   "observability": {
     "enabled": true
   },
   "assets": {
-    "directory": ".open-next/assets",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    "directory": "./dist/public",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
   }
 }

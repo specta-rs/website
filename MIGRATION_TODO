@@ -1,0 +1,10 @@
+.gitignore
+Posthog proxy
+PostHog on frontend (cause hook is broken)
+backport landing page + theme changes
+rename wrangler file
+
+wrangler types cloudflare-env.d.ts &&
+
+Fix hot reload issues in dev
+Remove `tsconfig.json` exclude
