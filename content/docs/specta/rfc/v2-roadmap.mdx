@@ -1,0 +1,427 @@
+---
+title: v2 Roadmap
+hidden: true
+---
+
+# Specta v2
+
+This roadmap outlines the plan for getting Specta to a v2 version.
+
+The major goal of version 2 is:
+ - Try and be the final major release for the foreseeable future. Every new major version makes a pretty big mess for the ecosystem built around Specta and this can make it suck to use for end-users.
+     - This doesn't mean no releases, just that they should be out of the core crate or non-breaking.
+ - Migrate from a Typescript-centric design to Rust-centric design. This is required to properly support alternate language exporters and will also create a more stable core design.
+ - Simplify the core and breakout non-critical logic into other crates (Eg. exporters, util crates, etc). This will help as we can do breaking changes to these crates without breaking the ecosystem.
+ - Easier to use. Specta was originally spun out of rspc and it shows in many places. We need to think about making clean APIs for people using Specta directly, while also providing the escape hatches for Specta-based frameworks like [Tauri Specta](https://github.com/specta-rs/tauri-specta) and [TauRPC](https://github.com/MatsDK/TauRPC) which require more control.
+ - Be more feature rich. Namespaces, phase-specific types and better support for Serde attributes come to mind. These need to be built into the core datamodel to be supported properly.
+
+## Preparation
+
+Before starting on any new work I think it is worth getting out another prerelease with the current changes on `main` as they are quite major (and from memory incomplete).
+
+From memory the `main` branch has incomplete work on:
+ - Runtime flattening (as discussed below)
+ - Complete redesign of the public API of `specta_typescript`, including removing all legacy methods.
+     - I've noticed the legacy methods being misused a lot by end-users so this new API should make that less common.
+
+This will involve:
+ - [x] Fix issues compiling `specta-jsonschema` due to `schemars`
+ - [x] Upgrade to edition 2024 across both repo's
+ - [ ] Upgrade Tauri Specta
+     - I think this will show a lot of issues in the new simplified public API which will require fixes.
+     - I also think some methods Tauri Specta needs are missing and i'm going to have to look at how we can reintroduce them in a way that makes sense with the new API surface.
+ - [ ] Upgrade TauRPC
+ - [ ] Finish rebuilding JSDoc exporter on the new foundation (this is required for a new as to not break Tauri Specta)
+     - [ ] Support generics
+     - [ ] Support field comments
+     - [ ] Support enums? Should just work but verify
+ - [ ] Fixing tests
+ - [ ] Fixing or improving CI workflows
+ - [ ] Review and merge the 2 active PRs.
+ - [ ] Resolve issues related to the new runtime flattening system.
+ - [x] Finish partial work on - [#316](https://github.com/specta-rs/specta/issues/316)
+ - [ ] How are we going to ship the breaking changes with Tauri?
+ - Some small improvements we could easily ship too:
+     - [x] Bug with headers - [#414](https://github.com/specta-rs/specta/issues/414)
+     - [x] `diagnostic::on_unimplemented` - [#401](https://github.com/specta-rs/specta/issues/401)
+     - [x] Move `specta::json` out of main crate and drop `serde` dep.
+     - [ ] Finishing cleaning up new `specta-serde` crate - [#258](https://github.com/specta-rs/specta/issues/258)
+     - [x] Rename `export` feature - [#388](https://github.com/specta-rs/specta/issues/388)
+     - [x] Prevent ctor segfaults from panics when using `export` - [#324](https://github.com/specta-rs/specta/issues/324)
+     - [x] Small TS exporter bug - [#231](https://github.com/specta-rs/specta/issues/231)
+     - [ ] `feature = std` for default implementations - [#78](https://github.com/specta-rs/specta/issues/78)
+
+Estimate: 3-8 days
+
+## Core design
+
+This section is work that needs to be done on the core `specta` crate. This work is crucial as it will come with lots of semver breaking changes, but it will lead to a a simplier and more capable core.
+
+### Runtime flattening
+
+This work has begun on `main` already. It's functional but the work is still not complete.
+
+Moving flattening to runtime instead of compile time has a huge number of advantages
+ - Allows us to simplify the `Type` trait down to a single function. The multiple methods are a massive source of bugs (even internally 😅)
+ - Allows the `Type` trait to be infallible. The flattening errors are now produced in the exporters.
+ - Allows better control over flattening for virtual types (types not created via the `Type` macro)
+ - Allow exporters to manage flattening which is important for languages which don't support flattening.
+
+Questions:
+ - Should we keep or remove the `Flatten` trait? Can we make it less error prone? - [#429](https://github.com/specta-rs/specta/pull/429)
+
+Regressions:
+ - [#356](https://github.com/specta-rs/specta/issues/356)
+
+Tracking:
+ - [#384](http://github.com/specta-rs/specta/issues/384)
+ - [#318](https://github.com/specta-rs/specta/issues/318)
+
+Estimate: 2-5 days
+
+### Runtime Serde tagging
+
+To better support other languages such as Rust we need to ensure tagging is fully up to the control of the language exporter.
+
+Tracking:
+ - [#328](https://github.com/specta-rs/specta/issues/328)
+
+Estimate: 2-4 days
+
+### Apply rename at runtime
+
+This is a small change which will give exporters more flexibility.
+
+Tracking:
+ - [#332](https://github.com/specta-rs/specta/issues/332)
+
+Estimate: 0.5 days
+
+### `impl Type for Result<T, E>`
+
+This wasn't implement originally due to [Tauri Specta](https://github.com/specta-rs/tauri-specta) and [this Serde issue](https://github.com/serde-rs/serde/issues/1070) but I suspect with the newer core design it should be supportable. If not that's okay but we should investigate it.
+
+I suspect if we can support this it will require some modifications of the functions traits.
+
+Will this require `DataType::Result` or can we match on the `SpectaID`?
+
+Tracking:
+ - [#415](https://github.com/specta-rs/specta/issues/415)
+
+Estimate: 2-3 days.
+
+### Cleanup function exporting system
+
+We should check if we can simplify any parts of the function exporting system as it's got a lot of moving parts which make it more confusing and can make it harder for the complier to give useful feedback.
+
+Work on this will likely be done in relation to adding an implementation for `Result` as that may avoid the need for the result trait?
+
+Tracking:
+ - [#379](https://github.com/specta-rs/specta/issues/379)
+ - Support Tauri attributes like - [#213](https://github.com/specta-rs/specta/issues/213)
+
+Estimate: 2-5 days
+
+### Phase-specific types
+
+Currently Specta only produces a single type which is the sum of the serialize and deserialze implmentation but it's possible for them to actually be different. A good example of this is `#[serde(skip_seralizing_if = ...)]` which should make the type optional for serialzing but it should't affect the deserialization type.
+
+In practice I suspect Specta would implement the primitives to support this but it would likely require something with more knowledge of the envrionment to use (Eg. rspc and Tauri Specta which control Serialization and Deserialization). Although if we can find a simple enolugh solution it would be nice to expose it for everyone.
+
+Tracking:
+ - [#229](https://github.com/specta-rs/specta/issues/229)
+ - [#190](https://github.com/specta-rs/specta/issues/190)
+ - [#133](https://github.com/specta-rs/specta/issues/133)
+ - [#228](https://github.com/specta-rs/specta/issues/228) - Implement [this](https://github.com/specta-rs/rspc/issues/100#issuecomment-1373092211)
+ - [#76](https://github.com/specta-rs/specta/issues/76)
+
+Estimate: 4-10 days
+
+### Cleanup `DataType` enum
+
+The definition of types in Specta is done through the `DataType` enum. This system has a lot of room for small improvements before we lock it in:
+
+ - Prevent duplicate struct field names - [#330](https://github.com/specta-rs/specta/issues/330)
+ - Can we prevent more runtime allocations. Maybe using `Cow<'static, [Field]>` instead of `Vec<Field>`?
+ - Are any of the ideas in [#140](https://github.com/specta-rs/specta/issues/140) still useful? I suspect most of these have alrea
+
+Estimate: 1-4 days
+
+### Cleanup `NamedType`
+
+Can/should we merge it into `Type` while maintaining the type-safety advantages it gives us? This trait is commonly forgotten to be implemented (including in Specta internals) so making it harder to get wrong would be nice but i'm not sure if it would be possible or even worth it.
+
+Tracking:
+ - [x] [#354](https://github.com/specta-rs/specta/issues/354)
+ - [ ] [#311](https://github.com/specta-rs/specta/issues/311)
+
+Estimate: 1-3 days
+
+### Improve support for generics
+
+Generics in Rust can get pretty wacky and we need to do our best to support as many as possible. Recently we rework the system to get some improvements but that came with some things we still need to cleanup.
+
+Tracing:
+ - [#44](https://github.com/specta-rs/specta/issues/44)
+ - [#349](http://github.com/specta-rs/specta/issues/349)
+ - [#361](https://github.com/specta-rs/specta/issues/361)
+ - [#357](https://github.com/specta-rs/specta/issues/357)
+ - [#138](https://github.com/specta-rs/specta/issues/138)
+
+Estimate: 2-7 days
+
+### `specta_serde` needs some thought
+
+Right now it's a bit of a mess. The general idea is that it would be nice to not bake Serde-specific design into Specta's core so we have broken it out into it's own crate.
+
+Tracking:
+ - [#232](https://github.com/specta-rs/specta/issues/232)
+
+Estimate: 1-5 days
+
+### Layouts
+
+We want to allow exporting via Typescript `namespace`'s or exporting into multiple files. My idea is we allow the exporter to configure the structure of the exported types. This introduces a way of exporting multiple types which share a conflicting name as in Typescript the import can be different so they won't overlap.
+
+We should probally also allow grouping types via the macros. This could allow different groups to be handled differently via the `export` feature?
+
+Bugs:
+ - [ ] [#409](https://github.com/specta-rs/specta/issues/409)
+ - [x] [#182](https://github.com/specta-rs/specta/pull/182)
+
+Estimate: 2-7 days
+
+### Nuanced types
+
+It would be nice if Specta could track types intent better than Rust supports. For example Typescript has a `Date` type and it would be cool if that could somehow be known by Specta. Although Serde means we may still be forced to export as `string` in these examples, for values being parsed from the client (deserialize impl) we could possibly use them and also smart frameworks like Tauri Specta could possibly use this data to generate custom serialization/deserialization code to support proper types.
+
+This issue is more an idea than specifics. More reasearch is required to see what if anything is possible. We may end up deciding this just isn't worth the complexity.
+
+Tracking Issue:
+ - [#203](https://github.com/specta-rs/specta/issues/203)
+ - [#55](https://github.com/specta-rs/specta/issues/55)
+
+Estimate: 2-7 days
+
+### Review `#[serde(transparent)]`
+
+Currently it's Specta behaviour doesn't really match Serde. I don't know if this should be considered a bug or intended design.
+
+Tracking:
+ - [#313](https://github.com/specta-rs/specta/issues/313)
+
+Estimate: 1-3 days
+
+### Format?
+
+The Typescript exporter has a format feature but it's also been a bit of a hack and annoying to maintain.
+
+Should we:
+ - Remove it and recommend a userspace solution?
+ - Improve it so it's actually nice to use?
+
+Tracking:
+ - [#382](https://github.com/specta-rs/specta/issues/382)
+
+Estimate: 1 day
+
+### Default generics
+
+Rust supports them, why don't we?
+
+Tracking:
+ - [#16](https://github.com/specta-rs/specta/issues/16)
+
+Estimate: 1-3 days
+
+### `MaybeUndefined` support
+
+This is just a kinda difficult type to define so we should make sure we have a good way to handle it. For previous projects i've hacked together a version of it but it's also been a little bit hacky. It's generally pretty useful when implementing an API in Rust so it should be easy with Specta.
+
+Tracking:
+ - [#157](https://github.com/specta-rs/specta/issues/157)
+
+Estimate: 1-4 days
+
+### BigInt number improvements
+
+The ergonomics's of using BigInt number types is pretty bad. Can we improve it?
+
+Tracking:
+ - Finer control - [#46](https://github.com/specta-rs/specta/issues/46)
+ - Who is incharge - [#319](https://github.com/specta-rs/specta/issues/319)
+
+Estimate: 1-4 days
+
+### Stricter enum support
+
+Currently the types can be a little lax when working with enums in Typescript. We should try and be stricter with the types to ensure invalid values can't be constructed.
+
+Tracking:
+ - [#221](https://github.com/specta-rs/specta/issues/221)
+
+Estimate: 1 day
+
+
+### `impl Type for external_crate::*`
+
+Currently the Specta crate exposes features for many common 3rd party crates. Due to the Rust orphan rule these implementations must either be in the `specta` crate because it defines `Type` or in the crate which defines the type being implemented on.
+
+This is problematic as it means Specta must take a dependency on all of these crates. To maintain proper semantic versioning Specta must release a major version to update to the latest major version of these downstream crates. Given how problematic a semver major in Specta can be to the ecosystem this isn't great.
+
+Currently Known Solutions:
+ - Move implementations into 3rd party crates
+     - This is the best technical solution (it's what Serde does) but it requires other maintainers to buy into Specta which is kinda rough when it's an order of magnitude less used even the lowest used.
+ - Introducing new feature for each crate major (`time1`, `time2`).
+     - This works but doesn't work if *any* dependency in the tree pulls in a `-sys` crate with a mismatching version. If that happens there is literally nothing we can do to support that version
+ - Try and decouple the versioning from the core with `specta_impls`
+     - I made [a prorotype](https://github.com/specta-rs/specta/pull/185) of one potential solution but this is some *really* cursed code.
+
+I am not sure how we are going to solve this, but it's going to be one of the most important things to solve before the next major if we want to ensure we don't need to do a Specta major release anything soon.
+
+Crates which we currently have implementations for:
+ - serde - (725,255,840 downloads)
+ - serde_json - (637,249,802 downloads)
+ - serde_yaml - (183,212,589 downloads)
+ - toml - (433,541,026 downloads)
+ - uuid - (389,094,615 downloads)
+ - ulid - (9,788,418 downloads)
+ - chrono - (408,291,796 downloads)
+ - time - (487,195,146 downloads)
+ - jiff - (49,131,637 downloads)
+ - bigdecimal - (56,647,219 downloads)
+ - rust_decimal - (65,083,624 downloads)
+ - indexmap - (732,239,344 downloads)
+ - ipnetwork - (43,771,302 downloads)
+ - mac_address - (6,741,416 downloads)
+ - bit-vec - (183,300,868 downloads)
+ - bson - (12,670,387 downloads)
+ - uhlc - (2,532,458 downloads)
+ - bytesize - (53,126,572 downloads)
+ - glam - (24,595,991 downloads)
+ - tokio - (455,785,267 downloads)
+ - url - (433,734,607 downloads)
+ - either - (505,848,321 downloads)
+ - bevy_ecs - (4,051,257 downloads)
+ - bevy_input - (3,683,355 downloads)
+ - camino - (117,519,200 downloads)
+
+Specta downloads: 555,790
+
+Related:
+ - [#114](https://github.com/specta-rs/specta/issues/114)
+ - [#8](https://github.com/specta-rs/specta/issues/8)
+
+Estimate: Unknown
+
+## Non-breaking features
+
+These could all hypothetically come after the stable release but I would like to try and get as many as possible in before we stable Specta to be 100% sure the core design accounts for them!
+
+### Snapshot testing
+
+Our current test suite is a bit of a mess since we broke out the language exporters from the main  `specta` crate. Lets clean it up and invest in Snapshot testing.
+
+Goals:
+ - Run a single command to be able to generate the results of each test. This will make maintaince easier if we change the output
+ - Checkin the snapshots to Git so we can see changes over time
+ - Ensure tests for 3rd party crate implements and similar are implemented well
+ - Ensure the tests are being properly run in CI and block PRs on them passing
+
+Tracked:
+ - [#338](https://github.com/specta-rs/specta/issues/338)
+ - [#346](https://github.com/specta-rs/specta/issues/346)
+ - [#306](https://github.com/specta-rs/specta/issues/306)
+ - [#317](https://github.com/specta-rs/specta/issues/317)
+ - [#145](https://github.com/specta-rs/specta/issues/145)
+
+Also:
+ - Unit test reference creation and usage across `Typescript` and `TypeCollection` to ensure we don't ever trigger panics and that errors are good.
+
+Estimate: 3-5 days
+
+### Remaining Serde attributes
+
+We need to support all attributes which can be passed to the `#[serde(...)]` macro attribute. We support most of the common ones currently but it's a general source of confusion when a user runs across one we don't support.
+
+Linked:
+ - [#402](https://github.com/specta-rs/specta/issues/402)
+ - [#395](https://github.com/specta-rs/specta/issues/395)
+ - [#86](https://github.com/specta-rs/specta/issues/86)
+ - [#187](http://github.com/specta-rs/specta/issues/187)
+ - [#132](https://github.com/specta-rs/specta/issues/132)
+ - [#130](https://github.com/specta-rs/specta/issues/130)
+ - [#131](https://github.com/specta-rs/specta/issues/131)
+ - [#68](https://github.com/specta-rs/specta/issues/68)
+ - [#22](https://github.com/specta-rs/specta/issues/22)
+
+Bugs in current attribute implementation:
+ - [#393](https://github.com/specta-rs/specta/issues/393)
+
+Estimate: 2-7 days
+
+### Better exporter errors
+
+Right now errors in the exporters can be pretty rough. Can we overhaul them so they are more similar to the Rust compiler. This should make it way easier to work out where the problem is coming from.
+
+Tracking:
+ - [#345](https://github.com/specta-rs/specta/issues/345)
+ - [#312](https://github.com/specta-rs/specta/issues/312)
+ - [#135](https://github.com/specta-rs/specta/issues/135)
+
+Estimate: 1-4 days
+
+### Documentation & Cleanup
+
+Documentation & examples for all crates and methods as required by Clippy lint. Also do some assorted cleanup we should do before stablisation to reduce tech debt.
+
+Tracking:
+ - [#343](https://github.com/specta-rs/specta/issues/343)
+ - [#352](https://github.com/specta-rs/specta/issues/352)
+ - [#325](https://github.com/specta-rs/specta/issues/325)
+ - [#299](https://github.com/specta-rs/specta/issues/299)
+ - [#257](https://github.com/specta-rs/specta/issues/257)
+ - [#112](https://github.com/specta-rs/specta/issues/112)
+ - [#100](https://github.com/specta-rs/specta/issues/100)
+ - [#262](https://github.com/specta-rs/specta/issues/262)
+
+Estimate: 1-7 days
+
+### `specta::json` macro
+
+`serde_json::json` but which implements `Type`. This is pretty hard, i've built a couple of prototypes but I kept getting stuck.
+
+Tracking:
+ - [#94](https://github.com/specta-rs/specta/issues/94)
+
+Estimate: Unknown
+
+## Bugs
+
+Just general bugs in the current code.
+
+ - [ ] Inconsistent rename inflection - [#336](https://github.com/specta-rs/specta/issues/336). Estimate: 0.5 days
+ - [ ] Fix generics with transparent - [#302](https://github.com/specta-rs/specta/issues/302). Estimate: 1 day
+
+
+## Exporters
+
+Supporting multiple languages is a big goal of Specta v2 although these aren't strictly required for us to do a major release. I am going to try and find time to work on the exporters as it's a really good test of if the core API's are designed correctly.
+
+These don't necessarily need to be in the scope for sponsorship unless you actively need any of them.
+
+Tier 1:
+ - JSDoc - [#341](https://github.com/specta-rs/specta/issues/341)
+ - Go - [#30](https://github.com/specta-rs/specta/issues/30)
+ - Kotlin - [#29](https://github.com/specta-rs/specta/issues/29)
+ - Swift - [#28](https://github.com/specta-rs/specta/issues/28)
+
+Tier 2
+ - Rust - [#](https://github.com/specta-rs/specta/issues/27)
+ - ReScript - [#14](https://github.com/specta-rs/specta/issues/14)
+ - WIT - [#15](https://github.com/specta-rs/specta/issues/15)
+ - OpenAPI - [#31](https://github.com/specta-rs/specta/issues/31)
+
+Tier 3 (building out of curiosity, not sure if they are possible):
+ - Valibot - [#303](https://github.com/specta-rs/specta/issues/303)
+ - Zod?

@@ -1,0 +1,118 @@
+---
+title: Nuanced Types
+hidden: true
+---
+
+Goal:
+ - Treat a `Date` as a date
+ - Properly handle BigInt types
+
+Assumptions:
+ - Specta will provide the primitives but a framework will be required to assemble it.
+
+### BigInt
+
+Javascript can't properly represent large integer types (`*64` and up + `*size` depending on platform) from Rust using it's `number` type. The current Specta version prevents exporting these types by default and recommends serialising the numbers to strings in Rust and converting back on the frontend. Although this works it's really painful, especially for numbers out of the users control like in 3rd party crates (Eg `std::time::SystemTime`).
+
+As Tauri and rspc use JSON for the communication standard we are limited by it's spec but luckily it *does* allow the bigint-style numbers in a JSON number field. [ref](https://stackoverflow.com/questions/13502398/json-integers-limit-on-size). This is great because we don't want to invest a whole new serialisation format.
+
+#### `json-bigint`
+
+Libraries exists in the JS ecosystem which extend the native `JSON.parse` with the ability to decode large numbers into the JS `BigInt` type. One example of such library is [json-bigint](https://github.com/sidorares/json-bigint).
+
+What if we could use this?
+
+##### Tauri
+
+rspc maintains full control of deserialising the network response so switching to `json-bigint` is as easy as replacing `await response.json()` with `JSONBig.parse(await response.text())`.
+
+With Tauri we get directly returned a Javascript object/primitive from `invoke` which means we can't easily control this.
+
+Digging depper into the Tauri core reveals that Tauri doesn't always actually use `JSON.parse`.
+
+For commands run with the brownfield isolation pattern Tauri uses a [custom URI protocol](https://docs.rs/tauri/latest/tauri/struct.Builder.html#method.register_asynchronous_uri_scheme_protocol) which internally does `await response.json()` ([ref](https://github.com/tauri-apps/tauri/blob/546b296405bfff42f2181e1bacbb9724e32c469e/crates/tauri/scripts/ipc-protocol.js#L48)) which is good.
+
+TODO: Should investigate the `isolation` pattern
+
+[ref `ipc` handler](https://github.com/tauri-apps/tauri/blob/546b296405bfff42f2181e1bacbb9724e32c469e/crates/tauri/scripts/ipc.js#L142)
+
+Events on the other hand are a bit problematic because they don't necessarily use `JSON.parse`. They are injected into the webview using `eval` which will at times just include the literal JS [ref](https://github.com/tauri-apps/tauri/blob/546b296405bfff42f2181e1bacbb9724e32c469e/crates/tauri/src/ipc/format_callback.rs#L65).
+
+Is this a problem?
+
+I suppose it's technically possible to always use `JSON.parse` but this probably wouldn't be great for performance. This is also a much bigger change to upstream.
+
+##### Consistent
+
+`json-bigint` has multiple modes but the default it to only convert to a `BigInt` for numbers that can't fit into a `number`. This makes sense but is pretty problematic for matching up with Specta types because it means the final type is dependant on runtime data which the type exporter doesn't have.
+
+The only real solution here would be to type large numbers as `number | BigInt` which isn't that great for DX.
+
+##### Conclusion
+
+Given these two issues i'm not sure if this is the approach we want.
+
+#### Custom `serde::Serializer`
+
+Another potential solution is to implement a custom `serde::Serializer` which wraps `serde_json::Serializer` but modifies the way that bigint-style numbers are serialialised. We could convert them to strings so they could be passed to the webview without risking precision losse.
+
+This would require a system to convert them from strings back to `BigInt`/`number` on the frontend but that could work similar to the `Date` idea (shown below)
+
+Issues:
+ - How would this be confiugured? I think it would need to enabled/disabled on a per-invoke call.
+
+
+### Date
+
+One cool invariant of `Date`'s is that they are generally serialized in a lossless format via Serde. This means we all we need to do is convert the date field from a known number/string format on the frontend into a proper date. This avoids any need to mess with the serialization and transfer format.
+
+What if we assign types in Specta a tag `TypeTag` (name is still up for debate) similar to:
+
+```rs
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[non_exhaustive]
+pub enum TypeTag {
+    Date,
+    Custom(Cow<'static, str>),
+}
+```
+
+This tag allows a `Type` implementation to include special metadata about how it should be handled.
+
+Then when generating the `bindings.ts` in Tauri Specta we can parse these out and generate some special code like:
+
+```ts
+my_command: (args: ...) => {
+    const result = await invoke(...);
+    return {
+          my_date: new Date(result.my_date),
+          ...result
+    }
+}
+```
+
+Some notes:
+ - I don't think we need to map arguments because `JSON.stringify(new Date())` works
+ - Arguments should probally be typed as `number | BigInt` (do this in phase-specific types work)
+ - We need to account for accounts by mapping each item
+
+What about rspc? One advantage of Tauri Specta is that the frontend bindings are tied to a specific build so generating custom code is fine, with rspc the frontend and backend can be deployed out of sync which coluld major issues if we use the same system.
+
+At build time we could parse the `TypeTag` out into a structure we can be included in the HTTP response. An example of how this could look:
+
+```json
+{
+    "result": {
+        "my_date": "2025-12-08T01:13:56.841Z"
+        "nested": {
+            "another_date": "2025-12-08T01:13:56.841Z"
+        }
+    },
+    "map": {
+        "Date": [
+            "my_date",
+            "nested.another_date"
+        ]
+    }
+}
+```

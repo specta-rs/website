@@ -80,5 +80,6 @@ export async function generateMetadata(
     openGraph: {
       images: getPageImage(page).url,
     },
+    robots: page.data.hidden ? { index: false } : undefined,
   };
 }

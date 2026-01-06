@@ -1,0 +1,64 @@
+---
+title: Simplify framework exporters
+hidden: true
+---
+
+Goal:
+ - Currently most frameworks Tauri Specta and TauRPC use string building for the final bindings file. This is error prone, generally badly formatted and more maintaince on maintainers. Is it possible to bring this into Specta?
+
+## Struct-like builder
+
+What if we had a function to build `{ field: raw_string }`.
+
+Okay but what about JSDoc comments?
+
+And optional fields?
+
+And what about prefix offsets for so it's rendered formatted?
+
+Okay this is not so easy while keeping it simple.
+
+## `DataType::Raw(String)`
+
+This makes sense in theory as it can be used with `Struct::named()`'s builder interface.
+
+Downsides: This *will* be used in *Type* implementations not just the exporter code which is abusing it. This sort of abuse would make multi-language support for exporter more error prone.
+
+## Exporter references
+
+What if you can build virtual `DataType::Reference`'s on the exporter (`Typescript`) which can point to a raw Typescript string?
+
+```rs
+let ts = Typescript::new();
+let ref: Reference = ts.raw("'HELLO WORLD'");
+ts::inline(&ts, &Default::default(), ref.into())
+```
+
+This should *just work* when the major `Reference` refactor lands as it will simplify virtual SpectaID's and we can just extend `reference_dt`:
+
+```rs
+fn reference_dt(...) -> Result<(), Error> {
+    // We add this
+    if let Some(rawstring) = ts.references.get(sid) {
+        s.push_str(rawstring);
+    }
+
+    if r.sid() == Any::<()>::ID {
+        s.push_str("any");
+    } else if r.sid() == Unknown::<()>::ID {
+        s.push_str("unknown");
+    } else {
+        ...
+    }
+}
+```
+
+TODO:
+ - How does this interact with Serde checks?
+ - How does this interact with inlining?
+ - What happens if reference is given to wrong `Typescript`? We should have error instead of panic.
+
+
+TODO: Can we use this for `Channel`'s import?
+
+TODO: Make Tauri `Channel` fail for non-JS exporter???. Maybe `DataType::Opaque(...)`?

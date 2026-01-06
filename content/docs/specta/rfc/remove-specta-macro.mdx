@@ -1,0 +1,25 @@
+---
+title: Removing #[specta::specta] macro
+hidden: true
+---
+
+# Why?
+
+`#[specta::specta]` was intended to be a generic function exporting system but i'm not sure it has really panned out. It is only used by Tauri Specta and it bakes in Tauri/Tauri Specta assumptions which don't make it as fit for a generic system.
+
+# Removing it?
+
+We could:
+ - Move it to `specta_functions` crate
+ - Move it to `tauri_specta` crate
+ - Remove it entirely?
+
+# Remove it?
+
+We currently use the `#[specta]` macro to collect type information from functions but what if we could just infer it using Rust?
+
+Rust allows infering the types of functions using traits similar to the following:
+
+```rust
+
+```
