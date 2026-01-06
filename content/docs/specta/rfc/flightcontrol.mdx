@@ -5,10 +5,162 @@ hidden: true
 
 This is an outline of what i've been able to achieve with the Flight Control sponsorship.
 
-## Phase 1
+# Phase 1 (completed)
 
-TODO
+From 2/12/2025 to 9/01/2026
 
-Getting the release out:
+## General
+
+These things are pretty self-explainatory:
+ - General repo maintenance including upgrading to edition 2024.
+ - `diagnostic::on_unimplemented` for better errors - [#401](https://github.com/specta-rs/specta/issues/401)
+ - Official `geojson` crate integration - [#437](https://github.com/specta-rs/specta/pull/437)
+ - Official `geozero` crate integration - [#436](https://github.com/specta-rs/specta/pull/436)
+ - Heavily reduce the usage of `specta::internal`.
+ - Rename `export` to `collect` - [#388](https://github.com/specta-rs/specta/pull/388)
+ - `std` feature like Serde has - [#437](https://github.com/specta-rs/specta/pull/437)
+ - Specta attribute bug - [#393](https://github.com/specta-rs/specta/issues/393)
+ - Migrate tests to `insta` for Snapshot testing - [#434](https://github.com/specta-rs/specta/pull/434)
+
+Bugs:
+ - Typescript header being exported twice [#414](https://github.com/specta-rs/specta/issues/414)
+ - Small TS exporter bug - [#231](https://github.com/specta-rs/specta/issues/231)
+ - Prevent ctor segfaults from panics when using `export` - [#324](https://github.com/specta-rs/specta/issues/324)
+ - Fix invalid output from when exporting w/ TS namespaces - [#409](https://github.com/specta-rs/specta/issues/409)
+
+Minor:
+ - Remove `specta::json` as it's useless in it's current form and i'm unsure whether it would be possible without major tradeoffs - [bbb9c01](https://github.com/specta-rs/specta/commit/bbb9c019264ff389a4f65feca6b3f4d79f796d62)
+
+## Reference overhaul
+
+We have done a massive refactor of how references work. References are core to Specta as they are how a single type can refer to anyother type in it's output (Eg. `{ property: TheReferencedType }`).
+
+[#423](https://github.com/specta-rs/specta/pull/423)
+
+### Remove SpectaID
+
+We need a unique identifier for each type to properly track them in Specta. One issue is that SpectaID are assigned to types with the `specta::Type` macro, but also it's useful to be able to create dyanmic types at runtime. The only solution to this was using an `AtomicUsize` and incrementing it to give each runtime type a unique ID. This causes major issues with the `TypeCollection` because if it can be `Clone`d then the number would reset. Although you could wrap it in an `Arc` this introduces issues with which type collection is responsible for a type (Eg. what if two collections issue ID 1 but then that reference is used on the wrong `TypeCollection`).
+
+I have rebuilt the system to internally use a custom `ArcId` type which hashes the pointer to a heap allocated or static reference. This gives a unique identifier without the same uniqueness issues. All references to a type hold the `ArcId` so the ID (pointer) can never be reused until it's drop and this is all taken care of by Rust.
+
+This allowed `TypeCollection` to be `Clone` again which is a massive DX win.
+
+### Drop `DataType::Literal`
+
+Removing SpectaID also makes comparision against a type a bit more complicated so to fix this we introduced:
+ - `Reference::ref_eq` (inspired by [`Arc::ptr_eq`](https://doc.rust-lang.org/stable/std/sync/struct.Arc.html#method.ptr_eq))
+ - Make `DataType: Hash`
+
+That section requirement is challenging because `DataType::Literal` was able to hold a `f64` which is not `Hash`. After some more thought I think `DataType::Literal` is too Typescript specific and it's usecase can be handled by other features so it can be removed from the core.
+
+It's possible supporting const generics will require us reviewing this decision but for this this is a massive improvement to what we had.
+
+### Opaque references
+
+Sometimes you want to implement `Type` for a Rust-type which has an exporter-specific meaning. For example `Channel` in Tauri doesn't actually mean anything to the Swift exporter, it only means something to the Typescript exporter as it's aware of the Tauri runtime Javascript class that it refers to.
+
+With this I have build a system for opaque references similar to the following:
+
+```rs
+# TODO
+```
+
+### Exporter references
+
+TODO: Explain
+
+## Drop `NamedType` and `Flatten`
+
+Both of these were good ideas but i'm not sure they belong in core.
+
+`NamedType` is a nice convience when doing type-map manipulation but I am trying to design newer API's to make that much harder because it breaks assumptions that Specta's core and exporters depend on. I also believe we can provide better ways to achieve the same sort of things. Closed by [#429](https://github.com/specta-rs/specta/pull/429)
+
+`Flatten` was designed for compile-time validation of whether flattening is valid. Serde don't do this themselves and I think we have kinda figured out why. It's hard to properly tell in all scenarios and now with Serde being slit out of the core flattening is no longer a concept I think the core should know about.
+
+Both of these macros where also commonly forgotten when doing a custom `impl Type for T`, so removing them is nice from that perspective. They were commonly implemented incorrectly in Specta's own official crate implementations (😅) which isn't a great sign of a good API.
+
+## Specta Serde is reborn
+
+[#430](https://github.com/specta-rs/specta/pull/430)
+
+It became clear very early in Specta's development that it can be a very powerful general introspection tool. This is what brought about support for more than Typescript and it has even be intended to extend to data formats. Although most of the ecosystem use [Serde](https://serde.rs), it's not the only possible option and we had started work on trying to break more of the Serde support out of the core. This is where `specta-serde` started.
+
+This PR moves the handling of Serde attributes to the runtime `specta-serde` crate opening up the ability for other formats to implement their own userspace support.
+
+This PR is massive and lead to a massive cleanup of the macros as they are carrying a lot of technical debt.
+
+This PR also aims to correctly implement many missing Serde attributes.
+
+This PR closes the following issues:
+ - [#258](https://github.com/specta-rs/specta/issues/258)
+ - [#232](https://github.com/specta-rs/specta/issues/232)
+ - [#332](https://github.com/specta-rs/specta/issues/332)
+ - [#229](https://github.com/specta-rs/specta/issues/229)
+ - [#318](https://github.com/specta-rs/specta/issues/318)
+ - [#328](https://github.com/specta-rs/specta/issues/328)
+ - [#332](https://github.com/specta-rs/specta/issues/332)
+ - [#114](https://github.com/specta-rs/specta/issues/114)
+ - [#229](https://github.com/specta-rs/specta/issues/229)
+ - [#228](https://github.com/specta-rs/specta/issues/228)
+ - [#190](https://github.com/specta-rs/specta/issues/190)
+ - [#133](https://github.com/specta-rs/specta/issues/133)
+ - [#76](https://github.com/specta-rs/specta/issues/76)
+ - [#402](https://github.com/specta-rs/specta/issues/402)
+ - [#395](https://github.com/specta-rs/specta/issues/395)
+ - [#132](https://github.com/specta-rs/specta/issues/132)
+ - [#130](https://github.com/specta-rs/specta/issues/130)
+ - [#131](https://github.com/specta-rs/specta/issues/131)
+ - [#22](https://github.com/specta-rs/specta/issues/22)
+
+TODO: Discuss breaking changes of runtime attribute handling.
+
+## JSDoc work
+
+This is required to upgrade Tauri Specta as it heavily depends on it. JSDoc is also used for the Typescript exporting of the deprecated attribute and comments so it's also used by the Typescript exporter.
+
+TODO: Explain work
+
+## Incomplete
+
+Things i've started work on but been unable to finish due to technical constraints. I will come back to these once i've had some more time to think.
+
+### TauRPC upgrade
+
+I have started upgrading TauRPC to the `main`. This is a little bit of work with some of the breaking changes and knowing some future ones I am going to make i've been trying to take them into account.
+
+With the new work on framework references I think we can also simplify the exporter code a heap but this is going to be something for the future once the idea is better proven in Tauri Specta.
+
+[#58](https://github.com/MatsDK/TauRPC/pull/58)
+
+### Drop `#[specta::specta]` from core
+
+The whole function handling system is too tied to Tauri Specta, and there has been discussion in the Tauri working group about ideas of a non-macro command system. On top of that it's always been an idea for me to try and hide `#[specta::specta]` under the `#[tauri::command]` macro as having both is bad DX.
+
+I have done up a PR for removing this stuff but it would be a breaking change to the code that is within Tauri so this is going to need to be approached with caution.
+
+Also with the introduction of `Reference::opaque` I also want to change the `Type` implementation for `Channel` which is going to be rough.
+
+I came up with a prototype for the minimal changes to Tauri to allow us to drop `specta::specta` [here](https://github.com/oscartbeaumont/tauri/commit/5719486dc97a17f90e94d018505eaa31677960c5). These need some more cleanup before I will do an upstream PR but it's promising. I also chatted with Lucas from the Tauri core-team and he seemed to be able to get behind it but i'm not sure if everyone will be thrilled by these changes as they are basically Tauri Specta-specific code in the Tauri code (although a very minimal amount).
+
+This also closes function system related issues as not planned:
+ - [#379](https://github.com/specta-rs/specta/issues/379)
+ - [#213](https://github.com/specta-rs/specta/issues/213) - leaving open until we have a solution with the next version of the function integration.
+
+[#432](https://github.com/specta-rs/specta/pull/432)
+
+## Phase 2
+
+Blocking Release:
  - Better testing
- - Upgrade real-world codebases
+ - Tauri-stuff sorted. This is a major blocker for the next release.
+ - https://github.com/specta-rs/specta/issues/356
+ - Tauri Specta upgrade finished
+ - TauRPC upgrade finished
+
+Would be nice:
+ - Upgrade a couple of real-world codebases because I suspect we are going to find regressions with this massive core work.
+ - Nauanced types prototype
+ - Figure out per-phase handling in Tauri Specta/TauRPC (now that the core can handle it) -> Main issue is around duplicated types.
+ - `impl Type for Result<T, E>` (likely blocked on removal of `#[specta::specta]`)
+ - `MaybeUndefined` support
+ - Release Specta
