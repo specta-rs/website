@@ -14,14 +14,15 @@ From 2/12/2025 to 9/01/2026
 These things are pretty self-explainatory:
  - General repo maintenance including upgrading to edition 2024.
  - `diagnostic::on_unimplemented` for better errors - [#401](https://github.com/specta-rs/specta/issues/401)
- - Official `geojson` crate integration - [#437](https://github.com/specta-rs/specta/pull/437) - will merge after (#430)
- - Official `geozero` crate integration - [#436](https://github.com/specta-rs/specta/pull/436) - will merge after (#430)
+ - Official `geojson` crate integration - [#437](https://github.com/specta-rs/specta/pull/437) - will merge after (#430) allowing you to remove your fork
+ - Official `geozero` crate integration - [#436](https://github.com/specta-rs/specta/pull/436) - will merge after (#430) allowing you to remove your fork
  - Heavily reduce the usage of `specta::internal`.
  - Rename `export` to `collect` - [#388](https://github.com/specta-rs/specta/pull/388)
  - `std` feature like Serde has - [#437](https://github.com/specta-rs/specta/pull/437)
  - Specta attribute bug - [#393](https://github.com/specta-rs/specta/issues/393)
  - Migrate tests to `insta` for Snapshot testing - [#434](https://github.com/specta-rs/specta/pull/434)
  - Fixed flood of warnings and Clippy issues when compiling
+ - Drop `#[specta(rename_from_path = ...)]` attribute. It was only ever used by PCR as far as I know and undocumented.
 
 Bugs:
  - Typescript header being exported twice [#414](https://github.com/specta-rs/specta/issues/414)
@@ -168,6 +169,7 @@ This results of this are:
  - More reliable due to a single shared implementation across Specta-based frameworks which can be well tested
  - Mostly-support for multi-file exporting without Tauri Specta and TauRPC needing to think about type imports
  - More consistent bindings format (Specta can have a consistent reasonable default for people who disable formatting on that file)
+ - Implicit JSDoc support. Eg. `specta_typescript::Typescript` can be rewritten as `specta_typescript::JSDoc` and it should *just work*, no other changes (*unless the runtime injects custom code into the bindings file*)
 
 ## Drop `NamedType` and `Flatten`
 
@@ -183,52 +185,93 @@ Both of these macros where also commonly forgotten when doing a custom `impl Typ
 
 [#430](https://github.com/specta-rs/specta/pull/430) - incomplete but getting very close
 
-It became clear very early in Specta's development that it can be a very powerful general introspection tool. This is what brought about support for more than Typescript and it has even be intended to extend to data formats. Although most of the ecosystem use [Serde](https://serde.rs), it's not the only possible option and we had started work on trying to break more of the Serde support out of the core. This is where `specta-serde` started.
+It became clear very early in Specta's development that it can be a very powerful general introspection tool. This is what brought about support for more langauges than just Typescript and it has even be intended to extend to data formats. Although most of the ecosystem use [Serde](https://serde.rs), it's not the only possible option and we had started work on trying to break more of the Serde support out of the Specta core. This is where `specta-serde` started but i've always been hazzy on exactly how this idea was going to be achieved.
 
-This PR moves the handling of Serde attributes to the runtime `specta-serde` crate opening up the ability for other formats to implement their own userspace support.
+This This PR does a massive refactor which moves the handling of Serde attributes from the Specta macro to the runtime `specta-serde` crate opening up the ability for other formats to implement their own userspace support.
 
-This PR is massive and lead to a massive cleanup of the macros as they are carrying a lot of technical debt.
+The main concept is that when you pass a type with attributes all of them are visible in the `TokenStream` Specta's macros see. For example:
 
-This PR also aims to correctly implement many missing Serde attributes.
+```bash
+#[derive(Type, MyMacro)]
+pub struct Testing {
+    #[my_attribute(something = "abc")]
+    pub testing: String,
+}
+```
 
-This PR closes the following issues:
+With the new Specta system when we create `DataType::Struct` we also include a lowered version of the raw `TokenStream` passed to `my_attribute` on the `Field`. The same is done for enum variant and contrainer attributes. Then the runtime code in `specta-serde`/any userspace implementation can parse the raw-attributes in whatever way it wants and it can tranform the `DataType` before it's given to `specta-typescript` to implement tagging, renames and more.
+
+Supporting multiple formats is cool but how is this generally useful? This enables per-phase attributes.
+
+For example `specta_serde` can expose:
+```rust
+// This is not an actual API but it shows the idea better and the final API is undecided.
+
+pub fn transform_for_serialize(dt: DataType) -> DataType;
+
+pub fn transform_for_deserialize(dt: DataType) -> DataType;
+
+pub fn transform_for_both(dt: DataType) -> DataType;
+```
+
+When paired with Specta Typescript you can export your type and account for attributes which are differently by Serde between `Serialize` and `Deserialize`. In practice this feature is a bit advanced for an average user but my vision is that TauRPC and Tauri Specta will just handle this internally and end-users don't even need to know about it.
+
+<Callout>This PR implements the Specta core support for per-phase attributes but doesn't actually expose the data from the Serde crate at the moment as it's unclear what the correct API is. <br /> <br /> One major concern I have is that if a type is used by the user for both serialization and deserialization it will need to be exported twice in the bindings file which I could see users disliking. I have some ideas to fix this but for now the Specta core support is the main focus, I can iterate on the high-level APIs later.</Callout>
+
+This PR also aims to implement many missing Serde attributes.
+
+#258 & #232 & #332 & #229 & #328 & #332 & #114 & #229 & #402 & #395 & #132 & #130 & #22
+
+This PR should close the following issues:
  - [#258](https://github.com/specta-rs/specta/issues/258)
  - [#232](https://github.com/specta-rs/specta/issues/232)
  - [#332](https://github.com/specta-rs/specta/issues/332)
  - [#229](https://github.com/specta-rs/specta/issues/229)
- - [#318](https://github.com/specta-rs/specta/issues/318)
  - [#328](https://github.com/specta-rs/specta/issues/328)
- - [#332](https://github.com/specta-rs/specta/issues/332)
  - [#114](https://github.com/specta-rs/specta/issues/114)
- - [#229](https://github.com/specta-rs/specta/issues/229)
- - [#228](https://github.com/specta-rs/specta/issues/228)
- - [#190](https://github.com/specta-rs/specta/issues/190)
- - [#133](https://github.com/specta-rs/specta/issues/133)
- - [#76](https://github.com/specta-rs/specta/issues/76)
  - [#402](https://github.com/specta-rs/specta/issues/402)
  - [#395](https://github.com/specta-rs/specta/issues/395)
  - [#132](https://github.com/specta-rs/specta/issues/132)
  - [#130](https://github.com/specta-rs/specta/issues/130)
- - [#131](https://github.com/specta-rs/specta/issues/131)
  - [#22](https://github.com/specta-rs/specta/issues/22)
 
-TODO: Discuss breaking changes of runtime attribute handling.
+It also makes progress towards another 5-or-so more but they require more specific work.
 
-## JSDoc work
+One major thing to note with this change is that previously the following would compile:
+```rust
+#[derive(Specta)]
+#[serde(untagged)] // Any `serde` attributes.
+enum Testing { ... }
+```
 
-This is required to upgrade Tauri Specta as it heavily depends on it. JSDoc is also used for the Typescript exporting of the deprecated attribute and comments so it's also used by the Typescript exporter.
+but with the new system `serde` attributes are treated as unknown by Specta so the user will be asked by Rust to include `serde::Serialize`. This is great as in a real-world senario if your using a Serde attribute, you will need to Serde runtime on your type.
 
-TODO: Explain work
+Another example of this is that previously:
+```rust
+#[derive(Specta)]
+#[specta(untagged)] // Any `serde`-format attributes passed to `specta`
+enum Testing { ... }
+```
+
+would work as we parsed the arguments from `specta` and `serde` attributes into the same arguments struct. This will fail to compile as now only Specta-specific attributes can be pased to `#[specta(...)]`. This is great as in practice `#[specta(untagged)]` is not processed by `serde::{Serialize, Deserialize}` so this code would have been broken.
+
+Sadly as this PR is a large refactor and new paradigm, I expect some regressions in the short-term but unit testing will help to iron these out. I am likely going to try and upgrade some real-world codebases to get a better idea of the impact on regular library users to see if a codemod or better guidance can be provided.
+
+## JSDoc rework
+
+This is required to upgrade Tauri Specta as it heavily depends on it. JSDoc is also used for the Typescript exporting of the deprecated attribute and comments. The support for exporting doc comments and deprecated attributes on struct fields and enum variants with Typescript is also a little buggy in `main` due to this.
+
+The JSDoc API is still not complete but it's reusing much more of the Typescript exporters code and is now exposed as `specta_typescript::JSDoc` instead of `specta_jsdoc::JSDoc` as it is not worth it when JSDoc needs so many of the Typescript exporters internals (it's literally a `pub struct JSDoc(crate::Typescript);` where `Typescript` has a hidden `jsdoc: bool` field for slightly adjusting the output).
 
 ## Incomplete
 
-Things i've started work on but been unable to finish due to technical constraints. I will come back to these once i've had some more time to think.
+Things i've started work on but been unable to finish due to technical constraints. I will come back to these once i've had some more time to work/think.
 
 ### TauRPC upgrade
 
-I have started upgrading TauRPC to the `main`. This is a little bit of work with some of the breaking changes and knowing some future ones I am going to make i've been trying to take them into account.
+I have started upgrading TauRPC to the `main`. This is a little bit of work with some of the breaking changes and with knowledge of some future ones I am going to make i've been trying to take them into account.
 
-With the new work on framework references I think we can also simplify the exporter code a heap but this is going to be something for the future once the idea is better proven in Tauri Specta.
+With the new "framework references" feature I think we can also simplify the exporter code a heap but this is going to be something for once the idea is proven out in Tauri Specta as I can afford to ship beta Specta APIs inside Tauri Specta as it's me who maintains it.
 
 [#58](https://github.com/MatsDK/TauRPC/pull/58)
 
@@ -236,11 +279,13 @@ With the new work on framework references I think we can also simplify the expor
 
 The whole function handling system is too tied to Tauri Specta, and there has been discussion in the Tauri working group about ideas of a non-macro command system. On top of that it's always been an idea for me to try and hide `#[specta::specta]` under the `#[tauri::command]` macro as having both is bad DX.
 
-I have done up a PR for removing this stuff but it would be a breaking change to the code that is within Tauri so this is going to need to be approached with caution.
+I have done up a PR for removing this stuff but it would be a breaking change to the code that is within the Tauri crate so this is going to need to be approached with caution.
 
 Also with the introduction of `Reference::opaque` I also want to change the `Type` implementation for `Channel` which is going to be rough.
 
-I came up with a prototype for the minimal changes to Tauri to allow us to drop `specta::specta` [here](https://github.com/oscartbeaumont/tauri/commit/5719486dc97a17f90e94d018505eaa31677960c5). These need some more cleanup before I will do an upstream PR but it's promising. I also chatted with Lucas from the Tauri core-team and he seemed to be able to get behind it but i'm not sure if everyone will be thrilled by these changes as they are basically Tauri Specta-specific code in the Tauri code (although a very minimal amount).
+This work is generally skewed towards Tauri Specta as TauRPC doesn't use the function macros from my knowledge (it only uses the `tauri::Channel` implementation) but these changes are *major* blockers for the next Specta release going forward.
+
+I came up with a prototype for the minimal changes to Tauri to allow us to drop `specta::specta` from Tauri Specta [here](https://github.com/oscartbeaumont/tauri/commit/5719486dc97a17f90e94d018505eaa31677960c5). These need some more cleanup before I will do an upstream PR but it's promising. I also chatted with Lucas from the Tauri core-team and he seemed to be able to get behind it but i'm not sure if everyone will be thrilled by these changes as they are basically Tauri Specta-specific code in the Tauri code (although a very minimal amount).
 
 This also closes function system related issues as not planned:
  - [#379](https://github.com/specta-rs/specta/issues/379)
@@ -248,33 +293,25 @@ This also closes function system related issues as not planned:
 
 [#432](https://github.com/specta-rs/specta/pull/432)
 
-### Release notes:
-
-The following are the user-facing breaking changes:
- - `std` feature
- - `#[serde(...)]` thing - TODO: Explain this.
- - Drop `#[specta(rename_from_path = ...)]` attribute
-
 ## Phase 2
-
-TODO:
- - Cleanup default formatting of bindings
- - Overhaul testing
 
 Blocking Release:
  - Tauri-stuff sorted. This is a major blocker for the next release.
  - https://github.com/specta-rs/specta/issues/356
- - Tauri Specta upgrade finished
- - TauRPC upgrade finished
+ - Cleanup default formatting of bindings (before we finish overhaulling testing cause it'll break all of them)
+ - Overhaul testing as the runtime-attribute refactor has broken a lot 😅
+ - Tauri Specta upgraded
+ - TauRPC upgraded
+
 
 Would be nice:
  - Upgrade a couple of real-world codebases because I suspect we are going to find regressions with this massive core work.
- - Nauanced types prototype
- - Figure out per-phase handling in Tauri Specta/TauRPC (now that the core can handle it) -> Main issue is around duplicated types.
+ - Nauanced types prototype. I did a Specta PR [#419](https://github.com/specta-rs/specta/pull/419) but most of the work for this will be in Tauri Specta/TauRPC and also I think we will need changes to Tauri for BigInt support.
+ - Figure out the specifics of per-phase handling in Tauri Specta/TauRPC with `specta-serde` -> Main issue is around duplicated types, maybe we export `{TypeName}_Serialize` & `{TypeName}_Deserialize` and then `export type {TypeName} = {TypeName}_Serialize | {TypeName}_Deserialize;`.
+ - Figure out how to make `alias` properly exported to Typescript as a descriminated union. This is a bit of a remaining question in how `specta-serde` needs to work.
  - `impl Type for Result<T, E>` (likely blocked on removal of `#[specta::specta]`)
- - Figure out how to make `alias` properly exported to Typescript as a descriminated union
- - `MaybeUndefined` support
- - Documentation overhaul (including generating documentation for all-possible attributes)
- - Release Specta
+ - Figure out how `MaybeUndefined` could be represented with Specta/`DataType`.
+ - Documentation overhaul (including documentation for all-possible attributes that we support)
+ - Release next `specta-rc.23`
 
- Upstream: https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater
+Potentially look at upstreaming [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater) into Tauri Plugins repo as they do already have Specta in that repo.
