@@ -14,74 +14,174 @@ From 2/12/2025 to 9/01/2026
 These things are pretty self-explainatory:
  - General repo maintenance including upgrading to edition 2024.
  - `diagnostic::on_unimplemented` for better errors - [#401](https://github.com/specta-rs/specta/issues/401)
- - Official `geojson` crate integration - [#437](https://github.com/specta-rs/specta/pull/437)
- - Official `geozero` crate integration - [#436](https://github.com/specta-rs/specta/pull/436)
+ - Official `geojson` crate integration - [#437](https://github.com/specta-rs/specta/pull/437) - will merge after (#430)
+ - Official `geozero` crate integration - [#436](https://github.com/specta-rs/specta/pull/436) - will merge after (#430)
  - Heavily reduce the usage of `specta::internal`.
  - Rename `export` to `collect` - [#388](https://github.com/specta-rs/specta/pull/388)
  - `std` feature like Serde has - [#437](https://github.com/specta-rs/specta/pull/437)
  - Specta attribute bug - [#393](https://github.com/specta-rs/specta/issues/393)
  - Migrate tests to `insta` for Snapshot testing - [#434](https://github.com/specta-rs/specta/pull/434)
+ - Fixed flood of warnings and Clippy issues when compiling
 
 Bugs:
  - Typescript header being exported twice [#414](https://github.com/specta-rs/specta/issues/414)
  - Small TS exporter bug - [#231](https://github.com/specta-rs/specta/issues/231)
- - Prevent ctor segfaults from panics when using `export` - [#324](https://github.com/specta-rs/specta/issues/324)
+ - Prevent ctor segfaults if Specta stack overflows when using `export` feature - [#324](https://github.com/specta-rs/specta/issues/324)
  - Fix invalid output from when exporting w/ TS namespaces - [#409](https://github.com/specta-rs/specta/issues/409)
 
 Minor:
- - Remove `specta::json` as it's useless in it's current form and i'm unsure whether it would be possible without major tradeoffs - [bbb9c01](https://github.com/specta-rs/specta/commit/bbb9c019264ff389a4f65feca6b3f4d79f796d62)
+ - Remove `specta::json` as it's useless in it's current form and i'm unsure whether it would be possible without major tradeoffs (tracked in [#94](https://github.com/specta-rs/specta/issues/94)) - [bbb9c01](https://github.com/specta-rs/specta/commit/bbb9c019264ff389a4f65feca6b3f4d79f796d62)
 
 ## Reference overhaul
 
-We have done a massive refactor of how references work. References are core to Specta as they are how a single type can refer to anyother type in it's output (Eg. `{ property: TheReferencedType }`).
+I have done a massive refactor of how references work. References are core to Specta as they are how a single type can refer to another type in it's output (Eg. `{ property: TheReferencedType }` contains a property with a reference to`TheReferenceType`).
 
-[#423](https://github.com/specta-rs/specta/pull/423)
+All of these related changes where merged in a larger PR [#423](https://github.com/specta-rs/specta/pull/423)
 
 ### Remove SpectaID
 
-We need a unique identifier for each type to properly track them in Specta. One issue is that SpectaID are assigned to types with the `specta::Type` macro, but also it's useful to be able to create dyanmic types at runtime. The only solution to this was using an `AtomicUsize` and incrementing it to give each runtime type a unique ID. This causes major issues with the `TypeCollection` because if it can be `Clone`d then the number would reset. Although you could wrap it in an `Arc` this introduces issues with which type collection is responsible for a type (Eg. what if two collections issue ID 1 but then that reference is used on the wrong `TypeCollection`).
+In Specta we need a unique identifier for each type to properly deduplicate them when exporting, so a type can only every show up once in a `TypeCollection`.
 
-I have rebuilt the system to internally use a custom `ArcId` type which hashes the pointer to a heap allocated or static reference. This gives a unique identifier without the same uniqueness issues. All references to a type hold the `ArcId` so the ID (pointer) can never be reused until it's drop and this is all taken care of by Rust.
+One issue in older versions of SpectaID is that types where assigned an identifier in the `specta::Type` macro, but it is also useful to be able to create dynamic types and export them at runtime. My original solution on `main` prior to this refactor was using an `AtomicUsize` stored on the `TypeCollection` and incrementing it to give each runtime type a unique ID.
 
-This allowed `TypeCollection` to be `Clone` again which is a massive DX win.
+This causes major DX issues with `TypeCollection` because if it can be `Clone`d then the `Atomic` would reset and potentially issue overlapping identifiers. One potential solution is that you could wrap it the `AtomicUsize` in an `Arc` to allow it to be shared but this introduces issues with which type collection is responsible for a type as they could branch when cloned but still issue duplicate identifiers from that point forward. This is all confusing and something we don't want end-users to have to think about.
+
+I have rebuilt the system to internally use a custom `ArcId` type which hashes the pointer to a heap allocated or static reference. This gives a unique identifier without us needing to uphold the uniqueness guarantees as that's done by the Rust compiler. All references to a type hold the `ArcId` so the ID (pointer) can never be reused until every single reference is dropped, meaning we can't issue overlapping identifiers *ever*. This also allowed us to restore `Clone` on `TypeCollection` without introducing any confusion. Now supporting runtime types is something that just works how you would expect it.
 
 ### Drop `DataType::Literal`
 
-Removing SpectaID also makes comparision against a type a bit more complicated so to fix this we introduced:
- - `Reference::ref_eq` (inspired by [`Arc::ptr_eq`](https://doc.rust-lang.org/stable/std/sync/struct.Arc.html#method.ptr_eq))
- - Make `DataType: Hash`
+In replacing SpectaID I went a step forward and decided to make these identifiers an implementation detail. The main advantage to this is that it removes a user-facing concept simplifying the library and also makes it much harder to abuse Specta's internals.
 
-That section requirement is challenging because `DataType::Literal` was able to hold a `f64` which is not `Hash`. After some more thought I think `DataType::Literal` is too Typescript specific and it's usecase can be handled by other features so it can be removed from the core.
+It does come with some downsides. Primarily that it makes comparision against a type a bit more complicated so to fix this I introduced `Reference::ref_eq` (inspired by [`Arc::ptr_eq`](https://doc.rust-lang.org/stable/std/sync/struct.Arc.html#method.ptr_eq)).
 
-It's possible supporting const generics will require us reviewing this decision but for this this is a massive improvement to what we had.
+Now that SpectaID is hidden one issue I ran into is that `specta-serde` keeps track of references it has crawled, this way is to prevent it stack overflowing on recursive types, however this was previously expressed as `HashSet<SpectaID>` which is no longer possible. With these changes I decided to make `Reference` implement `Hash` which in tern required making `DataType` implement `Hash` as `Reference` holds a list of generics (Eg. `{ property: MyReference<String> }`, where the generic is the `DataType` returned from `<String as specta::Type>::reference()`). `DataType` never implemented `Hash` due to `DataType::Literal(LiteralType::f64(...))` which is not `Hash` due to `f64: !Hash`.
+
+One unexpected advantage of this change is that because `HashSet<Reference>` hashes the entire `Reference` including the generics, `specta-serde` will process each generic being passed to a referenced type separately which is actually more correct than the previous implementation as for example if the generic is used in a flatten field, the value of the generic would affect whether the type should be rejected or not. This was an awesome thing to fall out of the refactor I didn't even know was a problem.
+
+It's possible supporting const generics will require us to review this decision as a const `f64` might need to be put into the `DataType` enum but for now this is a massive improvement to what we had. I also wonder if because a const `f64` has to come from the compiler (not runtime) we can express it in a different form (maybe `&'static str`) which can be safely hashed as we don't need to support floating-point math on it. However I need to read more about Rust's rules of floating point numbers in const contexts to understand if this is safe or not.
 
 ### Opaque references
 
-Sometimes you want to implement `Type` for a Rust-type which has an exporter-specific meaning. For example `Channel` in Tauri doesn't actually mean anything to the Swift exporter, it only means something to the Typescript exporter as it's aware of the Tauri runtime Javascript class that it refers to.
+Sometimes you want to implement `Type` for a Rust-type which has an exporter-specific meaning. For example `Channel` in Tauri doesn't actually mean anything to the Swift exporter, it only means something to the Typescript exporter as it's aware of the Tauri JS runtime which has a Javascript class to represent a `Channel`.
 
-With this I have build a system for opaque references similar to the following:
+With this I have build a system for opaque references (here is a real-world example for `specta_typescript::Any`):
 
 ```rs
-# TODO
+pub struct Any<T = ()>(T);
+
+pub(crate) static ANY_REFERENCE: Reference = Reference::opaque_from_sentinel({
+    static SENTINEL: () = ();
+    &SENTINEL
+});
+
+impl<T> Type for Any<T> {
+    fn definition(_: &mut TypeCollection) -> DataType {
+        // This just be `Reference::opaque()` but it *must* be cloned and identicial on each call.
+        // You could have a `OnceLock<Reference>` which is simple but it would require the memory allocated by the `Reference::opaque()` call to exist for the lifetime of the program.
+        // Using `Reference::opaque_from_sentinel` doesn't allocate a reference but is also a lot more error prone. Eg. using `const` instead of `static` will break it's invariants.
+
+        DataType::Reference(ANY_REFERENCE.clone())
+    }
+}
 ```
+
+Then in the Typescript exporter we do something like:
+```rust
+fn export_reference(reference: &Reference) -> String {
+    // Note: This is a simplification of the real-world. We actually use "exporter references" to implement this (but they are explained in the next section).
+    if reference == &ANY_REFERENCE {
+        "any".to_string()
+    } else {
+        format!("{}", reference.name()) // This also handles generics, and more in the real-world implementation.
+    }
+}
+```
+
+In result this allows us to do something like the following:
+```rust
+#[derive(Type)]
+pub struct Something {
+    #[specta(type = specta_typescript::Any)]
+    pub field: SomeNonSpectaType,
+}
+```
+
+I am also thinking of moving Tauri Specta and TauRPC to use this for supporting `tauri::Channel` as the `TypeCollection` manipulation we used to do is no longer supported. This solution is much more robust as the exporters can detect unhandled opaque references and give useful errors instead of the manual manipulation causing internal panicking due to broken invariants of `TypeCollection`.
 
 ### Exporter references
 
-TODO: Explain
+In Tauri Specta and TauRPC's exporter code they express custom Typescript objects similar to the following:
+
+```rust
+format!("{{ some_property: {} }}", specta_typescript::primtives::export(...));
+```
+
+Which looks simple in this example but then they want to export Rust documentation comments, deprecated attributes which requires a JSDoc builder.
+
+And then they want to handle cross-file imports for multi-file exporters, and more.
+
+and very quickly your reimplementing half of `specta-typescript` in the downstream framework, but your custom implementation doesn't benefit from the rigor of Specta's tests and is a pain to maintain.
+
+The core reason why these types are usually manually constructed in strings instead of being given to Specta is because they want to export things which can't be expressed by `DataType`. For example Tauri Specta exports something like:
+
+```ts
+export const commands = {
+  my_command: (...) => TAURI_INVOKE("command", ...)
+}
+````
+
+a closure and it's runtime code can't be expressed by `specta::DataType` because that would require being able to represent all Typescript syntax 😅.
+
+So exporter references are the solution I came up with. They look like the following:
+
+```rust
+let ts = specta_typescript::Typescript::default();
+
+let mut s = specta::datatype::Struct::named();
+for command in commands {
+    // Some logic to build up the closure here
+
+    let mut field = specta::datatype::Field::new(self.define(format!("({arguments}) => {body}")).into());
+    field.set_deprecated(command.deprecated().cloned());
+    field.set_docs(command.docs().clone());
+    s = s.field(command.name().to_lower_camel_case(), field);
+}
+
+println!("{}", specta_typescript::primitives::inline(self, cfg.types, &s.build())?);
+```
+
+The way this works is similar to opaque references where `Typescript` holds a `Vec<(Reference, Cow<'static, str>)>,` and then in `export_reference` we do something like:
+
+```rust
+fn export_reference(reference: &Reference) -> String {
+    if let Some((_, typescript)) = ts.references.iter().find(|(re, _)| re.ref_eq(r)) {
+        s.push_str(typescript);
+        return Ok(());
+    } else {
+        format!("{}", reference.name()) // This also handles generics, and more in the real-world implementation.
+    }
+}
+```
+
+This results of this are:
+ - Easier maintaince for TauRPC and Tauri Specta (once they adopt the new API)
+ - More reliable due to a single shared implementation across Specta-based frameworks which can be well tested
+ - Mostly-support for multi-file exporting without Tauri Specta and TauRPC needing to think about type imports
+ - More consistent bindings format (Specta can have a consistent reasonable default for people who disable formatting on that file)
 
 ## Drop `NamedType` and `Flatten`
 
 Both of these were good ideas but i'm not sure they belong in core.
 
-`NamedType` is a nice convience when doing type-map manipulation but I am trying to design newer API's to make that much harder because it breaks assumptions that Specta's core and exporters depend on. I also believe we can provide better ways to achieve the same sort of things. Closed by [#429](https://github.com/specta-rs/specta/pull/429)
+`NamedType` is a nice convience when doing type-map manipulation but I am trying to design newer API's to make that much harder because it breaks assumptions that Specta's core and exporters depend on. I also believe we can provide better ways to achieve the same sort of things (especially in related with the `Reference` overhaul). Closed by [#429](https://github.com/specta-rs/specta/pull/429)
 
-`Flatten` was designed for compile-time validation of whether flattening is valid. Serde don't do this themselves and I think we have kinda figured out why. It's hard to properly tell in all scenarios and now with Serde being slit out of the core flattening is no longer a concept I think the core should know about.
+`Flatten` was designed for compile-time validation of whether flattening is valid. Serde don't do this themselves and I think we have kinda figured out why. It's hard to properly tell in all scenarios and with the move to unbake Serde from Specta's core for better separation of concerns this feature is no longer worth it.
 
-Both of these macros where also commonly forgotten when doing a custom `impl Type for T`, so removing them is nice from that perspective. They were commonly implemented incorrectly in Specta's own official crate implementations (😅) which isn't a great sign of a good API.
+Both of these macros where also commonly forgotten when doing a custom `impl Type for T`, so removing them is nice to simplify the core and reduce bugs with Specta. They were commonly implemented incorrectly in Specta's own official crate implementations (😅) which isn't a great sign of a good API.
 
 ## Specta Serde is reborn
 
-[#430](https://github.com/specta-rs/specta/pull/430)
+[#430](https://github.com/specta-rs/specta/pull/430) - incomplete but getting very close
 
 It became clear very early in Specta's development that it can be a very powerful general introspection tool. This is what brought about support for more than Typescript and it has even be intended to extend to data formats. Although most of the ecosystem use [Serde](https://serde.rs), it's not the only possible option and we had started work on trying to break more of the Serde support out of the core. This is where `specta-serde` started.
 
@@ -148,10 +248,20 @@ This also closes function system related issues as not planned:
 
 [#432](https://github.com/specta-rs/specta/pull/432)
 
+### Release notes:
+
+The following are the user-facing breaking changes:
+ - `std` feature
+ - `#[serde(...)]` thing - TODO: Explain this.
+ - Drop `#[specta(rename_from_path = ...)]` attribute
+
 ## Phase 2
 
+TODO:
+ - Cleanup default formatting of bindings
+ - Overhaul testing
+
 Blocking Release:
- - Better testing
  - Tauri-stuff sorted. This is a major blocker for the next release.
  - https://github.com/specta-rs/specta/issues/356
  - Tauri Specta upgrade finished
@@ -162,5 +272,9 @@ Would be nice:
  - Nauanced types prototype
  - Figure out per-phase handling in Tauri Specta/TauRPC (now that the core can handle it) -> Main issue is around duplicated types.
  - `impl Type for Result<T, E>` (likely blocked on removal of `#[specta::specta]`)
+ - Figure out how to make `alias` properly exported to Typescript as a descriminated union
  - `MaybeUndefined` support
+ - Documentation overhaul (including generating documentation for all-possible attributes)
  - Release Specta
+
+ Upstream: https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater
