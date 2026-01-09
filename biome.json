@@ -10,11 +10,10 @@
     "includes": [
       "**",
       "!node_modules",
-      "!.next",
       "!dist",
       "!build",
       "!.source",
-      "!cloudflare-env.d.ts"
+      "!src/cloudflare-env.d.ts"
     ]
   },
   "formatter": {

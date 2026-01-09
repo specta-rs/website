@@ -1,0 +1,42 @@
+import { getLLMText, source } from "@/lib/source";
+import { isMarkdownPreferred } from "fumadocs-core/negotiation";
+import { unstable_notFound } from "waku/router/server";
+
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const slug =
+    url.pathname === "/llms.mdx/docs"
+      ? []
+      : removePrefix(url.pathname, "/llms.mdx/docs/").split("/");
+  const page = source.getPage(slug);
+  if (!page) {
+    if (isMarkdownPreferred(request))
+      return new Response("# 404 Not Found", {
+        status: 404,
+        headers: { "Content-Type": "text/markdown" },
+      });
+    else unstable_notFound();
+  }
+
+  return new Response(await getLLMText(page), {
+    headers: {
+      "Content-Type": "text/markdown",
+    },
+  });
+}
+
+export async function getConfig() {
+  const pages = source
+    .generateParams()
+    .map((item) => (item.lang ? [item.lang, ...item.slug] : item.slug));
+
+  return {
+    render: "dyanmic",
+    // TODO: Fix
+    // render: "static",
+    staticPaths: pages,
+  } as const;
+}
+
+const removePrefix = (s: string, p: string) =>
+  s.startsWith(p) ? s.slice(p.length) : s;

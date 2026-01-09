@@ -1,9 +1,16 @@
 @import "tailwindcss";
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
+@import "@fontsource-variable/inter/index.css";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
+html {
+  /*font-family: 'Inter', sans-serif;*/
+  font-family: Inter, Inter Fallback, sans-serif;
+  font-style: normal;
+}
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);

@@ -1,3 +1,6 @@
+import { source } from "@/lib/source";
+import { PageProps } from "waku/router";
+import { createRelativeLink } from "fumadocs-ui/mdx";
 import {
   DocsBody,
   DocsDescription,
@@ -5,21 +8,16 @@ import {
   DocsTitle,
   PageLastUpdate,
 } from "fumadocs-ui/layouts/docs/page";
-import { createRelativeLink } from "fumadocs-ui/mdx";
 import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { getPageImage, source } from "@/lib/source";
-import { getMDXComponents } from "@/mdx-components";
 import { SquarePen } from "lucide-react";
+import { getMDXComponents } from "@/mdx-components";
+import { unstable_notFound } from "waku/router/server";
 
-export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
-  const params = await props.params;
-  const page = source.getPage(params.slug);
-  if (!page) notFound();
+export default function DocPage({ slugs }: PageProps<"/docs/[...slugs]">) {
+  const page = source.getPage(slugs);
+  if (!page) unstable_notFound();
 
   const MDX = page.data.body;
-
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
       <DocsTitle>{page.data.longTitle || page.data.title}</DocsTitle>
@@ -62,23 +60,13 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   );
 }
 
-export async function generateStaticParams() {
-  return source.generateParams();
-}
-
-export async function generateMetadata(
-  props: PageProps<"/docs/[[...slug]]">,
-): Promise<Metadata> {
-  const params = await props.params;
-  const page = source.getPage(params.slug);
-  if (!page) notFound();
+export async function getConfig() {
+  const pages = source
+    .generateParams()
+    .map((item) => (item.lang ? [item.lang, ...item.slug] : item.slug));
 
   return {
-    title: page.data.longTitle || page.data.title,
-    description: page.data.description,
-    openGraph: {
-      images: getPageImage(page).url,
-    },
-    robots: page.data.hidden ? { index: false } : undefined,
-  };
+    render: "static" as const,
+    staticPaths: pages,
+  } as const;
 }

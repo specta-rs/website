@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "main": ".open-next/worker.js",
   "name": "specta-website",
+  "main": "./dist/server/serve-cloudflare.js",
   "compatibility_date": "2025-12-31",
   "compatibility_flags": ["nodejs_compat"],
   // https://github.com/pacocoursey/next-themes/issues/370
@@ -15,7 +15,14 @@
     "enabled": true
   },
   "assets": {
-    "directory": ".open-next/assets",
-    "binding": "ASSETS"
-  }
+    "directory": "./dist/public",
+    "html_handling": "drop-trailing-slash"
+  },
+  "rules": [
+    {
+      "type": "ESModule",
+      "globs": ["**/*.js", "**/*.mjs"]
+    }
+  ],
+  "no_bundle": true
 }
