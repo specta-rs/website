@@ -1,0 +1,10 @@
+/*
+  x-frame-options: DENY
+  x-xss-protection: 0
+  x-content-type-options: nosniff
+  referrer-policy: strict-origin-when-cross-origin
+  strict-transport-security: max-age=63072000; includeSubDomains; preload
+
+/assets/*
+  cache-control: public, max-age=31556952, immutable
+  content-security-policy: default-src 'none';

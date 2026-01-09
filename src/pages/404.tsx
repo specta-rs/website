@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { Home, ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { baseOptions } from "@/lib/layout.shared";
+import { Link } from "waku";
 
 export default function NotFound() {
   return (
@@ -22,7 +22,7 @@ export default function NotFound() {
             </p>
 
             <Link
-              href="/"
+              to="/"
               className={cn(
                 buttonVariants({ variant: "primary" }),
                 "gap-2 px-6 py-3 text-base",

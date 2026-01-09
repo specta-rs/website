@@ -1,5 +1,4 @@
-import Link from "next/link";
-import Image from "next/image";
+import { Link } from "waku";
 import {
   ArrowRight,
   Code2,
@@ -55,7 +54,7 @@ function Hero() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link
-            href="/docs"
+            to="/docs"
             className={cn(
               buttonVariants({ variant: "primary", size: "sm" }),
               "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0s_both]",
@@ -172,10 +171,9 @@ function Projects() {
               docsUrl="/docs/specta"
               logo={
                 <div className="w-14 h-14 relative shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 group-hover:scale-110 transition-transform duration-300">
-                  <Image
+                  <img
                     src="/assets/specta.svg"
-                    alt={`Specta logo`}
-                    fill
+                    alt="Specta logo"
                     className="object-contain"
                   />
                 </div>
@@ -192,10 +190,9 @@ function Projects() {
               docsUrl="/docs/rspc"
               logo={
                 <div className="w-14 h-14 relative shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 group-hover:scale-110 transition-transform duration-300">
-                  <Image
+                  <img
                     src="/assets/rspc.svg"
-                    alt={`rspc logo`}
-                    fill
+                    alt="rspc logo"
                     className="object-contain"
                   />
                 </div>
@@ -212,10 +209,9 @@ function Projects() {
               docsUrl="/docs/tauri-specta"
               logo={
                 <div className="w-22 h-10 relative shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 group-hover:scale-110 transition-transform duration-300 self-center">
-                  <Image
+                  <img
                     src="/assets/tauri-specta.png"
-                    alt={`Tauri Specta logo`}
-                    fill
+                    alt="Tauri Specta logo"
                     className="object-contain"
                   />
                 </div>
@@ -254,7 +250,7 @@ function ProjectCard(props: {
       {/* Gradient accent on hover */}
       <div
         className={cn(
-          "absolute inset-0 opacity-0 group-hover:opacity-[0.08] transition-opacity duration-300 bg-gradient-to-br",
+          "absolute inset-0 opacity-0 group-hover:opacity-[0.08] transition-opacity duration-300 bg-linear-to-br",
           props.gradient || "from-[#F74C00] to-[#F49600]",
         )}
       />
@@ -283,7 +279,7 @@ function ProjectCard(props: {
         <div className="flex gap-3 mt-auto">
           {props.docsUrl && (
             <Link
-              href={props.docsUrl}
+              to={props.docsUrl}
               className={cn(
                 buttonVariants({ variant: "primary" }),
                 "flex-1 group/btn px-4 py-2",
@@ -343,7 +339,7 @@ function CTASection() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/docs"
+              to="/docs"
               className={cn(
                 buttonVariants({ variant: "primary" }),
                 "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0s_both]",
@@ -370,3 +366,9 @@ function CTASection() {
     </section>
   );
 }
+
+export const getConfig = async () => {
+  return {
+    render: "static",
+  };
+};

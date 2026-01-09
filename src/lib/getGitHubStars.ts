@@ -3,6 +3,9 @@ export async function getGitHubStars(repo: string): Promise<string> {
     const response = await fetch(`https://api.github.com/repos/${repo}`, {
       headers: {
         Accept: "application/vnd.github+json",
+        ...(process.env.GITHUB_TOKEN
+          ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+          : {}),
       },
       next: { revalidate: 3600 }, // Cache for 1 hour
     });
