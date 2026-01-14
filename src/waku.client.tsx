@@ -3,9 +3,6 @@ import { StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { Router } from "waku/router/client";
 
-// import "./styles/globals.css"; // TODO
-// import "@fontsource-variable/inter/index.css";
-
 posthog.init("phc_eQP8pRBKw0mQWdUYXWE2HBcqQ5n9qP9h5R4xF5Y39aG", {
   api_host: "/ph_ebbd7f",
   ui_host: "https://us.posthog.com",

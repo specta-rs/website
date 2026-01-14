@@ -45,7 +45,6 @@ export async function GET(request: Request) {
         ),
       );
     }
-
   return new ImageResponse(
     <OpenGraph
       title={page.data.longTitle || page.data.title}
@@ -245,7 +244,7 @@ export async function getConfig() {
     .map((item) => (item.lang ? [item.lang, ...item.slug] : item.slug));
 
   return {
-    render: "dynamic", // TODO: "static", // TODO: Fix this
+    render: "static",
     staticPaths: pages,
   } as const;
 }

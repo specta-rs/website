@@ -1,0 +1,2 @@
+patchedDependencies:
+  waku: patches/waku.patch

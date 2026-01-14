@@ -1,0 +1,19 @@
+diff --git a/dist/router/define-router.js b/dist/router/define-router.js
+index 77a1cb4c262b60c3b6444de6686ff12671380351..9da8ecdc0112a70dfc08d06fde85d1db86911d22 100644
+--- a/dist/router/define-router.js
++++ b/dist/router/define-router.js
+@@ -408,12 +408,12 @@ export function unstable_defineRouter(fns) {
+                 continue;
+             }
+             const req = new Request(new URL(pathname, 'http://localhost:3000'));
+-            runTask(async ()=>{
++            // runTask(async ()=>{
+                 await withRequest(req, async ()=>{
+                     const res = await item.handler(req);
+                     await generateFile(pathname, res.body || '');
+                 });
+-            });
++            // });
+         }
+         // static route
+         for (const item of myConfig.configs){
