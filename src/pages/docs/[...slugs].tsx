@@ -12,6 +12,7 @@ import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
 import { SquarePen } from "lucide-react";
 import { getMDXComponents } from "@/mdx-components";
 import { unstable_notFound } from "waku/router/server";
+import { Meta } from "@/components/Meta";
 
 export default function DocPage({ slugs }: PageProps<"/docs/[...slugs]">) {
   const page = source.getPage(slugs);
@@ -20,7 +21,11 @@ export default function DocPage({ slugs }: PageProps<"/docs/[...slugs]">) {
   const MDX = page.data.body;
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
-      {/*<title>{page.data.longTitle || page.data.title}</title>*/}
+      <Meta
+        title={page.data.longTitle || page.data.title}
+        description={page.data.description}
+        openGraphImage={`/og/docs${slugs.length === 0 ? "" : `/${slugs.join("/")}`}`}
+      />
 
       <DocsTitle>{page.data.longTitle || page.data.title}</DocsTitle>
       <DocsDescription className="mb-0">

@@ -4,10 +4,16 @@ import { cn } from "@/lib/utils";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { baseOptions } from "@/lib/layout.shared";
 import { Link } from "waku";
+import { Meta } from "@/components/Meta";
 
 export default function NotFound() {
   return (
     <HomeLayout {...baseOptions()}>
+      <Meta
+        title="Not Found"
+        description="The page your looking for doesn't exist"
+      />
+
       <div className="flex min-h-screen items-center justify-center">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center space-y-6">
@@ -18,7 +24,7 @@ export default function NotFound() {
             </h1>
 
             <p className="text-lg md:text-xl text-fd-muted-foreground">
-              This page doesn't exist
+              The page your looking for doesn't exist
             </p>
 
             <Link

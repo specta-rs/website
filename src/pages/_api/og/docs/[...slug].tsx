@@ -4,6 +4,7 @@ import ImageResponse from "@takumi-rs/image-response/wasm";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import fs from "node:fs/promises";
+import { openGraphImageSize } from "@/components/Meta";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -53,8 +54,8 @@ export async function GET(request: Request) {
     />,
     {
       module,
-      width: 1200,
-      height: 630,
+      width: openGraphImageSize[0],
+      height: openGraphImageSize[1],
       fonts: [
         {
           name: "Inter",

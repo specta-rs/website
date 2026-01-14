@@ -1,10 +1,11 @@
 import type { PropsWithChildren } from "react";
+import { StaticMeta } from "@/components/Meta";
 
 export default async function RootElement({ children }: PropsWithChildren) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <title>specta-rs</title>
+        <StaticMeta />
       </head>
       <body className="flex flex-col min-h-screen">{children}</body>
     </html>
