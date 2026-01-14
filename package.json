@@ -24,7 +24,7 @@
     "fumadocs-ui": "16.4.7",
     "hono": "^4.11.4",
     "lucide-react": "^0.562.0",
-    "posthog-js": "^1.320.0",
+    "posthog-js": "^1.321.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-server-dom-webpack": "^19.2.3",
