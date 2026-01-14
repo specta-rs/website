@@ -1,7 +1,9 @@
-import type { JSX } from "react";
 import { source } from "@/lib/source";
 import spectaPng from "../../../../../public/assets/specta.png?arraybuffer";
 import ImageResponse from "@takumi-rs/image-response/wasm";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
+import fs from "node:fs/promises";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -16,22 +18,41 @@ export async function GET(request: Request) {
       status: 404,
     });
 
+  // This hackery can be fixed once Waku uses `@cloudflare/plugin-vite`:  https://github.com/wakujs/waku/issues/1245
+  let module: any;
+  if (import.meta.env.DEV)
+    // This only works in development as it loads the wasm module dynamically which Cloudflare blocks in production.
+    module = (await import("@takumi-rs/wasm/takumi_wasm_bg.wasm?arraybuffer"))
+      .default;
+  // We try the wasm import as during static rendering (which is done on node), this import will fail falling back to the catch case.
+  else
+    try {
+      // This works in Cloudflare Workers due to the `waku.config.ts` marking it external.
+      // This means the import isn't processed by Vite and when `wrangler deploy` is run,
+      // it's build process sees it and properly bundles it.
+      module = await import("@takumi-rs/wasm/takumi_wasm_bg.wasm");
+    } catch (_) {
+      // We are statically rendering on node so we can just import the wasm module.
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = dirname(__filename);
+      module = await fs.readFile(
+        resolve(
+          __dirname,
+          "..",
+          (
+            await import("@takumi-rs/wasm/takumi_wasm_bg.wasm?url")
+          ).default.replace(/^\/+/, ""),
+        ),
+      );
+    }
+
   return new ImageResponse(
     <OpenGraph
       title={page.data.longTitle || page.data.title}
       description={page.data.description}
     />,
     {
-      // This hackery can be fixed once Waku uses `@cloudflare/plugin-vite`:  https://github.com/wakujs/waku/issues/1245
-      module: import.meta.env.DEV
-        ? // This only works in development as it constructs the wasm module dynamically
-          // which Cloudflare block in production.
-          (await import("@takumi-rs/wasm/takumi_wasm_bg.wasm?arraybuffer"))
-            .default
-        : // This works in production due to the `waku.config.ts` externalisating it.
-          // This means the import isn't processed by Vite.
-          // When `wrangler deploy` is run it runs it's separate build process, which properly bundles it.
-          await import("@takumi-rs/wasm/takumi_wasm_bg.wasm"),
+      module,
       width: 1200,
       height: 630,
       fonts: [
@@ -46,9 +67,11 @@ export async function GET(request: Request) {
           style: "normal",
         },
       ],
-      // headers: { // TODO
-      //   "Cache-Control": "public, max-age=3600",
-      // },
+      headers: {
+        // Cache for 4 hours, allow usage another 4 hours if it's stale, or erroring.
+        "Cache-Control":
+          "public, max-age=14400, stale-while-revalidate=14400, stale-if-error=14400",
+      },
     },
   );
 }
@@ -215,8 +238,6 @@ function OpenGraph(props: { title: string; description?: string }) {
     </div>
   );
 }
-
-async function render(component: JSX.Element) {}
 
 export async function getConfig() {
   const pages = source
