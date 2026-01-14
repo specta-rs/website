@@ -1,5 +1,5 @@
 import { source } from "@/lib/source";
-import { PageProps } from "waku/router";
+import type { PageProps } from "waku/router";
 import { createRelativeLink } from "fumadocs-ui/mdx";
 import {
   DocsBody,
@@ -20,6 +20,8 @@ export default function DocPage({ slugs }: PageProps<"/docs/[...slugs]">) {
   const MDX = page.data.body;
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
+      {/*<title>{page.data.longTitle || page.data.title}</title>*/}
+
       <DocsTitle>{page.data.longTitle || page.data.title}</DocsTitle>
       <DocsDescription className="mb-0">
         {page.data.description}

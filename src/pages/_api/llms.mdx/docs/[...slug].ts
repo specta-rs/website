@@ -1,6 +1,4 @@
 import { getLLMText, source } from "@/lib/source";
-import { isMarkdownPreferred } from "fumadocs-core/negotiation";
-import { unstable_notFound } from "waku/router/server";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -9,14 +7,11 @@ export async function GET(request: Request) {
       ? []
       : removePrefix(url.pathname, "/llms.mdx/docs/").split("/");
   const page = source.getPage(slug);
-  if (!page) {
-    if (isMarkdownPreferred(request))
-      return new Response("# 404 Not Found", {
-        status: 404,
-        headers: { "Content-Type": "text/markdown" },
-      });
-    else unstable_notFound();
-  }
+  if (!page)
+    return new Response("# 404 Not Found", {
+      status: 404,
+      headers: { "Content-Type": "text/markdown" },
+    });
 
   return new Response(await getLLMText(page), {
     headers: {
@@ -31,9 +26,7 @@ export async function getConfig() {
     .map((item) => (item.lang ? [item.lang, ...item.slug] : item.slug));
 
   return {
-    render: "dyanmic",
-    // TODO: Fix
-    // render: "static",
+    // render: "static", // TODO: Fix this
     staticPaths: pages,
   } as const;
 }

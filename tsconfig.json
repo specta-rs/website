@@ -19,7 +19,7 @@
       "@/*": ["./src/*"],
       "fumadocs-mdx:collections/*": [".source/*"]
     },
-    "types": ["vite", "vite/client"]
+    "types": ["vite", "vite/client", "vite-plugin-arraybuffer/types"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
