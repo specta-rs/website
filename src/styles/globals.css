@@ -6,8 +6,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme default {
+  --font-sans: Inter Variable, Inter fallback;
+}
+
 html {
-  font-family: "Inter Variable";
+  /* We use a var so fontaine doesn't break "Inter Variable" as it doesn't seem to like multiword names */
+  font-family: var(--font-sans);
   font-style: normal;
   font-optical-sizing: auto;
 }

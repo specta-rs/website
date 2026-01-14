@@ -7,7 +7,6 @@ export async function getGitHubStars(repo: string): Promise<string> {
           ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
           : {}),
       },
-      next: { revalidate: 3600 }, // Cache for 1 hour
     });
 
     if (!response.ok)

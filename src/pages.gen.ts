@@ -14,8 +14,6 @@ import type { getConfig as File_ApiDocsLlmsMdx_getConfig } from './pages/_api/do
 // prettier-ignore
 import type { getConfig as File_ApiDocsOgPng_getConfig } from './pages/_api/docs/og.png';
 // prettier-ignore
-import type { getConfig as File_ApiOgDocsSlugImagePng_getConfig } from './pages/_api/og/docs/[...slug]/image.png';
-// prettier-ignore
 import type { getConfig as File_Root_getConfig } from './pages/_root';
 // prettier-ignore
 import type { getConfig as File_DocsSlugs_getConfig } from './pages/docs/[...slugs]';
@@ -28,7 +26,6 @@ type Page =
 | ({ path: '/_api/docs/[...slug]/og.png' } & GetConfigResponse<typeof File_ApiDocsSlugOgPng_getConfig>)
 | ({ path: '/_api/docs/llms.mdx' } & GetConfigResponse<typeof File_ApiDocsLlmsMdx_getConfig>)
 | ({ path: '/_api/docs/og.png' } & GetConfigResponse<typeof File_ApiDocsOgPng_getConfig>)
-| ({ path: '/_api/og/docs/[...slug]/image.png' } & GetConfigResponse<typeof File_ApiOgDocsSlugImagePng_getConfig>)
 | ({ path: '/_root' } & GetConfigResponse<typeof File_Root_getConfig>)
 | ({ path: '/docs/[...slugs]' } & GetConfigResponse<typeof File_DocsSlugs_getConfig>);
 

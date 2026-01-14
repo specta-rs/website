@@ -244,7 +244,7 @@ export async function getConfig() {
     .map((item) => (item.lang ? [item.lang, ...item.slug] : item.slug));
 
   return {
-    // render: "static", // TODO: Fix this
+    render: "dynamic", // TODO: "static", // TODO: Fix this
     staticPaths: pages,
   } as const;
 }

@@ -1,4 +1,4 @@
-import { type Config, defineConfig, type VitePlugin } from "waku/config";
+import { type Config, defineConfig } from "waku/config";
 import mdx from "fumadocs-mdx/vite";
 import tailwindcss from "@tailwindcss/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
