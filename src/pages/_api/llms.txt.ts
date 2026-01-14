@@ -1,0 +1,17 @@
+import { getLLMText, source } from "@/lib/source";
+
+export async function GET() {
+  const scan = source
+    .getPages()
+    .filter((page) => !page.data.hidden && !page.data.disableLlmsTxt)
+    .map(getLLMText);
+  const scanned = await Promise.all(scan);
+
+  return new Response(scanned.join("\n\n"));
+}
+
+export function getConfig() {
+  return {
+    render: "static",
+  } as const;
+}

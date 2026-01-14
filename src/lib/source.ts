@@ -2,7 +2,6 @@ import { docs } from "fumadocs-mdx:collections/server";
 import { type InferPageType, loader } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
 import { icons } from "lucide-react";
-import Image from "next/image";
 import { createElement } from "react";
 import { CratesIoLogo, NpmLogo } from "../components/logos";
 
@@ -30,7 +29,7 @@ export const source = loader({
     } else throw new Error(`Requested unknown icon: ${icon}`);
 
     const [src, alt, widthClass] = result;
-    return createElement(Image, {
+    return createElement("img", {
       src,
       alt,
       width: 24,
@@ -41,11 +40,11 @@ export const source = loader({
 });
 
 export function getPageImage(page: InferPageType<typeof source>) {
-  const segments = [...page.slugs, "image.png"];
+  const segments = [...page.slugs, "og.png"];
 
   return {
     segments,
-    url: `/og/docs/${segments.join("/")}`,
+    url: `/docs/${segments.join("/")}`,
   };
 }
 

@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "main": ".open-next/worker.js",
   "name": "specta-website",
+  "main": "./dist/server/serve-cloudflare.js",
   "compatibility_date": "2025-12-31",
   "compatibility_flags": ["nodejs_compat"],
   // https://github.com/pacocoursey/next-themes/issues/370
@@ -15,7 +15,28 @@
     "enabled": true
   },
   "assets": {
-    "directory": ".open-next/assets",
-    "binding": "ASSETS"
-  }
+    "directory": "./dist/public",
+    "html_handling": "drop-trailing-slash"
+  },
+  "rules": [
+    {
+      "type": "ESModule",
+      "globs": ["**/*.js", "**/*.mjs"],
+      "fallthrough": true
+    },
+    {
+      "type": "Data",
+      "globs": ["**/*.ttf", "**/*.woff", "**/*.woff2"],
+      "fallthrough": true
+    },
+    {
+      "type": "CompiledWasm",
+      "globs": ["**/*.wasm"],
+      "fallthrough": true
+    }
+  ]
+  // TODO: We should reenable this once Waku moves to `@cloudflare/vite-plugin`.
+  // This is required to process the `` import in the OG code.
+  // Linked: https://github.com/wakujs/waku/issues/1245
+  // "no_bundle": true
 }

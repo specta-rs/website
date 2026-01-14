@@ -6,9 +6,9 @@
 
 # test & build
 /coverage
-/.next/
 /out/
 /build
+/dist
 *.tsbuildinfo
 
 # misc
@@ -22,11 +22,8 @@ yarn-error.log*
 
 # others
 .env*.local
-.vercel
+.env
 next-env.d.ts
-
-# OpenNext
-.open-next
 
 # Cloudflare
 .wrangler
