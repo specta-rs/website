@@ -14,7 +14,7 @@ export function Meta(props: {
   const description =
     props.description ||
     "An ecosystem of crates focused on typesafety, developer experience, modern practices allowing you to build faster and deploy with confidence.";
-  const openGraphImage = props.openGraphImage || "/og/docs";
+  const openGraphImage = props.openGraphImage || "/docs/og.png";
 
   return (
     <>

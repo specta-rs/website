@@ -1,5 +1,5 @@
 import { source } from "@/lib/source";
-import spectaPng from "../../../../../public/assets/specta.png?arraybuffer";
+import spectaPng from "../../../../../../public/assets/specta.png?arraybuffer";
 import ImageResponse from "@takumi-rs/image-response/wasm";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
@@ -8,10 +8,9 @@ import { openGraphImageSize } from "@/components/Meta";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
+  const path = removeSuffix(url.pathname, "/image.png");
   const slug =
-    url.pathname === "/og/docs"
-      ? []
-      : removePrefix(url.pathname, "/og/docs/").split("/");
+    path === "/og/docs" ? [] : removePrefix(path, "/og/docs/").split("/");
 
   const page = source.getPage(slug);
   if (!page)
@@ -246,10 +245,13 @@ export async function getConfig() {
     .map((item) => (item.lang ? [item.lang, ...item.slug] : item.slug));
 
   return {
-    // render: "static", // TODO: Fix this
+    // render: "static" as const, // TODO: Fix this
     staticPaths: pages,
   } as const;
 }
 
 const removePrefix = (s: string, p: string) =>
   s.startsWith(p) ? s.slice(p.length) : s;
+
+const removeSuffix = (s: string, p: string) =>
+  s.endsWith(p) ? s.slice(0, -p.length) : s;

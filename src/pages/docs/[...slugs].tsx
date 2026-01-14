@@ -1,4 +1,4 @@
-import { source } from "@/lib/source";
+import { getPageImage, source } from "@/lib/source";
 import type { PageProps } from "waku/router";
 import { createRelativeLink } from "fumadocs-ui/mdx";
 import {
@@ -24,8 +24,9 @@ export default function DocPage({ slugs }: PageProps<"/docs/[...slugs]">) {
       <Meta
         title={page.data.longTitle || page.data.title}
         description={page.data.description}
-        openGraphImage={`/og/docs${slugs.length === 0 ? "" : `/${slugs.join("/")}`}`}
+        openGraphImage={getPageImage(page).url}
       />
+      {page.data.hidden ? <meta name="robots" content="noindex" /> : null}
 
       <DocsTitle>{page.data.longTitle || page.data.title}</DocsTitle>
       <DocsDescription className="mb-0">

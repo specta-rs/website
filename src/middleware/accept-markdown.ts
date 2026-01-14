@@ -3,12 +3,11 @@ import { isMarkdownPreferred, rewritePath } from "fumadocs-core/negotiation";
 
 const { rewrite: rewriteLLM } = rewritePath(
   "/docs{/*path}",
-  "/llms.mdx/docs{/*path}",
+  "/docs{/*path}/llms.mdx",
 );
 
 export default function acceptMarkdown(): MiddlewareHandler {
   return async (c, next) => {
-    // console.log(c.req.path, c.req.path.endsWith(".mdx"));
     const endsWithMdx = c.req.path.endsWith(".mdx");
     if (
       c.req.path.startsWith("/docs") &&
@@ -21,7 +20,6 @@ export default function acceptMarkdown(): MiddlewareHandler {
       if (result) {
         const url = new URL(c.req.url);
         url.pathname = result;
-        console.log(url.pathname); // TODO
         c.req.raw = new Request(url.toString(), c.req.raw);
       }
     }

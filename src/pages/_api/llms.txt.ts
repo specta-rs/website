@@ -9,3 +9,9 @@ export async function GET() {
 
   return new Response(scanned.join("\n\n"));
 }
+
+export function getConfig() {
+  return {
+    render: "static",
+  } as const;
+}

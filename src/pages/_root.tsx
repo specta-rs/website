@@ -14,6 +14,6 @@ export default async function RootElement({ children }: PropsWithChildren) {
 
 export async function getConfig() {
   return {
-    render: "static",
+    render: "static" as const,
   } as const;
 }
