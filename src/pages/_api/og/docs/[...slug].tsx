@@ -22,8 +22,16 @@ export async function GET(request: Request) {
       description={page.data.description}
     />,
     {
-      module: (await import("@takumi-rs/wasm/takumi_wasm_bg.wasm?arraybuffer"))
-        .default,
+      // This hackery can be fixed once Waku uses `@cloudflare/plugin-vite`:  https://github.com/wakujs/waku/issues/1245
+      module: import.meta.env.DEV
+        ? // This only works in development as it constructs the wasm module dynamically
+          // which Cloudflare block in production.
+          (await import("@takumi-rs/wasm/takumi_wasm_bg.wasm?arraybuffer"))
+            .default
+        : // This works in production due to the `waku.config.ts` externalisating it.
+          // This means the import isn't processed by Vite.
+          // When `wrangler deploy` is run it runs it's separate build process, which properly bundles it.
+          await import("@takumi-rs/wasm/takumi_wasm_bg.wasm"),
       width: 1200,
       height: 630,
       fonts: [
