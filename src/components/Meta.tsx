@@ -56,7 +56,7 @@ export function Meta(props: {
   );
 }
 
-export function StaticMeta(props: { title?: string; description?: string }) {
+export function StaticMeta() {
   return (
     <>
       <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />

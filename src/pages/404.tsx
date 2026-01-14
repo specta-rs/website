@@ -1,10 +1,10 @@
-import { Home, ArrowRight } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
-import { baseOptions } from "@/lib/layout.shared";
+import { ArrowRight, Home } from "lucide-react";
 import { Link } from "waku";
 import { Meta } from "@/components/Meta";
+import { buttonVariants } from "@/components/ui/button";
+import { baseOptions } from "@/lib/layout.shared";
+import { cn } from "@/lib/utils";
 
 export default function NotFound() {
   return (

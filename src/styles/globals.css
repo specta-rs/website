@@ -17,12 +17,13 @@ html {
   font-optical-sizing: auto;
 }
 
-html,:host {
-    line-height: 1.5;
-    -webkit-text-size-adjust: 100%;
-    font-feature-settings: normal;
-    font-variation-settings: normal;
-    tab-size: 4;
+html,
+:host {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+  tab-size: 4;
 }
 
 @theme inline {
@@ -145,13 +146,13 @@ html,:host {
 }
 
 @keyframes fadeIn {
-    from {
-    	transform: translateY(5%);
-    	opacity: 0;
-    }
+  from {
+    transform: translateY(5%);
+    opacity: 0;
+  }
 
-    to {
-    	transform: translateY(0);
-    	opacity: 1;
-    }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

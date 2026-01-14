@@ -1,18 +1,18 @@
-import { Link } from "waku";
 import {
   ArrowRight,
-  Code2,
-  Zap,
-  Shield,
-  Github,
   BookOpen,
+  Code2,
   ExternalLink,
+  Github,
+  Shield,
+  Zap,
 } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { type JSX, Suspense } from "react";
-import { getGitHubStars } from "@/lib/getGitHubStars";
+import { Link } from "waku";
 import { DiscordLogo } from "@/components/logos";
+import { buttonVariants } from "@/components/ui/button";
+import { getGitHubStars } from "@/lib/getGitHubStars";
+import { cn } from "@/lib/utils";
 
 export default async function HomePage() {
   return (

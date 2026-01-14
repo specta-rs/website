@@ -1,6 +1,3 @@
-import { getPageImage, source } from "@/lib/source";
-import type { PageProps } from "waku/router";
-import { createRelativeLink } from "fumadocs-ui/mdx";
 import {
   DocsBody,
   DocsDescription,
@@ -8,11 +5,14 @@ import {
   DocsTitle,
   PageLastUpdate,
 } from "fumadocs-ui/layouts/docs/page";
-import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
+import { createRelativeLink } from "fumadocs-ui/mdx";
 import { SquarePen } from "lucide-react";
-import { getMDXComponents } from "@/mdx-components";
+import type { PageProps } from "waku/router";
 import { unstable_notFound } from "waku/router/server";
 import { Meta } from "@/components/Meta";
+import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
+import { getPageImage, source } from "@/lib/source";
+import { getMDXComponents } from "@/mdx-components";
 
 export default function DocPage({ slugs }: PageProps<"/docs/[...slugs]">) {
   const page = source.getPage(slugs);

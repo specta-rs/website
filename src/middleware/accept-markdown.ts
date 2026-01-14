@@ -1,5 +1,5 @@
-import type { MiddlewareHandler } from "hono";
 import { isMarkdownPreferred, rewritePath } from "fumadocs-core/negotiation";
+import type { MiddlewareHandler } from "hono";
 
 const { rewrite: rewriteLLM } = rewritePath(
   "/docs{/*path}",

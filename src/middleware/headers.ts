@@ -1,5 +1,5 @@
-import type { MiddlewareHandler } from "hono";
 import _headers from "virtual:_headers";
+import type { MiddlewareHandler } from "hono";
 
 export default function headers(): MiddlewareHandler {
   return async (c, next) => {

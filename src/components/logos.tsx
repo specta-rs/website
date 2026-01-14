@@ -1,5 +1,3 @@
-import clsx from "clsx";
-
 export function CratesIoLogo() {
   return (
     <svg

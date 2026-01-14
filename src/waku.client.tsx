@@ -1,7 +1,8 @@
+import posthog from "posthog-js";
 import { StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { Router } from "waku/router/client";
-import posthog from "posthog-js";
+
 // import "./styles/globals.css"; // TODO
 // import "@fontsource-variable/inter/index.css";
 

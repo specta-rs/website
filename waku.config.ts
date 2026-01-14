@@ -1,10 +1,10 @@
-import { type Config, defineConfig } from "waku/config";
-import mdx from "fumadocs-mdx/vite";
 import tailwindcss from "@tailwindcss/vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { DEFAULT_CATEGORY_FALLBACKS, FontaineTransform } from "fontaine";
+import mdx from "fumadocs-mdx/vite";
 import type { UserConfig } from "vite";
 import arraybuffer from "vite-plugin-arraybuffer";
+import tsconfigPaths from "vite-tsconfig-paths";
+import { type Config, defineConfig } from "waku/config";
 import * as MdxConfig from "./source.config.js";
 import { headersPlugin } from "./src/vite-plugin-headers";
 

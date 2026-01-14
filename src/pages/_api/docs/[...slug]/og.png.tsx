@@ -1,10 +1,10 @@
+import fs from "node:fs/promises";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import ImageResponse from "@takumi-rs/image-response/wasm";
+import { openGraphImageSize } from "@/components/Meta";
 import { source } from "@/lib/source";
 import spectaPng from "../../../../../public/assets/specta.png?arraybuffer";
-import ImageResponse from "@takumi-rs/image-response/wasm";
-import { fileURLToPath } from "node:url";
-import { dirname, resolve } from "node:path";
-import fs from "node:fs/promises";
-import { openGraphImageSize } from "@/components/Meta";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -18,6 +18,7 @@ export async function GET(request: Request) {
     });
 
   // This hackery can be fixed once Waku uses `@cloudflare/plugin-vite`:  https://github.com/wakujs/waku/issues/1245
+  // biome-ignore lint/suspicious/noExplicitAny: This is already hacky, it's fine.
   let module: any;
   if (import.meta.env.DEV)
     // This only works in development as it loads the wasm module dynamically which Cloudflare blocks in production.
