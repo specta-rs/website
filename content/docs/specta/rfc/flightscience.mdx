@@ -295,23 +295,440 @@ This also closes function system related issues as not planned:
 
 ## Phase 2
 
-Blocking Release:
- - Tauri-stuff sorted. This is a major blocker for the next release.
- - https://github.com/specta-rs/specta/issues/356
+From 9/01/2026 to 9/01/2026
+
+## General
+
+These things are pretty self-explainatory:
+ - Support for [bytes](https://docs.rs/bytes) - [ref](https://github.com/specta-rs/specta/commit/40e77f9e38cf8a6c715f045f44a851a2c890bc3f)
+ - Support for renaming the `selection!` struct - [ref](https://github.com/specta-rs/specta/commit/9e2fc59b06fbd89692dc2311c17a938b4b98804d)
+ - Finish off and merge runtime attribute handling from phase 1 -[#430](https://github.com/specta-rs/specta/pull/430)
+
+## References v2
+
+The reference system overhaul that was implemented in Phase 1 was a remarkable improvement but in spending some time thinking of how we can support branded types I noticed that the system still could use some improvements.
+
+One major change is the realisation that references break down into 3 categories:
+ - Named static (Eg. `pub struct` with derive `Type`)
+ - Named dynamic (Eg. `NamedDataTypeBuilder::new(...).build(...)`)
+ - Opaque - A reference to a string in the exporter (usually of raw-Typescript code) (Eg. `specta_typescript::Any`)
+
+The major issues with the current system are:
+ - You can't differentiate between a named dynamic and opaque type as they are both `ArcId::Dyanmic`.
+ - You can `Reference::get` on an opaque type. This makes no sense because they are always inlined.
+ - You can insert an opaque type into the `TypeCollection` due to the shared `ArcId`. This makes no sense because they are always inlined.
+
+We had effectively conflated named dynamic and opaque types as one concept which isn't true in practice.
+
+So to fix this we defined `Reference` to be the following:
+ ```rs
+pub enum Reference {
+    Named(NamedReference),
+    Opaque(OpaqueReference),
+}
+
+pub struct NamedReference {
+    // `ArcId` becomes `NamedId`.
+    pub(crate) id: NamedId,
+    pub(crate) generics: ...,
+    pub(crate) inline: bool,
+}
+
+// Technically `dyn Any` is `dyn DynOpaqueReference` but that's too in the weeds for this.
+pub struct OpaqueReference(Arc<dyn Any>);
+```
+
+With this restructure the benefits we get are:
+ - Can no longer insert or get opaque type into `TypeCollection` (Eg. `NamedReference::get` can't be called with an opaque reference)
+ - Can no longer access `inline` or `generic` attributes of opaque type as they are on `NamedReference`.
+ - Language exporters can detect unhandled opaque references and give a helpful error. (Eg. if you pass `specta_typescript::Any` to the Swift/Go/etc exporter)
+
+Another change is that the previous opaque reference system was structured. Each new `Reference` was a "unique" pointer that had to be carefully cloned to ensure it pointed to the same type. This is what lead to the very unergonomic `Reference::opaque_from_sentinel` API.
+
+With the new implementation:
+ - References are nominal (compared by value)
+ - References now have a value (`T`) which means they can hold data.
+
+The benifits of this design is that:
+ - Enables branded types as we can store the type and brand information on the opaque reference.
+ - You can now define a Typescript framework reference without the `Typescript` instance. This is `specta_typescript::define` in the new API.
+
+The value held on the opaque reference is basically stored in an `Arc<Box<dyn Any>>`, however we had to do some special work to make `PartialEq` and `Eq` work.
+
+With this system:
+ - `Reference::opaque(5) == Reference::opaque(5)`
+ - `Reference::opaque(5) != Reference::opaque(10)`
+
+This works well for all usecases as the previous behavior of `opaque_from_sentinel` can be achieved by implementing an empty struct:
+
+```rust
+pub struct Identity;
+
+Reference::opaque(Identity) == Reference::opaque(Identity)
+```
+
+One really cool sideeffect of this system is that we can expose `OpaqueReference::type_name` which gives us the full name of the type. This is great because langauge exporter can show errors which give the user much more information as it can point to the exact source of the type.
+
+In the old system we had something like:
+
+```rust
+pub struct Any<T = ()>(T);
+
+pub(crate) static ANY_REFERENCE: Reference = Reference::opaque_from_sentinel({
+    static SENTINEL: () = ();
+    &SENTINEL
+});
+
+impl<T> Type for Any<T> {
+    fn definition(_: &mut TypeCollection) -> DataType {
+        // This just be `Reference::opaque()` but it *must* be cloned and identicial on each call.
+        // You could have a `OnceLock<Reference>` which is simple but it would require the memory allocated by the `Reference::opaque()` call to exist for the lifetime of the program.
+        // Using `Reference::opaque_from_sentinel` doesn't allocate a reference but is also a lot more error prone. Eg. using `const` instead of `static` will break it's invariants.
+
+        DataType::Reference(ANY_REFERENCE.clone())
+    }
+}
+```
+
+Whereas in the new system we can do something like:
+
+```rust
+use specta_typescript::define;
+
+pub struct Any<T = ()>(T);
+
+impl<T> Type for Any<T> {
+    fn definition(_: &mut TypeCollection) -> DataType {
+        DataType::Reference(define("any"))
+    }
+}
+```
+
+Much simplier. To explain in some more detail:
+
+`define` is implemented as such:
+
+```rust
+#[derive(PartialEq, Eq, Hash)]
+pub(crate) struct Define(pub(crate) Cow<'static, str>);
+
+pub fn define(raw: impl Into<Cow<'static, str>>) -> Reference {
+    Reference::opaque(Define(raw.into()))
+}
+```
+
+and then in the Typescript exporter reference generation logic we do:
+
+```rust
+fn reference_opaque_dt(
+    s: &mut String,
+    exporter: &Exporter,
+    types: &TypeCollection,
+    r: &OpaqueReference,
+) -> Result<(), Error> {
+    if let Some(def) = r.downcast_ref::<opaque::Define>() {
+        s.push_str(&def.0); // pushes the Typescript straight to the output
+        return Ok(());
+    }
+
+    ...
+}
+```
+
+### Branded types prototype
+
+This is unfinished but I have a working prototype of Typescript branded types. If you haven't come across branded types before, [checkout this Effect article](https://effect.website/docs/code-style/branded-types/).
+
+Currently the API looks like the following:
+
+```rust
+use specta_typescript::branded;
+
+branded!(#[derive(Default)] struct AccountId(String) as "accountId");
+
+#[derive(Type)]
+pub struct Account {
+    id: AccountId,
+    name: String,
+}
+```
+
+<Callout title="This API is experimental" type="warning">
+    I am happy with the low-level implementation ontop of opaque references but I quickly threw together the user-facing API for testing.
+
+    I think the `branded` macro_rules will probably stay but I can't say for sure and whether it's syntax will change or not.
+</Callout>
+
+The API:
+ - Can only have a tuple struct with a single field which is inherently transparent (Eg. we export as `String` not `AccountId` in the previous example)
+ - Works with generics
+ - Allows omitting `as "brand"` and it will fallback to the struct ident (Eg. `AccountId` in the previous example)
+
+The way this is implemented under the hood is using an opaque reference:
+
+[The implementation is here](https://github.com/specta-rs/specta/blob/main/specta-typescript/src/branded.rs) but it looks remarkably similar to `define` which is shown above.
+
+## Review Tauri integration
+
+Currently we have a small amount of Specta code within Tauri. This is what powers the integration with Tauri Specta and TauRPC. I had a look at each part of it to see if we can improve it.
+
+### Reexports
+
+Tauri has a built-in Specta feature to provide implementations for `Type` and `specta::function::*`. These were required to workaround the fact that Tauri v1 and v2 couldn't exist as a dependency within the same Cargo workspace ([explained here](https://github.com/specta-rs/tauri2)) which was causing a massive issue in Tauri Specta. These implementations being upstreamed meant this was not going to be a problem for a potential Tauri v3 or later.
+
+The downside with this is that Tauri is a semver-stable library so it's dependency on Specta needs to be taken carefully to ensure a downstream user doesn't get their project broken by a `cargo update`.
+
+I was able to remove `pub use datatype::DataType;` from Specta's root as Tauri doesn't depend on this and it was just left in caution.
+
+Long term sadly, we have to keep `pub type TypeMap = TypeCollection;` as Tauri imports from `function::TypeMap` and it would be breaking to remove.
+
+### Channel
+
+This is used by both Tauri Specta and TauRPC to ensure a `tauri::ipc::Channel` in a command can be typed correctly. This is more complicated than a regular type because we need to import `Channel` from `@tauri-apps/api/core` as it's not a type Specta creates.
+
+Under the hood the way this worked in the past was we did:
+
+```rs
+self.types
+    .remove(<tauri::ipc::Channel<()> as specta::NamedType>::sid()); // `NamedType` changed a lot across versions but concept is the same
+```
+
+and then we always included the `import { Channel } from "@tauri-apps/api/core";` in the Typescript file. This was a great hack to get this feature working but is not something great as a long term solution. This hack meant that the `Channel` import would always exist in the bindings file, even when not used and also we broke an invariant of Specta system, that a reference can't exist without a type being created in the `TypeCollection`.
+
+With the changes on `main` I had previously removed the `TypeCollection::remove` method which renders this hack impossible so it was time to finally figure out a proper solution.
+
+Given i've been working with opaque references my first thought was to try them. What if we had something like the following in Tauri:
+
+```rust
+impl<T> Type for Channel<T> {
+    fn definition(_: &mut TypeCollection) -> DataType {
+        pub struct Channel;
+        DataType::Reference(Reference::opaque(Channel))
+    }
+}
+```
+
+This makes heaps of sense but how does the opaque reference becomes some Typescript code?
+
+Well we get two options:
+ - Make `tauri` depend on `specta_typescript`, or
+ - Make `specta_typescript` depend on `tauri`
+
+We either need to call `Channel::definition` in the `specta_typescript` so we can `if incoming_ref == get_ref(Channel::definition()) { ... }` to branch on the channel or we need to use `specta_typescript::define` in Tauri. Neither of these are a viable option for semver reasons so we need to look somewhere else.
+
+Using opaque references would also require a major breaking change in Tauri which is would not be viable. This systems means we only need this small upstream change ([tauri-apps/tauri#14812](https://github.com/tauri-apps/tauri/pull/14812))  to drop `#[specta(rename = ...)]` from `Channel`.
+
+Instead inside of Specta we patch over the Tauri channel type with the following taken from `named.rs`:
+
+```rust
+// Called by `Type` macro inside the `fn definition` function.
+fn init_with_sentinel(...) {
+    let ndt: NamedDataType = ...;
+
+    // We patch the Tauri `Type` implementation.
+    if ndt.name() == "TAURI_CHANNEL" && ndt.module_path().starts_with("tauri::") {
+        // This produces `never`.
+        // It's expected a framework replaces this with it's own setup.
+        ndt.inner = Infallible::definition(types);
+
+        // This ensures that we never create a `export type Channel`,
+        // instead the definition gets inlined into each callsite.
+        ndt.inline = true;
+    }
+}
+```
+
+These two changes mean that any `Channel`'s export as `never` by default. Well how do we transform this into a `Channel` import? This is where Tauri Specta/TauRPC come in with the following:
+
+```rust
+use specta_typescript::define;
+
+let types: TypeCollection = ...;
+
+// We replace the `never` with Typescript string `Channel`
+types.iter_mut(|ndt| {
+    if ndt.name() == "TAURI_CHANNEL" && ndt.module_path().starts_with("tauri::") {
+        *ndt.ty_mut() = DataType::Reference(define("Channel"));
+    }
+});
+
+// We can also then detect when the `Channel` import is required by crawling the `DataType` for each command.
+let is_channel_used = commands.iter().any(|command| {
+    // Check if any argument is a Channel
+    command.args().iter().any(|(_, dt)| is_channel_type(dt, &cfg.types))
+        // Check if result contains a Channel
+        || command.result().is_none_or(|result| match result {
+            FunctionReturnType::Value(dt) => is_channel_type(dt, &cfg.types),
+            FunctionReturnType::Result(ok, err) =>
+                is_channel_type(ok, &cfg.types) || is_channel_type(err, &cfg.types),
+        })
+});
+
+if is_channel_used {
+    output.push_str("import { Channel } from \"@tauri-apps/api/core\"");
+}
+```
+
+This implementation works but in the bindings file you end up with the following unexpected type:
+
+```rust
+export type Channel<TSend> = Channel;
+```
+
+This is because Specta generates a type for every named type. If you think about it through the `Channel` named type is inlined. This means the exporter will never generate `{ property: Channel<T> }` it will always generate it's type inline like `{ property: never }`. Given this we know it's impossible for any inline type to be referenced and therefore it's not necessary to export them.
+
+This also required making some tweaks to the `Reference` system. Namely that for this to work we must ensure all named references are inlined if the container is inlined. This was already how it was intended to work but the implementation overlooked a couple of edgecases which needed fixing.
+
+### Function implementations
+
+Long term I want to remove Specta's function handling system (`specta::function::*` & `specta::specta` macro) as it was a good idea in theory but i'm not sure it's something that belongs in Specta's core anymore. The currently implementation is heavily tied to the way `#[tauri::command]` works and to fix some remaining bugs in Tauri Specta this is going to get worse.
+
+I built a prototype of this in a fresh crate and started work on a PR to Tauri but it's incomplete.
+
+At a core level if Tauri exposes:
+ - the names of the command arguments
+ - the doc comments on a command
+ - the deprecated attribute of a command
+
+Tauri Specta could work without requiring the `#[specta::specta]` macro and without stabilising the `specta::function::*` and `specta::specta` macro.
+
+Although these changes are for Tauri Specta they are being done under the higher-level goal of reducing the API surface of Specta for better maintainability & reliability.
+
+<Callout title="Incomplete work" type="warning">
+    This work on removing the function stuff from the core is incomplete but being documented as I did more research into it's viability.
+</Callout>
+
+### Restructure `specta_typescript`
+
+Specta Typescript has been in need of a lot of work to properly support frameworks like Tauri Specta and TauRPC with the new `Layout` system for multi-file exporting so we were in need of a major refactor.
+
+Previously the `JSDoc` exporter was defined something like:
+
+```rust
+pub struct JSDoc(Typescript);
+
+impl Default for JSDoc {
+    fn default() -> Self {
+        let ts = Typescript::default();
+        ts.jsdoc = true
+        ts
+    }
+}
+```
+
+now we have refactored so that both `JSDoc` and `Typescript` wrap an `Exporter` struct which contains the implementation. This is useful because:
+ - You can erase a `Typescript` or `JSDoc` into an `Exporter` so more of your export code can be shared.
+ - It's clearer how conversions work. Eg. What does converting from a `JSDoc` to a `Typescript` do, should it disable JSDoc or not. Previously it did but that mean you couldn't get a exporter-type which spanned both languages without a generic + trait system.
+
+This also allowed moving some of the more low-level framework APIs from `Typescript` to `Exporter` making them harder to use. The user must explicitly `Export::from(Typescript::default())` to set certain parameter.
+
+The logic in the `Exporter` was rewritten to:
+ - be more reliable
+ - for `Layout::Files` generate the files before any FS operations so any thrown errors don't leave an invalid state on disk
+ - for `Layout::Files` properly cleanup leftover files in the directory (even when converting between `.ts` and `.js` extensions)
+ - Check for duplicate type names, modules or import for each logical scope (whether that be a file or a namespace). The previous system only checked for duplicates on `Layout::FlatFile` which is wrong.
+ - Handle `Reference::requires_reference` to omit creating a named export for any types which are container inlined (Eg. Tauri Channel) and hence will never be referenced.
+ - Factor the code out into helper functions, allowing for more code reuse.
+ - Omit creating files or namespaces if the module is empty
+ - Restructured `Layout::Namespace` to properly create references across namespaces without shadowing issues.
+ - Ensure a consistent type export order in `Layout::Files` or `Layout::Namespaces`. Copied from the `TypeCollection::into_sorted_iter`
+ - Convert `framework_runtime` into a function which takes in `FrameworkExporter` giving access to the `TypeCollection` and a way of interspersing user types within the runtime code (instead of it being appended which is the default).
+ - When doing `Layout::Files` create `export * as module_name from "./module_name"` exports so that you can easily go `module.module.Type` in Typescript
+ - wip: progress towards fixing imports across files with `Layout::Files`
+
+ This has been a lot of work but it is going to be a huge pay of for the ecosystem. Previously a lot of this logic in various forms was in Specta, Tauri Specta and TauRPC. By formalising it and centralising it within Specta all of the frameworks can hand off the maintenance burden to a single well-tested implementation in Specta.
+
+### Upgrade frameworks
+
+Tauri Specta:
+ - Rewrite exporting logic around `Exporter`
+ - Using `framework_runtime` so that layouts are supported
+ - Making `tauri::ipc::Channel` work with the new integration.
+ - Improve the bindings format to be much cleaner and hand off more of it's generation to Specta using the new opaque references system
+ - Only include parts of the file as required. Eg. imports or runtime functions are detected and omitted if not used.
+ - Rethinking error handling based on Typescript type-inference to allow support for EffectTS, neverthrow and other similar methods. We are going to port this to TauRPC in a future phase!
+
+TauRPC: Sadly ran out of time to complete this. Will be first thing in next phase but should be fairly smooth now that Tauri Specta has proven out the flexibility of the new APIs.
+
+Work on Tauri Specta has allowed me to experiment as Tauri Specta has always been a really good testing ground for experimental Specta APIs due to it's design.
+
+### Restucture tests
+
+I rebuilt the testing harness around snapshot testing and testing all permutations of `inline`, `export`, `reference` and also using all `SerdeMode`'s along with testing `export` and `export_to`. All tests run and build up snapshot files using [insta](https://insta.rs).
+
+The move to snapshot testing was to ease manitaince burdon as Typescript types can be represented in many ways which are all valid due to formatting so snapshot testing allows formatting changes to easily be updated across multiple tests.
+
+The new harness also defines types to test separately from the tests themselves. This makes it easy for us to run each type through a heap of permutations of settings without needing a massive amount of code in the tests.
+
+I also spent some time rename and removing clearly duplicate tests.
+
+<Callout title="Work is incomplete" type="warning">
+    I have built the new harness and migrated tests however the snapshots being generated do contain bugs. I need to spend some time ensuring the snapshots for things that were previously untested are correct.
+</Callout>
+
+## Phase 3
+
+From 9/01/2026 to ...
+
+### Planned:
+
+Release blockers for (`specta-rc.23`):
+ - Upgrade TauRPC
+ - [tauri-apps/tauri#14812](https://github.com/tauri-apps/tauri/pull/14812).
+ - Stability
+
+Known stability issues/bugs:
+ - `thiserror` compaibility is broken
+ - All crates don't compile with all features enabled
+ - Avoid creating a namespace if it’s empty (like we did for `Layout::Files`)
+ - `Exporter` shouldn’t need to call `typedef_internal`, it should be implicitly done in `export_internal`?
+ - `import * as framework` import is hardcoded into Specta but this only works for `specta-typescript/examples/framework.rs`
+    - Cleanup references instead of `framework.current_module.nested.type` do `nested.type` if possible
+    - Also fix duplicate type name scope logic around whatever the import becomes.
+    - Also only add the import if it's required (Eg. a reference is created in that file)
+ - When the `framework_runtime` isn't defined the module reexports get shallowed.
+ - Namespaces should be formatted to the correct depth with tabs
+ - JSDoc issues:
+   - Exporting comments and deprecated is broken (can reproduce on `events` and `commands` in Tauri Specta)
+   - should merge all `@typedef`’s into a single comment
+   - build JSDoc param building into Specta
+   - `import type` and `export { module };` are broken
+   - Fix extra `\n` on user types
+ - Gracefully error out on dangling named reference in Typescript (instead of `panic`)
+ - Fix memory leak in Typescript primitives
+ - Fix container inline which is breaking `selection!` macro.
+
+Testing:
+ - Finish migration to new snapshot testing harness
  - Cleanup default formatting of bindings (before we finish overhaulling testing cause it'll break all of them)
- - Overhaul testing as the runtime-attribute refactor has broken a lot 😅
- - Tauri Specta upgraded
- - TauRPC upgraded
+ - https://github.com/specta-rs/specta/issues/356
 
+ - Test empty module path with everything (mainly namespaces and files)
+ - Test virtual `module_path` logic better
+ - Unit test empty module path and it not creating a file or creating an empty namespace
+ - Unit test exporter logic for file system creation and possible edge cases (directory where a file needs to go, etc)
 
-Would be nice:
- - Upgrade a couple of real-world codebases because I suspect we are going to find regressions with this massive core work.
- - Nauanced types prototype. I did a Specta PR [#419](https://github.com/specta-rs/specta/pull/419) but most of the work for this will be in Tauri Specta/TauRPC and also I think we will need changes to Tauri for BigInt support.
- - Figure out the specifics of per-phase handling in Tauri Specta/TauRPC with `specta-serde` -> Main issue is around duplicated types, maybe we export `{TypeName}_Serialize` & `{TypeName}_Deserialize` and then `export type {TypeName} = {TypeName}_Serialize | {TypeName}_Deserialize;`.
- - Figure out how to make `alias` properly exported to Typescript as a descriminated union. This is a bit of a remaining question in how `specta-serde` needs to work.
- - `impl Type for Result<T, E>` (likely blocked on removal of `#[specta::specta]`)
- - Figure out how `MaybeUndefined` could be represented with Specta/`DataType`.
- - Documentation overhaul (including documentation for all-possible attributes that we support)
- - Release next `specta-rc.23`
+Real-world testing:
+ - Upgrade Cap/Spacedrive/FlightScience codebases to see how the new macros go.
+ - Chat with Brendan about any bugs he is finding in OpenCode.
 
-Potentially look at upstreaming [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater) into Tauri Plugins repo as they do already have Specta in that repo.
+### Strech
+
+Core work:
+- Tauri Bigint support  - How does `Channel` work in Tauri core? Could the same system be abused for BigInt support?
+- Nauanced types prototype
+- Errors as strings or serialize
+- Figure out how to make `alias` properly exported to Typescript as a descriminated union. This is a bit of a remaining question in how `specta-serde` needs to work.
+- `impl Type for Result<T, E>` (likely blocked on removal of `#[specta::specta]`)
+- Figure out how `MaybeUndefined` could be represented with Specta/`DataType`.
+- Documentation overhaul (including documentation for all-possible attributes that we support)
+- Potentially look at upstreaming [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater) into Tauri Plugins repo as they do already have Specta in that repo.
+
+Specta Serde:
+ - Better split with Specta Typescript
+ - Multi-phase exporting working
+
+Branded types high-level API:
+ - Change default brand structure to `{ _brand: "myBrand" }`
+ - Allow using brands from 3rd party crates like EffectTS
+ - Runtime helpers for constructing them
