@@ -5,7 +5,7 @@ import { openGraphImageSize } from "@/components/Meta";
 import { source } from "@/lib/source";
 import spectaLogoPng from "../../../../../public/assets/specta.png?arraybuffer";
 import interFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?arraybuffer";
-import init, { ByteBuf, type Font, Renderer } from "@takumi-rs/wasm";
+import init, { type ByteBuf, type Font, Renderer } from "@takumi-rs/wasm";
 import { ImageResponse } from "@takumi-rs/image-response/wasm";
 
 const fonts: Font[] = [
@@ -48,15 +48,16 @@ export async function GET(request: Request) {
   let module: any;
   if (import.meta.env.DEV)
     // This only works in development as it loads the wasm module dynamically which Cloudflare blocks in production.
-    module = (await import("@takumi-rs/wasm/takumi_wasm_bg.wasm?arraybuffer"))
-      .default;
+    module = (
+      await import("@takumi-rs/wasm/pkg/takumi_wasm_bg.wasm?arraybuffer")
+    ).default;
   // We try the wasm import as during static rendering (which is done on node), this import will fail falling back to the catch case.
   else
     try {
       // This works in Cloudflare Workers due to the `waku.config.ts` marking it external.
       // This means the import isn't processed by Vite and when `wrangler deploy` is run,
       // it's build process sees it and properly bundles it.
-      module = await import("@takumi-rs/wasm/takumi_wasm_bg.wasm");
+      module = await import("@takumi-rs/wasm/pkg/takumi_wasm_bg.wasm");
     } catch (_) {
       // We are statically rendering on node so we can just import the wasm module.
       const __filename = fileURLToPath(import.meta.url);
@@ -66,7 +67,7 @@ export async function GET(request: Request) {
           __dirname,
           "..",
           (
-            await import("@takumi-rs/wasm/takumi_wasm_bg.wasm?url")
+            await import("@takumi-rs/wasm/pkg/takumi_wasm_bg.wasm?url")
           ).default.replace(/^\/+/, ""),
         ),
       );
