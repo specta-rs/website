@@ -293,7 +293,7 @@ This also closes function system related issues as not planned:
 
 [#432](https://github.com/specta-rs/specta/pull/432)
 
-## Phase 2
+# Phase 2
 
 From 9/01/2026 to 9/01/2026
 
@@ -308,7 +308,7 @@ These things are pretty self-explainatory:
 
 ## References v2
 
-The reference system overhaul that was implemented in Phase 1 was a remarkable improvement but in spending some time thinking of how we can support branded types I noticed that the system still could use some improvements.
+The reference system overhaul that was implemented in Phase 1 was a remarkable improvement but in spending some time thinking of how we can support branded types I noticed that the system still could use some more work.
 
 One major change is the realisation that references break down into 3 categories:
  - Named static (Eg. `pub struct` with derive `Type`)
@@ -351,7 +351,7 @@ With the new implementation:
  - References are nominal (compared by value)
  - References now have a value (`T`) which means they can hold data.
 
-The benifits of this design is that:
+The benefits of this design is that:
  - Enables branded types as we can store the type and brand information on the opaque reference.
  - You can now define a Typescript framework reference without the `Typescript` instance. This is `specta_typescript::define` in the new API.
 
