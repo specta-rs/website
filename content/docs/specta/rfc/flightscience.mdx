@@ -600,7 +600,7 @@ Although these changes are for Tauri Specta they are being done under the higher
     This work on removing the function stuff from the core is incomplete but being documented as I did more research into it's viability.
 </Callout>
 
-### Restructure `specta_typescript`
+## Restructure `specta_typescript`
 
 Specta Typescript has been in need of a lot of work to properly support frameworks like Tauri Specta and TauRPC with the new `Layout` system for multi-file exporting so we were in need of a major refactor.
 
@@ -640,7 +640,7 @@ The logic in the `Exporter` was rewritten to:
 
  This has been a lot of work but it is going to be a huge pay of for the ecosystem. Previously a lot of this logic in various forms was in Specta, Tauri Specta and TauRPC. By formalising it and centralising it within Specta all of the frameworks can hand off the maintenance burden to a single well-tested implementation in Specta.
 
-### Upgrade frameworks
+## Upgrade frameworks
 
 Tauri Specta:
  - Rewrite exporting logic around `Exporter`
@@ -654,7 +654,7 @@ TauRPC: Sadly ran out of time to complete this. Will be first thing in next phas
 
 Work on Tauri Specta has allowed me to experiment as Tauri Specta has always been a really good testing ground for experimental Specta APIs due to it's design.
 
-### Restucture tests
+## Restucture tests
 
 I rebuilt the testing harness around snapshot testing and testing all permutations of `inline`, `export`, `reference` and also using all `SerdeMode`'s along with testing `export` and `export_to`. All tests run and build up snapshot files using [insta](https://insta.rs).
 
