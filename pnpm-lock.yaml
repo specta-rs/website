@@ -21,8 +21,8 @@ importers:
         specifier: ^0.66.6
         version: 0.66.6
       '@takumi-rs/wasm':
-        specifier: ^0.66.6
-        version: 0.66.6
+        specifier: ^0.66.13
+        version: 0.66.13
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1685,6 +1685,9 @@ packages:
   '@takumi-rs/image-response@0.66.6':
     resolution: {integrity: sha512-3ZnKAYmWsHQSnJzgUUTcCb+eEIcdMTVBzhOmjW2mwxM7YiJHV0ya4GccUoVPUZzgtprLAHRhzkmo7ct3zRXlgg==}
 
+  '@takumi-rs/wasm@0.66.13':
+    resolution: {integrity: sha512-+MbS3CuO4AjKZ+up4CRC/erj/IPh6gJlhZytzzy5CBnkiEmnK6+v9qGwgWHaEjg3bl/xr/IBKWE1Es05vQ89Nw==}
+
   '@takumi-rs/wasm@0.66.6':
     resolution: {integrity: sha512-uc8Y4cgxEIDtbisTuNxTi/KMOcfUyMaPoGE6m0Ba2e2OMBg+V2AyoFR26kIk1fDHENUuKtj4flbx3K5Il3t3HQ==}
 
@@ -1732,6 +1735,9 @@ packages:
 
   '@types/node@25.1.0':
     resolution: {integrity: sha512-t7frlewr6+cbx+9Ohpl0NOTKXZNV9xHRmNOvql47BFJKcEG1CxtxlPEEe+gR9uhVWM4DwhnvTF110mIL4yP9RA==}
+
+  '@types/node@25.2.0':
+    resolution: {integrity: sha512-DZ8VwRFUNzuqJ5khrvwMXHmvPe+zGayJhr2CDNiKB1WBE1ST8Djl00D0IC4vvNmHMdj6DlbYRIaFE7WHjlDl5w==}
 
   '@types/react-dom@19.2.3':
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
@@ -1889,6 +1895,9 @@ packages:
   caniuse-lite@1.0.30001766:
     resolution: {integrity: sha512-4C0lfJ0/YPjJQHagaE9x2Elb69CIqEPZeG0anQt9SIvIoOH4a4uaRl73IavyO+0qZh6MDLH//DrXThEYKHkmYA==}
 
+  caniuse-lite@1.0.30001767:
+    resolution: {integrity: sha512-34+zUAMhSH+r+9eKmYG+k2Rpt8XttfE4yXAjoZvkAPs15xcYQhyBYdalJ65BzivAvGRMViEjy6oKr/S91loekQ==}
+
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
 
@@ -2001,6 +2010,10 @@ packages:
 
   enhanced-resolve@5.18.4:
     resolution: {integrity: sha512-LgQMM4WXU3QI+SYgEc2liRgznaD5ojbmY3sb8LxyguVkIg5FxdpTkvk72te2R38/TGKxH634oLxXRGY6d7AP+Q==}
+    engines: {node: '>=10.13.0'}
+
+  enhanced-resolve@5.19.0:
+    resolution: {integrity: sha512-phv3E1Xl4tQOShqSte26C7Fl84EwUdZsyOuSSk9qtAGyyQs2s3jJzComh+Abf4g187lUUAvH+H26omrqia2aGg==}
     engines: {node: '>=10.13.0'}
 
   error-stack-parser-es@1.0.5:
@@ -4510,6 +4523,8 @@ snapshots:
       '@takumi-rs/helpers': 0.66.6
       '@takumi-rs/wasm': 0.66.6
 
+  '@takumi-rs/wasm@0.66.13': {}
+
   '@takumi-rs/wasm@0.66.6': {}
 
   '@types/babel__core@7.20.5':
@@ -4568,6 +4583,10 @@ snapshots:
   '@types/ms@2.1.0': {}
 
   '@types/node@25.1.0':
+    dependencies:
+      undici-types: 7.16.0
+
+  '@types/node@25.2.0':
     dependencies:
       undici-types: 7.16.0
 
@@ -4752,6 +4771,9 @@ snapshots:
 
   caniuse-lite@1.0.30001766: {}
 
+  caniuse-lite@1.0.30001767:
+    optional: true
+
   ccount@2.0.1: {}
 
   character-entities-html4@2.1.0: {}
@@ -4835,6 +4857,11 @@ snapshots:
   electron-to-chromium@1.5.282: {}
 
   enhanced-resolve@5.18.4:
+    dependencies:
+      graceful-fs: 4.2.11
+      tapable: 2.3.0
+
+  enhanced-resolve@5.19.0:
     dependencies:
       graceful-fs: 4.2.11
       tapable: 2.3.0
@@ -5194,7 +5221,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 25.1.0
+      '@types/node': 25.2.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -5772,7 +5799,7 @@ snapshots:
     dependencies:
       '@next/env': 16.0.10
       '@swc/helpers': 0.5.15
-      caniuse-lite: 1.0.30001766
+      caniuse-lite: 1.0.30001767
       postcss: 8.4.31
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
@@ -6425,7 +6452,7 @@ snapshots:
       acorn-import-phases: 1.0.4(acorn@8.15.0)
       browserslist: 4.28.1
       chrome-trace-event: 1.0.4
-      enhanced-resolve: 5.18.4
+      enhanced-resolve: 5.19.0
       es-module-lexer: 2.0.0
       eslint-scope: 5.1.1
       events: 3.3.0
