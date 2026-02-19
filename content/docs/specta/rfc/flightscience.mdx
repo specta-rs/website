@@ -295,7 +295,7 @@ This also closes function system related issues as not planned:
 
 # Phase 2
 
-From 9/01/2026 to 9/01/2026
+From 9/01/2026 to 30/01/2026
 
 ## General
 
@@ -670,7 +670,60 @@ I also spent some time rename and removing clearly duplicate tests.
 
 ## Phase 3
 
-From 9/01/2026 to ...
+(I had a week off from the 30th Jan to 9th Feb)
+
+From 9/02/2026 to 20/02/2026
+
+## Stability
+
+Focusing on stability and bug fixes. Including:
+ - Fix internal/adjacent enums with only Fields::Unit's variants - [591a5f3](https://github.com/specta-rs/specta/commit/591a5f3ddc78348abf4cbb541d599d65306d92b9)
+ - Support generics on `tauri::ipc::Channel` (a bit of a oversight missing this 😅) - [253e6cc](https://github.com/specta-rs/specta/commit/253e6cc48e5dfc1974ac64c83dfeca4aaff464d0)
+ - Fix issue with ICF and invariant of type identifiers breaking Specta in non-development builds - [#447](https://github.com/specta-rs/specta/pull/447)
+ - Fix attribute parsing and lowering which would break `#[derive(thiserror::Error)]` - [11e76f1](https://github.com/specta-rs/specta/commit/11e76f1773854d47377002123e0c50d557c6d47f)
+ - Sometimes `DataType::Generic` would be exported when inlining so you might see `T` in contexts where it was never defined - [29a1379](https://github.com/specta-rs/specta/commit/29a1379f97e198a8ab40dafae57927ea13fffa02)
+ - Remove `String::leak` which got unintentionally left in the Typescript exporter - [a6fd79c](https://github.com/specta-rs/specta/commit/a6fd79cf011918fb2f070e171d937d91615d11b7)
+ - Ensure reexports are rendered even if framework runtime is empty - [f5b7c86](https://github.com/specta-rs/specta/commit/f5b7c86fb0978990d22919e7549fee293e1776c3)
+ - `export_internal` should implicitly handle JSDoc instead of it being done externally - [e6c76a7](https://github.com/specta-rs/specta/commit/e6c76a74bfc4a99ea8dbef1dd107f5443dab7457)
+ - Don't panic on dangling references in the Typescript exporter - [db9f060](https://github.com/specta-rs/specta/commit/db9f060e51704277d17c15a9940d73f1c388870e)
+ - Ensure we don't export empty namespaces (This was a bug due to the filtering of `requires_reference`) - [68804d7](https://github.com/specta-rs/specta/commit/68804d76d2df8110f2f3c1e43fe96b2fc49075f4)
+ - Ensure all types on `#[specta(collect = false)]` is on all types in test-suite - [c80a485](https://github.com/specta-rs/specta/commit/c80a485a27cb68c8df9c8772c4c9959601b670ed)
+ - Fix padding for namespace exporting as it's inconsistent - [5657070](https://github.com/specta-rs/specta/commit/56570703e62b86539975cc70f6a481e28c8aab2b)
+ - Make the FS exporting in `Exporter::export_to` more reliable - [d044b4b](https://github.com/specta-rs/specta/commit/d044b4bdfc90fadb1578bd650c21c58337d80d59)
+ - Fix branded types demo as `T & string` is not a proper brand - [29abcf6](https://github.com/specta-rs/specta/commit/29abcf61ae287c9ce262da7a426a34daf7b3494a)
+ - Allow user to configure the branded types template (Eg. use `ts-brand` or EffectTS branded types) - [90547b4](https://github.com/specta-rs/specta/commit/90547b4f84aa771307799d557d37fea1b8fc36c2)
+ - Bring back `specta_typescript::collect_references` for tracking cross-file imports - [711fe6f](https://github.com/specta-rs/specta/commit/711fe6f7190092d1769e99866f617ca61918a483)
+ - Make `Layout::Files` properly generate imports and references for types defined in other files - [24f3469](https://github.com/specta-rs/specta/commit/24f3469c1381bd9356c1d399cfe87dc0adcf4de6)
+ - Make all crates and tests compile again - [adb1455](https://github.com/specta-rs/specta/commit/adb1455edc8697b1686c241f8d23ebfb0e28e11e), [d918b63](https://github.com/specta-rs/specta/commit/d918b63616408a4889bf522f7784941d8bb1fcde), [7d574fe](https://github.com/specta-rs/specta/commit/7d574feb4fa5391d95c66f5a654f1e2556970be2)
+ - Give proper migration hint in compiler errors on the usage of deprecated `#[specta(...)]` attributes - [a658b1b](https://github.com/specta-rs/specta/commit/a658b1b43837247f7bab89284781b42a993e9fda)
+ - Fix exporting of comments and the deprecated attribute [135aa8b](https://github.com/specta-rs/specta/commit/135aa8b1c4058e773573bc8f33e9df18e10a3926)
+ - Upgrade all Rust dependencies to solve RUSTSEC issues - [84a7f4a](https://github.com/specta-rs/specta/commit/84a7f4afe87c29b84bc47c0d3f34c31e304348e4)
+ - Fix inline behaviour at field and container level as it was not working - [0d868f9](https://github.com/specta-rs/specta/commit/0d868f9202680eb4931b20a488eede177c3f3f46)
+ - Improve the formatting of the generate Typescript bindings - [ae567af](https://github.com/specta-rs/specta/commit/ae567af05ef841f9ee44ae7e8cc482f905af2ee9), [393ce96](https://github.com/specta-rs/specta/commit/393ce96a1fe27036db17c034b96c570984e8c545), [5965190](https://github.com/specta-rs/specta/commit/5965190769aab0c8156a5bc484645529bafa76e0)
+ - Make `specta_typescript::primitives::export` take `impl Iterator<Item = &NamedDatatype>` for better JSDoc rendering & formatting - [1b14234](https://github.com/specta-rs/specta/commit/1b1423482244e9cdf6fa3b03fa037ed26115d5f8), [9ea28b8](https://github.com/specta-rs/specta/commit/9ea28b83b7a81ca18ecaaeea9cb357262238d0f6)
+ - Ensure JSDoc exporter does imports correctly - [697fe23](https://github.com/specta-rs/specta/commit/697fe238c4bb7da54afec972fc2f63d46096f32b), [2127c99](https://github.com/specta-rs/specta/commit/2127c99a48ffbfe566ab599a3ca2a779a177a6de)
+ - Fix Cargo warning about multiple examples with the same name conflicting - [af55947](https://github.com/specta-rs/specta/commit/af55947669b4d186febbf19b665295b346bba06e)
+ - Fix `unreachable!()` when constructing enums using builder API - [c7f1dc3](https://github.com/specta-rs/specta/commit/c7f1dc3cb105a8334fe64433997d67ccee5e3fe7)
+ - Cleanup workspace lints, fix Clippy warnings and ensure all public types have docs - [e2f4f9f](https://github.com/specta-rs/specta/commit/e2f4f9fc509aa6248dbc4b22e1ecd25accac0ca6), [14a4ee8](https://github.com/specta-rs/specta/commit/14a4ee845c0a45169bc622dad2edbbd0d22cbf97)
+
+TODO: TauRPC upgrade w/ error handling, multi-file exporting, etc.
+TODO: Talk about OpenCode adopting Specta.
+
+## MaybeUndefined
+
+TODO
+
+https://github.com/specta-rs/specta/issues/157
+
+## Real-world testing
+
+TODO: Talk about implications of new attribute parsing if we didn't last time??? Talk about migration path.
+
+TODO: Talk about OpenCode adopting Specta.
+
+### Release
+
+TODO: Discuss star changes and release notes
 
 ### Planned:
 
@@ -679,29 +732,7 @@ Release blockers for (`specta-rc.23`):
  - [tauri-apps/tauri#14812](https://github.com/tauri-apps/tauri/pull/14812).
  - Stability
 
-Known stability issues/bugs:
- - `thiserror` compaibility is broken
- - All crates don't compile with all features enabled
- - Avoid creating a namespace if it’s empty (like we did for `Layout::Files`)
- - `Exporter` shouldn’t need to call `typedef_internal`, it should be implicitly done in `export_internal`?
- - `import * as framework` import is hardcoded into Specta but this only works for `specta-typescript/examples/framework.rs`
-    - Cleanup references instead of `framework.current_module.nested.type` do `nested.type` if possible
-    - Also fix duplicate type name scope logic around whatever the import becomes.
-    - Also only add the import if it's required (Eg. a reference is created in that file)
- - When the `framework_runtime` isn't defined the module reexports get shallowed.
- - Namespaces should be formatted to the correct depth with tabs
- - JSDoc issues:
-   - Exporting comments and deprecated is broken (can reproduce on `events` and `commands` in Tauri Specta)
-   - should merge all `@typedef`’s into a single comment
-   - build JSDoc param building into Specta
-   - `import type` and `export { module };` are broken
-   - Fix extra `\n` on user types
- - Gracefully error out on dangling named reference in Typescript (instead of `panic`)
- - Fix memory leak in Typescript primitives
- - Fix container inline which is breaking `selection!` macro.
-
 Testing:
- - Finish migration to new snapshot testing harness
  - Cleanup default formatting of bindings (before we finish overhaulling testing cause it'll break all of them)
  - https://github.com/specta-rs/specta/issues/356
 
@@ -709,10 +740,6 @@ Testing:
  - Test virtual `module_path` logic better
  - Unit test empty module path and it not creating a file or creating an empty namespace
  - Unit test exporter logic for file system creation and possible edge cases (directory where a file needs to go, etc)
-
-Real-world testing:
- - Upgrade Cap/Spacedrive/FlightScience codebases to see how the new macros go.
- - Chat with Brendan about any bugs he is finding in OpenCode.
 
 ### Strech
 
@@ -731,6 +758,4 @@ Specta Serde:
  - Multi-phase exporting working
 
 Branded types high-level API:
- - Change default brand structure to `{ _brand: "myBrand" }`
- - Allow using brands from 3rd party crates like EffectTS
  - Runtime helpers for constructing them
