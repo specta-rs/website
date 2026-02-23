@@ -1,11 +1,17 @@
 version: 2
-updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+
+multi-ecosystem-groups:
+  specta-website-deps:
     schedule:
       interval: "weekly"
 
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    multi-ecosystem-group: "specta-website-deps"
+    patterns: ["*"]
+
   - package-ecosystem: "npm"
     directory: "/"
-    schedule:
-      interval: "weekly"
+    multi-ecosystem-group: "specta-website-deps"
+    patterns: ["*"]
