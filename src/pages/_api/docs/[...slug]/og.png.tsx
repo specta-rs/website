@@ -5,36 +5,9 @@ import { openGraphImageSize } from "@/components/Meta";
 import { source } from "@/lib/source";
 import spectaLogoPng from "../../../../../public/assets/specta.png?arraybuffer";
 import interFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?arraybuffer";
-import init, {
-  type ByteBuf,
-  type Font,
-  Renderer,
-} from "@takumi-rs/wasm/no-bundler";
 import { ImageResponse } from "@takumi-rs/image-response/wasm";
 
-const fonts: Font[] = [
-  {
-    name: "Inter",
-    data: interFont,
-    weight: 100,
-    style: "normal",
-  },
-];
-
 const spectaLogoSrc = "spectaLogo";
-const persistentImages = [
-  {
-    src: spectaLogoSrc,
-    data: spectaLogoPng,
-  },
-];
-
-type PersistentImage = {
-  src: string;
-  data: ByteBuf;
-};
-const fontLoadMarker = new WeakSet<Font>();
-const persistentImageLoadMarker = new WeakSet<PersistentImage>();
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -76,26 +49,6 @@ export async function GET(request: Request) {
       );
     }
 
-  // `init` is required for `new Renderer`.
-  // `new Renderer` works around: https://github.com/wakujs/waku/issues/1904
-  await init({
-    module_or_path: module,
-  });
-  const renderer = new Renderer();
-  for (const font of fonts) {
-    if (fontLoadMarker.has(font)) return;
-
-    renderer.loadFont(font);
-  }
-  for (const image of persistentImages) {
-    if (persistentImageLoadMarker.has(image)) return;
-
-    renderer.putPersistentImage({
-      src: image.src,
-      data: new Uint8Array(image.data),
-    });
-  }
-
   return new ImageResponse(
     <OpenGraph
       title={page.data.longTitle || page.data.title}
@@ -103,11 +56,22 @@ export async function GET(request: Request) {
     />,
     {
       module,
-      renderer,
       width: openGraphImageSize[0],
       height: openGraphImageSize[1],
-      fonts,
-      persistentImages,
+      fonts: [
+        {
+          name: "Inter",
+          data: interFont,
+          weight: 100,
+          style: "normal",
+        },
+      ],
+      persistentImages: [
+        {
+          src: spectaLogoSrc,
+          data: spectaLogoPng,
+        },
+      ],
       headers: {
         // Cache for 4 hours, allow usage another 4 hours if it's stale, or erroring.
         "Cache-Control":
