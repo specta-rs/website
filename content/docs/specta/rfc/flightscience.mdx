@@ -846,28 +846,92 @@ This means we are really close from getting this stuff running on Flight Science
 
 From 27/02/2026 to xx/03/2026
 
-### Planned:
+### Finishing up from last sprint
 
-Week 1:
- - Cut new release
- - Finish TauRPC typesafe errors prototype
- - Make generic handling positional & improve it - [#349](https://github.com/specta-rs/specta/issues/349) & [#138](https://github.com/specta-rs/specta/issues/138) & [#44](https://github.com/specta-rs/specta/issues/44)
- - Overhaul error handling for Specta Typescript - [#135](https://github.com/specta-rs/specta/issues/135) & [#312](https://github.com/specta-rs/specta/issues/312) & [#356](https://github.com/specta-rs/specta/issues/356) & [#345](https://github.com/specta-rs/specta/issues/345)
+ - Fix final known failing tests - [fe39669](https://github.com/specta-rs/specta/commit/fe396690e078ad7213ffef0b754715cda760b80a) & [ee2352d](https://github.com/specta-rs/specta/commit/ee2352d69eb5daf6dd88cb6ca03a14d9a66a0faf) & [429bdd4](https://github.com/specta-rs/specta/commit/429bdd4b9173a0f36a5b4051829e37fd2df74294)
+ - Fix `f16` and `f128` implementation on nightly - [1257bb4](https://github.com/specta-rs/specta/commit/1257bb4867f5266b8b9492dabfb5ff23d52712c0)
+ - Fix CI workflows. The snapshots generated differently on Windows so this took some changes to it's format. - [f3143fe](https://github.com/specta-rs/specta/commit/f3143fe210ce483b983d413e516914da990c6bbc) & [ac74b0a](https://github.com/specta-rs/specta/commit/ac74b0ad45e5ea99c123d51e4f778a073b2e3c0d) & [0f501b9](https://github.com/specta-rs/specta/commit/0f501b991e46298625fb397b46ea808d3d693d27)
+ - Add alpha warning to all non-typescript crates ahead of publishing them for the first time - [0c69ad9](https://github.com/specta-rs/specta/commit/0c69ad959c7617a8ebac1f490629346fa71cc73c)
 
-Core work:
-- Tauri Bigint support  - How does `Channel` work in Tauri core? Could the same system be abused for BigInt support?
-- Nauanced types prototype
-- Errors as strings or serialize
-- Figure out how to make `alias` properly exported to Typescript as a descriminated union. This is a bit of a remaining question in how `specta-serde` needs to work.
-- `impl Type for Result<T, E>` (likely blocked on removal of `#[specta::specta]`)
-- Figure out how `MaybeUndefined` could be represented with Specta/`DataType`.
-- Documentation overhaul (including documentation for all-possible attributes that we support)
-- Potentially look at upstreaming [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater) into Tauri Plugins repo as they do already have Specta in that repo.
+Cut release [2.0.0-rc.23]()
 
-Specta Serde:
- - Better split with Specta Typescript
- - Multi-phase exporting working
+### Fresh work
 
- TauRPC:
-  - Upstream changes from Flight Science fork?
-  - Drop `specta::function` + `specta::specta` in preparation from upstream changes
+Writeup better:
+ - Stricter enum types - closes [#221](https://github.com/specta-rs/specta/issues/221)
+ - `Result` changes with named data type and how that makes exporters more powerful.
+
+Changes:
+ - Rename `specta::datatype::Runtime*` to drop the the unnecessary `Runtime` - [89cb19d](https://github.com/specta-rs/specta/commit/89cb19dcabe57e55db7cce4906f4c39d74b38a8d)
+ - Review all `#[doc(hidden)]` stuff - [9a13b7e](https://github.com/specta-rs/specta/commit/9a13b7eb4e16b021ef6ded1aaf537a53964eafe6) closes [#325](https://github.com/specta-rs/specta/issues/325)
+ - Overhaul built in implementations for `Type` - done in [#454](https://github.com/specta-rs/specta/pull/454) - closes [#415](https://github.com/specta-rs/specta/issues/415)
+  - Add `impl Type for Result<T, E>` implementation
+  - Regig `FunctionResult` trait and drop `FunctionReturnType` enum
+  - Replace all built-in implementation on non-primitives to return an inline NDT (this is gonna be powerful in userspace)
+  - `impl Type for str` to reduce needs for special combinations (and Serde supports it)
+  - Rename `Primtivies::String` to `Primitives::str` to be more consistent now that we have an impl for it.
+  - `#[cfg(feature = "derive")]` is no longer required for 3rd party crate features. This should should also save some compile time.
+
+Thursday:
+ - [ ] https://github.com/specta-rs/specta/pull/454
+ - [ ] https://github.com/specta-rs/specta/issues/402
+ - [ ] https://github.com/specta-rs/specta/issues/86
+ - [ ] Release notes + thank John.
+ - [ ] https://github.com/specta-rs/specta/issues/100
+ - [ ] https://github.com/specta-rs/specta/issues/299
+ - [ ] https://github.com/specta-rs/specta/issues/133
+ - [ ] https://github.com/specta-rs/specta/issues/68
+ - [ ] https://github.com/specta-rs/specta/issues/131
+ - [ ] https://github.com/specta-rs/specta/issues/76
+ - [ ] https://github.com/specta-rs/specta/issues/431
+ - [ ] https://github.com/specta-rs/specta/issues/352
+
+ - [ ] https://github.com/specta-rs/specta/issues/135
+
+ - Error overhaul:
+  - [ ] https://github.com/specta-rs/specta/issues/312
+  - [ ] https://github.com/specta-rs/specta/issues/345
+  - [ ] https://github.com/specta-rs/specta/issues/356
+  - [ ] https://github.com/specta-rs/specta/issues/135
+
+Friday:
+ - Generics overhaul
+    - [ ] https://github.com/specta-rs/specta/issues/138
+    - [ ] https://github.com/specta-rs/specta/issues/349
+    - [ ] https://github.com/specta-rs/specta/issues/17
+    - [ ] https://github.com/specta-rs/specta/issues/44
+    - [ ] https://github.com/specta-rs/specta/issues/16
+
+Sunday:
+ - Nuanced types work (https://github.com/specta-rs/specta/issues/203):
+    - [ ] https://github.com/specta-rs/specta/issues/440
+    - [ ] https://github.com/specta-rs/specta/issues/46
+    - [ ] https://github.com/specta-rs/specta/issues/190
+    - [ ] Tauri Specta prototype
+    - [ ] TauRPC prototype
+
+Tuesday:
+ - Specta Serde split
+    - [ ] https://github.com/specta-rs/specta/issues/438
+    - [ ] Tauri Specta multi-phase
+    - [ ] TauRPC multi-phase
+
+Wednesday:
+ - OpenAPI exporter - https://github.com/specta-rs/specta/issues/31
+ - Zod exporter - https://github.com/specta-rs/specta/pull/421
+ - Typesafe error handling TauRPC
+
+Thursday:
+ - Work through "// TODO: Fix this"'s in the test suite."
+ - Cut next `2.0.0.rc-24` release
+
+Next period:
+
+## Phase 5
+
+From xx/xx/2026 to xx/xx/2026
+
+Planned:
+- Tauri Specta macro: - https://github.com/specta-rs/specta/issues/213
+- Drop `specta::function` + `specta::specta` in preparation from upstream changes???
+- Upstreaming changes in Flightscience forks (including [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater))
