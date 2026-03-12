@@ -1063,6 +1063,8 @@ Focus: Publish `-rc.24` as it contains a massive core overhaul and breaking chan
 The below plan includes the majority of remaining GitHub issues and things from the original Specta roadmap.
 
 Priorities:
+ - Specta Zod - 16 hours - [#421](https://github.com/specta-rs/specta/pull/421)
+ - Specta OpenAPI??? - 16 hours - [#31](https://github.com/specta-rs/specta/issues/31)
  - General cleanup & documentation - 16 hours
     - Cleanup accessor methods in core - [#431](https://github.com/specta-rs/specta/issues/431)
     - Cleanup `specta::internal` - [#352](https://github.com/specta-rs/specta/issues/352)
@@ -1071,28 +1073,26 @@ Priorities:
     - Cleanup all remaining TODO's
     - Typescript exporter should throw error if ndt name is empty
     - Test cases for `serde_json::Value`, and all other legacy impls
+ - TauRPC error handling - 8 hours
  - Typescipt and Serde crate error reporting overhaul - 8 hours
     - [#135](https://github.com/specta-rs/specta/issues/135), [#312](https://github.com/specta-rs/specta/issues/312), [#345](https://github.com/specta-rs/specta/issues/345) & [#356](https://github.com/specta-rs/specta/issues/356)
  - Typescript exporter technical debt - 8 hours
     - Drop `legacy.rs` from Typescript exporter by finishing the rewrite of all exporter components
     - Should `indent` stay on `export`? Maybe it should be a find and replace???
     - Can we avoid using `thread_local`'s for context. It makes sense for the way the built-in Typescript exporter works, but it's not ideal for maintainability.
- - TauRPC error handling - 8 hours
  - Nuanced types - 16 hours
     - [#203](https://github.com/specta-rs/specta/issues/203), [#440](https://github.com/specta-rs/specta/issues/440), [#46](https://github.com/specta-rs/specta/issues/46)
- - Specta Zod - [#421](https://github.com/specta-rs/specta/pull/421)
- - Specta OpenAPI??? - [#31](https://github.com/specta-rs/specta/issues/31)
- - Upstreaming changes in Flightscience forks (including [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater))
 
 Stretch goals:
+ - Upstreaming changes in Flightscience forks (including [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater))
  - Bring back `DataType::Literal` on the new opaque types machinery
  - Const generics - [#17](https://github.com/specta-rs/specta/issues/17)
  - Default generics - [#16](https://github.com/specta-rs/specta/issues/16)
  - Features affecting the Serde implementation - [#8](https://github.com/specta-rs/specta/issues/8)
  - Dealing with `impl Type for *` without a semver nightmare.
  - Tauri Specta macro overhaul:
-    - [ ] Allows dropping `function` from core [#432](https://github.com/specta-rs/specta/pull/432)
-    - [ ] `#[tauri::command(rename_all = "...")]` - [#213](https://github.com/specta-rs/specta/issues/213)
+    - Allows dropping `function` from core [#432](https://github.com/specta-rs/specta/pull/432)
+    - `#[tauri::command(rename_all = "...")]` - [#213](https://github.com/specta-rs/specta/issues/213)
 
 My personal time (not in scope):
  - Non-allocated `DataType` structure. This would likely require significant changes so might not be worth it.
