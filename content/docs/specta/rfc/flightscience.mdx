@@ -844,94 +844,260 @@ This means we are really close from getting this stuff running on Flight Science
 
 ## Phase 4
 
-From 27/02/2026 to xx/03/2026
+From 27/02/2026 to 13/03/2026
 
 ### Finishing up from last sprint
+
+Some remaining issues carried over from the last sprint that where blocking a new release:
 
  - Fix final known failing tests - [fe39669](https://github.com/specta-rs/specta/commit/fe396690e078ad7213ffef0b754715cda760b80a) & [ee2352d](https://github.com/specta-rs/specta/commit/ee2352d69eb5daf6dd88cb6ca03a14d9a66a0faf) & [429bdd4](https://github.com/specta-rs/specta/commit/429bdd4b9173a0f36a5b4051829e37fd2df74294)
  - Fix `f16` and `f128` implementation on nightly - [1257bb4](https://github.com/specta-rs/specta/commit/1257bb4867f5266b8b9492dabfb5ff23d52712c0)
  - Fix CI workflows. The snapshots generated differently on Windows so this took some changes to it's format. - [f3143fe](https://github.com/specta-rs/specta/commit/f3143fe210ce483b983d413e516914da990c6bbc) & [ac74b0a](https://github.com/specta-rs/specta/commit/ac74b0ad45e5ea99c123d51e4f778a073b2e3c0d) & [0f501b9](https://github.com/specta-rs/specta/commit/0f501b991e46298625fb397b46ea808d3d693d27)
  - Add alpha warning to all non-typescript crates ahead of publishing them for the first time - [0c69ad9](https://github.com/specta-rs/specta/commit/0c69ad959c7617a8ebac1f490629346fa71cc73c)
 
-Cut release [2.0.0-rc.23]()
+Cut release [2.0.0-rc.23](https://github.com/specta-rs/specta/releases/tag/v2.0.0-rc.23)
 
-### Fresh work
+I have been working with MatsDK to get TauRPC upgraded but [#58](https://github.com/MatsDK/TauRPC/pull/58) is ready to go!
 
-Writeup better:
- - Stricter enum types - closes [#221](https://github.com/specta-rs/specta/issues/221)
- - `Result` changes with named data type and how that makes exporters more powerful.
+### Stricter enums
 
-Changes:
- - Rename `specta::datatype::Runtime*` to drop the the unnecessary `Runtime` - [89cb19d](https://github.com/specta-rs/specta/commit/89cb19dcabe57e55db7cce4906f4c39d74b38a8d)
- - Review all `#[doc(hidden)]` stuff - [9a13b7e](https://github.com/specta-rs/specta/commit/9a13b7eb4e16b021ef6ded1aaf537a53964eafe6) closes [#325](https://github.com/specta-rs/specta/issues/325)
- - Overhaul built in implementations for `Type` - done in [#454](https://github.com/specta-rs/specta/pull/454) - closes [#415](https://github.com/specta-rs/specta/issues/415)
-  - Add `impl Type for Result<T, E>` implementation
-  - Regig `FunctionResult` trait and drop `FunctionReturnType` enum
-  - Replace all built-in implementation on non-primitives to return an inline NDT (this is gonna be powerful in userspace)
-  - `impl Type for str` to reduce needs for special combinations (and Serde supports it)
-  - Rename `Primtivies::String` to `Primitives::str` to be more consistent now that we have an impl for it.
-  - `#[cfg(feature = "derive")]` is no longer required for 3rd party crate features. This should should also save some compile time.
+Specta's Typescript exporter has historically been too permissive for certain enum shapes. TypeScript unions are inclusive, so structurally-compatible variants could be accepted incorrectly. For example given the following type:
 
-Thursday:
- - [ ] https://github.com/specta-rs/specta/pull/454
- - [ ] https://github.com/specta-rs/specta/issues/402
- - [ ] https://github.com/specta-rs/specta/issues/86
- - [ ] Release notes + thank John.
- - [ ] https://github.com/specta-rs/specta/issues/100
- - [ ] https://github.com/specta-rs/specta/issues/299
- - [ ] https://github.com/specta-rs/specta/issues/133
- - [ ] https://github.com/specta-rs/specta/issues/68
- - [ ] https://github.com/specta-rs/specta/issues/131
- - [ ] https://github.com/specta-rs/specta/issues/76
- - [ ] https://github.com/specta-rs/specta/issues/431
- - [ ] https://github.com/specta-rs/specta/issues/352
+```rust
+enum Example {
+    A { a: String },
+    B { b: String },
+}
+```
 
- - [ ] https://github.com/specta-rs/specta/issues/135
+The following shows the difference:
 
- - Error overhaul:
-  - [ ] https://github.com/specta-rs/specta/issues/312
-  - [ ] https://github.com/specta-rs/specta/issues/345
-  - [ ] https://github.com/specta-rs/specta/issues/356
-  - [ ] https://github.com/specta-rs/specta/issues/135
+```rust
+// Specta's previous output. Notice we can parse both `a` and `b` which is incorrect.
+type Example = { a: string } | { b: string };
+const _: Example = { a: "aaaa", b: "bbbb" };
 
-Friday:
- - Generics overhaul
-    - [ ] https://github.com/specta-rs/specta/issues/138
-    - [ ] https://github.com/specta-rs/specta/issues/349
-    - [ ] https://github.com/specta-rs/specta/issues/17
-    - [ ] https://github.com/specta-rs/specta/issues/44
-    - [ ] https://github.com/specta-rs/specta/issues/16
+// Specta's new output
+type Example2 = ({ a: string }) & { b?: never } | ({ b: string }) & { a?: never };
 
-Sunday:
- - Nuanced types work (https://github.com/specta-rs/specta/issues/203):
-    - [ ] https://github.com/specta-rs/specta/issues/440
-    - [ ] https://github.com/specta-rs/specta/issues/46
-    - [ ] https://github.com/specta-rs/specta/issues/190
-    - [ ] Tauri Specta prototype
-    - [ ] TauRPC prototype
+// This yields a Typescript error as expected:
+const __: Example2 = { a: "aaaa", b: "bbbb" };
+```
 
-Tuesday:
- - Specta Serde split
-    - [ ] https://github.com/specta-rs/specta/issues/438
-    - [ ] Tauri Specta multi-phase
-    - [ ] TauRPC multi-phase
+This was fixed in [4606a42](https://github.com/specta-rs/specta/commit/4606a42) (closes [#221](https://github.com/specta-rs/specta/issues/221)).
 
-Wednesday:
- - OpenAPI exporter - https://github.com/specta-rs/specta/issues/31
- - Zod exporter - https://github.com/specta-rs/specta/pull/421
- - Typesafe error handling TauRPC
+## `Result<T, E>`
 
-Thursday:
- - Work through "// TODO: Fix this"'s in the test suite."
- - Cut next `2.0.0.rc-24` release
+I investigated adding a `Type` implementation for `Result<T, E>`. We previously removed this as it conflicted with our result handling implementation for `specta::function::FunctionResult` but with a lot of the work we've done in the core it's now possible to support this!
 
-Next period:
+### Regig `FunctionResult`
+
+The first step was to remove the `impl<T, E> FunctionResult for Result<T, E>` as theoretically we can now rely on `impl<T: Type> FunctionResult for T` so this was easy but did require a little bit of cleanup to remove [`FunctionReturnType`](https://docs.rs/specta/2.0.0-rc.23/specta/datatype/enum.FunctionReturnType.html).
+
+Now this is actually enough to have a working `Result` implementation in Specta's core but downstream frameworks like Tauri Specta need a way of being able to determine if a `Result` is a success or failure for generating helper code so this isn't enough!
+
+### Everything is an NDT
+
+Previously for `impl Type for String` Specta would return something like `DataType::Primitive(PrimitiveType::String)`. What if we rethink that?
+
+First of all `String` is not actually a primitive, `str` is the primitive so the first step was renaming `PrimitiveType::String` to `Primtive::str`. We also were able to cleanup some of the implementations by including a `impl Type for str` and then relaxing the `?Sized` bounds on some other implementations, such as those for containers such as `Box`, `Arc`, etc.
+
+Now that we have a set of primitives `str`, `[T]`, `i32`, etc we replaced the `Type` implementation for non-primtives to return a reference to a `NamedDataType` which we collect up into the `TypeCollection`. These are inlined by default so as a user you never actually see anything different but internally the exporter such as Typescript can see these named types to know more about what's going on.
+
+All of these `NamedDataType` implementations dispatch their `Type` implementation to a primitive. This is done to avoid `NamedDataType` wrapping. You don't want a `Date` to return a reference to a `String` which then has to be looked up to be find out it points to a `PrimitiveType::str`, you want to avoid the middleman. For example `IndexMap<T, E>` used to just call `<HashMap<T, E> as Type>::definition(...)` internally but that would result in these two named types being nested. Now we have a `MapPrimitive` internally that is used by both implementations to avoid onioning.
+
+This comes with such a massive improvements in that now any language exporter or tool can properly trace the `DataType` layer. For example, if we want to have a Rust exporter we could use the informations from the `NamedDataType`'s to determine the difference between an `IndexSet` and a `HashSet` where previously they would only be known as a `DataType::List` with more specific type information attached.
+
+### Generics are hard
+
+This change broke the handling of generics majorly. Namely when defining a `NamedDataType` in Specta you need to be very careful to ensure that you define generics on the `NamedDataType` and ensure the inner `DataType` only contains `DataType::Generic` slots which the language exporter can fill in.
+
+We also had issues in the Typescript exporter with resolving generics that where multiple types deep so I decided to rethink the generics a little bit.
+
+We deleted `DataType::Generic` and replaced it with `Reference::Generic` along with giving each generic a unique identity which helps to properly track them in the exporter. This also provides much harder errors for when the langauge exporter is unable to properly export the generics as it is able to properly check the generics exist in the current scope.
+
+### Derive be gone
+
+To fix all these generic issues I revampped the internal `macro_rules!` used for defining `impl Type for X`. With these changes a lucky side-effect is that we no longer require `specta-macros` for any of the built-in implementation. In limited conditions this could provide a compile time benefit and makes things cleaner.
+
+### Conclusion
+
+Merged in [#454](https://github.com/specta-rs/specta/pull/454), closes [#415](https://github.com/specta-rs/specta/issues/415), [#349](https://github.com/specta-rs/specta/issues/349), [#455](https://github.com/specta-rs/specta/issues/455)
+
+## Serde integration needs some serious TLC
+
+The `specta-serde` crate is a bit a mess at the moment so I sat down to try and sort it out and also support the remaning `#[serde(...)]` attributes which we don't currently support.
+
+### How it works?
+
+For the types Specta generates to properly reflect how Serde serialized and deserialized them we need to be able to adjust the types based on the presence of `#[serde(...)]` attributes. For example `#[serde(rename = "new_name")]` should rename the field to `new_name` in the generated type.
+
+For a long time we did this directly in Specta Macros which would parse these attributes and just make changes to the `DataType` layer directly before the macro generates it. Although this works well it requires each type to only have one singular representation. This means if you want to use a non-Serde format your out of luck and even more importantly if you want to differentiate between the `Serialize` and `Deserialize` implementations your out of luck.
+
+This is where the idea started for making Specta format-agnostic and removing Serde from the core where possible.
+
+The original system for this was introduced during "Phase 1" of my Flight Science work which was a runtime parser for attributes in the `specta-serde` crate. The Specta Macros crate we would parse all macro attributes `#[...]`, for example `#[doc = "My Rust docs"]`, `#[error(...)]` (from `thiserror`), `#[serde(...)]` and more and we would lower them into a [`Vec<specta::datatype::RuntimeAttribute>`](https://docs.rs/specta/2.0.0-rc.23/specta/datatype/struct.RuntimeAttribute.html) structure which could then be processed at runtime. The `specta-serde` crate could pull these attributes from the container, variants and fields and then make the corresponding adjusts to the `DataType` structure for the Typescript exporter to know how to export them.
+
+This worked well for a while, until...
+
+### Approach is flawed
+
+I started trying to implement [`#[specta(into = ...)]`](https://serde.rs/container-attrs.html#into) which seems like a fairly simple feature in theory but turns out it's completely not possible under the previous system.
+
+The issue you run into is that for `#[specta(into = "String")]` we want to call `<String as specta::Type>::definition(...)` to figure out the `DataType` for it, but the attribute parser is within the `specta-serde` crates runtime so it has no way to emit custom code like this. We need the attribute parser to go back to being done at compile time so we can emit custom code like this for the compiler to resolve prior to running the program.
+
+I did a heap of research around this and generated [this plan](https://hackmd.io/@oscartbeaumont/rJe_8avYWl) for solving it.
+
+### A solution enters the chat
+
+What if every format crate exports a `parser!` macro. This would take in something like:
+ - `parser!(@container; #[serde(...)]`
+ - `parser!(@container; #[doc = "Rustdocs"]`
+ - `parser!(@container; #[error(...)]`
+ - `parser!(@variant; #[serde(...)]`
+ - `parser!(@field; #[serde(...)]`
+
+This macro would be able to parse any incoming attribute it cares about, and also generate code such as the required `<T as specta::Type>::definition(...)` for `#[specta(into = ...)]`. The macro returns an arbitrary struct which it stored in an `Attributes` container which is basically a container for any type (more or less a `HashMap<TypeId, Arc<dyn Any>>`). Now the macro can pass the structures and we can `Attributes::downcast::<SerdeAttributes()` to get access to them at runtime to apply them to the `DataType` layer.
+
+This perfectly solves the problem we originally had and allows us to stay format agnostic while also supporting all of the Serde attributes.
+
+### Tradeoffs
+
+One downside is that Specta's macro crate needs to know about all of the supported formats to know which crates to call `{crate}::parser!` on. Using [`proc-macro-crate`](https://docs.rs/proc-macro-crate) we can detect known formats like `specta_serde` being in the users dependencies to know whether we need to emit the `parser!` call. For custom formats you can set a `SPECTA_FORMAT_CRATES` envrionment variable from your `build.rs`. This is clunky but in practice we would add support for as many formats officially as possible!
+
+### Phase-specific handling
+
+So all this work is cool and all but splitting Serde out of the core doesn't matter to me because I use Serde right?
+
+Actually no,
+
+By splitting it out of the core we can allow the Serde runtime to handle the different phases specifically `Serialize` and `Deserialize` differently.
+
+### The public API?
+
+With this refactor we now have the following API:
+ - `specta_serde::apply(types: specta::Types) -> Result<specta::ResolvedTypes, specta_serde::Error>`
+ - `specta_serde::apply_phases(types: specta::Types) -> Result<specta::ResolvedTypes, specta_serde::Error>`
+
+Note that both of these return `ResolvedTypes`. This is just a specially named wrapper around the existing `Types` struct, however this is used to indicate it has been processed by a specific-format, in this case Serde.
+
+Specta Typescript and other language exporters will expect `ResolvedTypes` instead of `Types`. This will at the type-level remind the user they must use `specta_serde::apply` or `specta_serde::apply_phases` before exporting the types.
+
+With this Specta Typescript no longer depends on Specta Serde. The two components are completely decoupled.
+
+### What is `apply_phases`?
+
+So `specta_serde::apply` is the old API your used to, except that the presence of phase-specific attributes like `#[serde(skip_serializing_if = ...)]` now throw as an error as it is impossible for a single type to be generated.
+
+`specta_serde::apply_phases` looks through each of your types for phase-specific properties and if they are found it split the type into the following:
+ - `MyType` which is replaced with `MyType_Serialize | MyType_Deserialize`.
+ - `MyType_Serialize` - which is the version with serialize attributes applied
+ - `MyType_Deserialize` - which is the version with deserialize attributes applied
+
+It also traces all depent types and may split them automatically so we can dispatch to the proper phase type.
+
+This all means a framework like TauRPC and Tauri Specta is now able to be much smarter about the types it generates.
+
+### All the Serde atttibutes!
+
+Following this I have worked through supporting as many Serde attributes as possible across all phases as previously we only really had the import ones supported. Although I suspect i'm not yet at 100% support we definitely have much better support.
+
+Attribute coverage expanded significantly during this phase:
+ - `variant_identifier` / `field_identifier` - [aba3540](https://github.com/specta-rs/specta/commit/aba3540)
+ - `into` / `from` / `try_from` - [8ec2663](https://github.com/specta-rs/specta/commit/8ec2663)
+ - `variant #[specta(type = ...)]` + broader attribute support cleanup - [e9a592d](https://github.com/specta-rs/specta/commit/e9a592d)
+ - container `type = ...` inference fix and `serde-repr` example - [4ff1c2a](https://github.com/specta-rs/specta/commit/4ff1c2a)
+
+### `specta_serde::Phased`
+
+It is very useful for the user to be able to override the type per-phase so I have introduced `Phased`. It can be used like the following:
+
+```rust
+#[derive(Type)]
+struct OneOrMany {
+    #[specta(type = specta_serde::Phased<Vec<String>, String>)]
+    value: Vec<String>,
+}
+```
+
+This is really cool because it is a way of supporting something like `#[specta(type(serialize = ..., deserialize = ...))]` without needing the core to be aware of Serde phases which would result in a much more fragile and complicated solution.
+
+### Notes about attributes
+
+ - `#[serde(with = ...)]` requires `#[specta(type = ...)]` annotation to work as we can't infer the type.
+ - `serde-with` crate doesn't require a special support as it just emits `#[serde(with = ...)]` internally, which Specta can see.
+
+## Other stuff
+
+### Issue count down, down and staying down
+
+I have also spent quite a bit of work going through GitHub issues and fixing them. We are currently at 27 open PRs. when stating this contract we were at *100*. That's absolutely huge!!!!!
+
+TODO:
+ - Added parity with crates supported by `ts-rs` - [#454](https://github.com/specta-rs/specta/pull/454) & [2b3aafa](https://github.com/specta-rs/specta/commit/2b3aafa)
+ - Add `error-stack` support - [e33a2d2](https://github.com/specta-rs/specta/commit/e33a2d2) (closes [#249](https://github.com/specta-rs/specta/issues/249))
+ - Review hidden API surface and docs - [9a13b7e](https://github.com/specta-rs/specta/commit/9a13b7e) (closes [#325](https://github.com/specta-rs/specta/issues/325))
+
+### Zod exporter
+
+I have started working on a Zod exporter. It is still incomplete so will share more in the near future!
+
+[#461](https://github.com/specta-rs/specta/pull/461)
+
+### Nuanced types
+
+This work is still shifting but I think we can fully achieve support for this feature without it existing in Specta's core.
+
+I suspect I am going to close [#419](https://github.com/specta-rs/specta/pull/419) in favor of [#458](https://github.com/specta-rs/specta/pull/458) for this reason.
+
+I have some prototypes running in Tauri Specta but making this something general enough for TauRPC to adopt is still going to require a bit of thought.
 
 ## Phase 5
 
-From xx/xx/2026 to xx/xx/2026
+From 13/03/2026 to xx/xx/2026
 
-Planned:
-- Tauri Specta macro: - https://github.com/specta-rs/specta/issues/213
-- Drop `specta::function` + `specta::specta` in preparation from upstream changes???
-- Upstreaming changes in Flightscience forks (including [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater))
+Focus: Publish `-rc.24` as it contains a massive core overhaul and breaking changes.
+
+{/* Immediate focus: fix test suite failures and get test suite passing again. */}
+
+The below plan includes the majority of remaining GitHub issues and things from the original Specta roadmap.
+
+Priorities:
+ - General cleanup & documentation - 16 hours
+    - Cleanup accessor methods in core - [#431](https://github.com/specta-rs/specta/issues/431)
+    - Cleanup `specta::internal` - [#352](https://github.com/specta-rs/specta/issues/352)
+    - Overhaul examples - [#112](https://github.com/specta-rs/specta/issues/112)
+    - Documentation overhaul - [#299](https://github.com/specta-rs/specta/issues/299)
+    - Cleanup all remaining TODO's
+    - Typescript exporter should throw error if ndt name is empty
+    - Test cases for `serde_json::Value`, and all other legacy impls
+ - Typescipt and Serde crate error reporting overhaul - 8 hours
+    - [#135](https://github.com/specta-rs/specta/issues/135), [#312](https://github.com/specta-rs/specta/issues/312), [#345](https://github.com/specta-rs/specta/issues/345) & [#356](https://github.com/specta-rs/specta/issues/356)
+ - Typescript exporter technical debt - 8 hours
+    - Drop `legacy.rs` from Typescript exporter by finishing the rewrite of all exporter components
+    - Should `indent` stay on `export`? Maybe it should be a find and replace???
+    - Can we avoid using `thread_local`'s for context. It makes sense for the way the built-in Typescript exporter works, but it's not ideal for maintainability.
+ - TauRPC error handling - 8 hours
+ - Nuanced types - 16 hours
+    - [#203](https://github.com/specta-rs/specta/issues/203), [#440](https://github.com/specta-rs/specta/issues/440), [#46](https://github.com/specta-rs/specta/issues/46)
+ - Specta Zod - [#421](https://github.com/specta-rs/specta/pull/421)
+ - Specta OpenAPI??? - [#31](https://github.com/specta-rs/specta/issues/31)
+ - Upstreaming changes in Flightscience forks (including [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater))
+
+Stretch goals:
+ - Bring back `DataType::Literal` on the new opaque types machinery
+ - Const generics - [#17](https://github.com/specta-rs/specta/issues/17)
+ - Default generics - [#16](https://github.com/specta-rs/specta/issues/16)
+ - Features affecting the Serde implementation - [#8](https://github.com/specta-rs/specta/issues/8)
+ - Dealing with `impl Type for *` without a semver nightmare.
+ - Tauri Specta macro overhaul:
+    - [ ] Allows dropping `function` from core [#432](https://github.com/specta-rs/specta/pull/432)
+    - [ ] `#[tauri::command(rename_all = "...")]` - [#213](https://github.com/specta-rs/specta/issues/213)
+
+My personal time (not in scope):
+ - Non-allocated `DataType` structure. This would likely require significant changes so might not be worth it.
+ - Kotlin exporter - [#29](https://github.com/specta-rs/specta/issues/29)
+ - JSONSchema exporter - [#58](https://github.com/specta-rs/specta/issues/58)
+ - Valibot exporter - [#303](https://github.com/specta-rs/specta/issues/303)
+ - WIT exporter - [#15](https://github.com/specta-rs/specta/issues/15)
+ - Rust exporter - [#27](https://github.com/specta-rs/specta/issues/27)
