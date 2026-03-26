@@ -1181,6 +1181,20 @@ This is being worked on in [specta-rs/tauri-specta#206](https://github.com/spect
 
 I have introduced the `specta-tags` crate. This crate is still a bit of a mess but it's been the playground for properly implementing nuanced types. It's really awesome this can purely be done in userspace with any integration from the `specta` core crate.
 
+### `specta-tags`
+
+When paired with a framework like Tauri Specta (or TauRPC) it can produce something like the following in the `bindings.ts`:
+
+```ts
+export const commands = {
+  specialTypes: (input: SpecialTypes_Deserialize) => __TAURI_INVOKE<[SpecialTypes_Deserialize, SpecialTypes_Deserialize]>("special_types", { input }).then((v) => [(() => { let __value1 = v[0]; { const next = BigInt(__value1["u128_max"]); if (next !== __value1["u128_max"]) __value1 = { ...__value1, "u128_max": next }; } { const next = BigInt(__value1["u128_min"]); if (next !== __value1["u128_min"]) __value1 = { ...__value1, "u128_min": next }; } { const next = BigInt(__value1["i128_max"]); if (next !== __value1["i128_max"]) __value1 = { ...__value1, "i128_max": next }; } { const next = BigInt(__value1["i128_min"]); if (next !== __value1["i128_min"]) __value1 = { ...__value1, "i128_min": next }; } return __value1; })(), (() => { let __value2 = v[1]; { const next = BigInt(__value2["u128_max"]); if (next !== __value2["u128_max"]) __value2 = { ...__value2, "u128_max": next }; } { const next = BigInt(__value2["u128_min"]); if (next !== __value2["u128_min"]) __value2 = { ...__value2, "u128_min": next }; } { const next = BigInt(__value2["i128_max"]); if (next !== __value2["i128_max"]) __value2 = { ...__value2, "i128_max": next }; } { const next = BigInt(__value2["i128_min"]); if (next !== __value2["i128_min"]) __value2 = { ...__value2, "i128_min": next }; } return __value2; })()]),
+};
+```
+
+Notice the `.then` logic. This is able to map the fields to their JS types. For example `BigInt(__value1["i128_min"])` in the code is converting the field `i128_min` into a proper bigint type. The same can be done for `Date`'s, `UInt8Array`'s, etc.
+
+The current code being produced is pretty messy but in the future it will likely be much cleaner.
+
 ### BigInt's
 
 The `specta-tags` crate handles mapping from the incoming type to a `bigint`, however that is too late as the `JSON.parse` in Tauri already triggers the truncation of the bigint if the number is too large. `JSON.stringify` used for communicating back with Rust always errors on bigint's too so it can't be sent either.
