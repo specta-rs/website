@@ -1054,11 +1054,234 @@ I have some prototypes running in Tauri Specta but making this something general
 
 ## Phase 5
 
-From 13/03/2026 to xx/xx/2026
+From 13/03/2026 to 27/03/2026
 
-Focus: Publish `-rc.24` as it contains a massive core overhaul and breaking changes.
+This has been a pretty slow week as I have had a bunch of personal stuff getting in the way.
 
-{/* Immediate focus: fix test suite failures and get test suite passing again. */}
+## Fixing tests
+
+I spent a bunch of time fixing the test suite. We had a handful of regressions from previous work that required a bunch of debugging. All fixes merged in [#463](https://github.com/specta-rs/specta/pull/463).
+
+I also opened [hashintel/hash#8579](https://github.com/hashintel/hash/issues/8579) to fix the issues I have been having with generating documentation with the Rust nightly toolchain due to `error-stack`.
+
+Also closed [#352](https://github.com/specta-rs/specta/issues/352) by cleaning up `specta::internal`.
+
+## Enum discrimination cleanup
+
+In Phase 4 we introduced stricter enum validation and I noticed that the implementation has some edge cases with certain Serde tagging conditions so I review and improved them.
+
+Basically it all boils down to the following which goes through how each tagging condition should be exported:
+
+```ts
+// For internally tagged the tag acts as the differentiator so we don't need to do anything special
+type A = { type: "A"} | { type: "B", data: string };
+const a: A = { "type": "A" };
+const b: A = { "type": "B", data: "todo" };
+const c: A = { "type": "A", data: "todo" }; // type error
+
+// For adjacently tagged the tag acts as the differentiator so we don't need to do anything special
+type C = { type: "A", data: { data: string } } | { type: "B", data: { another: number }  };
+const g: C = { type: "A", data: { data: "string" } };
+const h: C = { type: "B", data: { another: 42 } };
+const i: C = { type: "A", data: { data: "string", another: 42 } }; // type error
+
+// For untagged we need to add the `?: never` fields so both variants can't be initiated at once.
+type B = { data: string, another?: never } | { another: number, data?: never };
+const d: B = { another: 42 };
+const e: B = { data: "bruh" };
+const f: B = { data: "bruh", another: 42 }; // type error
+
+// For externally tagged we need to add the `?: never` fields so both variants can't be initiated at once.
+type D = { A: { data: string }, B?: never } | { B: { another: number }, A?: never };
+const j: D = { A: { data: "bruh" } };
+const k: D = { B: { another: 42 } };
+const l: D = { A: { data: "bruh" }, B: { another: 42 } }; // type error
+```
+
+[ts playground](https://www.typescriptlang.org/play/?ssl=7&ssc=8&pln=7&pc=18#code/PTAEDEHsCdQSwHYBcCm0EEMA2WCeokMBzIlAEwIAsUDjQMBjJAZ3taWtDLgDMe0UyOBiQxQzSKADuNMpAQByJKAQpyBSXPoJcHREXEAHFA2FYAUElzHQAQVABeUAG8C1lAC5QAIlveAvqAAPi5uxl7eAELeADRcIhhezEjQ+qD+ANzmDPLJ9F72Tq7eVsbeEX7pWTkIeQBGBY6hJe7lPtFxZAkRonLeVdm5ygyNRT6lKG2+sfGEPZB9A+YgEGIYZABWjIJIeLQk6hw0hAaMLGxUsrz80DvCorAS0rLySipqFKJckhg6eggGZjGUzYSzuUAAYSargmFRmXTmoQRiXEKTSgUCIRh7giHVmKNcv0gR2gXgQAFcALZ1NDpUADGp5IheKFjWE+PydbpI7neZKpAH9DHVIagSgs6FhTzteHcwkIYnUUmgAAsACY6ZlBrVlHAJWycRzZYjXMiIvz9DMiSSvOrNVllmAoLBychiKQKDJ3ocfmRPpwAAYAfjJKAAbmgA6AeHAUFgyKwnnVFaAwxhUr9zgxfm8afAEHAkPd1CJQPIGCgAHRgmyRSVm1ECohxa1KkPvCOwTGhVtoMlUmnQLmEduqTsM0VkLx1sa95V2rWM5TSmc8xHeOrQcmUIUinXR6f13mb7dWhU21UarWO1awFAAD1Q6GwexOHue3s+vv9NGDoc7UYxnGCbiJIyYcKm6bCMgrDZooyh5oghbFhQpbllWNY0AAIpKtheKa3IWgC6RxJEo7hrS3auJE+HaIqfYqAOlFxLY5HjouoobF4OFjHha4ohuW47va2p5AA1txko0T255KraV4TvuWCSbxtENoJp4kaA0nyvR84KdeQA)
+
+implemented in [9e782e4](https://github.com/specta-rs/specta/commit/9e782e4d89a2856968752196178b018366474534) and [331d7c0](https://github.com/specta-rs/specta/commit/331d7c0cefc4da7bb57f4d45c5c1a41db32d38b8)
+
+## Issues with format system
+
+In working on upgrading Tauri Specta and TauRPC I noticed another major issue with our new format system approach. I was getting the following error on a perfectly valid enum:
+```bash
+thread 'main' (4981415) panicked at examples/app/src-tauri/src/main.rs:155:14:
+Failed to export typescript bindings: Framework error: Specta Serde validation failed: Invalid externally tagged enum variant 'IoError': variant payload is fully skipped
+```
+
+In looking into it the type is actually valid so what's happening?
+
+Well `specta-serde` isn't a dependency on the example crate (representing the end-users application) which I was compiling. Due to this when `#[derive(Type)]` runs on it, the `#[serde(...)]` attributes are never collected, and hence the Serde transformation never runs and injects the expected `#[specta(tag = ..., content = ...)` which made this type valid.
+
+This is a another oversight on the implementation of formats.
+
+### Dynamic formats is not possible
+
+Conclusion: As much as the experiment has been worth it for providing the foundation of phase-specific types the whole vision of formats like Serde being modular just isn't possible.
+
+The core issue is that the macro runs across types in the entire crate-graph, so we need to collect up format information from all of them, however we can't import the format crate from all crates in the graph (as it had to have been a preexisting dependency) so you end up with incomplete attribute information and invalid and wierd types.
+
+Going forwards:
+ - `specta::datatype::Atributes` is now `HashMap<String, Box<dyn Any>>` so we can store attributes in a form like `serde:rename = "new_name"`. This means we don't need to import `specta_serde` to construct it's attributes.
+ - `specta_serde::parser!`'s logic is moved into `specta-macros` which now has a non-default `serde` feature which enables the collection of the Serde attributes (this is enabled if `specta_serde` is anywhere in the crate graph)
+
+This makes the Serde integration work really well and still keeps it agnostic from the `specta` crate, however the `specta-macros` crate can't get away without bundling support for it. If we want to support a non-Serde formats we would need to introduce them into `specta-macros` which is worse than the original plan to allow any 3rd party crate to define it, but this is overall still a solid final outcome and is the best we can do with the technical constraints.
+
+Fix in [#466](https://github.com/specta-rs/specta/pull/466)
+
+## Tauri Specta phase-specific handling
+
+I have integerated the work on phase-specific handling into Tauri Specta to confirm the API surface is actually working. I will follow this up with a PR to TauRPC in the next sprint once the current upgrade Specta PR is merged.
+
+From this command and struct definition in Rust:
+
+```rust
+#[derive(Serialize, Deserialize, Type)]
+struct PhaseSpecificRename {
+    #[serde(rename(serialize = "serialized_value", deserialize = "deserialized_value"))]
+    value: String,
+}
+
+#[tauri::command]
+#[specta::specta]
+fn phase_specific_rename(input: PhaseSpecificRename) -> PhaseSpecificRename {
+    input
+}
+```
+
+This results in the following in the `bindings.ts` file:
+
+```ts
+// ...
+
+export type PhaseSpecificRename = PhaseSpecificRename_Serialize | PhaseSpecificRename_Deserialize;
+
+export type PhaseSpecificRename_Deserialize = {
+	deserialized_value: string,
+};
+
+export type PhaseSpecificRename_Serialize = {
+	serialized_value: string,
+};
+
+// ...
+
+export const commands = {
+    // Notice how we specialise the types for the usage!
+	phaseSpecificRename: (input: PhaseSpecificRename_Deserialize) => __TAURI_INVOKE<PhaseSpecificRename_Serialize>("phase_specific_rename", { input }),
+};
+```
+
+This means all of the work on `specta-serde` is finally possible to be used! This will result in much more accurate types!
+
+This is being worked on in [specta-rs/tauri-specta#206](https://github.com/specta-rs/tauri-specta/pull/206)
+
+## Nuanced types
+
+I have introduced the `specta-tags` crate. This crate is still a bit of a mess but it's been the playground for properly implementing nuanced types. It's really awesome this can purely be done in userspace with any integration from the `specta` core crate.
+
+### BigInt's
+
+The `specta-tags` crate handles mapping from the incoming type to a `bigint`, however that is too late as the `JSON.parse` in Tauri already triggers the truncation of the bigint if the number is too large. `JSON.stringify` used for communicating back with Rust always errors on bigint's too so it can't be sent either.
+
+For us to properly support this across Tauri Specta and TauRPC our best bet is to get some form of official support for bigints in Tauri, by how?
+
+#### JS -> Rust
+
+This is as easy as the 3 lines of code changed in [this commit](https://github.com/oscartbeaumont/tauri/commit/169a8ae139c6664595472acb24567077db8cfdd6).
+
+The one major issue I see with this approach is that I don't think [`JSON.rawJSON` is supported](https://caniuse.com/wf-json-raw) on [all platforms Tauri supports](https://v2.tauri.app/reference/webview-versions/).
+
+It can however be polyfilled so that is the likely best option.
+
+#### Rust -> JS
+
+For this to work I tried multiple different approaches. The one I liked the most was allow the user to set a `reviver` on the Tauri `invoke` call. This `reviver` is then pass to the `JSON.parse` parameter.
+
+I implemented this in [e485002](https://github.com/oscartbeaumont/tauri/commit/e485002ae0c5f5afb5286d9846f196306b41ebe1) and [c1d13da](https://github.com/oscartbeaumont/tauri/commit/c1d13daf34ce881e248c06a7bccc31bc1f39afd4) (note these are AI generated and not very carefully reviewed but do work).
+
+The approach does require quite a few changes to Tauri so I definitely would have preferred a simpler solution but I suspect this is our best bet. This solution also has similar browser support concerns but may be harder to pollyfill.
+
+#### Bring them together
+
+This all comes together to make the following possible with the regular Tauri `invoke` API:
+
+```ts
+invoke("special_types", {
+  input: {
+    u128_max: (1n << 128n) - 1n,
+    u128_min: 0n,
+    i128_max: (1n << 127n) - 1n,
+    i128_min: -(1n << 127n),
+} }, {
+  reviver: (key, value, context) => {
+   if (
+     context &&
+     typeof value === "number" &&
+     Number.isInteger(value) &&
+     /^-?\d+$/.test(context.source) &&
+     !Number.isSafeInteger(value)
+   ) return BigInt(context.source);
+   return value;
+ }
+}).then((echo) => {
+    console.log(
+      "ASSERTIONS:",
+      echo.u128_max == (1n << 128n) - 1n,
+      echo.u128_min == 0n,
+      echo.i128_max == (1n << 127n) - 1n,
+      echo.i128_min == -(1n << 127n)
+    );
+});
+```
+
+Then when wrapped with `specta-tags` we end up with support for large integer types without any loss of precion, without any user-defined glue code or changes. Working in both TauRPC and Tauri Specta!
+
+This feature makes your code *just work* without the application developer even needing to be aware of all the issues with large integer types.
+
+#### Removal of `BigIntExportBehavior`
+
+The global `BigIntExportBehavior` configures how large integer types are exported, as by default they will be truncated by JS when deserializing. Although this global option is convenient, it's basically always a footgun to use so in the next release it's finally going to be removed.
+
+With official support for `BigInt`'s in Tauri Specta and TauRPC the need for a global option to disable the error will no longer be required as these frameworks make the error impossible. For people not using a framework, this change will likely be very annoying as it will require overriding every single bigint-style field with an override annotation, or writing very technical Specta logic to do a global override on the type collection. Although this will be annoying it's much more technically correct and will ensure developers are always aware of the danger which `BigIntExportBehavior` previously hide away from them.
+
+The Typescript exporter will always error (as if `BigIntExportBehavior::Fail`) was set and it will have no overridable option to disable that. We will recommend override on a per-field basis but the developer could also generate a transformation function for the `DataType` structure (as this is what frameworks like Tauri Specta and TauRPC will do to surpress the error).
+
+<Callout title="What to about bigint errors?" type="idea">
+ Specta Typescript intentionally forbids exporting BigInt-style Rust integer types.
+ This includes [usize], [isize], [i64], [u64], [u128], [i128] and [f128].
+
+ This guard exists because `JSON.parse` will truncate large integers to fit into a JavaScript `number` type so we explicitly forbid exporting them.
+
+ If you encounter this error, there are a few common migration paths (in order of preference):
+
+ 1. Use a smaller integer types (any of `u8`/`i8`/`u16`/`i16`/`u32`/`i32`/`f64`).
+    - Only possible when the biggest integer you need to represent is small enough to be represented by a `number` in JS.
+    - This approach forces your application code to handle overflow/underflow values explicitly
+    - Downside is that it can introduce annoying glue code and doesn't actually work if your need large values.
+
+ 2. Serialize the value as a string
+     - This can be done using `#[specta(type = String)]` combined with a Serde `#[serde(with = "...")]` attribute.
+     - Downside is that it can introduce annoying glue code, both on in Rust and in JS as you will need to turn it back into a `new BigInt(myString)` in JS.
+
+ 3. Use a Specta-based framework
+     - Frameworks like [Tauri Specta](https://github.com/specta-rs/tauri-specta) and [TauRPC](https://github.com/MatsDK/TauRPC) take care of this for you.
+     - They use special internals to preserve the values and make use of [`specta-tags`](http://docs.rs/specta-tags) for generating glue-code automatically.
+
+ 4. UNSAFE: Accept precision loss
+     - Accept that large numbers may be deserialized differently and use `#[specta(type = f64)]` to bypass this warning on a per-field basis.
+     - This can't be set globally as it is designed intentionally to introduce friction, as you are accepting the risk of data loss which is not okay.
+
+</Callout>
+
+### `Date` & `UInt8Array`
+
+These are way easier as they don't require transport level changes so they should be working although I haven't had time to iron out the bugs they will inevitably have.
+
+### Remaining
+
+My next focus is on getting TauRPC upgraded, using phase-specific types and using `specta-tags` so we can get it up and running in the Flight Science codebase! Sorry this has taken so long!
 
 The below plan includes the majority of remaining GitHub issues and things from the original Specta roadmap.
 
@@ -1067,7 +1290,6 @@ Priorities:
  - Specta OpenAPI??? - 16 hours - [#31](https://github.com/specta-rs/specta/issues/31)
  - General cleanup & documentation - 16 hours
     - Cleanup accessor methods in core - [#431](https://github.com/specta-rs/specta/issues/431)
-    - Cleanup `specta::internal` - [#352](https://github.com/specta-rs/specta/issues/352)
     - Overhaul examples - [#112](https://github.com/specta-rs/specta/issues/112)
     - Documentation overhaul - [#299](https://github.com/specta-rs/specta/issues/299)
     - Cleanup all remaining TODO's
