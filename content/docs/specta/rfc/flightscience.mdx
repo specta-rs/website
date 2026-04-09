@@ -1297,7 +1297,7 @@ These are way easier as they don't require transport level changes so they shoul
 
 From 27/03/2026 to 09/04/2026
 
-The Specta repo is now down to a single page of GitHub issues which is amazing!
+The Specta repo is now down to a single page of GitHub issues which is amazing mostly comprised of issues with `backburner` or `exporter` tags which mean they can be deferred until after the v2 launch!
 
 TODO: Discuss the number
 
@@ -1305,7 +1305,7 @@ TODO: Discuss the number
 
 TODO: New PR + rebased against Flight Science fork
 
-TODO: Error handling???
+TODO: Error handling merged into a PR???
 
 ### Generics
 
@@ -1327,12 +1327,6 @@ TODO
 
 TODO: I thought we need this for const generics but good to have back anyway. Hashing `f32` and `f64` are hard lol
 
-### TauRPC
-
-TODO
-
-Could we do `specta-tags` and error handling PRs quickly???
-
 ### Cleanup accessors
 
 [#431](https://github.com/specta-rs/specta/issues/431)
@@ -1349,10 +1343,6 @@ TODO
 
 TODO
 
-Strech:
- - Cleanup all remaining TODO's
- - Typescript exporter should throw error if ndt name is empty
-
 ## Phase 7
 
 From 09/04/2026 to xx/04/2026
@@ -1364,6 +1354,7 @@ Core issues:
  - Typescript and Serde exporter cleanup & better errors - [#475](https://github.com/specta-rs/specta/issues/475)
  - Overhaul examples - [#112](https://github.com/specta-rs/specta/issues/112)
  - Extend documentation for some more advanced information - [#299](https://github.com/specta-rs/specta/issues/299)
+ - Fix and triage all remaining TODO's
 
 Phase 8:
 - Specta Zod - [#421](https://github.com/specta-rs/specta/pull/421)
@@ -1376,3 +1367,5 @@ Going to keep chipping away at:
 - Nuanced types - [#203](https://github.com/specta-rs/specta/issues/203)
 
 {/* Upstreaming changes in Flightscience forks (including [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater)) */}
+
+{/* Tauri Specta needs to be able to replace literals from `number` to `BigInt`. We need that as part of `Exporter::map`'s callback. */}
