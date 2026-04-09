@@ -1303,17 +1303,17 @@ I'm sorry for the relatively brief writeup this week!
 
 ### Released 2.0.0-rc.24
 
-Did a release with all the improvements from the last sprint [Release notes](https://github.com/specta-rs/specta/releases/tag/v2.0.0-rc.24)!
+I did a release with all the improvements from the last sprint [release notes](https://github.com/specta-rs/specta/releases/tag/v2.0.0-rc.24)!
 
-This release was also finally coupled with a Tauri Specta release [release notes](https://github.com/specta-rs/tauri-specta/releases/tag/v2.0.0-rc.24)
+This release was also finally coupled with a Tauri Specta release [release notes](https://github.com/specta-rs/tauri-specta/releases/tag/v2.0.0-rc.24). The last one was over a year ago!
 
-The Tauri Specta release is launching the phase-specific types as an enabled by default feature.
+This Tauri Specta release is launching the phase-specific types as an enabled by default feature.This will allow me to gain proper feedback on them before/if we enable them by default in TauRPC.
 
 ### TauRPC
 
-I closed the existing PR [#58](https://github.com/MatsDK/TauRPC/pull/58) for 2.0.0-rc.23 and opened up a new one for [#64](https://github.com/MatsDK/TauRPC/pull/64) 2.0.0-rc.24.
+I closed the existing PR [#58](https://github.com/MatsDK/TauRPC/pull/58) for 2.0.0-rc.23 and opened up a new one for [#64](https://github.com/MatsDK/TauRPC/pull/64) 2.0.0-rc.24. Upgrading to all new breaking changes in the core and properly implementing phased types.
 
-I also rebased this PR against the Flight Science fork [#12](https://github.com/fltsci/TauRPC/pull/12).
+I also rebased this PR against the Flight Science fork [#12](https://github.com/fltsci/TauRPC/pull/12) so it's ready for you to try out!!!
 
 I would really appreciate any feedback while upgrading! I really want to see Flight Science get upgraded and also look for any holes in our Specta's testing process.
 
@@ -1321,7 +1321,7 @@ Once this PR is sorted we can introduce the typesafe error handling. I think it 
 
 ### Generics
 
-We had a group of issues relating to generics which have been marked as `breaking-change` which I wanted to clear out.
+We had a group of issues relating to generics which have been marked as `breaking-change` that I wanted to clear out.
 
 #### Const generics
 
@@ -1329,7 +1329,7 @@ We had a group of issues relating to generics which have been marked as `breakin
 
 Sadly Specta can't fully support const generics as we have no way to track their inference.
 
-For generics we create a virtual type to replace it's implementation similar to:
+For regular generics we create a virtual type to replace it's implementation similar to:
 
 ```rust
 pub struct MyType<A> {
@@ -1353,9 +1353,9 @@ impl<A> Type for MyType<A> {
 }
 ```
 
-but with const generics this doesn't work because the type will always be something like `usize`.
+but with const generics this doesn't work because the type will always be something like `usize`. After thinking and some prototypes I actually don't see a way we can support it.
 
-Another problem is our current implementation of `[T; N]` which is actually non-deterministic. If we always set the length in the `impl Type for [T; N]`, the implementation will "bake" whatever the first encountered value of `N` is into the global type definition which is wrong. For example:
+Another problem is our current implementation of `[T; N]` which is using const generics is actually broken because of this lack of support for const generics. If we always set the length in the `impl Type for [T; N]`, the implementation will "bake" whatever the first encountered value of `N` is into the global type definition which results in incorrect types. For example:
 
 ```rust
 pub struct A {
@@ -1378,26 +1378,91 @@ pub struct B {
 // export type Demo = { [number, number] }; // This is invalid for the `a` field.
 ```
 
-Your unlikely to notice this as Serde doesn't actually support `[T; N]` by default but with external crates or `with` implementations it is possible so it's still important that Specta is able to properly handle it.
+Your unlikely to notice this in practice as Serde doesn't actually support `[T; N]` by default but with external helper crates or `with` implementations it is possible so it's still important that Specta is able to properly handle it.
 
 To solve this I defined a set of rules:
  - If your in a named type with const generics we can't include length (Eg. always export as T[], instead of [T, T, T] (depending on length)).
- - If your in a named type without const generics we know that must be static (as associated const parameters aren't and can't be supported)
- - If your ouside the context of a named type length is safe.
+    - Inside `[T; N]`'s `Type` implementation we can't tell if the `N` is static or based on the const function so we just have to always ignore it.
+    - This means `[usize; 2]` will become `number[]` instead of `[number, number]`
+ - If your in a named type without const generics or outside of a named type all together we know that `N` must be static (as associated const parameters are also unsupported and can't be supported)
+    So `[usize; 2]` will become `[number, number]` always
 
-With this I introduced [`CONTEXT_HAS_CONST_PARAMS`](https://github.com/specta-rs/specta/blob/3e93f7c07770885d79b153191a598f218a1e7b3f/specta/src/datatype/named.rs#L60) as a thread_local to track the scope and modify the type implementation according to the rules above.
+With this I introduced [`CONTEXT_HAS_CONST_PARAMS`](https://github.com/specta-rs/specta/blob/3e93f7c07770885d79b153191a598f218a1e7b3f/specta/src/datatype/named.rs#L60) which is a thread_local to track the scope and modify the type implementation according to the rules above.
 
-I have introduced `specta_utils::FixedArray<N, T>` which can be used like `#[specta(type = specta_utils::FixedArray<4, usize>)]` to workaround Specta's conservative behavior in types with const generics.
+I have also introduced `specta_utils::FixedArray<N, T>` which can be used like `#[specta(type = specta_utils::FixedArray<4, usize>)]` to workaround Specta's conservative behavior in types with const generics.
+
+### Overhauling flattening/inlining for const parameters
+
+I also did a major overhaul to inlining and flattening so that when using them const generics are intentionally baked in.
+
+So for the following types:
+
+```rs
+#[derive(Type)]
+struct Demo<const N: usize = 1> {
+    one: [u32; N],
+    two: [u32; 3],
+}
+
+#[derive(Type)]
+struct ContainsDemo {
+    #[specta(inline)]
+    a: Demo<2>,
+    #[specta(inline)]
+    b: Demo<3>,
+    c: Demo<4>,
+}
+```
+
+we get the following:
+
+```ts
+// This file has been generated by Specta. Do not edit this file manually.
+export type ContainsDemo = {
+	a: {
+		one: [number, number], // Notice we "baked" N=2
+		two: [number, number, number],
+	},
+	b: {
+		one: [number, number, number], // Notice we "baked" N=3
+		two: [number, number, number],
+	},
+	c: Demo, // because it's not inlined, we fallback to the generalised `number[]` definition
+};
+
+export type Demo = {
+	one: number[],
+	two: number[],
+};
+```
+
+instead of the previous version of Specta returning:
+```ts
+// This file has been generated by Specta. Do not edit this file manually.
+export type ContainsDemo = {
+	a: {
+		one: number[], // Notice this is fixed length. It's just `Demo` pasted in place.
+		two: number[], // Notice this is fixed length. It's just `Demo` pasted in place.
+	},
+	b: {
+		one: number[], // Notice this is fixed length. It's just `Demo` pasted in place.
+		two: number[], // Notice this is fixed length. It's just `Demo` pasted in place.
+	},
+	c: Demo,
+};
+```
+
+This required a overhaul to the system for building `NamedDataType` as we now have to track the type of every possible reference's definition of a type which can be used for inline and flatten to make it perfectly accurate to where it was called.
 
 ### Bring back `DataType::Literal`
 
-I started work on a solution to literal types as they would likely be required for const generics, however this work started before I figured out that we can't support const generics.
+I started work on a solution to literal types as I thought they would be required for const generics, however this work started before I figured out that we can't support const generics.
 
 For now i've merged it into the repo but i'm leaving it commented out because I am not sure if we should stablise it.
 
-Literals with floating-point types (`f32` and `f64`) are challenging as they can't be `Hash` or `Eq` which is a requirement on `DataType`'s in Specta.
+Literals with floating-point types (`f32` and `f64`) are challenging as they can't be `Hash` or `Eq` which is a requirement on `DataType`'s in Specta. Although with some special work this can be worked around, similar to the things which make [`ordered-float`](https://docs.rs/ordered-float) possible.
 
-They are also challenging because a number can be `NaN`, `Infinity` or `-Infinity` which can't be exported to Typescript as those aren't valid types. They would conventionally be under `number` but in this case we are attemping to export the literal type, not a general type. These would likely need to error in the Typescript exporter.
+They are also challenging because a floating point number can be `NaN`, `Infinity` or `-Infinity` which can't be exported to Typescript as those aren't expressable as valid Typescript types. They would conventionally be under `number` but in this case we are attemping to export the literal type, not a general type. These would likely need to error in the Typescript exporter.
 
 But all these questions and no requirement on supporting it right now means this can be shelved and potentially introduced post v2 if anyone is interested.
 
@@ -1479,3 +1544,5 @@ Focus:
 {/* Upstreaming changes in Flightscience forks (including [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater)) */}
 
 {/* Tauri Specta needs to be able to replace literals from `number` to `BigInt`. We need that as part of `Exporter::map`'s callback. */}
+
+{/* TODO: If only a single instance exists we can should it for the NDT during exporting */}
