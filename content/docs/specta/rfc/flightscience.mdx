@@ -1297,57 +1297,163 @@ These are way easier as they don't require transport level changes so they shoul
 
 From 27/03/2026 to 09/04/2026
 
-The Specta repo is now down to a single page of GitHub issues which is amazing mostly comprised of issues with `backburner` or `exporter` tags which mean they can be deferred until after the v2 launch!
+The Specta repo is now down to 18 active GitHub issues which is amazing! Of the remaining issues none of them are marked as major breaking change which is really exciting!
 
-TODO: Discuss the number
+I'm sorry for the relatively brief writeup this week!
+
+### Released 2.0.0-rc.24
+
+Did a release with all the improvements from the last sprint [Release notes](https://github.com/specta-rs/specta/releases/tag/v2.0.0-rc.24)!
+
+This release was also finally coupled with a Tauri Specta release [release notes](https://github.com/specta-rs/tauri-specta/releases/tag/v2.0.0-rc.24)
+
+The Tauri Specta release is launching the phase-specific types as an enabled by default feature.
 
 ### TauRPC
 
-TODO: New PR + rebased against Flight Science fork
+I closed the existing PR [#58](https://github.com/MatsDK/TauRPC/pull/58) for 2.0.0-rc.23 and opened up a new one for [#64](https://github.com/MatsDK/TauRPC/pull/64) 2.0.0-rc.24.
 
-TODO: Error handling merged into a PR???
+I also rebased this PR against the Flight Science fork [#12](https://github.com/fltsci/TauRPC/pull/12).
+
+I would really appreciate any feedback while upgrading! I really want to see Flight Science get upgraded and also look for any holes in our Specta's testing process.
+
+Once this PR is sorted we can introduce the typesafe error handling. I think it would be best to do one upgrade at a time to make upgrading less risky.
 
 ### Generics
 
-TODO: Final feature in DataType layer
+We had a group of issues relating to generics which have been marked as `breaking-change` which I wanted to clear out.
 
 #### Const generics
 
 [#17](https://github.com/specta-rs/specta/issues/17)
 
-TODO
+Sadly Specta can't fully support const generics as we have no way to track their inference.
+
+For generics we create a virtual type to replace it's implementation similar to:
+
+```rust
+pub struct MyType<A> {
+    pub field: A
+}
+
+impl<A> Type for MyType<A> {
+    fn definition(...) {
+        // notice the shadowed name
+        struct A;
+
+        impl Type for A {
+            fn definition(...) {
+                GenericReference("A") // This is not a valid syntax but gives you the idea. We want `A` to become "A" in the `{ field: A }` instead of `{ field: String }` or whatever the concrete type is.
+            }
+        }
+
+        // later we do something like:
+        // <A as Type>::definition(...)
+    }
+}
+```
+
+but with const generics this doesn't work because the type will always be something like `usize`.
+
+Another problem is our current implementation of `[T; N]` which is actually non-deterministic. If we always set the length in the `impl Type for [T; N]`, the implementation will "bake" whatever the first encountered value of `N` is into the global type definition which is wrong. For example:
+
+```rust
+pub struct A {
+    a: Demo<1>,
+    b: Demo<2>,
+}
+// becomes:
+// export type A = { a: Demo, b: Demo }
+// export type Demo = { [number] }; // This is invalid for the `b` field.
+
+// and if we encounter the fields in the opposite order it changes:
+
+pub struct B {
+    // we flipped field definition
+    b: Demo<2>,
+    a: Demo<1>,
+}
+// becomes:
+// export type A = { a: Demo, b: Demo }
+// export type Demo = { [number, number] }; // This is invalid for the `a` field.
+```
+
+Your unlikely to notice this as Serde doesn't actually support `[T; N]` by default but with external crates or `with` implementations it is possible so it's still important that Specta is able to properly handle it.
+
+To solve this I defined a set of rules:
+ - If your in a named type with const generics we can't include length (Eg. always export as T[], instead of [T, T, T] (depending on length)).
+ - If your in a named type without const generics we know that must be static (as associated const parameters aren't and can't be supported)
+ - If your ouside the context of a named type length is safe.
+
+With this I introduced [`CONTEXT_HAS_CONST_PARAMS`](https://github.com/specta-rs/specta/blob/3e93f7c07770885d79b153191a598f218a1e7b3f/specta/src/datatype/named.rs#L60) as a thread_local to track the scope and modify the type implementation according to the rules above.
+
+I have introduced `specta_utils::FixedArray<N, T>` which can be used like `#[specta(type = specta_utils::FixedArray<4, usize>)]` to workaround Specta's conservative behavior in types with const generics.
+
+### Bring back `DataType::Literal`
+
+I started work on a solution to literal types as they would likely be required for const generics, however this work started before I figured out that we can't support const generics.
+
+For now i've merged it into the repo but i'm leaving it commented out because I am not sure if we should stablise it.
+
+Literals with floating-point types (`f32` and `f64`) are challenging as they can't be `Hash` or `Eq` which is a requirement on `DataType`'s in Specta.
+
+They are also challenging because a number can be `NaN`, `Infinity` or `-Infinity` which can't be exported to Typescript as those aren't valid types. They would conventionally be under `number` but in this case we are attemping to export the literal type, not a general type. These would likely need to error in the Typescript exporter.
+
+But all these questions and no requirement on supporting it right now means this can be shelved and potentially introduced post v2 if anyone is interested.
 
 #### Default generics
 
 [#16](https://github.com/specta-rs/specta/issues/16)
 
-TODO
+```rs
+pub struct Demo<T = String> {
+    t: T
+}
+```
 
-### Bring back `DataType::Literal`
+now becomes
 
-TODO: I thought we need this for const generics but good to have back anyway. Hashing `f32` and `f64` are hard lol
+```ts
+export type Demo<T = string> = T;
+```
+
+it also means references can be simplified from `Demo<string>` to `Demo` as the default generic is infered. This simplification is only possible if all generics are the default value as Typescript lacks something similar `_` in Rust which allows it to fallback to type inference.
 
 ### Cleanup accessors
 
 [#431](https://github.com/specta-rs/specta/issues/431)
 
-TODO
+Instead of exposing:
+ - `T::field(&self) -> &U`
+ - `T::field(&mut self) -> &mut U`
+ - `T::set_field(&mut self, v: U)`
+
+I have just exposed the fields as `pub field: T`. This is cleaner and at the end of the day I am not sure the extra flexibility is going to be useful as the conctete type is already baked into most of the accessor methods anyway.
 
 ### `Exporter::map_fn`
 
 [#470](https://github.com/specta-rs/specta/pull/470)
 
-TODO
+This is incomplete by the idea is to cleanup the code within TauRPC and Tauri Specta as right now it's complicated and importantly tricky to get correct.
+
+Both frameworks run find+replace functions on the `DataType` layer to handling large number types, support Serde transforms and to support the Tauri channel type.
+
+The idea here is to expose a hook from the Typescript exporter which allows us to define a central function to handle replacing any `DataType` which the Typescript exporter sees. This would prevent us from needing to manually remember to replace and apply transformations everywhere a `DataType` enters the system.
+
+I am still not sure if this is going to work or not but it would be nice if something was possible as I am a little uncomfortable with how much logic is ending up in TauRPC.
 
 ### Tauri BigInt support
 
-TODO
+I also did more research into support bigint types in Tauri and wrote up [this RFC](https://hackmd.io/keQMrZ0cRbqmcUBaZL6MWQ). This is still not ready to present to the Tauri working group but once it's cleaned up I will.
 
-## Phase 7
+I also became away that `NaN`, `Infinity` and `-Infinity` from floating point types are also lossily serialized which would also be nice to fix in this work. These types are actually different from bigint's through in that the issue for bigints is `JSON.parse`'s default lossy decoding, whereas these types are encoded as `null` in JSON which means the data is completly lost. I am not going to focus on these until regular bigints work but keeping them in mind is important in making a holistic solution.
+
+## Phase 7 (future)
 
 From 09/04/2026 to xx/04/2026
 
 Core issues:
+ - Finish TauRPC Typesafe error handling
  - `specta-tags` in TauRPC
  - Plan for dealing with `impl Type for *` without a semver nightmare, if it's even possible cause last time I looked it we have no real good options. Do up RFC with results.
 
@@ -1356,15 +1462,19 @@ Core issues:
  - Extend documentation for some more advanced information - [#299](https://github.com/specta-rs/specta/issues/299)
  - Fix and triage all remaining TODO's
 
-Phase 8:
+Going to keep chipping away at:
+- Nuanced types - [#203](https://github.com/specta-rs/specta/issues/203)
+
+## Phase 8 (future)
+
+From xx/xx/2026 to xx/xx/2026
+
+Focus:
 - Specta Zod - [#421](https://github.com/specta-rs/specta/pull/421)
 - Specta OpenAPI??? - [#31](https://github.com/specta-rs/specta/issues/31)
 - Figure out dropping `function` feature as this will be a breaking change. I started work on this but it would require changes to be upstreamed into Tauri.
     - Allows dropping `function` from core [#432](https://github.com/specta-rs/specta/pull/432)
     - `#[tauri::command(rename_all = "...")]` - [#213](https://github.com/specta-rs/specta/issues/213)
-
-Going to keep chipping away at:
-- Nuanced types - [#203](https://github.com/specta-rs/specta/issues/203)
 
 {/* Upstreaming changes in Flightscience forks (including [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater)) */}
 
