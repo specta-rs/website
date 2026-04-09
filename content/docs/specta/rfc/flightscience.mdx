@@ -1293,47 +1293,86 @@ The Typescript exporter will always error (as if `BigIntExportBehavior::Fail`) w
 
 These are way easier as they don't require transport level changes so they should be working although I haven't had time to iron out the bugs they will inevitably have.
 
-### Remaining
+## Phase 6
 
-My next focus is on getting TauRPC upgraded, using phase-specific types and using `specta-tags` so we can get it up and running in the Flight Science codebase! Sorry this has taken so long!
+From 27/03/2026 to 09/04/2026
 
-The below plan includes the majority of remaining GitHub issues and things from the original Specta roadmap.
+The Specta repo is now down to a single page of GitHub issues which is amazing!
 
-Priorities:
- - Specta Zod - 16 hours - [#421](https://github.com/specta-rs/specta/pull/421)
- - Specta OpenAPI??? - 16 hours - [#31](https://github.com/specta-rs/specta/issues/31)
- - General cleanup & documentation - 16 hours
-    - Cleanup accessor methods in core - [#431](https://github.com/specta-rs/specta/issues/431)
-    - Overhaul examples - [#112](https://github.com/specta-rs/specta/issues/112)
-    - Documentation overhaul - [#299](https://github.com/specta-rs/specta/issues/299)
-    - Cleanup all remaining TODO's
-    - Typescript exporter should throw error if ndt name is empty
-    - Test cases for `serde_json::Value`, and all other legacy impls
- - TauRPC error handling - 8 hours
- - Typescipt and Serde crate error reporting overhaul - 8 hours
-    - [#135](https://github.com/specta-rs/specta/issues/135), [#312](https://github.com/specta-rs/specta/issues/312), [#345](https://github.com/specta-rs/specta/issues/345) & [#356](https://github.com/specta-rs/specta/issues/356)
- - Typescript exporter technical debt - 8 hours
-    - Drop `legacy.rs` from Typescript exporter by finishing the rewrite of all exporter components
-    - Should `indent` stay on `export`? Maybe it should be a find and replace???
-    - Can we avoid using `thread_local`'s for context. It makes sense for the way the built-in Typescript exporter works, but it's not ideal for maintainability.
- - Nuanced types - 16 hours
-    - [#203](https://github.com/specta-rs/specta/issues/203), [#440](https://github.com/specta-rs/specta/issues/440), [#46](https://github.com/specta-rs/specta/issues/46)
+TODO: Discuss the number
 
-Stretch goals:
- - Upstreaming changes in Flightscience forks (including [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater))
- - Bring back `DataType::Literal` on the new opaque types machinery
- - Const generics - [#17](https://github.com/specta-rs/specta/issues/17)
- - Default generics - [#16](https://github.com/specta-rs/specta/issues/16)
- - Features affecting the Serde implementation - [#8](https://github.com/specta-rs/specta/issues/8)
- - Dealing with `impl Type for *` without a semver nightmare.
- - Tauri Specta macro overhaul:
+### TauRPC
+
+TODO: New PR + rebased against Flight Science fork
+
+TODO: Error handling???
+
+### Generics
+
+TODO: Final feature in DataType layer
+
+#### Const generics
+
+[#17](https://github.com/specta-rs/specta/issues/17)
+
+TODO
+
+#### Default generics
+
+[#16](https://github.com/specta-rs/specta/issues/16)
+
+TODO
+
+### Bring back `DataType::Literal`
+
+TODO: I thought we need this for const generics but good to have back anyway. Hashing `f32` and `f64` are hard lol
+
+### TauRPC
+
+TODO
+
+Could we do `specta-tags` and error handling PRs quickly???
+
+### Cleanup accessors
+
+[#431](https://github.com/specta-rs/specta/issues/431)
+
+TODO
+
+### `Exporter::map_fn`
+
+[#470](https://github.com/specta-rs/specta/pull/470)
+
+TODO
+
+### Tauri BigInt support
+
+TODO
+
+Strech:
+ - Cleanup all remaining TODO's
+ - Typescript exporter should throw error if ndt name is empty
+
+## Phase 7
+
+From 09/04/2026 to xx/04/2026
+
+Core issues:
+ - `specta-tags` in TauRPC
+ - Plan for dealing with `impl Type for *` without a semver nightmare, if it's even possible cause last time I looked it we have no real good options. Do up RFC with results.
+
+ - Typescript and Serde exporter cleanup & better errors - [#475](https://github.com/specta-rs/specta/issues/475)
+ - Overhaul examples - [#112](https://github.com/specta-rs/specta/issues/112)
+ - Extend documentation for some more advanced information - [#299](https://github.com/specta-rs/specta/issues/299)
+
+Phase 8:
+- Specta Zod - [#421](https://github.com/specta-rs/specta/pull/421)
+- Specta OpenAPI??? - [#31](https://github.com/specta-rs/specta/issues/31)
+- Figure out dropping `function` feature as this will be a breaking change. I started work on this but it would require changes to be upstreamed into Tauri.
     - Allows dropping `function` from core [#432](https://github.com/specta-rs/specta/pull/432)
     - `#[tauri::command(rename_all = "...")]` - [#213](https://github.com/specta-rs/specta/issues/213)
 
-My personal time (not in scope):
- - Non-allocated `DataType` structure. This would likely require significant changes so might not be worth it.
- - Kotlin exporter - [#29](https://github.com/specta-rs/specta/issues/29)
- - JSONSchema exporter - [#58](https://github.com/specta-rs/specta/issues/58)
- - Valibot exporter - [#303](https://github.com/specta-rs/specta/issues/303)
- - WIT exporter - [#15](https://github.com/specta-rs/specta/issues/15)
- - Rust exporter - [#27](https://github.com/specta-rs/specta/issues/27)
+Going to keep chipping away at:
+- Nuanced types - [#203](https://github.com/specta-rs/specta/issues/203)
+
+{/* Upstreaming changes in Flightscience forks (including [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater)) */}
