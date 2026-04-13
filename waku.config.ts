@@ -3,7 +3,6 @@ import { DEFAULT_CATEGORY_FALLBACKS, FontaineTransform } from "fontaine";
 import mdx from "fumadocs-mdx/vite";
 import type { UserConfig } from "vite";
 import arraybuffer from "vite-plugin-arraybuffer";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { type Config, defineConfig } from "waku/config";
 import * as MdxConfig from "./source.config.js";
 import { headersPlugin } from "./src/vite-plugin-headers";
@@ -13,7 +12,6 @@ export default defineConfig({
     plugins: [
       tailwindcss(),
       mdx(MdxConfig),
-      tsconfigPaths(),
       headersPlugin(),
       arraybuffer(),
       FontaineTransform.vite({
@@ -30,6 +28,9 @@ export default defineConfig({
         // TODO: Can be removed once https://github.com/wakujs/waku/issues/1245 is fixed.
         external: ["@takumi-rs/wasm/takumi_wasm_bg.wasm"],
       },
+    },
+    resolve: {
+      tsconfigPaths: true,
     },
   } satisfies UserConfig as Config["vite"],
 });

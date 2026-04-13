@@ -3,7 +3,7 @@ import { type InferPageType, loader } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
 import { icons } from "lucide-react";
 import { createElement } from "react";
-import { CratesIoLogo, NpmLogo } from "../components/logos";
+import { CratesIoLogo, GitHubLogo, NpmLogo } from "../components/logos";
 
 // See https://fumadocs.dev/docs/headless/source-api for more info
 export const source = loader({
@@ -24,6 +24,8 @@ export const source = loader({
       return createElement(CratesIoLogo);
     } else if (icon === "npmLogo") {
       return createElement(NpmLogo);
+    } else if (icon === "Github" || icon === "GitHub") {
+      return createElement(GitHubLogo);
     } else if (icon && icon in icons && icons[icon as keyof typeof icons]) {
       return createElement(icons[icon as keyof typeof icons]);
     } else throw new Error(`Requested unknown icon: ${icon}`);
