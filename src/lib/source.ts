@@ -50,6 +50,13 @@ export function getPageImage(page: InferPageType<typeof source>) {
   };
 }
 
+export function getNonRootDocStaticPaths() {
+  return source
+    .generateParams()
+    .map((item) => (item.lang ? [item.lang, ...item.slug] : item.slug))
+    .filter((slug) => slug.length > 0);
+}
+
 export async function getLLMText(page: InferPageType<typeof source>) {
   const processed = await page.data.getText("processed");
 
