@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { openGraphImageSize } from "@/components/Meta";
-import { source } from "@/lib/source";
+import { getNonRootDocStaticPaths, source } from "@/lib/source";
 import spectaLogoPng from "../../../../../public/assets/specta.png?arraybuffer";
 import interFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?arraybuffer";
 import { ImageResponse } from "@takumi-rs/image-response/wasm";
@@ -245,13 +245,9 @@ function OpenGraph(props: { title: string; description?: string }) {
 }
 
 export async function getConfig() {
-  const pages = source
-    .generateParams()
-    .map((item) => (item.lang ? [item.lang, ...item.slug] : item.slug));
-
   return {
     render: "static",
-    staticPaths: pages,
+    staticPaths: getNonRootDocStaticPaths(),
   } as const;
 }
 

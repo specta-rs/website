@@ -3,13 +3,12 @@ import {
   BookOpen,
   Code2,
   ExternalLink,
-  Github,
   Shield,
   Zap,
 } from "lucide-react";
 import { type JSX, Suspense } from "react";
 import { Link } from "waku";
-import { DiscordLogo } from "@/components/logos";
+import { DiscordLogo, GitHubLogo } from "@/components/logos";
 import { buttonVariants } from "@/components/ui/button";
 import { getGitHubStars } from "@/lib/getGitHubStars";
 import { cn } from "@/lib/utils";
@@ -301,7 +300,7 @@ function ProjectCard(props: {
                 !props.docsUrl ? "flex-1 px-4 py-2" : "px-4 py-2",
               )}
             >
-              <Github className="w-4 h-4 mr-2" />
+              <GitHubLogo className="w-4 h-4 mr-2" />
               GitHub
             </a>
           )}

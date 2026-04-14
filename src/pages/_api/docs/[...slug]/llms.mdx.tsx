@@ -1,4 +1,4 @@
-import { getLLMText, source } from "@/lib/source";
+import { getLLMText, getNonRootDocStaticPaths, source } from "@/lib/source";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -20,13 +20,9 @@ export async function GET(request: Request) {
 }
 
 export async function getConfig() {
-  const pages = source
-    .generateParams()
-    .map((item) => (item.lang ? [item.lang, ...item.slug] : item.slug));
-
   return {
     render: "static",
-    staticPaths: pages,
+    staticPaths: getNonRootDocStaticPaths(),
   } as const;
 }
 
