@@ -20,7 +20,7 @@ export default defineConfig({
     ],
     optimizeDeps: {
       // https://github.com/fuma-nama/fumadocs/issues/2845#issuecomment-3707856896
-      exclude: ["fumadocs-ui", "fumadocs-core", "@fumadocs/ui"],
+      exclude: ["fumadocs-ui", "fumadocs-core"],
     },
     build: {
       rollupOptions: {
