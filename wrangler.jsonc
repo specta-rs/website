@@ -8,33 +8,33 @@
   // https://opennext.js.org/cloudflare/howtos/keep_names
   "keep_names": false,
   "route": {
-    "pattern": "v2.specta.dev",
-    "custom_domain": true
+    "pattern": "specta.dev",
+    "custom_domain": true,
   },
   "observability": {
-    "enabled": true
+    "enabled": true,
   },
   "assets": {
     "directory": "./dist/public",
-    "html_handling": "drop-trailing-slash"
+    "html_handling": "drop-trailing-slash",
   },
   "rules": [
     {
       "type": "ESModule",
       "globs": ["**/*.js", "**/*.mjs"],
-      "fallthrough": true
+      "fallthrough": true,
     },
     {
       "type": "Data",
       "globs": ["**/*.ttf", "**/*.woff", "**/*.woff2"],
-      "fallthrough": true
+      "fallthrough": true,
     },
     {
       "type": "CompiledWasm",
       "globs": ["**/*.wasm"],
-      "fallthrough": true
-    }
-  ]
+      "fallthrough": true,
+    },
+  ],
   // TODO: We should reenable this once Waku moves to `@cloudflare/vite-plugin`.
   // This is required to process the `` import in the OG code.
   // Linked: https://github.com/wakujs/waku/issues/1245
