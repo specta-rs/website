@@ -13,9 +13,10 @@
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",
+    "@fumadocs/ui": "16.4.10",
     "@radix-ui/react-slot": "^1.2.4",
-    "@takumi-rs/image-response": "^1.0.6",
-    "@takumi-rs/wasm": "^1.0.6",
+    "@takumi-rs/image-response": "^1.0.9",
+    "@takumi-rs/wasm": "^1.0.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "fumadocs-core": "16.4.10",
@@ -23,7 +24,7 @@
     "fumadocs-ui": "16.4.10",
     "hono": "^4.12.12",
     "lucide-react": "^1.8.0",
-    "posthog-js": "^1.367.0",
+    "posthog-js": "^1.368.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-server-dom-webpack": "^19.2.5",
@@ -45,6 +46,6 @@
     "typescript": "^6.0.2",
     "vite": "^8.0.8",
     "vite-plugin-arraybuffer": "^0.1.4",
-    "wrangler": "^4.81.1"
+    "wrangler": "^4.82.2"
   }
 }
