@@ -21,6 +21,12 @@ export default defineConfig({
     optimizeDeps: {
       // https://github.com/fuma-nama/fumadocs/issues/2845#issuecomment-3707856896
       exclude: ["fumadocs-ui", "fumadocs-core", "@fumadocs/ui"],
+      // https://github.com/fuma-nama/fumadocs/issues/3205
+      include: [
+        "fumadocs-ui > unified",
+        "fumadocs-ui > remark",
+        "fumadocs-core > hast-util-to-jsx-runtime",
+      ],
     },
     build: {
       rollupOptions: {
