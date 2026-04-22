@@ -1517,6 +1517,33 @@ I also became away that `NaN`, `Infinity` and `-Infinity` from floating point ty
 
 From 09/04/2026 to xx/04/2026
 
+## Inline overhaul
+
+With the work in the previous phase on introducing const generics I have noticed some cracks in our system.
+
+Some older versions of Specta would return a 'Result' from 'Type::defition' to properly handle recursive inlined types. These types are unable to exist as they have an infinite depth.
+
+Early last year we moved inlining to be fully runtime to avoid the need for this result as it makes for bad DX. The idea is that we added an 'inline' field to type references and then the exporter would lookup the definition for the type and put it in place. Also importantly as the language exporter was incharge of this flattening it could retect recursive loops and return an error.
+
+This worked really well but one implication of this design is that for generics to work we would crawl the datatype later when inlining and replace all generic with the ones collected on the reference.
+
+This system worked super well until we got to const generics in the last phase. The issue with const generics is that we can't track them so we also cant just find and replace them. So the solution we came up with was disabling const being emitted when generating the shared template type (used in export Type = ...) and instead capture a datatype at each reference. The datatype at each reference can bake in the const generics safely as we know it isn't shared and will always have the same generics.
+
+Now this worked but it disn't really properly face the problem at hand. This reintroduced inlining in the macro in certain situtations and that is fundamentally at odds with properly handle recursive inlined types which is why we moved away from it originally.
+
+In practice the code from the last phase would emit references when recursion was detected but it was doing this in a really poor way.
+ 
+Another thing we previously did was construct a NamedDataType with a definition for all types. With types which have the container inline attribute this was never used. This release instead holds an Option<DataType> which simplies logic and allows removing the 'inline' field on 'NamedDataType'.
+
+Our new design introduces NamedReference Recursive which is used to make when infinite inline recursion is detected. We generate a hash of the tupe name and generics then collect this in a stack on 'Types' which allows us to detect cycles. When language exporter encounter these they will throw it as an error.
+
+We also removed the 'inline' property from fields as it would run across a lot of the same issues. To inline a field now the macro wraps the resolution of the child datatype in 'datatype::inline' which sets context on 'Types' which can be picked up by the child type and used to mark it as inlined.
+
+TODO: Tracking chages to type using overrides using 'Attribues' instead.
+
+Changes:
+ - 
+
 ## Framework map fn
 
 TODO: Explain the new design and coupling approach.
