@@ -1546,6 +1546,8 @@ Changes:
 
 ## Framework map fn
 
+The logic in Tauri Specta/TauRPC has grown and become quite complicated to get right. I got some reports of issues on Discord which boiled down to unevenly apply the Serde to datatypes. Although we tell Specta about the format when the framework callback this knowledge goes out the window and becomes the problem of the framework maintainer. In Tauri Specta/TauRPC this requires ensuring all arguments and result types are also transformed. Transforming just the type map doesnt account for the darartpes like arguments and results which dont appear it in bexase they are collected out of band by the framework. So we needed to rethink this.
+
 TODO: Explain the new design and coupling approach.
 
 TODO: Explain upgrades to Tauri Specta and TauRPC
