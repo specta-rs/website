@@ -1517,7 +1517,7 @@ I also became away that `NaN`, `Infinity` and `-Infinity` from floating point ty
 
 From 09/04/2026 to 24/04/2026
 
-## Inline overhaul + final review of Specta Core
+### Inline overhaul + final review of Specta Core
 
 With the work in the previous phase on introducing const generics I have noticed some cracks in our system in regards to inlining of types.
 
@@ -1549,7 +1549,7 @@ I have also defined a strict requirement on `DataType::Generic`'s  only appearin
 
 I have not finished work on implementation all of this [#483](https://github.com/specta-rs/specta/pull/483) but I will be complete it within the coming week!
 
-## Framework map fn
+### Framework map fn
 
 I continued work on this from the last phase.
 
@@ -1577,7 +1577,7 @@ This change simplifies things majorly as we can remove `specta::ResolvedTypes` a
 
 Another change is that the `specta::Format` trait in core allows trasforming both the type map and individual datatypes. This is what allows this system to automatically apply the required transformations to Tauri Specta/TauRPC function argument and result types make the framework code much simplier and more reliable.
 
-## Semver and dependencies
+### Semver and dependencies
 
 [Writeup](https://hackmd.io/@oscartbeaumont/H1surm76bl)
 
@@ -1594,7 +1594,7 @@ They will be in the format `{crate_name}{major}`. Eg:
 
 This allows us to add new impls in Specta minor releases for new majors in downstream dependencies if they ever occur without breaking Specta's semver Eg. `uuid2`.
 
-## Random
+### Random
 
 We also improved support for types in `bson` and `ordered-map` through other work.
 
