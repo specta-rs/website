@@ -1513,87 +1513,112 @@ I also did more research into support bigint types in Tauri and wrote up [this R
 
 I also became away that `NaN`, `Infinity` and `-Infinity` from floating point types are also lossily serialized which would also be nice to fix in this work. These types are actually different from bigint's through in that the issue for bigints is `JSON.parse`'s default lossy decoding, whereas these types are encoded as `null` in JSON which means the data is completly lost. I am not going to focus on these until regular bigints work but keeping them in mind is important in making a holistic solution.
 
-## Phase 7 (future)
+## Phase 7
 
-From 09/04/2026 to xx/04/2026
+From 09/04/2026 to 24/04/2026
 
-## Inline overhaul
+## Inline overhaul + final review of Specta Core
 
-With the work in the previous phase on introducing const generics I have noticed some cracks in our system.
+With the work in the previous phase on introducing const generics I have noticed some cracks in our system in regards to inlining of types.
 
-Some older versions of Specta would return a 'Result' from 'Type::defition' to properly handle recursive inlined types. These types are unable to exist as they have an infinite depth.
+Some older versions of Specta would return a `Result` from `Type::defition` to properly handle recursive inlined types. These types are unable to exist as they have an infinite depth.
 
-Early last year we moved inlining to be fully runtime to avoid the need for this result as it makes for bad DX. The idea is that we added an 'inline' field to type references and then the exporter would lookup the definition for the type and put it in place. Also importantly as the language exporter was incharge of this flattening it could retect recursive loops and return an error.
+Early last year we moved inlining to be fully runtime to avoid the need for this result as it makes for bad DX. The idea is that we added an `inline: bool` field to type references and then the exporter would lookup the definition for the type and put it in place. Also importantly as the language exporter was incharge of this flattening it could detect recursive loops and return an error.
 
 This worked really well but one implication of this design is that for generics to work we would crawl the datatype later when inlining and replace all generic with the ones collected on the reference.
 
-This system worked super well until we got to const generics in the last phase. The issue with const generics is that we can't track them so we also cant just find and replace them. So the solution we came up with was disabling const being emitted when generating the shared template type (used in export Type = ...) and instead capture a datatype at each reference. The datatype at each reference can bake in the const generics safely as we know it isn't shared and will always have the same generics.
+This system worked super well until we got to const generics in the last phase. The issue with const generics is that we can't track them so we also cant just find and replace them. So the solution we came up with was disabling const being emitted when generating the shared template type stored on the `NamedDataType` (used for generating `export Type = ...`) and instead capture a unique datatype at each references which would include the const generics, which is safe as it's only used on a single callsite. The datatype at each reference can bake in the const generics safely as we know it isn't shared and will always have the same generics.
 
 Now this worked but it disn't really properly face the problem at hand. This reintroduced inlining in the macro in certain situtations and that is fundamentally at odds with properly handle recursive inlined types which is why we moved away from it originally.
 
 In practice the code from the last phase would emit references when recursion was detected but it was doing this in a really poor way.
- 
-Another thing we previously did was construct a NamedDataType with a definition for all types. With types which have the container inline attribute this was never used. This release instead holds an Option<DataType> which simplies logic and allows removing the 'inline' field on 'NamedDataType'.
 
-Our new design introduces NamedReference Recursive which is used to make when infinite inline recursion is detected. We generate a hash of the tupe name and generics then collect this in a stack on 'Types' which allows us to detect cycles. When language exporter encounter these they will throw it as an error.
+Another thing we previously did was construct a `NamedDataType` with a inner `DataType` for all types. With types which have the container inline attribute this should never have been used. This release instead holds an `Option<DataType>` which simplies logic in the Typescript exporter as it allows removing the `inline` field on `NamedDataType`.
 
-We also removed the 'inline' property from fields as it would run across a lot of the same issues. To inline a field now the macro wraps the resolution of the child datatype in 'datatype::inline' which sets context on 'Types' which can be picked up by the child type and used to mark it as inlined.
+Our new design introduces a form of `NamedReference` for marking known infinitely recursive inline references. Specta's core is able to detect these by generating a hash of the type name, and generics to determine if the system is stuck in a cycle. If so it can emit one of these special references which when seen by the Typescript exporter will cause it to error.
 
-TODO: Tracking chages to type using overrides using 'Attribues' instead.
+We also removed the `inline` property from fields as it would run across a lot of the same issues. To inline a field now the macro wraps the resolution of the child datatype in `datatype::inline` helper which sets context on `Types` which can be picked up by the child type and used to mark it as inlined automatically.
 
-Changes:
- - 
+These two changes also majorly simplify the logic required in language exporter like Typescript. They no longer need to implement logic for handling inlining or replacing generics as it's all done in the `DataType`'s that are returned by the core.
+
+We also dropped the `type_overridden` field from `Fields` and instead replaced with with an attribute stored on `Attributes`. This is cleaner and really was an oversight in my implementation.
+
+These changes have all been part of me ensuring the Specta-core is ready for v2 by going through it at a fine detail to ensure everything is correct.
+
+I have also defined a strict requirement on `DataType::Generic`'s  only appearing in the `ty` field of `NamedDataType`, as oppose to it being returned from calls to `<T as Type>::definition(...)` as we are now removing the generic replacement code from the language exporters, this is required for desired behavior and makes more logical sense.
+
+I have not finished work on implementation all of this [#483](https://github.com/specta-rs/specta/pull/483) but I will be complete it within the coming week!
 
 ## Framework map fn
 
+I continued work on this from the last phase.
+
 The logic in Tauri Specta/TauRPC has grown and become quite complicated to get right. I got some reports of issues on Discord which boiled down to unevenly apply the Serde to datatypes. Although we tell Specta about the format when the framework callback this knowledge goes out the window and becomes the problem of the framework maintainer. In Tauri Specta/TauRPC this requires ensuring all arguments and result types are also transformed. Transforming just the type map doesnt account for the darartpes like arguments and results which dont appear it in bexase they are collected out of band by the framework. So we needed to rethink this.
 
-TODO: Explain the new design and coupling approach.
+In the new design `Typescript::export`/`Typescript::export_to` take in a 3rd parameter with the format.
 
-TODO: Explain upgrades to Tauri Specta and TauRPC
+For example:
 
-TODO: Drop `ResolvedTypes` as it's now an internal concept. This nice for simplifying API surface.
-TODO: Adding `format` param to `export`/`export_to` to handle this same purpose.
+```rs
+specta_typescript::Typescript::new()
+    .export(&types, specta_serde::Format)
+    .unwrap();
+
+// or
+
+specta_typescript::Typescript::new()
+    .export(&types, specta_serde::FormatPhases)
+    .unwrap();
+```
+
+I have upgraded Tauri Specta in [#215](https://github.com/specta-rs/tauri-specta/pull/215) and have started work on a TauRPC upgrade.
+
+This change simplifies things majorly as we can remove `specta::ResolvedTypes` and the types are now "resolved" internally. This reduces the need for duplicate logic across `Types` and `ResolvedTypes` and allows Specta's APIs to be more interchangable.
+
+Another change is that the `specta::Format` trait in core allows trasforming both the type map and individual datatypes. This is what allows this system to automatically apply the required transformations to Tauri Specta/TauRPC function argument and result types make the framework code much simplier and more reliable.
 
 ## Semver and dependencies
 
 [Writeup](https://hackmd.io/@oscartbeaumont/H1surm76bl)
 
-TODO
+I have decided we are going to keep the features for 3rd party `Type` impls.
 
-## TODO's
+As much as I don't think this the right move philosophically I think Specta's adoption isn't high enough for it to be viable to move this issue onto downstream crate maintainers.
 
-TODO: Triage them and start working through them.
-TODO: More Clippy and Rustdoc stuff
+The major risk if any downstream dependencies (or their children) which have the `link` propery set end up colliding as only one version of each of them can exist in the crate graph at once. This forbids up from shipping `Type` for any Tauri Plugins for example but also you would likely hit a circular dependency graph before that in practice. Also any low level libraries may cause issues. If this condition happens we probs have no choice but to do Specta v3 and review this decision.
 
-TODO: We did `bson` improvements on framework map PR too
+They will be in the format `{crate_name}{major}`. Eg:
+- `uuid1`
+- `tokio1`
+- etc.
 
-Core issues:
- - Finish TauRPC Typesafe error handling
- - `specta-tags` in TauRPC
- - Plan for dealing with `impl Type for *` without a semver nightmare, if it's even possible cause last time I looked it we have no real good options. Do up RFC with results.
+This allows us to add new impls in Specta minor releases for new majors in downstream dependencies if they ever occur without breaking Specta's semver Eg. `uuid2`.
 
- - Typescript and Serde exporter cleanup & better errors - [#475](https://github.com/specta-rs/specta/issues/475)
- - Overhaul examples - [#112](https://github.com/specta-rs/specta/issues/112)
- - Extend documentation for some more advanced information - [#299](https://github.com/specta-rs/specta/issues/299)
- - Fix and triage all remaining TODO's
+## Random
 
-Going to keep chipping away at:
-- Nuanced types - [#203](https://github.com/specta-rs/specta/issues/203)
+We also improved support for types in `bson` and `ordered-map` through other work.
 
 ## Phase 8 (future)
 
-From xx/xx/2026 to xx/xx/2026
+From 24/04/2026 to 07/05/2026
 
 Focus:
-- Specta Zod - [#421](https://github.com/specta-rs/specta/pull/421)
-- Specta OpenAPI??? - [#31](https://github.com/specta-rs/specta/issues/31)
-- Figure out dropping `function` feature as this will be a breaking change. I started work on this but it would require changes to be upstreamed into Tauri.
-    - Allows dropping `function` from core [#432](https://github.com/specta-rs/specta/pull/432)
-    - `#[tauri::command(rename_all = "...")]` - [#213](https://github.com/specta-rs/specta/issues/213)
+ - Getting the latest Specta running at FlightScience along with typesafe error handling
+ - Finish overhaul of inline logic - [#483](https://github.com/specta-rs/specta/pull/483) (all subissue are being fixed as part of this)
+    - Typescript exporter cleanup - [#475](https://github.com/specta-rs/specta/issues/475)
+    - Examples - [#112](https://github.com/specta-rs/specta/issues/112)
+    - Regression from recent changes - [#482](https://github.com/specta-rs/specta/issues/482)
+    - Continue working through `TODO`s in codebase
+ - Releasing Specta v2!
+ - Nuanced types - [#203](https://github.com/specta-rs/specta/issues/203)
+
+Strech:
+ - Specta Zod - [#421](https://github.com/specta-rs/specta/pull/421)
+ - Specta OpenAPI??? - [#31](https://github.com/specta-rs/specta/issues/31)
+
+For my personal time (possibly after contract):
+ - Figure out dropping `function` feature as this will be a breaking change. I started work on this but it would require changes to be upstreamed into Tauri.
+     - Allows dropping `function` from core [#432](https://github.com/specta-rs/specta/pull/432)
+     - `#[tauri::command(rename_all = "...")]` - [#213](https://github.com/specta-rs/specta/issues/213)
 
 {/* Upstreaming changes in Flightscience forks (including [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater)) */}
-
-{/* Tauri Specta needs to be able to replace literals from `number` to `BigInt`. We need that as part of `Exporter::map`'s callback. */}
-
-{/* TODO: If only a single instance exists we can should it for the NDT during exporting */}
