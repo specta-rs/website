@@ -30,7 +30,7 @@
     "react-dom": "^19.2.5",
     "react-server-dom-webpack": "^19.2.5",
     "tailwind-merge": "^3.5.0",
-    "waku": "https://pkg.pr.new/waku@2aabd86",
+    "waku": "https://pkg.pr.new/waku@433298d",
     "zod": "^4.4.1"
   },
   "devDependencies": {
