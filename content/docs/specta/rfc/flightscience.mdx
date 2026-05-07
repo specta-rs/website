@@ -1899,14 +1899,26 @@ This is built in so in practice it's as easy as:
 
 #### Jsone and Tauri?
 
-The biggest issue is that Tauri takes // TODO
+So can we upstream this into Tauri? Not really in a way which isn't full of footguns.
 
+Using a custom serializer and deserializer may impact IPC performance and would increase things Tauri need to maintain. It would be nice if it could be opt-in maybe via a HTTP header but this seems pretty impossible as for example one of the places we would need it would be in [`impl<T: Serialize> IpcResponse for T {`](https://github.com/tauri-apps/tauri/blob/e5ae5b93cdd310045191cc0526f253140ad64b87/crates/tauri/src/ipc/mod.rs#L181), which has no access to the HTTP context. Getting the HTTP context there would also be quite a big change to the IPC system so I don't think this is viable.
 
+Now could we just fork Tauri and integrate it?
 
-TODO:
- - Is hard - Explain how `IpcResponse` is effectivly seal from HTTP headers
- - `Emitter::emit_str` literally can't work
+Tauri allows JSON to come into the system from outside in a lot of places. This would make this full of footguns. For example, [`Emitter::emit_str`](https://docs.rs/tauri/latest/tauri/trait.Emitter.html#method.emit_str), [`Emitter::emit_str_to`](https://docs.rs/tauri/latest/tauri/trait.Emitter.html#method.emit_str_to), [`InvokeResponseBody::Json`](https://docs.rs/tauri/latest/tauri/ipc/enum.InvokeResponseBody.html#variant.Json), [`Event::payload`](https://docs.rs/tauri/latest/tauri/struct.Event.html#method.payload), [`InvokeMessage::payload`](https://docs.rs/tauri/latest/tauri/ipc/struct.InvokeMessage.html#method.payload) and probably more I didn't run across.
 
-Solutions I have implemented:
- - Fork?
- - `jsone` crate
+For more confirmation on this the current Tauri Specta versions use `serde_json::from_string` for the raw event payload, which would bypass any work done in Tauri. It's hard for all cases to be covered in Tauri when the raw JSON APIs exist.
+
+#### Solutions
+
+Basically for Tauri Specta and TauRPC I think this is a lost cause but an opinionated RPC framework which didn't use Tauri's APIs could make it work as they would maintain full control over serialization and deserialization (looking at you [rspc](https://github.com/specta-rs/rspc) and your support for any `serde::Serializer`).
+
+You could wrap your argument and return types of commands, events and channels manually with `Jsone` but that would both not be fun and would likely be pretty easy to miss.
+
+### Dropping Specta function code
+
+I have talked about wanting to remove `#[specta::specta]` and `specta::function::*`. I think bringing these into the core was a mistake but at the end of the day I need to be pragmatic and removing these is just not going to make v2.
+
+I spent some of my own time on the weekend doing up [this proposal to Tauri](https://github.com/tauri-apps/tauri/pull/15326) (and [associated implementation](https://github.com/specta-rs/tauri-specta/pull/218) in Tauri Specta). I need to run it pass the working group but I am also not really sure if it's going to happen. If it doesn't we are kinda in a limbo, not being able to remove this feature without just breaking Tauri Specta.
+
+So tldr: we live with bad decisions until we have a solution and then I will mark it as deprecated. We could then remove it in v3 if it ever happens someday (but I hope it doesn't need to!).
