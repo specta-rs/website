@@ -1915,10 +1915,44 @@ Basically for Tauri Specta and TauRPC I think this is a lost cause but an opinio
 
 You could wrap your argument and return types of commands, events and channels manually with `Jsone` but that would both not be fun and would likely be pretty easy to miss.
 
-### Dropping Specta function code
+## Dropping Specta function code
 
 I have talked about wanting to remove `#[specta::specta]` and `specta::function::*`. I think bringing these into the core was a mistake but at the end of the day I need to be pragmatic and removing these is just not going to make v2.
 
 I spent some of my own time on the weekend doing up [this proposal to Tauri](https://github.com/tauri-apps/tauri/pull/15326) (and [associated implementation](https://github.com/specta-rs/tauri-specta/pull/218) in Tauri Specta). I need to run it pass the working group but I am also not really sure if it's going to happen. If it doesn't we are kinda in a limbo, not being able to remove this feature without just breaking Tauri Specta.
 
 So tldr: we live with bad decisions until we have a solution and then I will mark it as deprecated. We could then remove it in v3 if it ever happens someday (but I hope it doesn't need to!).
+
+## TauRPC
+
+On [#22](https://github.com/fltsci/TauRPC/pull/22) I have implemented:
+ - Typesafe error handling
+ - Support for phased and semantic types
+ - Upgraded to Specta's latest work
+
+I would checkout the main example as it shows all of this work in practice.
+
+In conclusion:
+ - If you use an attribute which makes serialize and deserialize types differ like `#[serde(skip_serialize_if = ...)]` we will generate `Type_Serialize` and `Type_Deserialize` with the narrowed type for each phase and then use them. We ensure for command, event and channel arguments and results we pick the correct phased type too.
+ - If you use `chrono::DateTime`/`jiff::Timestamp`/`bytes::Bytes`/`url::Url` (and maybe more in the future) you will get a workable JS type (`Date`, `Uint8Array` or `URL`).
+    - You could expand this to your own classes, if you want to convert a Rust struct into a full JS class (for example, could be useful for a `Path` class w/ helpers for platform-agnostic path handling or something like that).
+
+## Specta Typescript improvements
+
+This work was done against main but working on resolving issue [#475](https://github.com/specta-rs/specta/issues/475).
+
+Changes:
+- Finish porting remaining logic from `legacy.rs` to `primitives.rs`.
+- Simplify exporting logic and cleanup the code
+- Overhaul error handling.
+    - You used to get `Error in type ""` where the type name was missing.
+    - Render the recursive inline cycle but showing all the types involved so it's easier to understand.
+    - Allow getting the `NamedDataType` an error occurred in back out.
+    - Restructure error enum to include some errors we didn't handle well before.
+
+## v2 release plan
+
+I am going to do the final v2 release in a few weeks time (right now slated for the 13th of June). I know a delay is really annoying but I want to do it because:
+ - I want to let the dust settle on these changes to ensure I haven't missed anything.
+ - I want to give people time to try it out and catch + resolve bugs.
+ - I want to test it on a large Tauri codebase of my next employer.
