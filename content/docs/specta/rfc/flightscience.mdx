@@ -1730,3 +1730,88 @@ I also took this opportunity to simplify some stuff:
 This all leads to a much simpler system, and it also means the job of preventing stack overflows is on Specta's core not the language exporters which is really nice for reducing bugs.
 
 Work for this was done on: [#483](https://github.com/specta-rs/specta/pull/483)
+
+## Semantic Types
+
+The work for this was done on: [#203](https://github.com/specta-rs/specta/issues/203)
+
+I did previously call this nuanced types but that's not really true anymore.
+
+### Getting terminology right
+
+The original nuanced types feature confused two different Specta features which ended up being quite related so I wanted to clarify the terminology.
+
+Nuanced types has the goal of allowing a language exporter to differentiate which Rust type it's targeting. The primary usecase for this is Specta Rust, as the core `DataType` model expresses `BTreeMap`, `HashMap`, `index_map::IndexMap`, etc all as `DataType::Map`. For a Rust exporter to be good we want to be able to know *which map*.
+
+This was solved by making *everything* bar Rust primitives (`str`, `bool`, `char`, etc.) a Specta `NamedDataType` but just marked as inline so they disappear, and don't end up in the final bindings file.
+
+Semantic types aims to make `BigInt`, `Date`, `Uint8Array`, etc. work with Specta. This goes furthur than just Rust types as these have a specific Javascript runtime component. Eg. A `Date` may be serialized to JSON as a `string` so we need to revive using `new Date(dateStrFromJson)`.
+
+The solution to this was `specta_typescript::semantic`.
+
+### Semantic Types
+
+I did a massive writeup [in a comment for #203](https://github.com/specta-rs/specta/issues/203#issuecomment-4387573925) to outline my conclusion here. But in essence:
+
+| Rust type                           | jiff/chrono   | bytes::Bytes        | url::URL     | u64/i64/higher   |
+|-------------------------------------|---------------|---------------------|--------------|------------------|
+| JSON type                           | string        | number[]            | string       | **_[1]_**        |
+| JS -> Rust type (serialize phase)   | Date          | Uint8Array          | URL          | bigint \| number |
+| Rust -> JS type (deserialize phase) | Date          | Uint8Array          | URL          | bigint           |
+| JS -> Rust runtime code             | **_[2]_**     | `[...v]`            | **_[2]_**    | **_[1]_**        |
+| Rust -> JS runtime code             | `new Date(v)` | `new Uint8Array(v)` | `new URL(v)` | **_[1]_**        |
+
+Special notes:
+ - *[1]* - BigInt's are explained later on and are less cut and dry.
+ - *[2]* - These types are actually handled by `JSON.stringify` for us so we don't need to do any special code.
+
+### `Date`, `Uint8Array` and `URL`
+
+The core observation of these is that the JSON type and Rust serialization is all good. All we need is a way to change the Specta type and generate some runtime JS code.
+
+So that's where [`specta_typescript::semantic::Configuration`](https://docs.rs/specta-typescript/latest/specta_typescript/semantic/struct.Configuration.html) comes in.
+
+Internally it defines a set of default "rules" (with the option for the user to provide custom ones) which look similar to the following:
+```rust
+Rule {
+    name: "Bytes".into(),
+    module_path: "bytes".into(),
+    data_type: DataTypeFn::new(|_| define("Uint8Array").into()),
+    serialize: Some(Transform::new(|i| format!("[...{i}]"))),
+    deserialize: Some(Transform::new(|i| format!("new Uint8Array({i})"))),
+},
+```
+
+(notice the carry over from the table above)
+
+Using `specta_typescript::semantic::Configuration::default()` we provide the following default rules:
+ - [`bytes::Bytes`](https://docs.rs/bytes/latest/bytes/struct.Bytes.html) to become [`Uint8Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)
+ - [`bytes::BytesMut`](https://docs.rs/bytes/latest/bytes/struct.BytesMut.html) to become [`Uint8Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)
+ - [`url::Url`](https://docs.rs/url/latest/url/struct.Url.html) to become [`Url`](https://developer.mozilla.org/en-US/docs/Web/API/URL/URL)
+ - [`chrono::DateTime`](https://docs.rs/chrono/latest/chrono/struct.DateTime.html) to become [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)
+ - [`chrono::NaiveDate`](https://docs.rs/chrono/latest/chrono/struct.NaiveDate.html) to become [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)
+ - [`jiff::Timestamp`](https://docs.rs/jiff/latest/jiff/struct.Timestamp.html) to become [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)
+ - [`jiff::civil::Date`](https://docs.rs/jiff/latest/jiff/civil/struct.Date.html) to become [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)
+
+Then frameworks like Tauri Specta can use with the following APIs:
+ - `semantic::Configuration::apply_types(types: &mut Types)`
+    - For applying types changes to the type map.
+ - `semantic::Configuration::apply_*(types: &Types, dt: &DataType, js_ident: &str,) -> Option<(Option<DataType>, String)>`.
+    - Takes in a `DataType`, and `js_ident` (for example `v`), then it will apply the rules returning an updated `DataType` if required and a runtime string.
+    - The runtime string can be used like `outputFromRust.then((v) => {js_runtime_str})`.
+    - This generates something like `outputFromRust.then((v) => { date_field: new Date(v) })`. It also handles nesting, arrays, etc.
+    - You can use `apply_serialize` or `apply_deserialize` depending on the direction as the runtime needs to be different.
+
+This all comes together to allow these types to work. I have implemented this into Tauri Specta in [#219](https://github.com/specta-rs/tauri-specta/pull/219) and TauRPC in [#22](https://github.com/fltsci/TauRPC/pull/22).
+
+I have some concerns about this approach with [rspc](https://github.com/specta-rs/rspc) as by generating JS code that depends on the object shape, it requires your frontend and backend to be versioned in perfect sync. For Tauri this is how it will always be as the JS and Rust is shipped in the same binary, but for people building web APIs this is not usually the case. I have ideas for solving this but it is out of scope for now and rspc is not currently maintained so it's not a massive concern.
+
+### BigInt and special-float support in Tauri
+
+TODO:
+ - Is hard - Explain how `IpcResponse` is effectivly seal from HTTP headers
+ - `Emitter::emit_str` literally can't work
+
+Solutions I have implemented:
+ - Fork?
+ - `jsone` crate
