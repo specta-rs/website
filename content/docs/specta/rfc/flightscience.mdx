@@ -5,7 +5,7 @@ hidden: true
 
 This is an outline of what i've been able to achieve with the Flight Science sponsorship.
 
-# Phase 1 (completed)
+# Phase 1
 
 From 2/12/2025 to 9/01/2026
 
@@ -1598,30 +1598,135 @@ This allows us to add new impls in Specta minor releases for new majors in downs
 
 We also improved support for types in `bson` and `ordered-map` through other work.
 
-## Phase 8 (future)
+## Phase 8
 
 From 24/04/2026 to 07/05/2026
 
-Focus:
- - Getting the latest Specta running at FlightScience along with typesafe error handling
- - Finish overhaul of inline logic - [#483](https://github.com/specta-rs/specta/pull/483) (all subissue are being fixed as part of this)
-    - Typescript exporter cleanup - [#475](https://github.com/specta-rs/specta/issues/475)
-    - Examples - [#112](https://github.com/specta-rs/specta/issues/112)
-    - Regression from recent changes - [#482](https://github.com/specta-rs/specta/issues/482)
-    - Continue working through `TODO`s in codebase
- - Releasing Specta v2!
- - Nuanced types - [#203](https://github.com/specta-rs/specta/issues/203)
+I started the sprint completing some of the remaining work from the framework map function outlined in the last sprint on [#470](https://github.com/specta-rs/specta/pull/470). This has been really good for reducing complexity in the Tauri Specta and TauRPC code which should hopefully reduce future bugs.
 
-Strech:
- - Specta Zod - [#421](https://github.com/specta-rs/specta/pull/421)
- - Specta OpenAPI??? - [#31](https://github.com/specta-rs/specta/issues/31)
+Closed the following issues:
+ - `serde_json::Value` broken with latest release - [#455](https://github.com/specta-rs/specta/issues/455)
+ - Support for `rename_all` for `#[specta::specta]` - [#213](https://github.com/specta-rs/specta/issues/213)
+ - Fix Rustdoc exporting for singleline comments - [#450](https://github.com/specta-rs/specta/issues/450)
+ - Fix bug with enum merging - [#482](https://github.com/specta-rs/specta/issues/482)
+ - Improve Rustdoc comments across all crates  - [#299](https://github.com/specta-rs/specta/issues/299)
+ - Break examples out into separate crates - [#112](https://github.com/specta-rs/specta/issues/112)
 
-For my personal time (possibly after contract):
- - Figure out dropping `function` feature as this will be a breaking change. I started work on this but it would require changes to be upstreamed into Tauri.
-     - Allows dropping `function` from core [#432](https://github.com/specta-rs/specta/pull/432)
-     - `#[tauri::command(rename_all = "...")]` - [#213](https://github.com/specta-rs/specta/issues/213)
+### Inline refactor
 
-{/* Upstreaming changes in Flightscience forks (including [this](https://github.com/fltsci/plugins-workspace/tree/add-specta-to-updater)) */}
+While working on [#470](https://github.com/specta-rs/specta/pull/470) I was running across many issues with the specific implementation of const generics so I had to rethink it a bit.
 
+With the previous design when a reference to a type was created we would capture the inline type and store it onto `NamedDataType.instances`. This meant that when `#[specta(inline)]` was used we could use this instance to ensure the type correctly applied the generics.
 
-{ /* https://github.com/georust/geozero/issues/253 */}
+```rs
+pub struct Demo<const S: usize> {
+    a: [u8; S],
+}
+// the general definition of this type is `{ a: number[] }` (used for `export type Demo = ...`).
+// Notice how `S` isn't captured as Rust provides us no way to properly track it and this type needs to be valid for any `S`.
+
+Demo<3>
+// create an "instance" containing `{ a: [u8; 3] }`
+
+Demo<7>
+// create an "instance" containing `{ a: [u8; 7] }`
+
+// So if you do
+struct SomeOtherStruct {
+    #[specta(inline)]
+    b: Demo<3>
+}
+// we could grab the inline type `{ a: [u8; 3] }` and use it for the field's type.
+// (this relies on the fact that if a type doesn't have a const generic, we know all const generics inside it are static and therefore are safe to inlined).
+```
+
+This system does work but it makes `NamedDataType` very confusing and hard to work with correctly. We ended up with something like:
+
+```rs
+pub struct NamedDataType {
+    pub name: Cow<'static, str>,
+    // ...
+
+    // the type for `export type {name} = ...`
+    pub ty: DataType,
+
+    // the types for inlining each reference
+    pub(crate) instances: HashMap<InstanceId, DataType>, // Ackchyually, we used a `Vec` and used the index as an id but this shows it better.
+}
+
+// and each named reference would hold it's identifier
+pub struct NamedReference {
+    id: TypeId,
+
+    // identifier to the types `instances` table on the `NamedDataType`
+    instance: Option<InstanceId>,
+}
+```
+
+So what's the problem with this?
+
+Well for one each type is now represented by 1 + N `DataType`'s which makes Specta Serde's job hard as it needs to ensure it transforms all of these. I was running into issues with this in Tauri Specta which also helped to motivate this work.
+
+but that's not even biggest issue. The biggest issue is that the each instance hold a `DataType` resolved in the macro, entirely missing that in a previous Specta release we moved away from computing inlining in the macro as the `DataType` makes it hard to handle infinite recursive inlining. For example:
+
+```rs
+struct A {
+    #[specta(inline)]
+    b: B
+}
+
+struct B {
+    #[specta(inline)]
+    a: A
+}
+
+// in essence, this produces:
+
+impl Type for A {
+    fn definition(...) -> DataType {
+        // some logic
+        B::definition(...)
+        // some logic
+    }
+}
+
+impl Type for B {
+    fn definition(...) -> DataType {
+        // some logic
+        A::definition(...)
+        // some logic
+    }
+}
+
+// notice that this is a stack overflow :(
+// each type needs the inline definition of the other one.
+// If you don't inline we generate references and this isn't a problem.
+```
+
+So how should we solve this?
+
+The changes:
+ - Make every type other than primitives return a `NamedDataType`.
+    - Eg. `std::string::String` will end up in `Types`. It is marked `#[specta(inline)]` effectively on the container so you don't get `export String = ...;` in JS.
+    - This has the superpower that it allows exporters to detect types and change their behaviour. For example a Rust exporter can now differentiate between a `HashMap` and a `BTreeMap`, where previously it only knew it was a `DataType::Map`.
+ - Split up `NamedReference` into an enum with 3 variants
+    - `Inline`
+        - It tells the language exporter that the `NamedReference` should be inlined.
+        - This is what `std::string::String` uses for example, or anywhere your using `#[specta(inline)]`.
+        - It is as if it doesn't exist in the language output but the exporter could match on the `NamedDataType` to change it's behaviour.
+    - `Recursive`
+        - This is emitted when a recursive inline is reached.
+        - This is just a marker than the language exporter should error, it includes a stack of the recursive references for better errors.
+    - `Reference`
+        - A reference to another type with associated generics.
+        - This is basically what `NamedReference` used to be and it exported as `TypeName<{generics}>`.
+
+I also took this opportunity to simplify some stuff:
+    - `specta::datatype::inline(types, |types| <T as Type>::definition(...))` can be used now on a field to inline it.
+        - Allowed removing `Field.inline`.
+    - Dropped `Field.type_overriden` in favor of using `Attributes`.
+    - Dropped `Field.flatten` in favor of making Specta Serde smarter.
+
+This all leads to a much simpler system, and it also means the job of preventing stack overflows is on Specta's core not the language exporters which is really nice for reducing bugs.
+
+Work for this was done on: [#483](https://github.com/specta-rs/specta/pull/483)
