@@ -1731,13 +1731,13 @@ This all leads to a much simpler system, and it also means the job of preventing
 
 Work for this was done on: [#483](https://github.com/specta-rs/specta/pull/483)
 
-## Semantic Types
+### Semantic Types
 
 The work for this was done on: [#203](https://github.com/specta-rs/specta/issues/203)
 
 I did previously call this nuanced types but that's not really true anymore.
 
-### Getting terminology right
+#### Getting terminology right
 
 The original nuanced types feature confused two different Specta features which ended up being quite related so I wanted to clarify the terminology.
 
@@ -1749,7 +1749,7 @@ Semantic types aims to make `BigInt`, `Date`, `Uint8Array`, etc. work with Spect
 
 The solution to this was `specta_typescript::semantic`.
 
-### Semantic Types
+#### Semantic Types
 
 I did a massive writeup [in a comment for #203](https://github.com/specta-rs/specta/issues/203#issuecomment-4387573925) to outline my conclusion here. But in essence:
 
@@ -1765,7 +1765,7 @@ Special notes:
  - *[1]* - BigInt's are explained later on and are less cut and dry.
  - *[2]* - These types are actually handled by `JSON.stringify` for us so we don't need to do any special code.
 
-### `Date`, `Uint8Array` and `URL`
+#### `Date`, `Uint8Array` and `URL`
 
 The core observation of these is that the JSON type and Rust serialization is all good. All we need is a way to change the Specta type and generate some runtime JS code.
 
@@ -1806,7 +1806,7 @@ This all comes together to allow these types to work. I have implemented this in
 
 I have some concerns about this approach with [rspc](https://github.com/specta-rs/rspc) as by generating JS code that depends on the object shape, it requires your frontend and backend to be versioned in perfect sync. For Tauri this is how it will always be as the JS and Rust is shipped in the same binary, but for people building web APIs this is not usually the case. I have ideas for solving this but it is out of scope for now and rspc is not currently maintained so it's not a massive concern.
 
-### BigInt and special-float support in Tauri
+#### BigInt and special-float support in Tauri
 
 BigInt's have a different constraint, there JSON representation is lossly. Mainly:
  - When `JSON.parse` is run large integers are truncated.
@@ -1814,7 +1814,7 @@ BigInt's have a different constraint, there JSON representation is lossly. Mainl
 
  So at it's core, doing `commandResult.then((v) => BigInt(v))` will still result in truncation if `v` is a `number`. So you need a way of serializing these correctly in Rust.
 
-#### Jsone
+##### Jsone
 
 [Jsone](https://github.com/specta-rs/jsone) is a new crate I built out of my work looking at solutions here.
 
@@ -1897,7 +1897,7 @@ This is built in so in practice it's as easy as:
      - This remaps the type of floats like `f32` and `f64` from `number | null` to `number`.
      - If `NaN`, `Infinity` and `-Infinity` are handled properly they will be preserved and hence `null` won't occur.
 
-#### Jsone and Tauri?
+##### Jsone and Tauri?
 
 So can we upstream this into Tauri? Not really in a way which isn't full of footguns.
 
@@ -1909,13 +1909,13 @@ Tauri allows JSON to come into the system from outside in a lot of places. This 
 
 For more confirmation on this the current Tauri Specta versions use `serde_json::from_string` for the raw event payload, which would bypass any work done in Tauri. It's hard for all cases to be covered in Tauri when the raw JSON APIs exist.
 
-#### Solutions
+##### Solutions
 
 Basically for Tauri Specta and TauRPC I think this is a lost cause but an opinionated RPC framework which didn't use Tauri's APIs could make it work as they would maintain full control over serialization and deserialization (looking at you [rspc](https://github.com/specta-rs/rspc) and your support for any `serde::Serializer`).
 
 You could wrap your argument and return types of commands, events and channels manually with `Jsone` but that would both not be fun and would likely be pretty easy to miss.
 
-## Dropping Specta function code
+### Dropping Specta function code
 
 I have talked about wanting to remove `#[specta::specta]` and `specta::function::*`. I think bringing these into the core was a mistake but at the end of the day I need to be pragmatic and removing these is just not going to make v2.
 
@@ -1923,7 +1923,7 @@ I spent some of my own time on the weekend doing up [this proposal to Tauri](htt
 
 So tldr: we live with bad decisions until we have a solution and then I will mark it as deprecated. We could then remove it in v3 if it ever happens someday (but I hope it doesn't need to!).
 
-## TauRPC
+### TauRPC
 
 On [#22](https://github.com/fltsci/TauRPC/pull/22) I have implemented:
  - Typesafe error handling
@@ -1937,7 +1937,7 @@ In conclusion:
  - If you use `chrono::DateTime`/`jiff::Timestamp`/`bytes::Bytes`/`url::Url` (and maybe more in the future) you will get a workable JS type (`Date`, `Uint8Array` or `URL`).
     - You could expand this to your own classes, if you want to convert a Rust struct into a full JS class (for example, could be useful for a `Path` class w/ helpers for platform-agnostic path handling or something like that).
 
-## Specta Typescript improvements
+### Specta Typescript improvements
 
 This work was done against main but working on resolving issue [#475](https://github.com/specta-rs/specta/issues/475).
 
@@ -1950,9 +1950,30 @@ Changes:
     - Allow getting the `NamedDataType` an error occurred in back out.
     - Restructure error enum to include some errors we didn't handle well before.
 
-## v2 release plan
+### TODOs
+
+I have resolved all remaining TODO's in `specta`, `specta-macros`, `specta-typescript` and `specta-serde`.
+
+### v2 release plan
 
 I am going to do the final v2 release in a few weeks time (right now slated for the 13th of June). I know a delay is really annoying but I want to do it because:
- - I want to let the dust settle on these changes to ensure I haven't missed anything.
- - I want to give people time to try it out and catch + resolve bugs.
- - I want to test it on a large Tauri codebase of my next employer.
+ - I want to let the dust settle on these changes to ensure I haven't missed anything major.
+ - I want to give people time to try it out and catch + resolve bugs before the launch.
+ - I want to test it on a large Tauri codebase of my next employer. I will also try and upgrade some open source ones like [Cap](https://cap.so).
+
+## Conclusions
+
+This marks the end of contract! I am so incredibly thankful to Flight Science for making this stuff possible and I really hope you got the value you were looking for out of it!
+
+Given how much of a monumental effort this has been I don't think Specta v2 would have happened anytime soon if it were up to me working on it in my spare time. I have been dreaming of Specta v2 finally happening for literally years at this point and now it's happening which is so amazing!!!
+
+TLDR:
+ - Improve tests and codebase quality
+ - Cleanup and make a very solid minimal core API. Improve Typescript exporter code, fix bugs and improve the default formatting of generated bindings.
+ - Finish the incomplete work on decoupling Serde from Specta's core.
+ - Support for all Serde attributes, including narrowing types for serialize vs deserialize phase.
+ - Support for converting Rust types into JS types like `Date`, `Uint8Array`, `URL` and more.
+ - Support for Typescript branded types for typesafe identifiers
+ - Apply all upgrades to the Flight Science TauRPC, ready to be used internally!
+
+I can't express how thankful I am! I am always going to be around so feel free to reach out if you have any questions or need help with anything!
