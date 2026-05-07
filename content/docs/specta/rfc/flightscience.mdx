@@ -1808,6 +1808,101 @@ I have some concerns about this approach with [rspc](https://github.com/specta-r
 
 ### BigInt and special-float support in Tauri
 
+BigInt's have a different constraint, there JSON representation is lossly. Mainly:
+ - When `JSON.parse` is run large integers are truncated.
+ - `NaN`, `Infinity` and `-Infinity` all become `null`
+
+ So at it's core, doing `commandResult.then((v) => BigInt(v))` will still result in truncation if `v` is a `number`. So you need a way of serializing these correctly in Rust.
+
+#### Jsone
+
+[Jsone](https://github.com/specta-rs/jsone) is a new crate I built out of my work looking at solutions here.
+
+At it's core it's one simple API: `pub struct Jsone<T>(pub T);`
+
+However internally it wraps the `Serializer` and `Deserializer` with it's own as it passes through the `Serialize for Jsone<T>` and `Deserialize for Jsone<T>` implementations.
+
+Using Serde methods we can capture large numbers, `NaN`, `Infinity` and `-Infinity` and encode them in a lossless way.
+
+Below is the example from the repository which shows it pretty clearly:
+
+```rs
+use std::f64;
+
+use jsone::Jsone;
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
+struct Payload<N> {
+    id: N,
+}
+
+fn main() {
+    {
+        // wrap your root type in `Jsone` and we will take care of the rest!
+        let json = serde_json::to_string(&Jsone(Payload { id: 42 })).unwrap();
+        assert_eq!(json, r#"{"id":42}"#);
+        println!("{json}");
+
+        let payload: Jsone<Payload<i32>> = serde_json::from_str(&json).unwrap();
+        assert_eq!(payload.0.id, 42);
+        println!("{payload:?}");
+    }
+
+    {
+        // wrap your root type in `Jsone` and we will take care of the rest!
+        let json = serde_json::to_string(&Jsone(Payload { id: f64::MAX })).unwrap();
+        assert_eq!(
+            json,
+            format!(r#"{{"id":{{"$$jsone$remap$$":"{}"}}}}"#, f64::MAX)
+        );
+        println!("\n{json}");
+
+        let payload: Jsone<Payload<f64>> = serde_json::from_str(&json).unwrap();
+        assert_eq!(payload.0.id, f64::MAX);
+        println!("{payload:?}");
+    }
+
+    {
+        let json = serde_json::to_string(&Jsone(Payload { id: f64::NAN })).unwrap();
+        assert_eq!(json, r#"{"id":{"$$jsone$remap$$":1}}"#);
+        println!("\n{json}");
+
+        let payload: Jsone<Payload<f64>> = serde_json::from_str(&json).unwrap();
+        assert!(payload.0.id.is_nan());
+        println!("{payload:?}");
+    }
+}
+```
+
+Main things to note:
+ - large numbers become `{"$$jsone$remap$$": "{number}" }` in JSON
+   - Stringifying preserves it through `JSON.parse`.
+   - The JS runtime will do `BigInt({number})` automatically so you effectively get `number | bigint` for all fields.
+ - float special cases become `{"$$jsone$remap$$": {constant} }` where constant is:
+   - `1` for `NaN`
+   - `2` for `Infinity`
+   - `3` for `-Infinity`
+
+This requires both the Rust wrapper on serialization and deserialization and a small utility in JS to run within the `reviver`/`replacer` param for `JSON.parse`/`JSON.stringify` (although it can be used later).
+
+This makes the transport layer lossless. Now we need the Specta integration, this is done using `specta_typescript::semantic`.
+
+This is built in so in practice it's as easy as:
+ - `semantic::Configuration::enable_loseless_bigints`
+    - This will make all large numbers (`u64`/`i64` and bigger) become `bigint` in types.
+    - Wrap the runtime in `(v) => BigInt(v)` so it's consistent with the datatype.
+       - With Jsone for example this layer this would be in practice `(v: number | bigint) => BigInt(v)`.
+ - `semantic::Configuration::enable_loseless_bigints`
+     - This remaps the type of floats like `f32` and `f64` from `number | null` to `number`.
+     - If `NaN`, `Infinity` and `-Infinity` are handled properly they will be preserved and hence `null` won't occur.
+
+#### Jsone and Tauri?
+
+The biggest issue is that Tauri takes // TODO
+
+
+
 TODO:
  - Is hard - Explain how `IpcResponse` is effectivly seal from HTTP headers
  - `Emitter::emit_str` literally can't work
