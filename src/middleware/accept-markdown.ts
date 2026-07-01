@@ -25,7 +25,10 @@ export default function acceptMarkdown(): MiddlewareHandler {
       if (result) {
         const url = new URL(c.req.url);
         url.pathname = result;
-        const response = await fetch(new Request(url.toString(), c.req.raw));
+        const assets = (c.env as { ASSETS?: { fetch: typeof fetch } }).ASSETS;
+        const response = await (assets ?? { fetch }).fetch(
+          new Request(url.toString(), c.req.raw),
+        );
         const headers = new Headers(response.headers);
         headers.set("Vary", "Accept");
         return new Response(response.body, {
