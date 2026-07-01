@@ -8,6 +8,11 @@ const { rewrite: rewriteLLM } = rewritePath(
 
 export default function acceptMarkdown(): MiddlewareHandler {
   return async (c, next) => {
+    if (c.req.path.endsWith("/llms.mdx")) {
+      await next();
+      return;
+    }
+
     const endsWithMdx = c.req.path.endsWith(".mdx");
     if (
       c.req.path.startsWith("/docs") &&
