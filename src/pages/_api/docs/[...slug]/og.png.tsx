@@ -1,6 +1,3 @@
-import fs from "node:fs/promises";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { openGraphImageSize } from "@/components/Meta";
 import { getNonRootDocStaticPaths, source } from "@/lib/source";
 import spectaLogoPng from "../../../../../public/assets/specta.png?arraybuffer";
@@ -20,42 +17,12 @@ export async function GET(request: Request) {
       status: 404,
     });
 
-  // This hackery can be fixed once Waku uses `@cloudflare/plugin-vite`:  https://github.com/wakujs/waku/issues/1245
-  // biome-ignore lint/suspicious/noExplicitAny: This is already hacky, it's fine.
-  let module: any;
-  if (import.meta.env.DEV)
-    // This only works in development as it loads the wasm module dynamically which Cloudflare blocks in production.
-    module = (await import("@takumi-rs/wasm/takumi_wasm_bg.wasm?arraybuffer"))
-      .default;
-  // We try the wasm import as during static rendering (which is done on node), this import will fail falling back to the catch case.
-  else
-    try {
-      // This works in Cloudflare Workers due to the `waku.config.ts` marking it external.
-      // This means the import isn't processed by Vite and when `wrangler deploy` is run,
-      // it's build process sees it and properly bundles it.
-      module = await import("@takumi-rs/wasm/takumi_wasm_bg.wasm");
-    } catch (_) {
-      // We are statically rendering on node so we can just import the wasm module.
-      const __filename = fileURLToPath(import.meta.url);
-      const __dirname = dirname(__filename);
-      module = await fs.readFile(
-        resolve(
-          __dirname,
-          "..",
-          (
-            await import("@takumi-rs/wasm/takumi_wasm_bg.wasm?url")
-          ).default.replace(/^\/+/, ""),
-        ),
-      );
-    }
-
   return new ImageResponse(
     <OpenGraph
       title={page.data.longTitle || page.data.title}
       description={page.data.description}
     />,
     {
-      module,
       width: openGraphImageSize[0],
       height: openGraphImageSize[1],
       fonts: [

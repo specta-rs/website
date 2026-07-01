@@ -28,13 +28,6 @@ export default defineConfig({
         "fumadocs-core > hast-util-to-jsx-runtime",
       ],
     },
-    build: {
-      rollupOptions: {
-        // Allow the Cloudflare build process to take care of wasm bundling.
-        // TODO: Can be removed once https://github.com/wakujs/waku/issues/1245 is fixed.
-        external: ["@takumi-rs/wasm/takumi_wasm_bg.wasm"],
-      },
-    },
     resolve: {
       tsconfigPaths: true,
     },
