@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "fumadocs-mdx",
     "dev": "waku dev",
-    "build": "waku build",
+    "build": "waku build && node scripts/patch-cloudflare-wrangler.mjs",
     "start": "waku start",
     "typecheck": "wrangler types src/cloudflare-env.d.ts && fumadocs-mdx && tsc --noEmit",
     "format": "biome check --write"

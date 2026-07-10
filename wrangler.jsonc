@@ -17,6 +17,7 @@
   "assets": {
     "directory": "./dist/public",
     "html_handling": "drop-trailing-slash",
+    "run_worker_first": ["/docs", "/docs/*"],
   },
   "rules": [
     {

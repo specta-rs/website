@@ -1,16 +1,17 @@
 import { openGraphImageSize } from "@/components/Meta";
-import { getNonRootDocStaticPaths, source } from "@/lib/source";
+import { source } from "@/lib/source";
 import spectaLogoPng from "../../../../../public/assets/specta.png?arraybuffer";
 import interFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?arraybuffer";
 import { ImageResponse } from "@takumi-rs/image-response/wasm";
+import type { ApiContext } from "waku/router";
 
 const spectaLogoSrc = "spectaLogo";
 
-export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const path = removeSuffix(url.pathname, "/og.png");
-  const slug = path === "/docs" ? [] : removePrefix(path, "/docs/").split("/");
-
+export async function GET(
+  _request: Request,
+  { params }: ApiContext<"/_api/docs/[...slug]/og.png">,
+) {
+  const slug = params.slug;
   const page = source.getPage(slug);
   if (!page)
     return new Response("", {
@@ -212,14 +213,12 @@ function OpenGraph(props: { title: string; description?: string }) {
 }
 
 export async function getConfig() {
+  const pages = source
+    .generateParams()
+    .map((item) => (item.lang ? [item.lang, ...item.slug] : item.slug));
+
   return {
     render: "static",
-    staticPaths: getNonRootDocStaticPaths(),
+    staticPaths: pages,
   } as const;
 }
-
-const removePrefix = (s: string, p: string) =>
-  s.startsWith(p) ? s.slice(p.length) : s;
-
-const removeSuffix = (s: string, p: string) =>
-  s.endsWith(p) ? s.slice(0, -p.length) : s;
