@@ -17,6 +17,19 @@
   "assets": {
     "directory": "./dist/public",
     "html_handling": "drop-trailing-slash",
+    // Route /docs HTML pages through the Worker for `Accept: text/markdown`
+    // negotiation, but let Cloudflare serve the generated static files
+    // (og.png, llms.mdx) from the Asset Worker directly. Waku's Cloudflare
+    // adapter ignores this, so `scripts/patch-cloudflare-wrangler.mjs` applies
+    // the same value to the generated deploy config.
+    "run_worker_first": [
+      "/docs",
+      "/docs/*",
+      "!/docs/**/og.png",
+      "!/docs/**/llms.mdx",
+      "!/docs/og.png",
+      "!/docs/llms.mdx",
+    ],
   },
   "rules": [
     {
