@@ -2,7 +2,7 @@ import { openGraphImageSize } from "@/components/Meta";
 import { getNonRootDocStaticPaths, source } from "@/lib/source";
 import spectaLogoPng from "../../../../../public/assets/specta.png?arraybuffer";
 import interFont from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?arraybuffer";
-import { ImageResponse } from "@takumi-rs/image-response/wasm";
+import { ImageResponse } from "takumi-js/response";
 
 const spectaLogoSrc = "spectaLogo";
 
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
           style: "normal",
         },
       ],
-      persistentImages: [
+      images: [
         {
           src: spectaLogoSrc,
           data: spectaLogoPng,
