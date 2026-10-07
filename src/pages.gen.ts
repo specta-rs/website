@@ -10,15 +10,9 @@ import type { getConfig as File_ApiDocsSlugLlmsMdx_getConfig } from './pages/_ap
 // prettier-ignore
 import type { getConfig as File_ApiDocsSlugOgPng_getConfig } from './pages/_api/docs/[...slug]/og.png';
 // prettier-ignore
-import type { getConfig as File_ApiDocsLlmsMdx_getConfig } from './pages/_api/docs/llms.mdx';
-// prettier-ignore
-import type { getConfig as File_ApiDocsOgPng_getConfig } from './pages/_api/docs/og.png';
-// prettier-ignore
 import type { getConfig as File_Root_getConfig } from './pages/_root';
 // prettier-ignore
 import type { getConfig as File_DocsSlugs_getConfig } from './pages/docs/[...slugs]';
-// prettier-ignore
-import type { getConfig as File_DocsIndex_getConfig } from './pages/docs/index';
 
 // prettier-ignore
 type Page =
@@ -26,11 +20,8 @@ type Page =
 | { path: '/404'; render: 'static' }
 | ({ path: '/_api/docs/[...slug]/llms.mdx' } & GetConfigResponse<typeof File_ApiDocsSlugLlmsMdx_getConfig>)
 | ({ path: '/_api/docs/[...slug]/og.png' } & GetConfigResponse<typeof File_ApiDocsSlugOgPng_getConfig>)
-| ({ path: '/_api/docs/llms.mdx' } & GetConfigResponse<typeof File_ApiDocsLlmsMdx_getConfig>)
-| ({ path: '/_api/docs/og.png' } & GetConfigResponse<typeof File_ApiDocsOgPng_getConfig>)
 | ({ path: '/_root' } & GetConfigResponse<typeof File_Root_getConfig>)
-| ({ path: '/docs/[...slugs]' } & GetConfigResponse<typeof File_DocsSlugs_getConfig>)
-| ({ path: '/docs' } & GetConfigResponse<typeof File_DocsIndex_getConfig>);
+| ({ path: '/docs/[...slugs]' } & GetConfigResponse<typeof File_DocsSlugs_getConfig>);
 
 // prettier-ignore
 declare module 'waku/router' {

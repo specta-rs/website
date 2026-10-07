@@ -1,10 +1,16 @@
 // This endpoint proxies requests to PostHog's API.
 // It has a random name to make blocking less likely.
 
-export default async function handler(request: Request) {
+import type { ApiContext } from "waku/router";
+
+export default async function handler(
+  request: Request,
+  { params }: ApiContext<"/_api/ph_ebbd7f/[...slug]">,
+) {
   const originalUrl = new URL(request.url);
+  const slug = params.slug.join("/");
   // // Determine target hostname based on static or dynamic ingestion
-  const hostname = originalUrl.pathname.startsWith("/ph_ebbd7f/static/")
+  const hostname = params.slug[0] === "static"
     ? "us-assets.i.posthog.com" // change us to eu for EU Cloud
     : "us.i.posthog.com"; // change us to eu for EU Cloud
 
@@ -13,7 +19,7 @@ export default async function handler(request: Request) {
   url.protocol = "https:";
   url.hostname = hostname;
   url.port = "443";
-  url.pathname = `/${stripPrefix(url.pathname, "/ph_ebbd7f/")}`;
+  url.pathname = `/${slug}`;
 
   const ip = request.headers.get("CF-Connecting-IP") || "";
   const headers = new Headers(request.headers);
@@ -40,6 +46,3 @@ export default async function handler(request: Request) {
     headers: Object.fromEntries(res.headers),
   });
 }
-
-const stripPrefix = (str: string, prefix: string) =>
-  str.startsWith(prefix) ? str.slice(prefix.length) : str;

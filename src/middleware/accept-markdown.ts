@@ -8,6 +8,11 @@ const { rewrite: rewriteLLM } = rewritePath(
 
 export default function acceptMarkdown(): MiddlewareHandler {
   return async (c, next) => {
+    if (c.req.path.endsWith("/llms.mdx")) {
+      await next();
+      return;
+    }
+
     const endsWithMdx = c.req.path.endsWith(".mdx");
     if (
       c.req.path.startsWith("/docs") &&
@@ -20,7 +25,17 @@ export default function acceptMarkdown(): MiddlewareHandler {
       if (result) {
         const url = new URL(c.req.url);
         url.pathname = result;
-        c.req.raw = new Request(url.toString(), c.req.raw);
+        const assets = (c.env as { ASSETS?: { fetch: typeof fetch } }).ASSETS;
+        const response = await (assets ?? { fetch }).fetch(
+          new Request(url.toString(), c.req.raw),
+        );
+        const headers = new Headers(response.headers);
+        headers.set("Vary", "Accept");
+        return new Response(response.body, {
+          status: response.status,
+          statusText: response.statusText,
+          headers,
+        });
       }
     }
 
