@@ -47,5 +47,12 @@
     "vite": "^8.3.3",
     "vite-plugin-arraybuffer": "^0.1.4",
     "wrangler": "^4.148.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "next": "16.4.0",
+      "postcss": "8.5.29",
+      "sharp": "0.35.5"
+    }
   }
 }
