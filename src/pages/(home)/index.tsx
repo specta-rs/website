@@ -3,6 +3,7 @@ import {
   BookOpen,
   Code2,
   ExternalLink,
+  Heart,
   Shield,
   Zap,
 } from "lucide-react";
@@ -11,14 +12,18 @@ import { Link } from "waku";
 import { DiscordLogo, GitHubLogo } from "@/components/logos";
 import { buttonVariants } from "@/components/ui/button";
 import { getGitHubStars } from "@/lib/getGitHubStars";
+import { getSponsors, type Sponsor } from "@/lib/sponsors";
 import { cn } from "@/lib/utils";
 
 export default async function HomePage() {
+  const sponsors = await getSponsors();
+
   return (
     <div className="flex flex-col min-h-screen">
       <Hero />
       <Features />
       <Projects />
+      <Support sponsors={sponsors} />
       <CTASection />
     </div>
   );
@@ -322,6 +327,105 @@ function Stars(props: { stars: Promise<string> }) {
         <span className="font-medium">{props.stars}</span>
       </div>
     </Suspense>
+  );
+}
+
+function Support({ sponsors }: { sponsors: Sponsor[] }) {
+  const direct = sponsors.filter((sponsor) => sponsor.tier === "direct");
+  const github = sponsors.filter((sponsor) => sponsor.tier === "github");
+
+  return (
+    <section className="border-t bg-fd-secondary/10">
+      <div className="container mx-auto px-4 py-20 md:py-28">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Support development
+            </h2>
+            <p className="text-fd-muted-foreground text-lg max-w-2xl mx-auto">
+              specta-rs is built and maintained by Oscar Beaumont. Sponsorships
+              fund the time that goes into it.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-4">
+            {direct.map((sponsor) => (
+              <SponsorCard key={sponsor.name} sponsor={sponsor} featured />
+            ))}
+          </div>
+
+          {github.length > 0 ? (
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+              <span className="text-sm text-fd-muted-foreground">
+                With thanks to
+              </span>
+              {github.map((sponsor) => (
+                <SponsorCard key={sponsor.name} sponsor={sponsor} />
+              ))}
+            </div>
+          ) : null}
+
+          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a
+              href="https://github.com/sponsors/oscartbeaumont"
+              target="_blank"
+              rel="noopener"
+              className={cn(
+                buttonVariants({ variant: "primary" }),
+                "gap-2 px-6 py-3 text-base",
+              )}
+            >
+              <Heart className="w-4 h-4" />
+              Become a sponsor
+            </a>
+            <span className="text-sm text-fd-muted-foreground">
+              or support through{" "}
+              <a
+                href="https://paypal.me/oscartbeaumont"
+                target="_blank"
+                rel="noopener"
+                className="underline underline-offset-2 hover:text-fd-foreground"
+              >
+                PayPal
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SponsorCard({
+  sponsor,
+  featured = false,
+}: {
+  sponsor: Sponsor;
+  featured?: boolean;
+}) {
+  return (
+    <a
+      href={sponsor.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(
+        "group flex items-center gap-3 rounded-xl border bg-fd-card transition-colors hover:border-fd-primary/30",
+        featured ? "px-5 py-4" : "px-3 py-2",
+      )}
+    >
+      <img
+        src={sponsor.logo}
+        alt={`${sponsor.name} logo`}
+        loading="lazy"
+        className={cn(
+          "rounded-lg object-contain",
+          featured ? "size-12" : "size-7",
+        )}
+      />
+      <span className={cn("font-semibold", featured ? "text-lg" : "text-sm")}>
+        {sponsor.name}
+      </span>
+    </a>
   );
 }
 
