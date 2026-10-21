@@ -41,6 +41,13 @@ export const source = loader({
   },
 });
 
+// Pages nested under `rspc/0.3.0` document a deprecated rspc release. They are
+// kept for historical reference, but we show a deprecation banner and add a
+// `noindex` meta tag so they don't compete with the current docs in search.
+export function isDeprecatedPage(slugs: string[]): boolean {
+  return slugs[0] === "rspc" && slugs[1] === "0.3.0";
+}
+
 export function getPageImage(page: InferPageType<typeof source>) {
   const segments = [...page.slugs, "og.png"];
 

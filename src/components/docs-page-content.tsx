@@ -7,15 +7,17 @@ import {
 } from "fumadocs-ui/layouts/docs/page";
 import { createRelativeLink } from "fumadocs-ui/mdx";
 import { SquarePen } from "lucide-react";
+import { DeprecationBanner } from "@/components/deprecation-banner";
 import { Meta } from "@/components/Meta";
 import { LLMCopyButton, ViewOptions } from "@/components/page-actions";
-import { getPageImage, source } from "@/lib/source";
+import { getPageImage, isDeprecatedPage, source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
 export function DocsPageContent({ slugs }: { slugs: string[] }) {
   const page = source.getPage(slugs);
   if (!page) throw new Error(`Missing docs page for slug: ${slugs.join("/")}`);
 
+  const deprecated = isDeprecatedPage(page.slugs);
   const MDX = page.data.body;
   return (
     <DocsPage toc={page.data.toc} full={page.data.full}>
@@ -24,7 +26,11 @@ export function DocsPageContent({ slugs }: { slugs: string[] }) {
         description={page.data.description}
         openGraphImage={getPageImage(page).url}
       />
-      {page.data.hidden ? <meta name="robots" content="noindex" /> : null}
+      {page.data.hidden || deprecated ? (
+        <meta name="robots" content="noindex" />
+      ) : null}
+
+      {deprecated ? <DeprecationBanner /> : null}
 
       <DocsTitle>{page.data.longTitle || page.data.title}</DocsTitle>
       <DocsDescription className="mb-0">
