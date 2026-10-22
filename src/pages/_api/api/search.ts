@@ -1,6 +1,6 @@
 import { createFromSource } from "fumadocs-core/search/server";
 import type { SortedResult } from "fumadocs-core/search";
-import referenceIndex from "../../../../public/reference/search.json";
+import referenceIndex from "@/lib/reference-index.json";
 import { searchReference } from "@/lib/reference-search";
 import { isIndexable, source } from "@/lib/source";
 

@@ -3,8 +3,7 @@
 import { ArrowUpRight, Braces, FileCode2, Search } from "lucide-react";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "waku/router/client";
-import rust from "../../public/reference/rust.json";
-import typescript from "../../public/reference/typescript.json";
+import catalog from "@/lib/reference-catalog.json";
 import {
   filterSymbols,
   projectNames,
@@ -14,10 +13,7 @@ import {
   type ReferencePackage,
 } from "@/lib/reference";
 
-const packages: ReferencePackage[] = [
-  ...rust.packages,
-  ...typescript.packages,
-] as ReferencePackage[];
+const packages = catalog.packages as ReferencePackage[];
 
 function readSelection(query: string, hash: string) {
   const params = new URLSearchParams(query);

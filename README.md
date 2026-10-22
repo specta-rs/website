@@ -30,8 +30,11 @@ bindings from each release's exact source commit, not an application-independent
 command API. Unpublished packages use explicitly labeled, commit-pinned snapshots.
 
 The catalogs and per-version symbol files live in `public/reference/` and are
-checked in. Normal development, CI, and Cloudflare builds need no registry or
-docs.rs access. The browser loads only the selected release's symbol file.
+checked in. The sync script also generates the bundled catalog and default-version
+search index under `src/lib/reference-{catalog,index}.json`, keeping imports out
+of Vite's public-asset directory. Normal development, CI, and Cloudflare builds
+need no registry or docs.rs access. The browser loads only the selected release's
+symbol file.
 Site-wide search indexes each reference's default version; the reference page
 can search historical versions without mixing duplicate releases into global
 search results.

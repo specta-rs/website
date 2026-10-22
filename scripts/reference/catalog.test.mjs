@@ -68,3 +68,54 @@ for (const ecosystem of ["rust", "typescript"]) {
     }
   });
 }
+
+test("bundled catalog and default-version search index match the release snapshots", async () => {
+  const packages = [];
+  const records = [];
+  for (const ecosystem of ["rust", "typescript"]) {
+    const catalog = JSON.parse(
+      await readFile(new URL(`reference/${ecosystem}.json`, root), "utf8"),
+    );
+    packages.push(...catalog.packages);
+    for (const pkg of catalog.packages) {
+      const release = pkg.versions.find(
+        (item) => item.version === pkg.defaultVersion,
+      );
+      if (!release?.data) continue;
+      const artifact = JSON.parse(
+        await readFile(new URL(release.data.slice(1), root), "utf8"),
+      );
+      for (const symbol of artifact.symbols) {
+        records.push({
+          name: symbol.name,
+          url: symbol.url,
+          package: pkg.name,
+          version: release.version,
+          language: pkg.language,
+          text: `${symbol.kind} ${symbol.description || ""} ${symbol.signature || ""}`.slice(
+            0,
+            3000,
+          ),
+        });
+      }
+    }
+  }
+  assert.deepEqual(
+    JSON.parse(
+      await readFile(
+        new URL("../../src/lib/reference-catalog.json", import.meta.url),
+        "utf8",
+      ),
+    ),
+    { packages },
+  );
+  assert.deepEqual(
+    JSON.parse(
+      await readFile(
+        new URL("../../src/lib/reference-index.json", import.meta.url),
+        "utf8",
+      ),
+    ),
+    records,
+  );
+});
