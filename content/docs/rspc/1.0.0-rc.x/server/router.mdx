@@ -2,11 +2,11 @@
 title: Router
 ---
 
-A router is responsible for collecting up [procedures](./procedures). Once a router is built you are provided with the types for generating the client bindings and the procedure handlers which can be exposed via an [integration](../integrations/axum).
+A router is responsible for collecting up [procedures](./procedure). Once a router is built you are provided with the types for generating the client bindings and the procedure handlers which can be exposed via an [integration](../integrations/axum).
 
 ## TCtx
 
-The type of the [request context](/server/concepts#request-context). This is usually a `struct` containing state coming from the webserver such as a database connection and user session.
+The type of the [request context](/docs/rspc/1.0.0-rc.x/server/procedure#request-context). This is usually a `struct` containing state coming from the webserver such as a database connection and user session.
 
 For example:
 
@@ -37,7 +37,7 @@ let router = <Router>::new();
 let router = Router::<MyCtx>::new();
 ```
 
-`TCtx` is super powerful in rspc because [middleware](/server/middleware) are able to change it for procedures following them in the chain. A great example of this in action is an authentication middleware like shown below.
+`TCtx` is super powerful in rspc because [middleware](/docs/rspc/1.0.0-rc.x/middleware/overview) are able to change it for procedures following them in the chain. A great example of this in action is an authentication middleware like shown below.
 
 ```rs copy filename="src/main.rs"
 pub struct AuthenticatedCtx {

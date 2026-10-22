@@ -2,7 +2,7 @@
 title: Vanilla
 ---
 
-The vanilla client allows you to consume your API on the frontend. This client is the minimal core and it is recommended that you use the [React](/client/react) or [Solid](/client/solid) integration for building application.
+The vanilla client allows you to consume your API on the frontend. This client is the minimal core and it is recommended that you use the [React](/docs/rspc/1.0.0-rc.x/client/react) or [Solid](/docs/rspc/1.0.0-rc.x/client/solid) integration for building application.
 
 To get started first install the minimal runtime package.
 
@@ -10,7 +10,7 @@ To get started first install the minimal runtime package.
 npm i @rspc/client
 ```
 
-Next you need to export the Typescript bindings from your `rspc::Router` by using either [export_ts_bindings](/server/router#exporting-the-typescript-bindings) or [export_ts](/server/router#exporting-the-typescript-bindings).
+Next you need to export the Typescript bindings from your `rspc::Router` by using either [export_ts_bindings](/docs/rspc/1.0.0-rc.x/server/router#exporting-the-typescript-bindings) or [export_ts](/docs/rspc/1.0.0-rc.x/server/router#exporting-the-typescript-bindings).
 
 ```rs /export_ts_bindings/ copy  filename="src/main.rs"
 let router = <rspc::Router>::new()
