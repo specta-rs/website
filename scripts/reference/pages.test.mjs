@@ -78,19 +78,24 @@ test("long declarations are trimmed at a line boundary, never emptied", () => {
 });
 
 test("generated binding provenance is stated once per page, not per symbol", () => {
+  const commit = "a".repeat(40);
   const artifact = {
-    sourceCommit: "a".repeat(40),
+    sourceVersion: "2.0.0-rc.26",
+    sourceCommit: commit,
     description:
       "Representative generated output, not a fixed package API. Fixtures here.",
     symbols: [
       {
         name: "commands.hello",
         kind: "function",
-        description:
-          "Representative generated output from Tauri Specta 2.0.0-rc.26, source commit " +
-          "a".repeat(40) +
-          ". Greets the caller.",
+        description: `Representative generated output from Tauri Specta 2.0.0-rc.26, source commit ${commit}. Greets the caller.`,
         signature: 'hello: () => invoke<string>("hello")',
+      },
+      {
+        name: "commands.silent",
+        kind: "function",
+        description: `Representative generated output from Tauri Specta 2.0.0-rc.26, source commit ${commit}.`,
+        signature: 'silent: () => invoke<void>("silent")',
       },
     ],
   };
@@ -99,10 +104,40 @@ test("generated binding provenance is stated once per page, not per symbol", () 
     version: "1.0.0",
     artifact,
   });
-  assert.match(page, /Greets the caller\./);
-  assert.ok(
-    !page.includes("Representative generated output from Tauri Specta"),
+  // What remains must be exactly the symbol's own documentation: cutting the
+  // sentence at the first period would leave "0.0-rc.26, source commit …".
+  assert.match(page, /\nGreets the caller\.\n/);
+  assert.ok(!page.includes("source commit"), "provenance repeated per symbol");
+  assert.ok(!page.includes("0.0-rc.26"), "version fragment left behind");
+  assert.ok(!page.includes("Representative generated output from Tauri"));
+  // A symbol with nothing else to say keeps no dangling fragment.
+  assert.match(
+    page,
+    /### `commands\.silent`\n\n`silent: \(\) => invoke<void>\("silent"\)`\n\n$/,
   );
+});
+
+test("an unpublished snapshot's provenance is stripped the same way", () => {
+  const commit = "b".repeat(40);
+  const page = renderPackagePage({
+    pkg: { ...rustPackage, language: "typescript", project: "rspc" },
+    version: "1.0.0",
+    artifact: {
+      published: false,
+      sourceCommit: commit,
+      description: "Unreleased source snapshot.",
+      symbols: [
+        {
+          name: "createHooks",
+          kind: "function",
+          description: `Unreleased source snapshot of packages/tanstack-query at commit ${commit}; not a published npm version. The directory is documented as @rspc/tanstack-query. Wraps the query client.`,
+          signature: "declare function createHooks(): Hooks;",
+        },
+      ],
+    },
+  });
+  assert.ok(!page.includes("not a published npm version."));
+  assert.match(page, /Wraps the query client\./);
 });
 
 test("signatures render as lightweight code, not highlighted blocks", () => {

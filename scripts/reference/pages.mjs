@@ -138,10 +138,19 @@ export function truncateSignature(signature) {
 
 function symbolSummary(symbol, artifact) {
   let summary = symbol.description ?? "";
-  // Generated bindings repeat a per-symbol provenance sentence that the page
-  // already states once, in the release's own wording.
-  if (artifact.sourceCommit) {
-    summary = summary.replace(/^Representative generated output[^.]*\.\s*/, "");
+  // A generated-binding snapshot repeats per-symbol provenance that the page
+  // already states once. Cut at the release's own marker rather than guessing
+  // the sentence's shape: version strings contain periods.
+  const markers = [
+    artifact.sourceCommit
+      ? `, source commit ${artifact.sourceCommit}.`
+      : undefined,
+    artifact.published === false ? "; not a published npm version." : undefined,
+  ].filter((marker) => marker !== undefined);
+  for (const marker of markers) {
+    const index = summary.indexOf(marker);
+    if (index !== -1 && index < 200)
+      summary = summary.slice(index + marker.length).trim();
   }
   return escapeMdx(summary);
 }
