@@ -12,7 +12,7 @@ const contentDir = path.join(root, "content/docs");
 const catalogFile = path.join(root, "src/lib/reference-catalog.json");
 
 /** Directory a project's TypeScript reference lives in. */
-export const referenceFolder = "typescript-api";
+const referenceFolder = "typescript-api";
 
 // `rust-api` was the earlier Rust reference; it is cleared so a checkout that
 // still has it does not keep serving pages that are no longer generated.

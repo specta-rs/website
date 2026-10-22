@@ -69,13 +69,13 @@ export function ReferenceHeader({
         </a>
       </div>
 
-      <p className="text-fd-muted-foreground">
-        {current.unpublished
-          ? "Generated from a pinned source commit, not a published npm release. This snapshot is deliberately pinned rather than following the branch."
-          : current.data
-            ? "Generated from the published type declarations for this exact release."
-            : null}
-      </p>
+      {current.unpublished || current.data ? (
+        <p className="text-fd-muted-foreground">
+          {current.unpublished
+            ? "Generated from a pinned source commit, not a published npm release. This snapshot is deliberately pinned rather than following the branch."
+            : "Generated from the published type declarations for this exact release."}
+        </p>
+      ) : null}
     </div>
   );
 }
