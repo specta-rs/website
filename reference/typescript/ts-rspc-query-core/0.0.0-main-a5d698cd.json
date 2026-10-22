@@ -1,0 +1,60 @@
+{
+  "symbols": [
+    {
+      "name": "BaseOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "export interface BaseOptions<TProcedures extends ProceduresDef> {\n    rspc?: {\n        client?: AlphaClient<TProcedures>;\n    };\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/query-core/v/0.0.0-main-a5d698cd"
+    },
+    {
+      "name": "Context",
+      "kind": "interface",
+      "description": "",
+      "signature": "export interface Context<TProcedures extends ProceduresDef> {\n    client: AlphaClient<TProcedures>;\n    queryClient: QueryClient;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/query-core/v/0.0.0-main-a5d698cd"
+    },
+    {
+      "name": "createQueryHookHelpers",
+      "kind": "function",
+      "description": "",
+      "signature": "export declare function createQueryHookHelpers<P extends ProceduresDef>(args: {\n    useContext(): Context<P> | null;\n}): {\n    useContext: () => Context<P>;\n    useClient: () => AlphaClient<P>;\n    useExtractOps: <T extends BaseOptions<P>>(opts: T) => readonly [\n        AlphaClient<P>,\n        Omit<T, \"rspc\">\n    ];\n    mapQueryKey: (keyAndInput: KeyAndInput, client: AlphaClient<P>) => any;\n    useQueryArgs: <K extends rspc.inferQueries<P>[\"key\"] & string, O extends QueryOptionsOmit<QueryObserverOptions<rspc.inferQueryResult<P, K>, rspc.inferQueryError<P, K>, rspc.inferQueryResult<P, K>, rspc.inferQueryResult<P, K>, [\n        K,\n        rspc.inferQueryInput<P, K>\n    ], never>> & BaseOptions<P>>(keyAndInput: [\n        key: K,\n        ...input: rspc._inferProcedureHandlerInput<P, \"queries\", K>\n    ] | (() => [\n        key: K,\n        ...input: rspc._inferProcedureHandlerInput<P, \"queries\", K>\n    ]), opts?: O | undefined) => {\n        queryKey: any;\n        queryFn: () => Promise<rspc.inferQueryResult<P, P[\"queries\"][\"key\"] & string>>;\n    };\n    useMutationArgs: <K_1 extends rspc.inferMutations<P>[\"key\"] & string, O_1 extends Omit<MutationObserverOptions<rspc.inferMutationResult<P, K_1>, rspc.inferMutationError<P, K_1>, rspc.inferMutationInput<P, K_1> extends never ? undefined : rspc.inferMutationInput<P, K_1>, any>, \"_defaulted\" | \"variables\"> & BaseOptions<P>>(key: K_1 | [\n        K_1\n    ], opts?: O_1 | undefined) => {\n        mutationFn: (input: any) => Promise<rspc.inferMutationResult<P, P[\"mutations\"][\"key\"] & string>>;\n    };\n    handleSubscription: <K_2 extends rspc.inferSubscriptions<P>[\"key\"] & string>({ client, keyAndInput, opts, }: {\n        client: AlphaClient<P>;\n        keyAndInput: [\n            key: K_2,\n            ...input: rspc._inferProcedureHandlerInput<P, \"subscriptions\", K_2>\n        ];\n        opts: Pick<HookOptions<P, SubscriptionOptions<Extract<rspc.inferProcedures<rspc.inferProcedures<P>>[\"subscriptions\"], {\n            key: K_2;\n        }>>>, \"enabled\" | \"onError\" | \"onData\">;\n    }) => (() => void) | undefined;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/query-core/v/0.0.0-main-a5d698cd"
+    },
+    {
+      "name": "HookOptions",
+      "kind": "type",
+      "description": "",
+      "signature": "export type HookOptions<P extends ProceduresDef, T> = T & BaseOptions<P>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/query-core/v/0.0.0-main-a5d698cd"
+    },
+    {
+      "name": "KeyAndInput",
+      "kind": "type",
+      "description": "",
+      "signature": "export type KeyAndInput = [\n    string\n] | [\n    string,\n    any\n];",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/query-core/v/0.0.0-main-a5d698cd"
+    },
+    {
+      "name": "QueryOptionsOmit",
+      "kind": "type",
+      "description": "",
+      "signature": "export type QueryOptionsOmit<T> = Omit<T, \"queryKey\" | \"queryFn\">;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/query-core/v/0.0.0-main-a5d698cd"
+    },
+    {
+      "name": "SubscriptionOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "export interface SubscriptionOptions<P extends ProcedureDef> {\n    enabled?: boolean;\n    onStarted?: () => void;\n    onData: (data: P[\"result\"]) => void;\n    onError?: (err: P[\"error\"] | rspc.Error) => void;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/query-core/v/0.0.0-main-a5d698cd"
+    },
+    {
+      "name": "throwOnError",
+      "kind": "function",
+      "description": "",
+      "signature": "export declare function throwOnError<TOk, TError>(res: rspc.Result<TOk, TError>): TOk | Promise<never>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/query-core/v/0.0.0-main-a5d698cd"
+    }
+  ]
+}

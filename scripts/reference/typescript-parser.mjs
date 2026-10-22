@@ -1,16 +1,6 @@
 import path from "node:path";
 
-// UI consumers must use this same formula (including the full subpath-qualified name).
-export function symbolAnchor(name) {
-  return `symbol-${encodeURIComponent(name)}`;
-}
-
-export function parseExports(
-  ts,
-  files,
-  entrypoints,
-  { id, version, sourceUrl = "" },
-) {
+export function parseExports(ts, files, entrypoints, { sourceUrl = "" } = {}) {
   const roots = Object.values(entrypoints).map((file) => path.resolve(file));
   const contents = new Map(
     Object.entries(files).map(([file, text]) => [path.resolve(file), text]),
@@ -152,7 +142,6 @@ export function parseExports(
           kind: symbolKind,
           description: symbolDescription,
           signature: symbolSignature,
-          url: `/docs/reference?package=${encodeURIComponent(id)}&version=${encodeURIComponent(version)}#${symbolAnchor(symbolName)}`,
           ...(sourceUrl ? { sourceUrl } : {}),
         });
       add(

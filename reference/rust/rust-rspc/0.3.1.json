@@ -1,0 +1,976 @@
+{
+  "symbols": [
+    {
+      "name": "Config",
+      "kind": "struct",
+      "description": "TODO",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Config.html",
+      "signature": "pub struct Config { /* private fields */ }"
+    },
+    {
+      "name": "Config::export_ts_bindings",
+      "kind": "method",
+      "description": "will export the bindings of the generated router to a folder every time the router is built. Note: The bindings are only exported when debug_assertions are enabled (Rust is in debug mode).",
+      "signature": "pub fn export_ts_bindings<TPath>(self, export_path: TPath) -> Selfwhere PathBuf: From<TPath>,",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Config.html#method.export_ts_bindings"
+    },
+    {
+      "name": "Config::new",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn new() -> Self",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Config.html#method.new"
+    },
+    {
+      "name": "Config::set_ts_bindings_header",
+      "kind": "method",
+      "description": "allows you to add a custom string to the top of the exported Typescript bindings file. This is useful if you want to disable ESLint or Prettier.",
+      "signature": "pub fn set_ts_bindings_header(self, custom: &'static str) -> Self",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Config.html#method.set_ts_bindings_header"
+    },
+    {
+      "name": "DoubleArgMarker",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.DoubleArgMarker.html",
+      "signature": "pub struct DoubleArgMarker<TArg, TResultMarker>(/* private fields */);"
+    },
+    {
+      "name": "DoubleArgStreamMarker",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.DoubleArgStreamMarker.html",
+      "signature": "pub struct DoubleArgStreamMarker<TArg, TResult, TStream>(/* private fields */);"
+    },
+    {
+      "name": "Error",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Error.html",
+      "signature": "pub struct Error { /* private fields */ }"
+    },
+    {
+      "name": "Error::new",
+      "kind": "method",
+      "description": "",
+      "signature": "pub const fn new(code: ErrorCode, message: String) -> Self",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Error.html#method.new"
+    },
+    {
+      "name": "Error::with_cause",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn with_cause<TErr>(code: ErrorCode, message: String, cause: TErr) -> Selfwhere TErr: Error + Send + Sync + 'static,",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Error.html#method.with_cause"
+    },
+    {
+      "name": "ErrorCode",
+      "kind": "enum",
+      "description": "TODO",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html",
+      "signature": "pub enum ErrorCode { BadRequest, Unauthorized, Forbidden, NotFound, Timeout, Conflict, PreconditionFailed, PayloadTooLarge, MethodNotSupported, ClientClosedRequest, InternalServerError, }"
+    },
+    {
+      "name": "ErrorCode::BadRequest",
+      "kind": "variant",
+      "description": "",
+      "signature": "BadRequest",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html#variant.BadRequest"
+    },
+    {
+      "name": "ErrorCode::ClientClosedRequest",
+      "kind": "variant",
+      "description": "",
+      "signature": "ClientClosedRequest",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html#variant.ClientClosedRequest"
+    },
+    {
+      "name": "ErrorCode::Conflict",
+      "kind": "variant",
+      "description": "",
+      "signature": "Conflict",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html#variant.Conflict"
+    },
+    {
+      "name": "ErrorCode::Forbidden",
+      "kind": "variant",
+      "description": "",
+      "signature": "Forbidden",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html#variant.Forbidden"
+    },
+    {
+      "name": "ErrorCode::from_status_code",
+      "kind": "method",
+      "description": "",
+      "signature": "pub const fn from_status_code(status_code: u16) -> Option<Self>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html#method.from_status_code"
+    },
+    {
+      "name": "ErrorCode::InternalServerError",
+      "kind": "variant",
+      "description": "",
+      "signature": "InternalServerError",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html#variant.InternalServerError"
+    },
+    {
+      "name": "ErrorCode::MethodNotSupported",
+      "kind": "variant",
+      "description": "",
+      "signature": "MethodNotSupported",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html#variant.MethodNotSupported"
+    },
+    {
+      "name": "ErrorCode::NotFound",
+      "kind": "variant",
+      "description": "",
+      "signature": "NotFound",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html#variant.NotFound"
+    },
+    {
+      "name": "ErrorCode::PayloadTooLarge",
+      "kind": "variant",
+      "description": "",
+      "signature": "PayloadTooLarge",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html#variant.PayloadTooLarge"
+    },
+    {
+      "name": "ErrorCode::PreconditionFailed",
+      "kind": "variant",
+      "description": "",
+      "signature": "PreconditionFailed",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html#variant.PreconditionFailed"
+    },
+    {
+      "name": "ErrorCode::Timeout",
+      "kind": "variant",
+      "description": "",
+      "signature": "Timeout",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html#variant.Timeout"
+    },
+    {
+      "name": "ErrorCode::to_status_code",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn to_status_code(&self) -> u16",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html#method.to_status_code"
+    },
+    {
+      "name": "ErrorCode::Unauthorized",
+      "kind": "variant",
+      "description": "",
+      "signature": "Unauthorized",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ErrorCode.html#variant.Unauthorized"
+    },
+    {
+      "name": "ExecError",
+      "kind": "enum",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExecError.html",
+      "signature": "pub enum ExecError { OperationNotFound(String), DeserializingArgErr(Error), SerializingResultErr(Error), AxumExtractorError, InvalidJsonRpcVersion, UnsupportedMethod(String), ErrResolverError(Error), ErrSubscriptionWithNullId, ErrSubscriptionDuplicateId, }"
+    },
+    {
+      "name": "ExecError::AxumExtractorError",
+      "kind": "variant",
+      "description": "",
+      "signature": "AxumExtractorError",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExecError.html#variant.AxumExtractorError"
+    },
+    {
+      "name": "ExecError::DeserializingArgErr",
+      "kind": "variant",
+      "description": "",
+      "signature": "DeserializingArgErr(Error)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExecError.html#variant.DeserializingArgErr"
+    },
+    {
+      "name": "ExecError::ErrResolverError",
+      "kind": "variant",
+      "description": "",
+      "signature": "ErrResolverError(Error)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExecError.html#variant.ErrResolverError"
+    },
+    {
+      "name": "ExecError::ErrSubscriptionDuplicateId",
+      "kind": "variant",
+      "description": "",
+      "signature": "ErrSubscriptionDuplicateId",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExecError.html#variant.ErrSubscriptionDuplicateId"
+    },
+    {
+      "name": "ExecError::ErrSubscriptionWithNullId",
+      "kind": "variant",
+      "description": "",
+      "signature": "ErrSubscriptionWithNullId",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExecError.html#variant.ErrSubscriptionWithNullId"
+    },
+    {
+      "name": "ExecError::InvalidJsonRpcVersion",
+      "kind": "variant",
+      "description": "",
+      "signature": "InvalidJsonRpcVersion",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExecError.html#variant.InvalidJsonRpcVersion"
+    },
+    {
+      "name": "ExecError::OperationNotFound",
+      "kind": "variant",
+      "description": "",
+      "signature": "OperationNotFound(String)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExecError.html#variant.OperationNotFound"
+    },
+    {
+      "name": "ExecError::SerializingResultErr",
+      "kind": "variant",
+      "description": "",
+      "signature": "SerializingResultErr(Error)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExecError.html#variant.SerializingResultErr"
+    },
+    {
+      "name": "ExecError::UnsupportedMethod",
+      "kind": "variant",
+      "description": "",
+      "signature": "UnsupportedMethod(String)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExecError.html#variant.UnsupportedMethod"
+    },
+    {
+      "name": "ExecKind",
+      "kind": "enum",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExecKind.html",
+      "signature": "pub enum ExecKind { Query, Mutation, }"
+    },
+    {
+      "name": "ExecKind::Mutation",
+      "kind": "variant",
+      "description": "",
+      "signature": "Mutation",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExecKind.html#variant.Mutation"
+    },
+    {
+      "name": "ExecKind::Query",
+      "kind": "variant",
+      "description": "",
+      "signature": "Query",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExecKind.html#variant.Query"
+    },
+    {
+      "name": "ExportError",
+      "kind": "enum",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExportError.html",
+      "signature": "pub enum ExportError { IOErr(Error), }"
+    },
+    {
+      "name": "ExportError::IOErr",
+      "kind": "variant",
+      "description": "",
+      "signature": "IOErr(Error)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/enum.ExportError.html#variant.IOErr"
+    },
+    {
+      "name": "FutureMarker",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.FutureMarker.html",
+      "signature": "pub struct FutureMarker<TMarker>(/* private fields */);"
+    },
+    {
+      "name": "internal",
+      "kind": "mod",
+      "description": "Internal types which power rspc. The module provides no guarantee of compatibility between updates, so you should be careful rely on types from it.",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/index.html"
+    },
+    {
+      "name": "internal::jsonrpc",
+      "kind": "mod",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/index.html"
+    },
+    {
+      "name": "internal::jsonrpc::handle_json_rpc",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/fn.handle_json_rpc.html",
+      "signature": "pub async fn handle_json_rpc<TCtx, TMeta>( ctx: TCtx, req: Request, router: &Arc<Router<TCtx, TMeta>>, sender: &mut Sender<'_>, subscriptions: &mut SubscriptionMap<'_>, )where TCtx: 'static,"
+    },
+    {
+      "name": "internal::jsonrpc::JsonRPCError",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/struct.JsonRPCError.html",
+      "signature": "pub struct JsonRPCError { pub code: i32, pub message: String, pub data: Option<Value>, }"
+    },
+    {
+      "name": "internal::jsonrpc::Request",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/struct.Request.html",
+      "signature": "pub struct Request { pub jsonrpc: Option<String>, pub id: RequestId, pub inner: RequestInner, }"
+    },
+    {
+      "name": "internal::jsonrpc::RequestId",
+      "kind": "enum",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestId.html",
+      "signature": "pub enum RequestId { Null, Number(u32), String(String), }"
+    },
+    {
+      "name": "internal::jsonrpc::RequestId::Null",
+      "kind": "variant",
+      "description": "",
+      "signature": "Null",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestId.html#variant.Null"
+    },
+    {
+      "name": "internal::jsonrpc::RequestId::Number",
+      "kind": "variant",
+      "description": "",
+      "signature": "Number(u32)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestId.html#variant.Number"
+    },
+    {
+      "name": "internal::jsonrpc::RequestId::String",
+      "kind": "variant",
+      "description": "",
+      "signature": "String(String)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestId.html#variant.String"
+    },
+    {
+      "name": "internal::jsonrpc::RequestInner",
+      "kind": "enum",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestInner.html",
+      "signature": "pub enum RequestInner { Query { path: String, input: Option<Value>, }, Mutation { path: String, input: Option<Value>, }, Subscription { path: String, input: (RequestId, Option<Value>), }, SubscriptionStop { input: RequestId, }, }"
+    },
+    {
+      "name": "internal::jsonrpc::RequestInner::Mutation",
+      "kind": "variant",
+      "description": "",
+      "signature": "Mutation",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestInner.html#variant.Mutation"
+    },
+    {
+      "name": "internal::jsonrpc::RequestInner::Mutation::input",
+      "kind": "structfield",
+      "description": "",
+      "signature": "input: Option<Value>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestInner.html#variant.Mutation.field.input"
+    },
+    {
+      "name": "internal::jsonrpc::RequestInner::Mutation::path",
+      "kind": "structfield",
+      "description": "",
+      "signature": "path: String",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestInner.html#variant.Mutation.field.path"
+    },
+    {
+      "name": "internal::jsonrpc::RequestInner::Query",
+      "kind": "variant",
+      "description": "",
+      "signature": "Query",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestInner.html#variant.Query"
+    },
+    {
+      "name": "internal::jsonrpc::RequestInner::Query::input",
+      "kind": "structfield",
+      "description": "",
+      "signature": "input: Option<Value>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestInner.html#variant.Query.field.input"
+    },
+    {
+      "name": "internal::jsonrpc::RequestInner::Query::path",
+      "kind": "structfield",
+      "description": "",
+      "signature": "path: String",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestInner.html#variant.Query.field.path"
+    },
+    {
+      "name": "internal::jsonrpc::RequestInner::Subscription",
+      "kind": "variant",
+      "description": "",
+      "signature": "Subscription",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestInner.html#variant.Subscription"
+    },
+    {
+      "name": "internal::jsonrpc::RequestInner::Subscription::input",
+      "kind": "structfield",
+      "description": "",
+      "signature": "input: (RequestId, Option<Value>)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestInner.html#variant.Subscription.field.input"
+    },
+    {
+      "name": "internal::jsonrpc::RequestInner::Subscription::path",
+      "kind": "structfield",
+      "description": "",
+      "signature": "path: String",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestInner.html#variant.Subscription.field.path"
+    },
+    {
+      "name": "internal::jsonrpc::RequestInner::SubscriptionStop",
+      "kind": "variant",
+      "description": "",
+      "signature": "SubscriptionStop",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestInner.html#variant.SubscriptionStop"
+    },
+    {
+      "name": "internal::jsonrpc::RequestInner::SubscriptionStop::input",
+      "kind": "structfield",
+      "description": "",
+      "signature": "input: RequestId",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.RequestInner.html#variant.SubscriptionStop.field.input"
+    },
+    {
+      "name": "internal::jsonrpc::Response",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/struct.Response.html",
+      "signature": "pub struct Response { pub jsonrpc: &'static str, pub id: RequestId, pub result: ResponseInner, }"
+    },
+    {
+      "name": "internal::jsonrpc::ResponseInner",
+      "kind": "enum",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.ResponseInner.html",
+      "signature": "pub enum ResponseInner { Event(Value), Response(Value), Error(JsonRPCError), }"
+    },
+    {
+      "name": "internal::jsonrpc::ResponseInner::Error",
+      "kind": "variant",
+      "description": "",
+      "signature": "Error(JsonRPCError)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.ResponseInner.html#variant.Error"
+    },
+    {
+      "name": "internal::jsonrpc::ResponseInner::Event",
+      "kind": "variant",
+      "description": "",
+      "signature": "Event(Value)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.ResponseInner.html#variant.Event"
+    },
+    {
+      "name": "internal::jsonrpc::ResponseInner::Response",
+      "kind": "variant",
+      "description": "",
+      "signature": "Response(Value)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.ResponseInner.html#variant.Response"
+    },
+    {
+      "name": "internal::jsonrpc::Sender",
+      "kind": "enum",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.Sender.html",
+      "signature": "pub enum Sender<'a> { Channel(&'a mut Sender<Response>), ResponseChannel(&'a mut UnboundedSender<Response>), Broadcast(&'a Sender<Response>), Response(Option<Response>), }"
+    },
+    {
+      "name": "internal::jsonrpc::Sender::Broadcast",
+      "kind": "variant",
+      "description": "",
+      "signature": "Broadcast(&'a Sender<Response>)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.Sender.html#variant.Broadcast"
+    },
+    {
+      "name": "internal::jsonrpc::Sender::Channel",
+      "kind": "variant",
+      "description": "",
+      "signature": "Channel(&'a mut Sender<Response>)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.Sender.html#variant.Channel"
+    },
+    {
+      "name": "internal::jsonrpc::Sender::Response",
+      "kind": "variant",
+      "description": "",
+      "signature": "Response(Option<Response>)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.Sender.html#variant.Response"
+    },
+    {
+      "name": "internal::jsonrpc::Sender::ResponseChannel",
+      "kind": "variant",
+      "description": "",
+      "signature": "ResponseChannel(&'a mut UnboundedSender<Response>)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.Sender.html#variant.ResponseChannel"
+    },
+    {
+      "name": "internal::jsonrpc::Sender::send",
+      "kind": "method",
+      "description": "",
+      "signature": "pub async fn send(&mut self, resp: Response) -> Result<(), SendError<Response>>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.Sender.html#method.send"
+    },
+    {
+      "name": "internal::jsonrpc::Sender::sender2",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn sender2(&mut self) -> Sender2",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.Sender.html#method.sender2"
+    },
+    {
+      "name": "internal::jsonrpc::Sender2",
+      "kind": "enum",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.Sender2.html",
+      "signature": "pub enum Sender2 { Channel(Sender<Response>), ResponseChannel(UnboundedSender<Response>), Broadcast(Sender<Response>), }"
+    },
+    {
+      "name": "internal::jsonrpc::Sender2::Broadcast",
+      "kind": "variant",
+      "description": "",
+      "signature": "Broadcast(Sender<Response>)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.Sender2.html#variant.Broadcast"
+    },
+    {
+      "name": "internal::jsonrpc::Sender2::Channel",
+      "kind": "variant",
+      "description": "",
+      "signature": "Channel(Sender<Response>)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.Sender2.html#variant.Channel"
+    },
+    {
+      "name": "internal::jsonrpc::Sender2::ResponseChannel",
+      "kind": "variant",
+      "description": "",
+      "signature": "ResponseChannel(UnboundedSender<Response>)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.Sender2.html#variant.ResponseChannel"
+    },
+    {
+      "name": "internal::jsonrpc::Sender2::send",
+      "kind": "method",
+      "description": "",
+      "signature": "pub async fn send(&mut self, resp: Response) -> Result<(), SendError<Response>>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.Sender2.html#method.send"
+    },
+    {
+      "name": "internal::jsonrpc::SubscriptionMap",
+      "kind": "enum",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.SubscriptionMap.html",
+      "signature": "pub enum SubscriptionMap<'a> { Ref(&'a mut HashMap<RequestId, Sender<()>>), Mutex(&'a Mutex<HashMap<RequestId, Sender<()>>>), None, }"
+    },
+    {
+      "name": "internal::jsonrpc::SubscriptionMap::has_subscription",
+      "kind": "method",
+      "description": "",
+      "signature": "pub async fn has_subscription(&self, id: &RequestId) -> bool",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.SubscriptionMap.html#method.has_subscription"
+    },
+    {
+      "name": "internal::jsonrpc::SubscriptionMap::insert",
+      "kind": "method",
+      "description": "",
+      "signature": "pub async fn insert(&mut self, id: RequestId, tx: Sender<()>)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.SubscriptionMap.html#method.insert"
+    },
+    {
+      "name": "internal::jsonrpc::SubscriptionMap::Mutex",
+      "kind": "variant",
+      "description": "",
+      "signature": "Mutex(&'a Mutex<HashMap<RequestId, Sender<()>>>)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.SubscriptionMap.html#variant.Mutex"
+    },
+    {
+      "name": "internal::jsonrpc::SubscriptionMap::None",
+      "kind": "variant",
+      "description": "",
+      "signature": "None",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.SubscriptionMap.html#variant.None"
+    },
+    {
+      "name": "internal::jsonrpc::SubscriptionMap::Ref",
+      "kind": "variant",
+      "description": "",
+      "signature": "Ref(&'a mut HashMap<RequestId, Sender<()>>)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.SubscriptionMap.html#variant.Ref"
+    },
+    {
+      "name": "internal::jsonrpc::SubscriptionMap::remove",
+      "kind": "method",
+      "description": "",
+      "signature": "pub async fn remove(&mut self, id: &RequestId)",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/jsonrpc/enum.SubscriptionMap.html#method.remove"
+    },
+    {
+      "name": "internal::ProcedureKind",
+      "kind": "enum",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/enum.ProcedureKind.html",
+      "signature": "pub enum ProcedureKind { Query, Mutation, Subscription, }"
+    },
+    {
+      "name": "internal::ProcedureKind::Mutation",
+      "kind": "variant",
+      "description": "",
+      "signature": "Mutation",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/enum.ProcedureKind.html#variant.Mutation"
+    },
+    {
+      "name": "internal::ProcedureKind::Query",
+      "kind": "variant",
+      "description": "",
+      "signature": "Query",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/enum.ProcedureKind.html#variant.Query"
+    },
+    {
+      "name": "internal::ProcedureKind::Subscription",
+      "kind": "variant",
+      "description": "",
+      "signature": "Subscription",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/enum.ProcedureKind.html#variant.Subscription"
+    },
+    {
+      "name": "internal::ProcedureKind::to_str",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn to_str(&self) -> &'static str",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/internal/enum.ProcedureKind.html#method.to_str"
+    },
+    {
+      "name": "Middleware",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Middleware.html",
+      "signature": "pub struct Middleware<TState, TLayerCtx, TNewCtx, THandlerFunc, THandlerFut>where TState: Send, TLayerCtx: Send, THandlerFunc: Fn(MiddlewareContext<TLayerCtx, TLayerCtx, ()>) -> THandlerFut + Clone, THandlerFut: Future<Output = Result<MiddlewareContext<TLayerCtx, TNewCtx, TState>, Error>> + Send + 'static,{ /* private fields */ }"
+    },
+    {
+      "name": "Middleware::resp",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn resp<TRespHandlerFunc, TRespHandlerFut>( self, handler: TRespHandlerFunc, ) -> MiddlewareWithResponseHandler<TState, TLayerCtx, TNewCtx, THandlerFunc, THandlerFut, TRespHandlerFunc, TRespHandlerFut>where TRespHandlerFunc: Fn(TState, Value) -> TRespHandlerFut + Clone + Sync + Send + 'static, TRespHandlerFut: Future<Output = Result<Value, Error>> + Send + 'static,",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Middleware.html#method.resp"
+    },
+    {
+      "name": "MiddlewareBuilder",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.MiddlewareBuilder.html",
+      "signature": "pub struct MiddlewareBuilder<TLayerCtx>(pub PhantomData<TLayerCtx>) where TLayerCtx: Send;"
+    },
+    {
+      "name": "MiddlewareBuilder::middleware",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn middleware<TState, TNewCtx, THandlerFunc, THandlerFut>( &self, handler: THandlerFunc, ) -> Middleware<TState, TLayerCtx, TNewCtx, THandlerFunc, THandlerFut>where TState: Send, THandlerFunc: Fn(MiddlewareContext<TLayerCtx, TLayerCtx, ()>) -> THandlerFut + Clone, THandlerFut: Future<Output = Result<MiddlewareContext<TLayerCtx, TNewCtx, TState>, Error>> + Send + 'static,",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.MiddlewareBuilder.html#method.middleware"
+    },
+    {
+      "name": "MiddlewareContext",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.MiddlewareContext.html",
+      "signature": "pub struct MiddlewareContext<TLayerCtx, TNewCtx = TLayerCtx, TState = ()>where TState: Send,{ pub state: TState, pub input: Value, pub ctx: TNewCtx, pub req: RequestContext, pub phantom: PhantomData<TLayerCtx>, }"
+    },
+    {
+      "name": "MiddlewareContext::with_ctx",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn with_ctx<TNewCtx>( self, new_ctx: TNewCtx, ) -> MiddlewareContext<TLayerCtx, TNewCtx, TState>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.MiddlewareContext.html#method.with_ctx"
+    },
+    {
+      "name": "MiddlewareContext::with_state",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn with_state<TState>( self, state: TState, ) -> MiddlewareContext<TLayerCtx, TNewCtx, TState>where TState: Send,",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.MiddlewareContext.html#method.with_state"
+    },
+    {
+      "name": "MiddlewareLike",
+      "kind": "trait",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.MiddlewareLike.html",
+      "signature": "pub trait MiddlewareLike<TLayerCtx>: Clone { type State: Clone + Send + Sync + 'static; type NewCtx: Send + 'static; // Required method fn handle<TMiddleware: Layer<Self::NewCtx> + 'static>( &self, ctx: TLayerCtx, input: Value, req: RequestContext, next: Arc<TMiddleware>, ) -> Result<LayerResult, ExecError>; }"
+    },
+    {
+      "name": "MiddlewareLike::handle",
+      "kind": "tymethod",
+      "description": "",
+      "signature": "fn handle<TMiddleware: Layer<Self::NewCtx> + 'static>( &self, ctx: TLayerCtx, input: Value, req: RequestContext, next: Arc<TMiddleware>, ) -> Result<LayerResult, ExecError>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.MiddlewareLike.html#tymethod.handle"
+    },
+    {
+      "name": "MiddlewareLike::NewCtx",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type NewCtx: Send + 'static",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.MiddlewareLike.html#associatedtype.NewCtx"
+    },
+    {
+      "name": "MiddlewareLike::State",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type State: Clone + Send + Sync + 'static",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.MiddlewareLike.html#associatedtype.State"
+    },
+    {
+      "name": "MiddlewareWithResponseHandler",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.MiddlewareWithResponseHandler.html",
+      "signature": "pub struct MiddlewareWithResponseHandler<TState, TLayerCtx, TNewCtx, THandlerFunc, THandlerFut, TRespHandlerFunc, TRespHandlerFut>where TState: Send, TLayerCtx: Send, THandlerFunc: Fn(MiddlewareContext<TLayerCtx, TLayerCtx, ()>) -> THandlerFut + Clone, THandlerFut: Future<Output = Result<MiddlewareContext<TLayerCtx, TNewCtx, TState>, Error>> + Send + 'static, TRespHandlerFunc: Fn(TState, Value) -> TRespHandlerFut + Clone + Sync + Send + 'static, TRespHandlerFut: Future<Output = Result<Value, Error>> + Send + 'static,{ /* private fields */ }"
+    },
+    {
+      "name": "RequestLayer",
+      "kind": "trait",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.RequestLayer.html",
+      "signature": "pub trait RequestLayer<TMarker> { type Result: Type; // Required method fn into_layer_result(self) -> Result<LayerResult, ExecError>; }"
+    },
+    {
+      "name": "RequestLayer::into_layer_result",
+      "kind": "method",
+      "description": "",
+      "signature": "fn into_layer_result(self) -> Result<LayerResult, ExecError>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.RequestLayer.html#method.into_layer_result"
+    },
+    {
+      "name": "RequestLayer::into_layer_result",
+      "kind": "tymethod",
+      "description": "",
+      "signature": "fn into_layer_result(self) -> Result<LayerResult, ExecError>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.RequestLayer.html#tymethod.into_layer_result"
+    },
+    {
+      "name": "RequestLayer::Result",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type Result: Type",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.RequestLayer.html#associatedtype.Result"
+    },
+    {
+      "name": "Resolver",
+      "kind": "trait",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.Resolver.html",
+      "signature": "pub trait Resolver<TCtx, TMarker> { type Result; // Required methods fn exec(&self, ctx: TCtx, input: Value) -> Result<LayerResult, ExecError>; fn typedef(defs: &mut TypeMap) -> ProcedureDataType; }"
+    },
+    {
+      "name": "Resolver::exec",
+      "kind": "tymethod",
+      "description": "",
+      "signature": "fn exec(&self, ctx: TCtx, input: Value) -> Result<LayerResult, ExecError>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.Resolver.html#tymethod.exec"
+    },
+    {
+      "name": "Resolver::Result",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type Result",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.Resolver.html#associatedtype.Result"
+    },
+    {
+      "name": "Resolver::typedef",
+      "kind": "tymethod",
+      "description": "",
+      "signature": "fn typedef(defs: &mut TypeMap) -> ProcedureDataType",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.Resolver.html#tymethod.typedef"
+    },
+    {
+      "name": "ResultMarker",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.ResultMarker.html",
+      "signature": "pub struct ResultMarker(/* private fields */);"
+    },
+    {
+      "name": "Router",
+      "kind": "struct",
+      "description": "TODO",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Router.html",
+      "signature": "pub struct Router<TCtx = (), TMeta = ()>where TCtx: 'static,{ /* private fields */ }"
+    },
+    {
+      "name": "Router::arced",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn arced(self) -> Arc<Self>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Router.html#method.arced"
+    },
+    {
+      "name": "Router::exec",
+      "kind": "method",
+      "description": "",
+      "signature": "pub async fn exec( &self, ctx: TCtx, kind: ExecKind, key: String, input: Option<Value>, ) -> Result<Value, ExecError>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Router.html#method.exec"
+    },
+    {
+      "name": "Router::exec_subscription",
+      "kind": "method",
+      "description": "",
+      "signature": "pub async fn exec_subscription( &self, ctx: TCtx, key: String, input: Option<Value>, ) -> Result<Pin<Box<dyn Stream<Item = Result<Value, ExecError>> + Send>>, ExecError>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Router.html#method.exec_subscription"
+    },
+    {
+      "name": "Router::export_ts",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn export_ts<TPath: AsRef<Path>>( &self, export_path: TPath, ) -> Result<(), ExportError>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Router.html#method.export_ts"
+    },
+    {
+      "name": "Router::mutations",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn mutations(&self) -> &BTreeMap<String, Procedure<TCtx>>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Router.html#method.mutations"
+    },
+    {
+      "name": "Router::new",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn new() -> RouterBuilder<TCtx, TMeta, BaseMiddleware<TCtx>>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Router.html#method.new"
+    },
+    {
+      "name": "Router::queries",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn queries(&self) -> &BTreeMap<String, Procedure<TCtx>>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Router.html#method.queries"
+    },
+    {
+      "name": "Router::subscriptions",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn subscriptions(&self) -> &BTreeMap<String, Procedure<TCtx>>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Router.html#method.subscriptions"
+    },
+    {
+      "name": "Router::typ_store",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn typ_store(&self) -> TypeMap",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Router.html#method.typ_store"
+    },
+    {
+      "name": "Router::type_map",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn type_map(&self) -> TypeMap",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.Router.html#method.type_map"
+    },
+    {
+      "name": "RouterBuilder",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.RouterBuilder.html",
+      "signature": "pub struct RouterBuilder<TCtx = (), TMeta = (), TMiddleware = BaseMiddleware<TCtx>>where TCtx: Send + Sync + 'static, TMeta: Send + 'static, TMiddleware: MiddlewareBuilderLike<TCtx> + Send + 'static,{ /* private fields */ }"
+    },
+    {
+      "name": "RouterBuilder::build",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn build(self) -> Router<TCtx, TMeta>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.RouterBuilder.html#method.build"
+    },
+    {
+      "name": "RouterBuilder::config",
+      "kind": "method",
+      "description": "Attach a configuration to the router. Calling this multiple times will overwrite the previous config.",
+      "signature": "pub fn config(self, config: Config) -> Self",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.RouterBuilder.html#method.config"
+    },
+    {
+      "name": "RouterBuilder::legacy_merge",
+      "kind": "method",
+      "description": "legacy_merge maintains the merge functionality prior to release 0.1.3 It will flow the TMiddleware and TCtx out of the child router to the parent router. This was a confusing behavior and is generally not useful so it has been deprecated.",
+      "signature": "pub fn legacy_merge<TNewLayerCtx, TIncomingMiddleware>( self, prefix: &'static str, router: RouterBuilder<TLayerCtx, TMeta, TIncomingMiddleware>, ) -> RouterBuilder<TCtx, TMeta, MiddlewareMerger<TCtx, TLayerCtx, TNewLayerCtx, TMiddleware, TIncomingMiddleware>>where TNewLayerCtx: 'static, TIncomingMiddleware: MiddlewareBuilderLike<TLayerCtx, LayerContext = TNewLayerCtx> + Send + 'static,",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.RouterBuilder.html#method.legacy_merge"
+    },
+    {
+      "name": "RouterBuilder::merge",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn merge<TNewLayerCtx, TIncomingMiddleware>( self, prefix: &'static str, router: RouterBuilder<TLayerCtx, TMeta, TIncomingMiddleware>, ) -> Selfwhere TNewLayerCtx: 'static, TIncomingMiddleware: MiddlewareBuilderLike<TLayerCtx, LayerContext = TNewLayerCtx> + Send + 'static,",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.RouterBuilder.html#method.merge"
+    },
+    {
+      "name": "RouterBuilder::middleware",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn middleware<TNewMiddleware, TNewLayerCtx>( self, builder: impl Fn(MiddlewareBuilder<TLayerCtx>) -> TNewMiddleware, ) -> RouterBuilder<TCtx, TMeta, MiddlewareLayerBuilder<TCtx, TLayerCtx, TNewLayerCtx, TMiddleware, TNewMiddleware>>where TNewLayerCtx: Send + Sync + 'static, TNewMiddleware: MiddlewareLike<TLayerCtx, NewCtx = TNewLayerCtx> + Send + Sync + 'static,",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.RouterBuilder.html#method.middleware"
+    },
+    {
+      "name": "RouterBuilder::mutation",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn mutation<TResolver, TArg, TResult, TResultMarker>( self, key: &'static str, builder: impl Fn(UnbuiltProcedureBuilder<TLayerCtx, TResolver>) -> BuiltProcedureBuilder<TResolver>, ) -> Selfwhere TArg: DeserializeOwned + Type, TResult: RequestLayer<TResultMarker>, TResolver: Fn(TLayerCtx, TArg) -> TResult + Send + Sync + 'static,",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.RouterBuilder.html#method.mutation"
+    },
+    {
+      "name": "RouterBuilder::new",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn new() -> Self",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.RouterBuilder.html#method.new"
+    },
+    {
+      "name": "RouterBuilder::query",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn query<TResolver, TArg, TResult, TResultMarker>( self, key: &'static str, builder: impl Fn(UnbuiltProcedureBuilder<TLayerCtx, TResolver>) -> BuiltProcedureBuilder<TResolver>, ) -> Selfwhere TArg: DeserializeOwned + Type, TResult: RequestLayer<TResultMarker>, TResolver: Fn(TLayerCtx, TArg) -> TResult + Send + Sync + 'static,",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.RouterBuilder.html#method.query"
+    },
+    {
+      "name": "RouterBuilder::subscription",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn subscription<TResolver, TArg, TStream, TResult, TResultMarker>( self, key: &'static str, builder: impl Fn(UnbuiltProcedureBuilder<TLayerCtx, TResolver>) -> BuiltProcedureBuilder<TResolver>, ) -> Selfwhere TArg: DeserializeOwned + Type, TStream: Stream<Item = TResult> + Send + 'static, TResult: Serialize + Type, TResolver: Fn(TLayerCtx, TArg) -> TStream + StreamResolver<TLayerCtx, DoubleArgStreamMarker<TArg, TResultMarker, TStream>> + Send + Sync + 'static,",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.RouterBuilder.html#method.subscription"
+    },
+    {
+      "name": "selection",
+      "kind": "macro",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/macro.selection.html",
+      "signature": "macro_rules! selection { ( $s:expr, { $($n:ident),+ } ) => { ... }; ( $s:expr, [{ $($n:ident),+ }] ) => { ... }; }"
+    },
+    {
+      "name": "SerializeMarker",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/struct.SerializeMarker.html",
+      "signature": "pub struct SerializeMarker(/* private fields */);"
+    },
+    {
+      "name": "StreamResolver",
+      "kind": "trait",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.StreamResolver.html",
+      "signature": "pub trait StreamResolver<TCtx, TMarker> { // Required methods fn exec(&self, ctx: TCtx, input: Value) -> Result<LayerResult, ExecError>; fn typedef(defs: &mut TypeMap) -> ProcedureDataType; }"
+    },
+    {
+      "name": "StreamResolver::exec",
+      "kind": "tymethod",
+      "description": "",
+      "signature": "fn exec(&self, ctx: TCtx, input: Value) -> Result<LayerResult, ExecError>",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.StreamResolver.html#tymethod.exec"
+    },
+    {
+      "name": "StreamResolver::typedef",
+      "kind": "tymethod",
+      "description": "",
+      "signature": "fn typedef(defs: &mut TypeMap) -> ProcedureDataType",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/trait.StreamResolver.html#tymethod.typedef"
+    },
+    {
+      "name": "test_result_type",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/fn.test_result_type.html",
+      "signature": "pub fn test_result_type<T: Type + Serialize>()"
+    },
+    {
+      "name": "test_result_value",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/fn.test_result_value.html",
+      "signature": "pub fn test_result_value<T: Type + Serialize>(_: T)"
+    },
+    {
+      "name": "typedef",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/rspc/0.3.1/rspc/fn.typedef.html",
+      "signature": "pub fn typedef<TArg: Type, TResult: Type>( defs: &mut TypeMap, ) -> ProcedureDataType"
+    }
+  ],
+  "source": "rustdoc-html"
+}

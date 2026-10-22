@@ -1,0 +1,214 @@
+{
+  "symbols": [
+    {
+      "name": "_inferInfiniteQueryProcedureHandlerInput",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type _inferInfiniteQueryProcedureHandlerInput<TProcedures extends ProceduresLike, K extends inferInfiniteQueries<TProcedures>[\"key\"]> = inferInfiniteQueryInput<TProcedures, K> extends never ? [\n] : [\n    inferInfiniteQueryInput<TProcedures, K>\n];",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "_inferProcedureHandlerInput",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type _inferProcedureHandlerInput<TProcedures extends ProceduresLike, TOperation extends keyof ProceduresDef, K extends inferProcedures<TProcedures>[TOperation][\"key\"]> = inferProcedure<TProcedures, TOperation, K>[\"input\"] extends never ? [\n] : [\n    inferProcedure<TProcedures, TOperation, K>[\"input\"]\n];",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "Client",
+      "kind": "class",
+      "description": "",
+      "signature": "declare class Client<TProcedures extends ProceduresDef> {\n    _rspc_def: ProceduresDef;\n    private transport;\n    private subscriptionMap;\n    private onError?;\n    constructor(args: ClientArgs);\n    query<K extends TProcedures[\"queries\"][\"key\"] & string>(keyAndInput: [\n        key: K,\n        ...input: _inferProcedureHandlerInput<TProcedures, \"queries\", K>\n    ]): Promise<inferQueryResult<TProcedures, K>>;\n    mutation<K extends TProcedures[\"mutations\"][\"key\"] & string>(keyAndInput: [\n        key: K,\n        ...input: _inferProcedureHandlerInput<TProcedures, \"mutations\", K>\n    ]): Promise<inferMutationResult<TProcedures, K>>;\n    addSubscription<K extends TProcedures[\"mutations\"][\"key\"] & string, TData = inferSubscriptionResult<TProcedures, K>>(keyAndInput: [\n        K,\n        _inferProcedureHandlerInput<TProcedures, \"subscriptions\", K>\n    ], opts: SubscriptionOptions<TData>): () => void;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "ClientArgs",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface ClientArgs {\n    transport: Transport;\n    onError?: (err: RSPCError) => void | Promise<void>;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "createClient",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function createClient<TProcedures extends ProceduresLike>(args: ClientArgs): Client<inferProcedures<TProcedures>>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "FetchTransport",
+      "kind": "class",
+      "description": "",
+      "signature": "declare class FetchTransport implements Transport {\n    private url;\n    clientSubscriptionCallback?: (id: string, key: string, value: any) => void;\n    constructor(url: string);\n    doRequest(operation: OperationType, key: string, input: any): Promise<any>;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferInfiniteQueries",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferInfiniteQueries<TProcedures extends ProceduresLike> = Exclude<Extract<inferProcedures<TProcedures>[\"queries\"], {\n    input: {\n        cursor: any;\n    };\n}>, {\n    input: never;\n}>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferInfiniteQuery",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferInfiniteQuery<TProcedures extends ProceduresLike, K extends inferInfiniteQueries<TProcedures>[\"key\"]> = Extract<inferInfiniteQueries<TProcedures>, {\n    key: K;\n}>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferInfiniteQueryInput",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferInfiniteQueryInput<TProcedures extends ProceduresLike, K extends inferInfiniteQueries<TProcedures>[\"key\"]> = EmptyObjToNever<Omit<inferInfiniteQuery<TProcedures, K>[\"input\"], \"cursor\">>;\n\n// Referenced local context (not public exports):\ndeclare type EmptyObjToNever<T> = keyof T extends never ? never : T;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferInfiniteQueryResult",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferInfiniteQueryResult<TProcedures extends ProceduresLike, K extends inferInfiniteQueries<TProcedures>[\"key\"]> = inferInfiniteQuery<TProcedures, K>[\"result\"];",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferMutationInput",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferMutationInput<TProcedures extends ProceduresLike, T extends inferProcedures<TProcedures>[\"mutations\"][\"key\"][0]> = inferProcedureInput<inferProcedures<TProcedures>, \"mutations\", T>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferMutationResult",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferMutationResult<TProcedures extends ProceduresLike, T extends inferProcedures<TProcedures>[\"mutations\"][\"key\"][0]> = inferProcedureResult<inferProcedures<TProcedures>, \"mutations\", T>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferProcedure",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferProcedure<TProcedures extends ProceduresLike, TOperation extends keyof ProceduresDef, K extends inferProcedureKey<TProcedures, TOperation>> = Extract<inferProcedures<TProcedures>[TOperation], {\n    key: K;\n}>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferProcedureInput",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferProcedureInput<TProcedures extends ProceduresLike, TOperation extends keyof ProceduresDef, K extends inferProcedureKey<TProcedures, TOperation>> = inferProcedure<TProcedures, TOperation, K>[\"input\"];",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferProcedureKey",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferProcedureKey<TProcedures extends ProceduresLike, TOperation extends keyof ProceduresDef> = inferProcedures<TProcedures>[TOperation][\"key\"];",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferProcedureResult",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferProcedureResult<TProcedures extends ProceduresLike, TOperation extends keyof ProceduresDef, K extends inferProcedureKey<TProcedures, TOperation>> = inferProcedure<TProcedures, TOperation, K>[\"result\"];",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferProcedures",
+      "kind": "type",
+      "description": "This is a helper method to infer the type of bindings for this router off other rspc types.\nThe inferred type is what is generated by Rust.\n@example const rspc = createReactQueryHooks<Operations>();\ntype Bindings = inferBindingsType<typeof rspc>",
+      "signature": "/**\n * This is a helper method to infer the type of bindings for this router off other rspc types.\n * The inferred type is what is generated by Rust.\n * @example\n * const rspc = createReactQueryHooks<Operations>();\n * type Bindings = inferBindingsType<typeof rspc>\n */\ndeclare type inferProcedures<TProcedures extends ProceduresLike> = TProcedures extends {\n    _rspc_def: ProceduresDef;\n} ? TProcedures[\"_rspc_def\"] : TProcedures;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferQueryInput",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferQueryInput<TProcedures extends ProceduresLike, T extends inferProcedures<TProcedures>[\"queries\"][\"key\"][0]> = inferProcedureInput<inferProcedures<TProcedures>, \"queries\", T>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferQueryResult",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferQueryResult<TProcedures extends ProceduresLike, T extends inferProcedures<TProcedures>[\"queries\"][\"key\"][0]> = inferProcedureResult<inferProcedures<TProcedures>, \"queries\", T>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferSubscriptionInput",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferSubscriptionInput<TProcedures extends ProceduresLike, T extends inferProcedures<TProcedures>[\"subscriptions\"][\"key\"][0]> = inferProcedureInput<inferProcedures<TProcedures>, \"subscriptions\", T>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "inferSubscriptionResult",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type inferSubscriptionResult<TProcedures extends ProceduresLike, T extends inferProcedures<TProcedures>[\"subscriptions\"][\"key\"][0]> = inferProcedureResult<inferProcedures<TProcedures>, \"subscriptions\", T>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "NoOpTransport",
+      "kind": "class",
+      "description": "",
+      "signature": "declare class NoOpTransport implements Transport {\n    constructor();\n    doRequest(operation: OperationType, key: string, input: string): Promise<any>;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "OperationType",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type OperationType = \"query\" | \"mutation\" | \"subscription\" | \"subscriptionStop\";",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "ProceduresDef",
+      "kind": "type",
+      "description": "This type represents the Typescript bindings which are generated from the router by Rust.",
+      "signature": "/**\n * This type represents the Typescript bindings which are generated from the router by Rust.\n */\ndeclare type ProceduresDef = {\n    queries: {\n        key: string;\n        input: any;\n        result: any;\n    };\n    mutations: {\n        key: string;\n        input: any;\n        result: any;\n    };\n    subscriptions: {\n        key: string;\n        input: any;\n        result: any;\n    };\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "ProceduresLike",
+      "kind": "type",
+      "description": "A type which allows inferring the type of the bindings",
+      "signature": "/**\n * A type which allows inferring the type of the bindings\n */\ndeclare type ProceduresLike = {\n    _rspc_def: ProceduresDef;\n} | ProceduresDef;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "randomId",
+      "kind": "variable",
+      "description": "",
+      "signature": "randomId: () => string",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "RSPCError",
+      "kind": "class",
+      "description": "",
+      "signature": "declare class RSPCError {\n    code: number;\n    message: string;\n    constructor(code: number, message: string);\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "SubscriptionOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface SubscriptionOptions<TOutput> {\n    onStarted?: () => void;\n    onData: (data: TOutput) => void;\n    onError?: (err: RSPCError) => void;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "Transport",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface Transport {\n    clientSubscriptionCallback?: (id: string, key: string, value: any) => void;\n    doRequest(operation: OperationType, key: string, input: any): Promise<any>;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    },
+    {
+      "name": "WebsocketTransport",
+      "kind": "class",
+      "description": "",
+      "signature": "declare class WebsocketTransport implements Transport {\n    private url;\n    private ws;\n    private requestMap;\n    clientSubscriptionCallback?: (id: string, value: any) => void;\n    constructor(url: string);\n    attachEventListeners(): void;\n    reconnect(timeoutIndex?: number): Promise<void>;\n    doRequest(operation: OperationType, key: string, input: any, opts?: {\n        id?: string;\n    }): Promise<any>;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.1.1"
+    }
+  ]
+}

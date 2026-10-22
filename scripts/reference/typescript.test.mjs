@@ -3,13 +3,9 @@ import assert from "node:assert/strict";
 import ts from "typescript-api";
 import { readFile } from "node:fs/promises";
 import { sourceSnapshots } from "./typescript-snapshots.mjs";
-import {
-  declarationEntrypoints,
-  parseExports,
-  symbolAnchor,
-} from "./typescript-parser.mjs";
+import { declarationEntrypoints, parseExports } from "./typescript-parser.mjs";
 
-const options = { id: "ts-test", version: "1.0.0" };
+const options = { sourceUrl: "https://example.test/package/1.0.0" };
 
 test("resolves public aliases, star exports, overloads and docs without private declarations", () => {
   const files = {
@@ -56,7 +52,7 @@ test("finds conditional and wildcard subpath declaration entrypoints", () => {
   });
 });
 
-test("subpath identities and URL anchors are unambiguous", () => {
+test("subpath identities stay qualified and unambiguous", () => {
   const symbols = parseExports(
     ts,
     { "extra.d.ts": "export type Result = string;" },
@@ -64,14 +60,6 @@ test("subpath identities and URL anchors are unambiguous", () => {
     options,
   );
   assert.equal(symbols[0].name, "extra:Result");
-  assert.equal(
-    symbols[0].url,
-    "/docs/reference?package=ts-test&version=1.0.0#symbol-extra%3AResult",
-  );
-  assert.equal(
-    symbolAnchor("commands.helloWorld"),
-    "symbol-commands.helloWorld",
-  );
 });
 
 test("generated commands, events and mocks retain real property source", () => {
@@ -210,9 +198,7 @@ test("local context never mislabels exports declared with an export list as priv
 
 test("real release artifacts retain previously omitted packages, nested docs and runtime type context", async () => {
   const catalog = JSON.parse(
-    await readFile(
-      new URL("../../public/reference/typescript.json", import.meta.url),
-    ),
+    await readFile(new URL("../../reference/typescript.json", import.meta.url)),
   );
   const getArtifact = async (id, version) => {
     const release = catalog.packages
@@ -220,7 +206,7 @@ test("real release artifacts retain previously omitted packages, nested docs and
       ?.versions.find((item) => item.version === version);
     assert.ok(release?.data, `missing artifact: ${id}@${version}`);
     return JSON.parse(
-      await readFile(new URL(`../../public${release.data}`, import.meta.url)),
+      await readFile(new URL(`../../${release.data}`, import.meta.url)),
     );
   };
   const normi = catalog.packages.find((pkg) => pkg.id === "ts-rspc-normi");
@@ -320,9 +306,7 @@ test("source snapshots follow local TypeScript and TSX public re-exports", () =>
 
 test("unreleased snapshot artifacts are pinned and cannot masquerade as npm releases", async () => {
   const catalog = JSON.parse(
-    await readFile(
-      new URL("../../public/reference/typescript.json", import.meta.url),
-    ),
+    await readFile(new URL("../../reference/typescript.json", import.meta.url)),
   );
   for (const snapshot of sourceSnapshots) {
     assert.match(snapshot.commit, /^[a-f0-9]{40}$/);
@@ -337,7 +321,7 @@ test("unreleased snapshot artifacts are pinned and cannot masquerade as npm rele
       `${snapshot.repository}/tree/${snapshot.commit}/${snapshot.directory}`,
     );
     const artifact = JSON.parse(
-      await readFile(new URL(`../../public${version.data}`, import.meta.url)),
+      await readFile(new URL(`../../${version.data}`, import.meta.url)),
     );
     assert.equal(artifact.published, false);
     assert.equal(artifact.sourceCommit, snapshot.commit);
@@ -376,9 +360,7 @@ test("unreleased snapshot artifacts are pinned and cannot masquerade as npm rele
 
 test("committed release catalog and every artifact satisfy the UI contract", async () => {
   const catalog = JSON.parse(
-    await readFile(
-      new URL("../../public/reference/typescript.json", import.meta.url),
-    ),
+    await readFile(new URL("../../reference/typescript.json", import.meta.url)),
   );
   assert.ok(catalog.packages.length >= 9);
   for (const pkg of catalog.packages) {
@@ -395,24 +377,21 @@ test("committed release catalog and every artifact satisfy the UI contract", asy
       }
       assert.equal(
         version.data,
-        `/reference/typescript/${pkg.id}/${version.version}.json`,
+        `reference/typescript/${pkg.id}/${version.version}.json`,
       );
       const artifact = JSON.parse(
-        await readFile(new URL(`../../public${version.data}`, import.meta.url)),
+        await readFile(new URL(`../../${version.data}`, import.meta.url)),
       );
       assert.ok(artifact.symbols.length > 0);
-      const urls = new Set();
+      const names = new Set();
       for (const symbol of artifact.symbols) {
         assert.ok(symbol.name);
         assert.ok(symbol.kind);
         assert.equal(typeof symbol.description, "string");
         assert.ok(symbol.signature);
-        assert.equal(
-          symbol.url,
-          `/docs/reference?package=${encodeURIComponent(pkg.id)}&version=${encodeURIComponent(version.version)}#${symbolAnchor(symbol.name)}`,
-        );
-        assert.ok(!urls.has(symbol.url), `duplicate URL: ${symbol.url}`);
-        urls.add(symbol.url);
+        assert.equal(symbol.url, undefined);
+        assert.ok(!names.has(symbol.name), `duplicate symbol: ${symbol.name}`);
+        names.add(symbol.name);
       }
       if (pkg.project === "tauri-specta") {
         assert.equal(artifact.sourceVersion, version.version);

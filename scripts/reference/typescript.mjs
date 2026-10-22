@@ -8,7 +8,7 @@ import { sourceSnapshots } from "./typescript-snapshots.mjs";
 
 const root = path.resolve(import.meta.dirname, "../..");
 const cache = path.join(root, "node_modules/.cache/reference-typescript");
-const output = path.join(root, "public/reference/typescript");
+const output = path.join(root, "reference/typescript");
 await mkdir(cache, { recursive: true });
 await mkdir(output, { recursive: true });
 const refresh = process.argv.includes("--refresh");
@@ -85,11 +85,7 @@ async function filesIn(dir, prefix = "") {
 // An isolated, pinned compiler: the site's TypeScript 7 package has no legacy compiler API.
 const packages = [];
 async function artifact(pkg, version, files, entries, sourceUrl, extra = {}) {
-  const symbols = parseExports(ts, files, entries, {
-    id: pkg.id,
-    version,
-    sourceUrl,
-  });
+  const symbols = parseExports(ts, files, entries, { sourceUrl });
   if (extra.published === false) {
     for (const symbol of symbols)
       symbol.description = [extra.description, symbol.description]
@@ -108,10 +104,10 @@ async function artifact(pkg, version, files, entries, sourceUrl, extra = {}) {
   }
   if (!symbols.length)
     throw new Error("No public declarations found in this published archive.");
-  const data = `/reference/typescript/${pkg.id}/${version}.json`;
+  const data = `reference/typescript/${pkg.id}/${version}.json`;
   await mkdir(path.join(output, pkg.id), { recursive: true });
   await writeFile(
-    path.join(root, "public", data),
+    path.join(root, data),
     JSON.stringify({ symbols, ...extra }, null, 2) + "\n",
   );
   return data;
@@ -287,6 +283,6 @@ console.log(
 );
 packages.push(pkg);
 await writeFile(
-  path.join(root, "public/reference/typescript.json"),
+  path.join(root, "reference/typescript.json"),
   JSON.stringify({ packages }, null, 2) + "\n",
 );

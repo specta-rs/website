@@ -33,3 +33,7 @@ next-env.d.ts
 
 # downloaded release documentation used by reference:sync
 .reference-cache/
+
+# generated API reference pages (see scripts/reference/pages.mjs)
+content/docs/*/rust-api/
+content/docs/*/typescript-api/

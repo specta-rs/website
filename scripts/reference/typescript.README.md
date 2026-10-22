@@ -67,7 +67,7 @@ commit edit, never silently follows main, and never replaces a published version
 
 ## Data contract
 
-`public/reference/typescript.json` contains `{ packages: [...] }`. Each version points
+`reference/typescript.json` contains `{ packages: [...] }`. Each version points
 to its artifact via `data`, or records an `unavailable` reason. Artifacts contain
 `{ symbols: [...] }`; Tauri artifacts also record source version, commit, fixtures and
 the representative-output caveat.

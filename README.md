@@ -23,21 +23,24 @@ pnpm lint
 
 ## API reference
 
-`/docs/reference` lets readers choose a project, package or crate, and version.
-Rust results open the exact symbol on docs.rs. TypeScript results show public
-exports from published declarations; Tauri Specta shows representative generated
-bindings from each release's exact source commit, not an application-independent
-command API. Unpublished packages use explicitly labeled, commit-pinned snapshots.
+Each project has a **Rust API** and/or **TypeScript API** section in the sidebar,
+with one page per crate or package. Every page documents one exact release and
+carries a version switcher: Rust symbols link to their page on docs.rs, TypeScript
+symbols show the published signature. Tauri Specta shows representative generated
+bindings from that release's source commit, not an application-independent command
+API; unpublished packages use explicitly labelled, commit-pinned snapshots.
 
-The catalogs and per-version symbol files live in `public/reference/` and are
-checked in. The sync script also generates the bundled catalog and default-version
-search index under `src/lib/reference-{catalog,index}.json`, keeping imports out
-of Vite's public-asset directory. Normal development, CI, and Cloudflare builds
-need no registry or docs.rs access. The browser loads only the selected release's
-symbol file.
-Site-wide search indexes each reference's default version; the reference page
-can search historical versions without mixing duplicate releases into global
-search results.
+Symbols are ordinary documentation pages, so they appear in site search,
+`llms.txt` and the Markdown endpoints alongside the handwritten guides. Only the
+current release of each package is listed in the sidebar and indexed; older
+releases are reachable from the version switcher and are excluded from search so
+one symbol cannot match dozens of times.
+
+The machine-readable snapshots live in `reference/` and the generated pages and
+bundled catalog are written from them by `scripts/reference/pages.mjs`, which runs
+before `dev`, `build`, `typecheck` and `postinstall`. Generated pages are not
+committed. Normal development, CI and Cloudflare builds therefore need no registry
+or docs.rs access.
 
 Refresh the data with Node 22.18+ and `tar` installed:
 
@@ -47,7 +50,7 @@ pnpm test
 pnpm format
 ```
 
-Review and commit the changed artifacts with the code. Registry discovery lists
+Review and commit the changed snapshots with the code. Registry discovery lists
 historical releases even when they have no extractable documentation. Those
 versions show an explanation and link to their original source instead of
 silently substituting another release. Downloaded inputs are cached locally;

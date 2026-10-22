@@ -1,0 +1,18 @@
+{
+  "symbols": [
+    {
+      "name": "createTauriClient",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function createTauriClient(): TRPCWebSocketClient;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "tauriLink",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function tauriLink<TProcedures extends ProceduresDef>(): TRPCLink<TProcedures>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-32fe3d8a"
+    }
+  ]
+}

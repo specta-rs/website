@@ -1,0 +1,729 @@
+{
+  "symbols": [
+    {
+      "name": "datatype",
+      "kind": "mod",
+      "description": "Types related to working with crate::DataType directly. You’ll probably never need this.",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/index.html"
+    },
+    {
+      "name": "datatype::DataType",
+      "kind": "enum",
+      "description": "this is used internally to represent the types.",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html"
+    },
+    {
+      "name": "datatype::DataType::Any",
+      "kind": "variant",
+      "description": "",
+      "signature": "Any",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.Any"
+    },
+    {
+      "name": "datatype::DataType::Enum",
+      "kind": "variant",
+      "description": "",
+      "signature": "Enum(EnumType)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.Enum"
+    },
+    {
+      "name": "datatype::DataType::Generic",
+      "kind": "variant",
+      "description": "",
+      "signature": "Generic(GenericType)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.Generic"
+    },
+    {
+      "name": "datatype::DataType::List",
+      "kind": "variant",
+      "description": "",
+      "signature": "List(Box<DataType>)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.List"
+    },
+    {
+      "name": "datatype::DataType::Literal",
+      "kind": "variant",
+      "description": "",
+      "signature": "Literal(LiteralType)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.Literal"
+    },
+    {
+      "name": "datatype::DataType::Nullable",
+      "kind": "variant",
+      "description": "",
+      "signature": "Nullable(Box<DataType>)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.Nullable"
+    },
+    {
+      "name": "datatype::DataType::Object",
+      "kind": "variant",
+      "description": "",
+      "signature": "Object(ObjectType)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.Object"
+    },
+    {
+      "name": "datatype::DataType::Primitive",
+      "kind": "variant",
+      "description": "",
+      "signature": "Primitive(PrimitiveType)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.Primitive"
+    },
+    {
+      "name": "datatype::DataType::Record",
+      "kind": "variant",
+      "description": "",
+      "signature": "Record(Box<(DataType, DataType)>)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.Record"
+    },
+    {
+      "name": "datatype::DataType::Reference",
+      "kind": "variant",
+      "description": "",
+      "signature": "Reference",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.Reference"
+    },
+    {
+      "name": "datatype::DataType::Reference::generics",
+      "kind": "structfield",
+      "description": "",
+      "signature": "generics: Vec<DataType>",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.Reference.field.generics"
+    },
+    {
+      "name": "datatype::DataType::Reference::name",
+      "kind": "structfield",
+      "description": "",
+      "signature": "name: String",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.Reference.field.name"
+    },
+    {
+      "name": "datatype::DataType::Reference::type_id",
+      "kind": "structfield",
+      "description": "",
+      "signature": "type_id: TypeId",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.Reference.field.type_id"
+    },
+    {
+      "name": "datatype::DataType::Tuple",
+      "kind": "variant",
+      "description": "",
+      "signature": "Tuple(TupleType)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.DataType.html#variant.Tuple"
+    },
+    {
+      "name": "datatype::DefOpts",
+      "kind": "struct",
+      "description": "arguments for Type::inline, Type::reference and Type::definition.",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/struct.DefOpts.html"
+    },
+    {
+      "name": "datatype::EnumRepr",
+      "kind": "enum",
+      "description": "this is used internally to represent the types.",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumRepr.html"
+    },
+    {
+      "name": "datatype::EnumRepr::Adjacent",
+      "kind": "variant",
+      "description": "",
+      "signature": "Adjacent",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumRepr.html#variant.Adjacent"
+    },
+    {
+      "name": "datatype::EnumRepr::Adjacent::content",
+      "kind": "structfield",
+      "description": "",
+      "signature": "content: String",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumRepr.html#variant.Adjacent.field.content"
+    },
+    {
+      "name": "datatype::EnumRepr::Adjacent::tag",
+      "kind": "structfield",
+      "description": "",
+      "signature": "tag: String",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumRepr.html#variant.Adjacent.field.tag"
+    },
+    {
+      "name": "datatype::EnumRepr::External",
+      "kind": "variant",
+      "description": "",
+      "signature": "External",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumRepr.html#variant.External"
+    },
+    {
+      "name": "datatype::EnumRepr::Internal",
+      "kind": "variant",
+      "description": "",
+      "signature": "Internal",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumRepr.html#variant.Internal"
+    },
+    {
+      "name": "datatype::EnumRepr::Internal::tag",
+      "kind": "structfield",
+      "description": "",
+      "signature": "tag: String",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumRepr.html#variant.Internal.field.tag"
+    },
+    {
+      "name": "datatype::EnumRepr::Untagged",
+      "kind": "variant",
+      "description": "",
+      "signature": "Untagged",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumRepr.html#variant.Untagged"
+    },
+    {
+      "name": "datatype::EnumType",
+      "kind": "struct",
+      "description": "this is used internally to represent the types.",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/struct.EnumType.html"
+    },
+    {
+      "name": "datatype::EnumType::make_flattenable",
+      "kind": "method",
+      "description": "An enum may contain variants which are invalid and will cause a runtime errors during serialize/deserialization. This function will filter them out so types can be exported for valid variants.",
+      "signature": "pub fn make_flattenable(&mut self)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/struct.EnumType.html#method.make_flattenable"
+    },
+    {
+      "name": "datatype::EnumVariant",
+      "kind": "enum",
+      "description": "this is used internally to represent the types.",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumVariant.html"
+    },
+    {
+      "name": "datatype::EnumVariant::data_type",
+      "kind": "method",
+      "description": "Get the DataType of the variant.",
+      "signature": "pub fn data_type(&self) -> DataType",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumVariant.html#method.data_type"
+    },
+    {
+      "name": "datatype::EnumVariant::name",
+      "kind": "method",
+      "description": "Get the name of the variant.",
+      "signature": "pub fn name(&self) -> &str",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumVariant.html#method.name"
+    },
+    {
+      "name": "datatype::EnumVariant::Named",
+      "kind": "variant",
+      "description": "",
+      "signature": "Named(ObjectType)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumVariant.html#variant.Named"
+    },
+    {
+      "name": "datatype::EnumVariant::Unit",
+      "kind": "variant",
+      "description": "",
+      "signature": "Unit(String)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumVariant.html#variant.Unit"
+    },
+    {
+      "name": "datatype::EnumVariant::Unnamed",
+      "kind": "variant",
+      "description": "",
+      "signature": "Unnamed(TupleType)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.EnumVariant.html#variant.Unnamed"
+    },
+    {
+      "name": "datatype::GenericType",
+      "kind": "struct",
+      "description": "this is used internally to represent the types.",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/struct.GenericType.html"
+    },
+    {
+      "name": "datatype::LiteralType",
+      "kind": "enum",
+      "description": "this is used internally to represent the types.",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.LiteralType.html"
+    },
+    {
+      "name": "datatype::LiteralType::bool",
+      "kind": "variant",
+      "description": "",
+      "signature": "bool(bool)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.LiteralType.html#variant.bool"
+    },
+    {
+      "name": "datatype::LiteralType::f32",
+      "kind": "variant",
+      "description": "",
+      "signature": "f32(f32)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.LiteralType.html#variant.f32"
+    },
+    {
+      "name": "datatype::LiteralType::f64",
+      "kind": "variant",
+      "description": "",
+      "signature": "f64(f64)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.LiteralType.html#variant.f64"
+    },
+    {
+      "name": "datatype::LiteralType::i16",
+      "kind": "variant",
+      "description": "",
+      "signature": "i16(i16)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.LiteralType.html#variant.i16"
+    },
+    {
+      "name": "datatype::LiteralType::i32",
+      "kind": "variant",
+      "description": "",
+      "signature": "i32(i32)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.LiteralType.html#variant.i32"
+    },
+    {
+      "name": "datatype::LiteralType::i8",
+      "kind": "variant",
+      "description": "",
+      "signature": "i8(i8)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.LiteralType.html#variant.i8"
+    },
+    {
+      "name": "datatype::LiteralType::None",
+      "kind": "variant",
+      "description": "",
+      "signature": "None",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.LiteralType.html#variant.None"
+    },
+    {
+      "name": "datatype::LiteralType::String",
+      "kind": "variant",
+      "description": "",
+      "signature": "String(String)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.LiteralType.html#variant.String"
+    },
+    {
+      "name": "datatype::LiteralType::u16",
+      "kind": "variant",
+      "description": "",
+      "signature": "u16(u16)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.LiteralType.html#variant.u16"
+    },
+    {
+      "name": "datatype::LiteralType::u32",
+      "kind": "variant",
+      "description": "",
+      "signature": "u32(u32)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.LiteralType.html#variant.u32"
+    },
+    {
+      "name": "datatype::LiteralType::u8",
+      "kind": "variant",
+      "description": "",
+      "signature": "u8(u8)",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.LiteralType.html#variant.u8"
+    },
+    {
+      "name": "datatype::ObjectField",
+      "kind": "struct",
+      "description": "this is used internally to represent the types.",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/struct.ObjectField.html"
+    },
+    {
+      "name": "datatype::ObjectType",
+      "kind": "struct",
+      "description": "this is used internally to represent the types.",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/struct.ObjectType.html"
+    },
+    {
+      "name": "datatype::PrimitiveType",
+      "kind": "enum",
+      "description": "this is used internally to represent the types.",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html"
+    },
+    {
+      "name": "datatype::PrimitiveType::bool",
+      "kind": "variant",
+      "description": "",
+      "signature": "bool",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.bool"
+    },
+    {
+      "name": "datatype::PrimitiveType::char",
+      "kind": "variant",
+      "description": "",
+      "signature": "char",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.char"
+    },
+    {
+      "name": "datatype::PrimitiveType::f32",
+      "kind": "variant",
+      "description": "",
+      "signature": "f32",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.f32"
+    },
+    {
+      "name": "datatype::PrimitiveType::f64",
+      "kind": "variant",
+      "description": "",
+      "signature": "f64",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.f64"
+    },
+    {
+      "name": "datatype::PrimitiveType::i128",
+      "kind": "variant",
+      "description": "",
+      "signature": "i128",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.i128"
+    },
+    {
+      "name": "datatype::PrimitiveType::i16",
+      "kind": "variant",
+      "description": "",
+      "signature": "i16",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.i16"
+    },
+    {
+      "name": "datatype::PrimitiveType::i32",
+      "kind": "variant",
+      "description": "",
+      "signature": "i32",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.i32"
+    },
+    {
+      "name": "datatype::PrimitiveType::i64",
+      "kind": "variant",
+      "description": "",
+      "signature": "i64",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.i64"
+    },
+    {
+      "name": "datatype::PrimitiveType::i8",
+      "kind": "variant",
+      "description": "",
+      "signature": "i8",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.i8"
+    },
+    {
+      "name": "datatype::PrimitiveType::isize",
+      "kind": "variant",
+      "description": "",
+      "signature": "isize",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.isize"
+    },
+    {
+      "name": "datatype::PrimitiveType::String",
+      "kind": "variant",
+      "description": "",
+      "signature": "String",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.String"
+    },
+    {
+      "name": "datatype::PrimitiveType::u128",
+      "kind": "variant",
+      "description": "",
+      "signature": "u128",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.u128"
+    },
+    {
+      "name": "datatype::PrimitiveType::u16",
+      "kind": "variant",
+      "description": "",
+      "signature": "u16",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.u16"
+    },
+    {
+      "name": "datatype::PrimitiveType::u32",
+      "kind": "variant",
+      "description": "",
+      "signature": "u32",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.u32"
+    },
+    {
+      "name": "datatype::PrimitiveType::u64",
+      "kind": "variant",
+      "description": "",
+      "signature": "u64",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.u64"
+    },
+    {
+      "name": "datatype::PrimitiveType::u8",
+      "kind": "variant",
+      "description": "",
+      "signature": "u8",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.u8"
+    },
+    {
+      "name": "datatype::PrimitiveType::usize",
+      "kind": "variant",
+      "description": "",
+      "signature": "usize",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/enum.PrimitiveType.html#variant.usize"
+    },
+    {
+      "name": "datatype::TupleType",
+      "kind": "struct",
+      "description": "this is used internally to represent the types.",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/struct.TupleType.html"
+    },
+    {
+      "name": "datatype::TypeDefs",
+      "kind": "type",
+      "description": "A map of type definitions",
+      "url": "https://docs.rs/specta/0.0.6/specta/datatype/type.TypeDefs.html"
+    },
+    {
+      "name": "DataTypeFrom",
+      "kind": "derive",
+      "description": "Generates a From implementation for DataType of the given type. This differs from Type in that you can use other DataType values at runtime inside the targeted type, providing an easy way to construct types at runtime from other types which are known statically via Type.",
+      "url": "https://docs.rs/specta/0.0.6/specta/derive.DataTypeFrom.html"
+    },
+    {
+      "name": "export",
+      "kind": "mod",
+      "description": "Provides the global type store and a method to export them to other languages.",
+      "url": "https://docs.rs/specta/0.0.6/specta/export/index.html"
+    },
+    {
+      "name": "export::ts",
+      "kind": "fn",
+      "description": "Exports all types in the TYPES map to the provided TypeScript file.",
+      "url": "https://docs.rs/specta/0.0.6/specta/export/fn.ts.html"
+    },
+    {
+      "name": "export::TYPES",
+      "kind": "static",
+      "description": "Global type store for collecting custom types to export.",
+      "url": "https://docs.rs/specta/0.0.6/specta/export/static.TYPES.html"
+    },
+    {
+      "name": "fn_datatype",
+      "kind": "macro",
+      "description": "Returns a FunctionDataType for a given function that has been annotated with specta.",
+      "url": "https://docs.rs/specta/0.0.6/specta/macro.fn_datatype.html"
+    },
+    {
+      "name": "function",
+      "kind": "mod",
+      "description": "Support for exporting Rust functions.",
+      "url": "https://docs.rs/specta/0.0.6/specta/function/index.html"
+    },
+    {
+      "name": "function::FunctionDataType",
+      "kind": "struct",
+      "description": "Contains type information about a function annotated with specta. Returned by fn_datatype.",
+      "url": "https://docs.rs/specta/0.0.6/specta/function/struct.FunctionDataType.html"
+    },
+    {
+      "name": "function::get_datatype_internal",
+      "kind": "fn",
+      "description": "is a helper for exporting a command to a CommandDataType. You shouldn’t use this directly and instead should use fn_datatype!.",
+      "url": "https://docs.rs/specta/0.0.6/specta/function/fn.get_datatype_internal.html"
+    },
+    {
+      "name": "function::SpectaFunction",
+      "kind": "trait",
+      "description": "is a trait which is implemented by all functions which can be used as a command.",
+      "url": "https://docs.rs/specta/0.0.6/specta/function/trait.SpectaFunction.html"
+    },
+    {
+      "name": "function::SpectaFunction::to_datatype",
+      "kind": "method",
+      "description": "",
+      "signature": "fn to_datatype( name: &'static str, type_map: &mut TypeDefs, _fields: &[&'static str]) -> FunctionDataType",
+      "url": "https://docs.rs/specta/0.0.6/specta/function/trait.SpectaFunction.html#method.to_datatype"
+    },
+    {
+      "name": "function::SpectaFunction::to_datatype",
+      "kind": "tymethod",
+      "description": "convert function into a DataType",
+      "signature": "fn to_datatype( name: &'static str, type_map: &mut TypeDefs, fields: &[&'static str]) -> FunctionDataType",
+      "url": "https://docs.rs/specta/0.0.6/specta/function/trait.SpectaFunction.html#tymethod.to_datatype"
+    },
+    {
+      "name": "function::SpectaFunctionArg",
+      "kind": "trait",
+      "description": "is a trait which is implemented by all types which can be used as a command argument.",
+      "url": "https://docs.rs/specta/0.0.6/specta/function/trait.SpectaFunctionArg.html"
+    },
+    {
+      "name": "function::SpectaFunctionArg::to_datatype",
+      "kind": "tymethod",
+      "description": "convert argument of the Rust function into a DataType",
+      "signature": "fn to_datatype(opts: DefOpts<'_>) -> Option<DataType>",
+      "url": "https://docs.rs/specta/0.0.6/specta/function/trait.SpectaFunctionArg.html#tymethod.to_datatype"
+    },
+    {
+      "name": "function::SpectaFunctionResult",
+      "kind": "trait",
+      "description": "is a trait which is implemented by all types which can be used as a command result.",
+      "url": "https://docs.rs/specta/0.0.6/specta/function/trait.SpectaFunctionResult.html"
+    },
+    {
+      "name": "function::SpectaFunctionResult::to_datatype",
+      "kind": "tymethod",
+      "description": "convert result of the Rust function into a DataType",
+      "signature": "fn to_datatype(opts: DefOpts<'_>) -> DataType",
+      "url": "https://docs.rs/specta/0.0.6/specta/function/trait.SpectaFunctionResult.html#tymethod.to_datatype"
+    },
+    {
+      "name": "openapi",
+      "kind": "mod",
+      "description": "Alpha: OpenAPI support.",
+      "url": "https://docs.rs/specta/0.0.6/specta/openapi/index.html"
+    },
+    {
+      "name": "openapi::to_openapi",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/specta/0.0.6/specta/openapi/fn.to_openapi.html"
+    },
+    {
+      "name": "specta",
+      "kind": "attr",
+      "description": "Attribute macro which can be put on a Rust function to introspect its types.",
+      "url": "https://docs.rs/specta/0.0.6/specta/attr.specta.html"
+    },
+    {
+      "name": "ts",
+      "kind": "mod",
+      "description": "Typescript support.",
+      "url": "https://docs.rs/specta/0.0.6/specta/ts/index.html"
+    },
+    {
+      "name": "ts::datatype",
+      "kind": "fn",
+      "description": "Convert a DataType to a TypeScript string Eg. { demo: string; }",
+      "url": "https://docs.rs/specta/0.0.6/specta/ts/fn.datatype.html"
+    },
+    {
+      "name": "ts::export",
+      "kind": "fn",
+      "description": "Convert a type which implements Type to a TypeScript string with an export. Eg. export type Foo = { demo: string; };",
+      "url": "https://docs.rs/specta/0.0.6/specta/ts/fn.export.html"
+    },
+    {
+      "name": "ts::export_datatype",
+      "kind": "fn",
+      "description": "Convert a DataType to a TypeScript string with an export. Eg. export type Foo = { demo: string; };",
+      "url": "https://docs.rs/specta/0.0.6/specta/ts/fn.export_datatype.html"
+    },
+    {
+      "name": "ts::inline",
+      "kind": "fn",
+      "description": "Convert a type which implements Type to a TypeScript string. Eg. { demo: string; };",
+      "url": "https://docs.rs/specta/0.0.6/specta/ts/fn.inline.html"
+    },
+    {
+      "name": "ts::object_field_to_ts",
+      "kind": "fn",
+      "description": "convert an object field into a Typescript string",
+      "url": "https://docs.rs/specta/0.0.6/specta/ts/fn.object_field_to_ts.html"
+    },
+    {
+      "name": "ts::sanitise_name",
+      "kind": "fn",
+      "description": "sanitise a string to be a valid Typescript key",
+      "url": "https://docs.rs/specta/0.0.6/specta/ts/fn.sanitise_name.html"
+    },
+    {
+      "name": "type",
+      "kind": "mod",
+      "description": "Contains Type and everything related to it, including implementations and helper macros",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/index.html"
+    },
+    {
+      "name": "Type",
+      "kind": "derive",
+      "description": "Implements Type for a given struct or enum.",
+      "url": "https://docs.rs/specta/0.0.6/specta/derive.Type.html"
+    },
+    {
+      "name": "type::Flatten",
+      "kind": "trait",
+      "description": "A marker trait for compile-time validation of which types can be flattened.",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/trait.Flatten.html"
+    },
+    {
+      "name": "type::Type",
+      "kind": "trait",
+      "description": "Provides runtime type information that can be fed into a language exporter to generate a type definition in another language. Avoid implementing this trait yourself where possible and use the Type macro instead.",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/trait.Type.html"
+    },
+    {
+      "name": "type::Type::category_impl",
+      "kind": "method",
+      "description": "Defines which category this type falls into, determining how references to it are created. See TypeCategory for more info.",
+      "signature": "fn category_impl(opts: DefOpts<'_>, generics: &[DataType]) -> TypeCategory",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/trait.Type.html#method.category_impl"
+    },
+    {
+      "name": "type::Type::definition",
+      "kind": "method",
+      "description": "Small wrapper around inline that provides definition_generics as the value for the generics arg.",
+      "signature": "fn definition(opts: DefOpts<'_>) -> DataType",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/trait.Type.html#method.definition"
+    },
+    {
+      "name": "type::Type::definition_generics",
+      "kind": "method",
+      "description": "Returns the type parameter generics of a given type. Will usually be empty except for custom types.",
+      "signature": "fn definition_generics() -> Vec<GenericType> ⓘ",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/trait.Type.html#method.definition_generics"
+    },
+    {
+      "name": "type::Type::inline",
+      "kind": "method",
+      "description": "",
+      "signature": "fn inline(_: DefOpts<'_>, _: &[DataType]) -> DataType",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/trait.Type.html#method.inline"
+    },
+    {
+      "name": "type::Type::inline",
+      "kind": "tymethod",
+      "description": "Returns the inline definition of a type with generics substituted for those provided. This function defines the base structure of every type, and is used in both definition and reference",
+      "signature": "fn inline(opts: DefOpts<'_>, generics: &[DataType]) -> DataType",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/trait.Type.html#tymethod.inline"
+    },
+    {
+      "name": "type::Type::NAME",
+      "kind": "associatedconstant",
+      "description": "The name of the type",
+      "signature": "const NAME: &'static str",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/trait.Type.html#associatedconstant.NAME"
+    },
+    {
+      "name": "type::Type::reference",
+      "kind": "method",
+      "description": "Generates a datatype corresponding to a reference to this type, as determined by its category. Getting a reference to a type implies that it should belong in the type map (since it has to be referenced from somewhere), so the output of definition will be put into the type map.",
+      "signature": "fn reference(opts: DefOpts<'_>, generics: &[DataType]) -> DataType",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/trait.Type.html#method.reference"
+    },
+    {
+      "name": "type::TypeCategory",
+      "kind": "enum",
+      "description": "The category a type falls under. Determines how references are generated for a given type.",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/enum.TypeCategory.html"
+    },
+    {
+      "name": "type::TypeCategory::Inline",
+      "kind": "variant",
+      "description": "No references should be created, instead just copies the inline representation of the type.",
+      "signature": "Inline(DataType)",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/enum.TypeCategory.html#variant.Inline"
+    },
+    {
+      "name": "type::TypeCategory::Reference",
+      "kind": "variant",
+      "description": "",
+      "signature": "Reference",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/enum.TypeCategory.html#variant.Reference"
+    },
+    {
+      "name": "type::TypeCategory::Reference::placeholder",
+      "kind": "structfield",
+      "description": "Datatype to be put in the type map while field types are being resolved. Used in order to support recursive types without causing an infinite loop.",
+      "signature": "placeholder: DataType",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/enum.TypeCategory.html#variant.Reference.field.placeholder"
+    },
+    {
+      "name": "type::TypeCategory::Reference::reference",
+      "kind": "structfield",
+      "description": "Datatype to use whenever a reference to the type is requested.",
+      "signature": "reference: DataType",
+      "url": "https://docs.rs/specta/0.0.6/specta/type/enum.TypeCategory.html#variant.Reference.field.reference"
+    }
+  ],
+  "source": "rustdoc-html"
+}

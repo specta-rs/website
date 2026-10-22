@@ -1,0 +1,53 @@
+{
+  "symbols": [
+    {
+      "name": "BaseOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface BaseOptions<TProcedures extends ProceduresDef> {\n    rspc?: {\n        client?: AlphaClient<TProcedures>;\n    };\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/react/v/1.0.0-rc.2"
+    },
+    {
+      "name": "Context",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface Context<TProcedures extends ProceduresDef> {\n    client: AlphaClient<TProcedures>;\n    queryClient: QueryClient;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/react/v/1.0.0-rc.2"
+    },
+    {
+      "name": "createReactQueryHooks",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function createReactQueryHooks<P extends ProceduresDef>(client: AlphaClient<P>, opts?: HooksOpts<P>): {\n    _rspc_def: P;\n    Provider: ({ children, client, queryClient, }: {\n        children?: ReactElement<any, string | react.JSXElementConstructor<any>> | undefined;\n        client: AlphaClient<P>;\n        queryClient: QueryClient;\n    }) => react_jsx_runtime.JSX.Element;\n    useContext: () => Context<P>;\n    useQuery: <K extends P[\"queries\"][\"key\"] & string, TQueryFnData = inferQueryResult<P, K>, TData = inferQueryResult<P, K>>(keyAndInput: [\n        key: K,\n        ...input: _inferProcedureHandlerInput<P, \"queries\", K>\n    ], opts?: (Omit<UseQueryOptions<TQueryFnData, RSPCError, TData, [\n        K,\n        inferQueryInput<P, K>\n    ]>, \"queryKey\" | \"queryFn\"> & BaseOptions<P>) | undefined) => UseQueryResult<TData, RSPCError>;\n    useMutation: <K_1 extends P[\"mutations\"][\"key\"] & string, TContext = unknown>(key: K_1 | [\n        K_1\n    ], opts?: (UseMutationOptions<inferMutationResult<P, K_1>, RSPCError, inferMutationInput<P, K_1> extends never ? undefined : inferMutationInput<P, K_1>, TContext> & BaseOptions<P>) | undefined) => UseMutationResult<inferMutationResult<P, K_1>, RSPCError, inferMutationInput<P, K_1> extends never ? undefined : inferMutationInput<P, K_1>, TContext>;\n    useSubscription: <K_2 extends P[\"subscriptions\"][\"key\"] & string, TData_1 = inferProcedureResult<P, \"subscriptions\", K_2>>(keyAndInput: [\n        key: K_2,\n        ...input: _inferProcedureHandlerInput<P, \"subscriptions\", K_2>\n    ], opts: SubscriptionOptions<TData_1> & BaseOptions<P>) => void;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/react/v/1.0.0-rc.2"
+    },
+    {
+      "name": "HooksOpts",
+      "kind": "type",
+      "description": "",
+      "signature": "type HooksOpts<P extends ProceduresDef> = {\n    context: React.Context<Context<P>>;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/react/v/1.0.0-rc.2"
+    },
+    {
+      "name": "QueryClient",
+      "kind": "export",
+      "description": "",
+      "signature": "QueryClient",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/react/v/1.0.0-rc.2"
+    },
+    {
+      "name": "QueryClientProvider",
+      "kind": "export",
+      "description": "",
+      "signature": "QueryClientProvider",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/react/v/1.0.0-rc.2"
+    },
+    {
+      "name": "SubscriptionOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface SubscriptionOptions<TOutput> {\n    enabled?: boolean;\n    onStarted?: () => void;\n    onData: (data: TOutput) => void;\n    onError?: (err: RSPCError | Error) => void;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/react/v/1.0.0-rc.2"
+    }
+  ]
+}

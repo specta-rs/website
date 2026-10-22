@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const root = new URL("../../public/", import.meta.url);
+const root = new URL("../../", import.meta.url);
 
 for (const ecosystem of ["rust", "typescript"]) {
   test(`${ecosystem} reference catalog has usable, version-correct artifacts`, async () => {
@@ -33,22 +33,25 @@ for (const ecosystem of ["rust", "typescript"]) {
           );
           continue;
         }
-        assert.ok(release.data.startsWith(`/reference/${ecosystem}/`));
+        assert.equal(
+          release.data,
+          `reference/${ecosystem}/${pkg.id}/${release.version}.json`,
+        );
         const data = JSON.parse(
-          await readFile(new URL(release.data.slice(1), root), "utf8"),
+          await readFile(new URL(release.data, root), "utf8"),
         );
         assert.ok(
           data.symbols.length > 0,
           `${pkg.id}@${release.version}: empty artifact`,
         );
         assert.equal(
-          new Set(data.symbols.map((symbol) => `${symbol.name}:${symbol.url}`))
+          new Set(data.symbols.map((symbol) => `${symbol.kind}:${symbol.name}`))
             .size,
           data.symbols.length,
           `${pkg.id}@${release.version}: duplicate symbols`,
         );
         for (const symbol of data.symbols) {
-          assert.ok(symbol.name && symbol.kind && symbol.url);
+          assert.ok(symbol.name && symbol.kind);
           if (ecosystem === "rust") {
             const url = new URL(symbol.url);
             assert.equal(url.origin, "https://docs.rs");
@@ -57,11 +60,9 @@ for (const ecosystem of ["rust", "typescript"]) {
               symbol.url,
             );
           } else {
-            const url = new URL(symbol.url, "https://specta.dev");
-            assert.equal(url.pathname, "/docs/reference");
-            assert.equal(url.searchParams.get("package"), pkg.id);
-            assert.equal(url.searchParams.get("version"), release.version);
-            assert.ok(url.hash, symbol.url);
+            assert.ok(symbol.signature);
+            assert.match(symbol.sourceUrl, /^https:\/\//, symbol.sourceUrl);
+            assert.equal(symbol.url, undefined);
           }
         }
       }
@@ -69,53 +70,29 @@ for (const ecosystem of ["rust", "typescript"]) {
   });
 }
 
-test("bundled catalog and default-version search index match the release snapshots", async () => {
+test("bundled catalog mirrors the version metadata the pages are built from", async () => {
   const packages = [];
-  const records = [];
   for (const ecosystem of ["rust", "typescript"]) {
     const catalog = JSON.parse(
       await readFile(new URL(`reference/${ecosystem}.json`, root), "utf8"),
     );
     packages.push(...catalog.packages);
-    for (const pkg of catalog.packages) {
-      const release = pkg.versions.find(
-        (item) => item.version === pkg.defaultVersion,
-      );
-      if (!release?.data) continue;
-      const artifact = JSON.parse(
-        await readFile(new URL(release.data.slice(1), root), "utf8"),
-      );
-      for (const symbol of artifact.symbols) {
-        records.push({
-          name: symbol.name,
-          url: symbol.url,
-          package: pkg.name,
-          version: release.version,
-          language: pkg.language,
-          text: `${symbol.kind} ${symbol.description || ""} ${symbol.signature || ""}`.slice(
-            0,
-            3000,
-          ),
-        });
-      }
-    }
   }
-  assert.deepEqual(
-    JSON.parse(
-      await readFile(
-        new URL("../../src/lib/reference-catalog.json", import.meta.url),
-        "utf8",
-      ),
-    ),
-    { packages },
+  const bundled = JSON.parse(
+    await readFile(new URL("src/lib/reference-catalog.json", root), "utf8"),
   );
+  // The switcher only needs release metadata, but it must not drift from the
+  // catalog the pages and search index are generated from.
   assert.deepEqual(
-    JSON.parse(
-      await readFile(
-        new URL("../../src/lib/reference-index.json", import.meta.url),
-        "utf8",
-      ),
-    ),
-    records,
+    bundled.packages.map((pkg) => pkg.id),
+    packages.map((pkg) => pkg.id),
   );
+  for (const [index, pkg] of packages.entries()) {
+    const built = bundled.packages[index];
+    assert.equal(built.name, pkg.name);
+    assert.equal(built.project, pkg.project);
+    assert.equal(built.language, pkg.language);
+    assert.equal(built.defaultVersion, pkg.defaultVersion);
+    assert.deepEqual(built.versions, pkg.versions);
+  }
 });

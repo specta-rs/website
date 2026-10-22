@@ -71,6 +71,29 @@ export function compareVersions(a, b) {
   return 0;
 }
 
+/**
+ * Rustdoc lists a trait's items on the trait declaration and again on every
+ * implementation of it. Symbol names here are qualified by the declaring type,
+ * so those repeats collapse onto one name and would otherwise be emitted
+ * hundreds of times. Keep the declaration, which rustdoc anchors without a
+ * `-N` suffix.
+ */
+export function dedupeSymbols(symbols) {
+  const unique = new Map();
+  for (const symbol of symbols) {
+    const key = `${symbol.kind}|${symbol.name}`;
+    const previous = unique.get(key);
+    if (!previous || fragmentRank(symbol.url) < fragmentRank(previous.url))
+      unique.set(key, symbol);
+  }
+  return [...unique.values()];
+}
+
+function fragmentRank(url) {
+  const match = (url.split("#")[1] ?? "").match(/-(\d+)$/);
+  return match ? Number(match[1]) + 1 : 0;
+}
+
 export function text(html) {
   return html
     .replace(/<[^>]*>/g, "")
@@ -654,15 +677,19 @@ export async function generate({
               `rustdoc HTML ${name}@${version}: HTTP ${all.status}`,
             );
           if (symbols?.length) {
-            const data = `/reference/rust/${pkg.id}/${version}.json`;
+            const data = `reference/rust/${pkg.id}/${version}.json`;
             const path = join(outputDir, pkg.id, `${version}.json`);
             await mkdir(dirname(path), { recursive: true });
-            symbols.sort(
+            const unique = dedupeSymbols(symbols);
+            unique.sort(
               (a, b) =>
                 a.name.localeCompare(b.name, "en") ||
                 a.kind.localeCompare(b.kind, "en"),
             );
-            await writeFile(path, JSON.stringify({ symbols, source }) + "\n");
+            await writeFile(
+              path,
+              JSON.stringify({ symbols: unique, source }) + "\n",
+            );
             entry.data = data;
           } else {
             const failedBuild = all.body
@@ -706,7 +733,7 @@ if (
 ) {
   const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
   await generate({
-    outputDir: join(root, "public/reference/rust"),
+    outputDir: join(root, "reference/rust"),
     cacheDir: value("--cache-dir") ?? join(root, ".reference-cache/rust"),
     offline: process.argv.includes("--offline"),
     refresh: process.argv.includes("--refresh"),

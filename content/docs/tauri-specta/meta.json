@@ -4,8 +4,9 @@
   "icon": "tauriSpectaLogo",
   "root": true,
   "pages": [
-    "...",
-    "[BookOpen][API reference](/docs/reference?project=tauri-specta)",
+    "index",
+    "rust-api",
+    "typescript-api",
     "[Github][GitHub](https://github.com/specta-rs/tauri-specta)",
     "[docsRsLogo][docs.rs](https://docs.rs/tauri-specta)"
   ]

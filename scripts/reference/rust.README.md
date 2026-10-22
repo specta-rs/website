@@ -1,7 +1,7 @@
 # Rust reference snapshots
 
 Run `node scripts/reference/rust.mjs` to regenerate the committed catalog at
-`public/reference/rust.json` and per-release symbol files in `public/reference/rust/`.
+`reference/rust.json` and per-release symbol files in `reference/rust/`.
 The website consumes these files without network access at build time.
 
 The generator uses Node built-ins, with optional Python 3 for decoding docs.rs

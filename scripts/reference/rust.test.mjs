@@ -445,7 +445,7 @@ test("offline generator covers all releases, yanks, missing docs and reproducibl
     assert.match(pkg.versions[2].unavailable, /unavailable/);
     assert.equal(
       pkg.versions[1].data,
-      "/reference/rust/rust-example/1.0.0.json",
+      "reference/rust/rust-example/1.0.0.json",
     );
     const first = await readFile(
       join(outputDir, "rust-example/1.0.0.json"),
@@ -554,7 +554,7 @@ const artifact = async (crate, version) =>
   JSON.parse(
     await readFile(
       new URL(
-        `../../public/reference/rust/rust-${crate}/${version}.json`,
+        `../../reference/rust/rust-${crate}/${version}.json`,
         import.meta.url,
       ),
       "utf8",

@@ -1,3 +1,2 @@
-public/reference/** linguist-generated=true
+reference/** linguist-generated=true
 src/lib/reference-catalog.json linguist-generated=true
-src/lib/reference-index.json linguist-generated=true
