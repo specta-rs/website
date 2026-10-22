@@ -1,0 +1,84 @@
+{
+  "symbols": [
+    {
+      "name": "BaseOptions",
+      "kind": "interface",
+      "description": "Unreleased source snapshot of packages/tanstack-query at commit 30402a42a6a523e0a76d23f3b7ce80903386a98d; not a published npm version. The directory is documented as @rspc/tanstack-query, but its source package.json declares @rspc/query-core. Signatures preserve actual public source, including implementation bodies; they are not fabricated declaration output.",
+      "signature": "export interface BaseOptions<TProcedures extends rspc.ProceduresDef> {\n    rspc?: {\n        client?: rspc.Client<TProcedures>;\n    };\n}",
+      "sourceUrl": "https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/packages/tanstack-query"
+    },
+    {
+      "name": "Context",
+      "kind": "interface",
+      "description": "Unreleased source snapshot of packages/tanstack-query at commit 30402a42a6a523e0a76d23f3b7ce80903386a98d; not a published npm version. The directory is documented as @rspc/tanstack-query, but its source package.json declares @rspc/query-core. Signatures preserve actual public source, including implementation bodies; they are not fabricated declaration output.",
+      "signature": "export interface Context<TProcedures extends rspc.ProceduresDef> {\n    client: rspc.Client<TProcedures>;\n    queryClient: tanstack.QueryClient;\n}",
+      "sourceUrl": "https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/packages/tanstack-query"
+    },
+    {
+      "name": "createQueryHookHelpers",
+      "kind": "function",
+      "description": "Unreleased source snapshot of packages/tanstack-query at commit 30402a42a6a523e0a76d23f3b7ce80903386a98d; not a published npm version. The directory is documented as @rspc/tanstack-query, but its source package.json declares @rspc/query-core. Signatures preserve actual public source, including implementation bodies; they are not fabricated declaration output.",
+      "signature": "export function createQueryHookHelpers<P extends rspc.ProceduresDef>(args: {\n    useContext(): Context<P> | null;\n}) {\n    type TBaseOptions = BaseOptions<P>;\n    function useContext() {\n        const ctx = args.useContext();\n        if (!ctx)\n            throw new Error(\"rspc context provider not found!\");\n        return ctx;\n    }\n    function useClient() {\n        return useContext().client;\n    }\n    function getClient<T extends TBaseOptions>(opts?: T) {\n        return opts?.rspc?.client ?? useClient();\n    }\n    function useQueryArgs<K extends rspc.inferQueries<P>[\"key\"] & string, O extends WrapQueryOptions<P, tanstack.QueryObserverOptions<rspc.inferQueryResult<P, K>, rspc.RSPCError, rspc.inferQueryResult<P, K>, rspc.inferQueryResult<P, K>, KeyAndInputSkipToken<P, K>>>>(keyAndInput: KeyAndInputSkipToken<P, K>, opts?: O) {\n        const client = getClient(opts);\n        const [key, ...input] = keyAndInput;\n        return {\n            ...opts,\n            queryKey: keyAndInput,\n            queryFn: isSkipTokenInput(input)\n                ? (input[0] as tanstack.SkipToken)\n                : () => client.query([key, ...input]),\n        };\n    }\n    type MutationObserverOptions<K extends rspc.inferMutations<P>[\"key\"] & string> = WrapMutationOptions<P, tanstack.MutationObserverOptions<rspc.inferMutationResult<P, K>, rspc.RSPCError, rspc.inferMutationInput<P, K> extends never ? undefined : rspc.inferMutationInput<P, K>, any>>;\n    function useMutationArgs<K extends rspc.inferMutations<P>[\"key\"] & string, O extends MutationObserverOptions<K>>(key: K, opts?: O) {\n        const client = getClient(opts);\n        return {\n            ...opts,\n            mutationKey: [key],\n            mutationFn: (input) => client.mutation([key, ...(input ? [input] : [])] as any),\n        } satisfies tanstack.MutationObserverOptions<rspc.inferMutationResult<P, K>, rspc.RSPCError, rspc.inferMutationInput<P, K> extends never ? undefined : rspc.inferMutationInput<P, K>, any>;\n    }\n    function handleSubscription<K extends rspc.inferSubscriptions<P>[\"key\"] & string>(keyAndInput: KeyAndInputSkipToken<P, K, \"subscriptions\">, _opts: () => SubscriptionOptions<P, K>, _client: rspc.Client<P>) {\n        // function to allow options to be passed in via ref\n        const opts = _opts();\n        const [key, ...input] = keyAndInput;\n        if (!(opts.enabled ?? true) || isSkipTokenInput(input))\n            return;\n        const client = opts.client ?? _client;\n        let isStopped = false;\n        const unsubscribe = client.addSubscription([key, ...input], {\n            onStarted: () => {\n                if (!isStopped)\n                    opts.onStarted?.();\n            },\n            onData: (d) => {\n                if (!isStopped)\n                    opts.onData(d);\n            },\n            onError: (e) => {\n                if (!isStopped)\n                    opts.onError?.(e);\n            },\n        });\n        return () => {\n            isStopped = true;\n            unsubscribe();\n        };\n    }\n    return {\n        useContext,\n        getClient,\n        useClient,\n        useExtractOps: getClient,\n        useQueryArgs,\n        useMutationArgs,\n        handleSubscription,\n    };\n}\n\n// Referenced local context (not public exports):\nfunction isSkipTokenInput(array: any[]): array is [\n    tanstack.SkipToken\n] {\n    return array.length === 1 && array[0] === tanstack.skipToken;\n}",
+      "sourceUrl": "https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/packages/tanstack-query"
+    },
+    {
+      "name": "createRSPCQueryUtils",
+      "kind": "function",
+      "description": "Unreleased source snapshot of packages/tanstack-query at commit 30402a42a6a523e0a76d23f3b7ce80903386a98d; not a published npm version. The directory is documented as @rspc/tanstack-query, but its source package.json declares @rspc/query-core. Signatures preserve actual public source, including implementation bodies; they are not fabricated declaration output.",
+      "signature": "export function createRSPCQueryUtils<TProceduresLike extends rspc.ProceduresDef>(client: rspc.Client<rspc.inferProcedures<TProceduresLike>>, queryClient: tanstack.QueryClient) {\n    type TProcedures = rspc.inferProcedures<TProceduresLike>;\n    type TBaseOptions = BaseOptions<TProcedures>;\n    type QueryKey<K extends string, TProcedures extends rspc.ProceduresLike> = [\n        key: K,\n        ...input: rspc._inferProcedureHandlerInput<TProcedures, \"queries\", K>\n    ];\n    type AllowedKeys = TProcedures[\"queries\"][\"key\"] & string;\n    type RSPCOptions<T> = Omit<T, \"queryKey\" | \"queryFn\"> & TBaseOptions;\n    type RSPCFetchQueryOptions<K extends string, TData = rspc.inferQueryResult<TProcedures, K>> = RSPCOptions<tanstack.FetchQueryOptions<TData, rspc.RSPCError, TData, QueryKey<K, TProcedures>>>;\n    type RSPCEnsureFetchQueryOptions<K extends string, TData = rspc.inferQueryResult<TProcedures, K>> = RSPCOptions<tanstack.EnsureQueryDataOptions<TData, rspc.RSPCError, TData, QueryKey<K, TProcedures>>>;\n    return {\n        fetch: <K extends AllowedKeys>(queryKey: QueryKey<K, TProcedures>, opts?: RSPCFetchQueryOptions<K>) => queryClient.fetchQuery({\n            ...opts,\n            queryKey,\n            queryFn: () => client.query(queryKey),\n        }),\n        prefetch: <K extends AllowedKeys>(queryKey: QueryKey<K, TProcedures>, opts?: RSPCFetchQueryOptions<K>) => queryClient.prefetchQuery({\n            ...opts,\n            queryKey,\n            queryFn: () => client.query(queryKey),\n        }),\n        ensureData: <K extends AllowedKeys>(queryKey: QueryKey<K, TProcedures>, opts?: RSPCEnsureFetchQueryOptions<K>) => queryClient.ensureQueryData({\n            ...opts,\n            queryKey,\n            queryFn: () => client.query(queryKey),\n        }),\n        invalidate: <K extends AllowedKeys>(queryKey: QueryKey<K, TProcedures>, filters?: Omit<tanstack.InvalidateQueryFilters, \"queryKey\">, opts?: tanstack.InvalidateOptions) => queryClient.invalidateQueries({ ...filters, queryKey }, opts),\n        refetch: <K extends AllowedKeys>(queryKey: QueryKey<K, TProcedures>, filters?: Omit<tanstack.RefetchQueryFilters, \"queryKey\">, opts?: tanstack.RefetchOptions) => queryClient.refetchQueries({ ...filters, queryKey }, opts),\n        cancel: <K extends AllowedKeys>(queryKey: QueryKey<K, TProcedures>, filters?: Omit<tanstack.QueryFilters, \"queryKey\">, opts?: tanstack.CancelOptions) => queryClient.cancelQueries({ ...filters, queryKey }, opts),\n        setData: <K extends AllowedKeys, TData = rspc.inferQueryResult<TProcedures, K>,>(queryKey: QueryKey<K, TProcedures>, updater: tanstack.Updater<TData | undefined, TData | undefined>, options?: tanstack.SetDataOptions) => {\n            queryClient.setQueryData<TData>(queryKey, updater, options);\n        },\n        getData: <K extends AllowedKeys, TData = rspc.inferQueryResult<TProcedures, K>,>(queryKey: QueryKey<K, TProcedures>) => queryClient.getQueryData<TData>(queryKey),\n    };\n}",
+      "sourceUrl": "https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/packages/tanstack-query"
+    },
+    {
+      "name": "createTanstackQueryProxy",
+      "kind": "function",
+      "description": "Unreleased source snapshot of packages/tanstack-query at commit 30402a42a6a523e0a76d23f3b7ce80903386a98d; not a published npm version. The directory is documented as @rspc/tanstack-query, but its source package.json declares @rspc/query-core. Signatures preserve actual public source, including implementation bodies; they are not fabricated declaration output.",
+      "signature": "export function createTanstackQueryProxy<TProceduresLike extends rspc.ProceduresDef, TTanstack extends {\n    queryOptions: (options: any) => any;\n    infiniteQueryOptions: (options: any) => any;\n}>() {\n    type TProcedures = rspc.inferProcedures<TProceduresLike>;\n    return function (args: {\n        queryOptions: TTanstack[\"queryOptions\"];\n        infiniteQueryOptions: TTanstack[\"infiniteQueryOptions\"];\n    }) {\n        return {\n        // queryOptions: args.queryOptions,\n        // mutationOptions: ():  => {},\n        };\n    };\n}",
+      "sourceUrl": "https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/packages/tanstack-query"
+    },
+    {
+      "name": "HookOptions",
+      "kind": "type",
+      "description": "Unreleased source snapshot of packages/tanstack-query at commit 30402a42a6a523e0a76d23f3b7ce80903386a98d; not a published npm version. The directory is documented as @rspc/tanstack-query, but its source package.json declares @rspc/query-core. Signatures preserve actual public source, including implementation bodies; they are not fabricated declaration output.",
+      "signature": "export type HookOptions<P extends rspc.ProceduresDef, T> = T & BaseOptions<P>;",
+      "sourceUrl": "https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/packages/tanstack-query"
+    },
+    {
+      "name": "KeyAndInputSkipToken",
+      "kind": "type",
+      "description": "Unreleased source snapshot of packages/tanstack-query at commit 30402a42a6a523e0a76d23f3b7ce80903386a98d; not a published npm version. The directory is documented as @rspc/tanstack-query, but its source package.json declares @rspc/query-core. Signatures preserve actual public source, including implementation bodies; they are not fabricated declaration output.",
+      "signature": "export type KeyAndInputSkipToken<P extends rspc.ProceduresDef, K extends rspc.inferQueries<P>[\"key\"] & string, O extends keyof rspc.ProceduresDef = \"queries\"> = [\n    key: K,\n    ...input: rspc._inferProcedureHandlerInput<P, O, K> | [\n        tanstack.SkipToken\n    ]\n];",
+      "sourceUrl": "https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/packages/tanstack-query"
+    },
+    {
+      "name": "SubscriptionOptions",
+      "kind": "interface",
+      "description": "Unreleased source snapshot of packages/tanstack-query at commit 30402a42a6a523e0a76d23f3b7ce80903386a98d; not a published npm version. The directory is documented as @rspc/tanstack-query, but its source package.json declares @rspc/query-core. Signatures preserve actual public source, including implementation bodies; they are not fabricated declaration output.",
+      "signature": "export interface SubscriptionOptions<P extends rspc.ProceduresDef, K extends rspc.inferSubscriptions<P>[\"key\"] & string> extends rspc.SubscriptionOptions<rspc.inferSubscriptionResult<P, K>> {\n    enabled?: boolean;\n    client?: rspc.Client<P>;\n}",
+      "sourceUrl": "https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/packages/tanstack-query"
+    },
+    {
+      "name": "WrapMutationOptions",
+      "kind": "type",
+      "description": "Unreleased source snapshot of packages/tanstack-query at commit 30402a42a6a523e0a76d23f3b7ce80903386a98d; not a published npm version. The directory is documented as @rspc/tanstack-query, but its source package.json declares @rspc/query-core. Signatures preserve actual public source, including implementation bodies; they are not fabricated declaration output.",
+      "signature": "export type WrapMutationOptions<P extends rspc.ProceduresDef, T> = Omit<T, \"_defaulted\" | \"variables\" | \"mutationKey\"> & BaseOptions<P>;",
+      "sourceUrl": "https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/packages/tanstack-query"
+    },
+    {
+      "name": "WrapQueryOptions",
+      "kind": "type",
+      "description": "Unreleased source snapshot of packages/tanstack-query at commit 30402a42a6a523e0a76d23f3b7ce80903386a98d; not a published npm version. The directory is documented as @rspc/tanstack-query, but its source package.json declares @rspc/query-core. Signatures preserve actual public source, including implementation bodies; they are not fabricated declaration output.",
+      "signature": "export type WrapQueryOptions<P extends rspc.ProceduresDef, T> = Omit<T, \"queryKey\" | \"queryFn\"> & BaseOptions<P>;",
+      "sourceUrl": "https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/packages/tanstack-query"
+    }
+  ],
+  "description": "Unreleased source snapshot of packages/tanstack-query at commit 30402a42a6a523e0a76d23f3b7ce80903386a98d; not a published npm version. The directory is documented as @rspc/tanstack-query, but its source package.json declares @rspc/query-core. Signatures preserve actual public source, including implementation bodies; they are not fabricated declaration output.",
+  "published": false,
+  "sourceCommit": "30402a42a6a523e0a76d23f3b7ce80903386a98d",
+  "sourceRepository": "https://github.com/specta-rs/rspc",
+  "sourceUrl": "https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/packages/tanstack-query",
+  "sourcePackageDirectory": "packages/tanstack-query",
+  "sourceManifestName": "@rspc/query-core",
+  "sourceEntrypoints": {
+    ".": "packages/tanstack-query/src/index.ts"
+  }
+}

@@ -1,0 +1,627 @@
+{
+  "symbols": [
+    {
+      "name": "_inferInfiniteQueryProcedureHandlerInput",
+      "kind": "type",
+      "description": "",
+      "signature": "type _inferInfiniteQueryProcedureHandlerInput<TProcedures extends ProceduresLike, K extends inferInfiniteQueries<TProcedures>[\"key\"]> = inferInfiniteQueryInput<TProcedures, K> extends null ? [\n] : [\n    inferInfiniteQueryInput<TProcedures, K>\n];",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "_inferProcedureHandlerInput",
+      "kind": "type",
+      "description": "",
+      "signature": "type _inferProcedureHandlerInput<TProcedures extends ProceduresLike, TOperation extends keyof ProceduresDef, K extends inferProcedures<TProcedures>[TOperation][\"key\"]> = inferProcedure<TProcedures, TOperation, K>[\"input\"] extends null ? [\n] : [\n    inferProcedure<TProcedures, TOperation, K>[\"input\"]\n];",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "CancelFn",
+      "kind": "type",
+      "description": "@internal ",
+      "signature": "/**\n * @internal\n */\ntype CancelFn = () => void;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "Client",
+      "kind": "type",
+      "description": "",
+      "signature": "type Client<TBaseProceduresLike extends ProceduresLike, TQueries extends ProcedureDef = inferProcedures<TBaseProceduresLike>[\"queries\"], TMutations extends ProcedureDef = inferProcedures<TBaseProceduresLike>[\"mutations\"], TSubscriptions extends ProcedureDef = inferProcedures<TBaseProceduresLike>[\"subscriptions\"]> = ReturnType<typeof createClient<TBaseProceduresLike, TQueries, TMutations, TSubscriptions>>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "ClientArgs",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface ClientArgs {\n    /**\n     * Data transformer\n     * @link https://trpc.io/docs/data-transformers\n     **/\n    transformer?: ClientDataTransformerOptions;\n    /**\n     * TODO\n     * @link https://rspc.dev/todo\n     **/\n    links: TRPCLink<any>[];\n    /**\n     * TODO\n     * @link https://rspc.dev/todo\n     **/\n    onError?: OnErrorFunction;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "ClientDataTransformerOptions",
+      "kind": "type",
+      "description": "@public ",
+      "signature": "/**\n * @public\n */\ntype ClientDataTransformerOptions = DataTransformer | CombinedDataTransformerClient;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "CombinedDataTransformer",
+      "kind": "type",
+      "description": "@public ",
+      "signature": "/**\n * @public\n */\ntype CombinedDataTransformer = {\n    input: DataTransformer;\n    output: DataTransformer;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "CombinedDataTransformerClient",
+      "kind": "type",
+      "description": "@public ",
+      "signature": "/**\n * @public\n */\ntype CombinedDataTransformerClient = {\n    input: Pick<DataTransformer, \"serialize\">;\n    output: Pick<DataTransformer, \"deserialize\">;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "createClient",
+      "kind": "function",
+      "description": "@deprecated It is recommended you use `hooks.createClient` where `const hooks = createSolidQueryHooks<Procedures>();` instead if your using hooks or `createVanillaClient` if you're not.",
+      "signature": "/**\n * @deprecated It is recommended you use `hooks.createClient` where `const hooks = createSolidQueryHooks<Procedures>();` instead if your using hooks or `createVanillaClient` if you're not.\n */\ndeclare function createClient<TBaseProceduresLike extends ProceduresLike, TQueries extends ProcedureDef = inferProcedures<TBaseProceduresLike>[\"queries\"], TMutations extends ProcedureDef = inferProcedures<TBaseProceduresLike>[\"mutations\"], TSubscriptions extends ProcedureDef = inferProcedures<TBaseProceduresLike>[\"subscriptions\"]>(opts: ClientArgs): {\n    _rspc_def: {\n        queries: TQueries;\n        mutations: TMutations;\n        subscriptions: TSubscriptions;\n    };\n    query: <K extends TQueries[\"key\"] & string>(keyAndInput: [\n        key: K,\n        ...input: Extract<TQueries, {\n            key: K;\n        }>[\"input\"] extends null ? [\n        ] : [\n            Extract<TQueries, {\n                key: K;\n            }>[\"input\"]\n        ]\n    ], opts?: TRPCRequestOptions) => Promise<Extract<TQueries, {\n        key: K;\n    }>[\"result\"]>;\n    mutation: <K_1 extends TMutations[\"key\"] & string>(keyAndInput: [\n        key: K_1,\n        ...input: Extract<TMutations, {\n            key: K_1;\n        }>[\"input\"] extends null ? [\n        ] : [\n            Extract<TMutations, {\n                key: K_1;\n            }>[\"input\"]\n        ]\n    ], opts?: TRPCRequestOptions) => Promise<Extract<TMutations, {\n        key: K_1;\n    }>[\"result\"]>;\n    subscription: <K_2 extends TSubscriptions[\"key\"] & string>(keyAndInput: [\n        key: K_2,\n        ...input: Extract<TSubscriptions, {\n            key: K_2;\n        }>[\"input\"] extends null ? [\n        ] : [\n            Extract<TSubscriptions, {\n                key: K_2;\n            }>[\"input\"]\n        ]\n    ], opts: TRPCRequestOptions & Partial<TRPCSubscriptionObserver<Extract<TSubscriptions, {\n        key: K_2;\n    }>[\"result\"], RSPCError>>) => Unsubscribable;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "createVanillaClient",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function createVanillaClient<TBaseProceduresLike extends ProceduresLike, TQueries extends ProcedureDef = inferProcedures<TBaseProceduresLike>[\"queries\"], TMutations extends ProcedureDef = inferProcedures<TBaseProceduresLike>[\"mutations\"], TSubscriptions extends ProcedureDef = inferProcedures<TBaseProceduresLike>[\"subscriptions\"]>(opts: ClientArgs): {\n    _rspc_def: {\n        queries: TQueries;\n        mutations: TMutations;\n        subscriptions: TSubscriptions;\n    };\n    query: <K extends TQueries[\"key\"] & string>(keyAndInput: [\n        key: K,\n        ...input: Extract<TQueries, {\n            key: K;\n        }>[\"input\"] extends null ? [\n        ] : [\n            Extract<TQueries, {\n                key: K;\n            }>[\"input\"]\n        ]\n    ], opts?: TRPCRequestOptions | undefined) => Promise<Extract<TQueries, {\n        key: K;\n    }>[\"result\"]>;\n    mutation: <K_1 extends TMutations[\"key\"] & string>(keyAndInput: [\n        key: K_1,\n        ...input: Extract<TMutations, {\n            key: K_1;\n        }>[\"input\"] extends null ? [\n        ] : [\n            Extract<TMutations, {\n                key: K_1;\n            }>[\"input\"]\n        ]\n    ], opts?: TRPCRequestOptions | undefined) => Promise<Extract<TMutations, {\n        key: K_1;\n    }>[\"result\"]>;\n    subscription: <K_2 extends TSubscriptions[\"key\"] & string>(keyAndInput: [\n        key: K_2,\n        ...input: Extract<TSubscriptions, {\n            key: K_2;\n        }>[\"input\"] extends null ? [\n        ] : [\n            Extract<TSubscriptions, {\n                key: K_2;\n            }>[\"input\"]\n        ]\n    ], opts: TRPCRequestOptions & Partial<TRPCSubscriptionObserver<Extract<TSubscriptions, {\n        key: K_2;\n    }>[\"result\"], RSPCError>>) => Unsubscribable;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "createWSClient",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function createWSClient(opts: WebSocketClientOptions): {\n    close: () => void;\n    request: (op: Operation, callbacks: TCallbacks) => UnsubscribeFn;\n    getConnection(): WebSocket;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "CustomHooks",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface CustomHooks {\n    mapQueryKey?(keyAndInput: [\n        string\n    ] | [\n        string,\n        any\n    ]): [\n        string\n    ] | [\n        string,\n        any\n    ];\n    doQuery?(keyAndInput: [\n        string\n    ] | [\n        string,\n        any\n    ], next: (keyAndInput: [\n        string\n    ] | [\n        string,\n        any\n    ]) => Promise<any>): Promise<any>;\n    doMutation?(keyAndInput: [\n        string\n    ] | [\n        string,\n        any\n    ], next: (keyAndInput: [\n        string\n    ] | [\n        string,\n        any\n    ]) => Promise<any>): Promise<any>;\n    dangerous?: {\n        useQuery?(keyAndInput: [\n            string\n        ] | [\n            string,\n            any\n        ], handler: () => Promise<any>, opts?: any): any;\n        useMutation?(handler: (input: any) => Promise<any>, opts?: any): any;\n    };\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "DataTransformer",
+      "kind": "type",
+      "description": "@public ",
+      "signature": "/**\n * @public\n */\ntype DataTransformer = {\n    serialize(object: any): any;\n    deserialize(object: any): any;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "DataTransformerOptions",
+      "kind": "type",
+      "description": "@public ",
+      "signature": "/**\n * @public\n */\ntype DataTransformerOptions = DataTransformer | CombinedDataTransformer;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "getCauseFromUnknown",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function getCauseFromUnknown(cause: unknown): Error | undefined;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "getErrorFromUnknown",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function getErrorFromUnknown(cause: unknown): Error;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "getMessageFromUnkownError",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function getMessageFromUnkownError(err: unknown, fallback: string): string;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "getTRPCErrorFromUnknown",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function getTRPCErrorFromUnknown(cause: unknown): RSPCError;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "HookCreateFunction",
+      "kind": "type",
+      "description": "TODO\n@internal ",
+      "signature": "/**\n * TODO\n *\n * @internal\n */\ntype HookCreateFunction<TContext, TBaseProcedures extends ProceduresDef = never, TQueries extends ProcedureDef = TBaseProcedures[\"queries\"], TMutations extends ProcedureDef = TBaseProcedures[\"mutations\"], TSubscriptions extends ProcedureDef = TBaseProcedures[\"subscriptions\"]> = (hookOpts?: HookOptions) => Hooks<TContext, TBaseProcedures, TQueries, TMutations, TSubscriptions>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "HookOptions",
+      "kind": "type",
+      "description": "TODO\n@internal ",
+      "signature": "/**\n * TODO\n *\n * @internal\n */\ntype HookOptions = {\n    /**\n     * TODO\n     *\n     * @internal\n     */\n    internal?: {\n        /**\n         * WARNING: Using these hooks to modify data may result in incorrect types.\n         */\n        customHooks?: () => CustomHooks;\n    };\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "Hooks",
+      "kind": "type",
+      "description": "TODO\n@internal ",
+      "signature": "/**\n * TODO\n *\n * @internal\n */\ntype Hooks<TContext, TBaseProcedures extends ProceduresDef = never, TQueries extends ProcedureDef = TBaseProcedures[\"queries\"], TMutations extends ProcedureDef = TBaseProcedures[\"mutations\"], TSubscriptions extends ProcedureDef = TBaseProcedures[\"subscriptions\"]> = {\n    createClient(opts: ClientArgs): Client<TBaseProcedures, TQueries, TMutations, TSubscriptions>;\n    useContext(): TContext;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "httpBatchLink",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function httpBatchLink<TProcedures extends ProceduresDef>(opts: HttpBatchLinkOptions): TRPCLink<TProcedures>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "HttpBatchLinkOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface HttpBatchLinkOptions extends HTTPLinkOptions {\n    maxURLLength?: number;\n}\n\n// Referenced local context (not public exports):\ninterface HTTPLinkOptions {\n    url: string;\n    /**\n     * Add ponyfill for fetch\n     */\n    fetch?: typeof fetch;\n    /**\n     * Add ponyfill for AbortController\n     */\n    AbortController?: typeof AbortController | null;\n    /**\n     * Headers to be set on outgoing requests or a callback that of said headers\n     * @link http://trpc.io/docs/v10/header\n     */\n    headers?: HTTPHeaders | (() => HTTPHeaders | Promise<HTTPHeaders>);\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "HTTPHeaders",
+      "kind": "type",
+      "description": "@internal ",
+      "signature": "/**\n * @internal\n */\ntype HTTPHeaders = Record<string, string | string[] | undefined>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "httpLink",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function httpLink<TProcedures extends ProcedureDef>(opts: HTTPLinkOptions): TRPCLink<TProcedures>;\n\n// Referenced local context (not public exports):\ninterface HTTPLinkOptions {\n    url: string;\n    /**\n     * Add ponyfill for fetch\n     */\n    fetch?: typeof fetch;\n    /**\n     * Add ponyfill for AbortController\n     */\n    AbortController?: typeof AbortController | null;\n    /**\n     * Headers to be set on outgoing requests or a callback that of said headers\n     * @link http://trpc.io/docs/v10/header\n     */\n    headers?: HTTPHeaders | (() => HTTPHeaders | Promise<HTTPHeaders>);\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferInfiniteQueries",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferInfiniteQueries<TProcedures extends ProceduresLike> = Exclude<Extract<inferProcedures<TProcedures>[\"queries\"], {\n    input: {\n        cursor: any;\n    };\n}>, {\n    input: never;\n}>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferInfiniteQuery",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferInfiniteQuery<TProcedures extends ProceduresLike, K extends inferInfiniteQueries<TProcedures>[\"key\"]> = Extract<inferInfiniteQueries<TProcedures>, {\n    key: K;\n}>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferInfiniteQueryInput",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferInfiniteQueryInput<TProcedures extends ProceduresLike, K extends inferInfiniteQueries<TProcedures>[\"key\"]> = EmptyObjToNever<Omit<inferInfiniteQuery<TProcedures, K>[\"input\"], \"cursor\">>;\n\n// Referenced local context (not public exports):\ntype EmptyObjToNever<T> = keyof T extends never ? never : T;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferInfiniteQueryResult",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferInfiniteQueryResult<TProcedures extends ProceduresLike, K extends inferInfiniteQueries<TProcedures>[\"key\"]> = inferInfiniteQuery<TProcedures, K>[\"result\"];",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferMutationInput",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferMutationInput<TProcedures extends ProceduresLike, T extends inferProcedures<TProcedures>[\"mutations\"][\"key\"][0]> = inferProcedureInput<inferProcedures<TProcedures>, \"mutations\", T>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferMutationResult",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferMutationResult<TProcedures extends ProceduresLike, T extends inferProcedures<TProcedures>[\"mutations\"][\"key\"][0]> = inferProcedureResult<inferProcedures<TProcedures>, \"mutations\", T>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferObservableValue",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferObservableValue<TObservable> = TObservable extends Observable<infer TValue, unknown> ? TValue : never;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferProcedure",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferProcedure<TProcedures extends ProceduresLike, TOperation extends keyof ProceduresDef, K extends inferProcedureKey<TProcedures, TOperation>> = Extract<inferProcedures<TProcedures>[TOperation], {\n    key: K;\n}>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferProcedureInput",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferProcedureInput<TProcedures extends ProceduresLike, TOperation extends keyof ProceduresDef, K extends inferProcedureKey<TProcedures, TOperation>> = inferProcedure<TProcedures, TOperation, K>[\"input\"];",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferProcedureKey",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferProcedureKey<TProcedures extends ProceduresLike, TOperation extends keyof ProceduresDef> = inferProcedures<TProcedures>[TOperation][\"key\"];",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferProcedureResult",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferProcedureResult<TProcedures extends ProceduresLike, TOperation extends keyof ProceduresDef, K extends inferProcedureKey<TProcedures, TOperation>> = inferProcedure<TProcedures, TOperation, K>[\"result\"];",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferProcedures",
+      "kind": "type",
+      "description": "This is a helper method to infer the type of bindings for this router off other rspc types.\nThe inferred type is what is generated by Rust.\n@example const rspc = createReactQueryHooks<Operations>();\ntype Bindings = inferBindingsType<typeof rspc>",
+      "signature": "/**\n * This is a helper method to infer the type of bindings for this router off other rspc types.\n * The inferred type is what is generated by Rust.\n * @example\n * const rspc = createReactQueryHooks<Operations>();\n * type Bindings = inferBindingsType<typeof rspc>\n */\ntype inferProcedures<TProcedures extends ProceduresLike> = TProcedures extends {\n    _rspc_def: ProceduresDef;\n} ? TProcedures[\"_rspc_def\"] : TProcedures;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferQueryInput",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferQueryInput<TProcedures extends ProceduresLike, T extends inferProcedures<TProcedures>[\"queries\"][\"key\"][0]> = inferProcedureInput<inferProcedures<TProcedures>, \"queries\", T>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferQueryResult",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferQueryResult<TProcedures extends ProceduresLike, T extends inferProcedures<TProcedures>[\"queries\"][\"key\"][0]> = inferProcedureResult<inferProcedures<TProcedures>, \"queries\", T>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferSubscriptionInput",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferSubscriptionInput<TProcedures extends ProceduresLike, T extends inferProcedures<TProcedures>[\"subscriptions\"][\"key\"][0]> = inferProcedureInput<inferProcedures<TProcedures>, \"subscriptions\", T>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "inferSubscriptionResult",
+      "kind": "type",
+      "description": "",
+      "signature": "type inferSubscriptionResult<TProcedures extends ProceduresLike, T extends inferProcedures<TProcedures>[\"subscriptions\"][\"key\"][0]> = inferProcedureResult<inferProcedures<TProcedures>, \"subscriptions\", T>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "isObservable",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function isObservable(x: unknown): x is Observable<unknown, unknown>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "loggerLink",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function loggerLink<TProcedures extends ProceduresDef = ProceduresDef>(opts?: LoggerLinkOptions<TProcedures>): TRPCLink<TProcedures>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "LoggerLinkOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface LoggerLinkOptions<TProcedures extends ProceduresDef> {\n    logger?: LoggerLinkFn<TProcedures>;\n    enabled?: EnabledFn<TProcedures>;\n    /**\n     * Used in the built-in defaultLogger\n     */\n    console?: ConsoleEsque;\n}\n\n// Referenced local context (not public exports):\ntype LoggerLinkFn<TProcedures extends ProceduresDef> = (opts: LoggerLinkFnOptions<TProcedures>) => void;\n\ntype EnabledFn<TProcedures extends ProceduresDef> = (opts: EnableFnOptions<TProcedures>) => boolean;\n\ntype ConsoleEsque = {\n    log: (...args: any[]) => void;\n    error: (...args: any[]) => void;\n};\n\ntype LoggerLinkFnOptions<TProcedures extends ProceduresDef> = Operation & ({\n    /**\n     * Request was just initialized\n     */\n    direction: \"up\";\n} | {\n    /**\n     * Request result\n     */\n    direction: \"down\";\n    result: OperationResultEnvelope<unknown> | RSPCError;\n    elapsedMs: number;\n});\n\ntype EnableFnOptions<TProcedures extends ProceduresDef> = (Operation & {\n    direction: \"up\";\n}) | {\n    direction: \"down\";\n    result: OperationResultEnvelope<unknown> | RSPCError;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "map",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function map<TValueBefore, TError, TValueAfter>(project: (value: TValueBefore, index: number) => TValueAfter): OperatorFunction<TValueBefore, TError, TValueAfter, TError>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "MonoTypeOperatorFunction",
+      "kind": "type",
+      "description": "",
+      "signature": "type MonoTypeOperatorFunction<TValue, TError> = OperatorFunction<TValue, TError, TValue, TError>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "observable",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function observable<TValue, TError = unknown>(subscribe: (observer: Observer<TValue, TError>) => TeardownLogic): Observable<TValue, TError>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "Observable",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface Observable<TValue, TError> extends Subscribable<TValue, TError> {\n    pipe(): Observable<TValue, TError>;\n    pipe<TValue1, TError1>(op1: OperatorFunction<TValue, TError, TValue1, TError1>): Observable<TValue1, TError1>;\n    pipe<TValue1, TError1, TValue2, TError2>(op1: OperatorFunction<TValue, TError, TValue1, TError1>, op2: OperatorFunction<TValue1, TError1, TValue2, TError2>): Observable<TValue2, TError2>;\n    pipe<TValue1, TError1, TValue2, TError2, TValue3, TError3>(op1: OperatorFunction<TValue, TError, TValue1, TError1>, op2: OperatorFunction<TValue1, TError1, TValue2, TError2>, op3: OperatorFunction<TValue2, TError2, TValue3, TError3>): Observable<TValue2, TError2>;\n    pipe<TValue1, TError1, TValue2, TError2, TValue3, TError3, TValue4, TError4>(op1: OperatorFunction<TValue, TError, TValue1, TError1>, op2: OperatorFunction<TValue1, TError1, TValue2, TError2>, op3: OperatorFunction<TValue2, TError2, TValue3, TError3>, op4: OperatorFunction<TValue3, TError3, TValue4, TError4>): Observable<TValue2, TError2>;\n    pipe<TValue1, TError1, TValue2, TError2, TValue3, TError3, TValue4, TError4, TValue5, TError5>(op1: OperatorFunction<TValue, TError, TValue1, TError1>, op2: OperatorFunction<TValue1, TError1, TValue2, TError2>, op3: OperatorFunction<TValue2, TError2, TValue3, TError3>, op4: OperatorFunction<TValue3, TError3, TValue4, TError4>, op5: OperatorFunction<TValue4, TError4, TValue5, TError5>): Observable<TValue2, TError2>;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "observableToPromise",
+      "kind": "function",
+      "description": "@internal ",
+      "signature": "/** @internal */\ndeclare function observableToPromise<TValue>(observable: Observable<TValue, unknown>): {\n    promise: Promise<TValue>;\n    abort: () => void;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "Observer",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface Observer<TValue, TError> {\n    next: (value: TValue) => void;\n    error: (err: TError) => void;\n    complete: () => void;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "OnErrorFunction",
+      "kind": "type",
+      "description": "",
+      "signature": "type OnErrorFunction = (opts: {\n    error: RSPCError;\n    type: string;\n    path: string | undefined;\n    input: unknown;\n    ctx: undefined | any;\n}) => void;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "Operation",
+      "kind": "type",
+      "description": "@internal ",
+      "signature": "/**\n * @internal\n */\ntype Operation<TInput = unknown> = {\n    id: number;\n    type: \"query\" | \"mutation\" | \"subscription\";\n    input: TInput;\n    path: string;\n    context: OperationContext;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "OperationContext",
+      "kind": "type",
+      "description": "@internal ",
+      "signature": "/**\n * @internal\n */\ntype OperationContext = Record<string, unknown>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "OperationLink",
+      "kind": "type",
+      "description": "@internal ",
+      "signature": "/**\n * @internal\n */\ntype OperationLink<TRouter extends AnyRouter, TInput = unknown, TOutput = unknown> = (opts: {\n    op: Operation<TInput>;\n    next: (op: Operation<TInput>) => OperationResultObservable<TRouter, TOutput>;\n}) => OperationResultObservable<TRouter, TOutput>;\n\n// Referenced local context (not public exports):\ntype AnyRouter = any;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "OperationResultEnvelope",
+      "kind": "interface",
+      "description": "@internal ",
+      "signature": "/**\n * @internal\n */\ninterface OperationResultEnvelope<TOutput> {\n    result: TRPCSuccessResponse<TOutput>[\"result\"] | TRPCResultMessage<TOutput>[\"result\"];\n    context?: OperationContext;\n}\n\n// Referenced local context (not public exports):\ntype TRPCSuccessResponse<T> = any;\n\ntype TRPCResultMessage<T> = any;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "OperationResultObservable",
+      "kind": "type",
+      "description": "@internal ",
+      "signature": "/**\n * @internal\n */\ntype OperationResultObservable<TRouter extends AnyRouter, TOutput> = Observable<OperationResultEnvelope<TOutput>, RSPCError>;\n\n// Referenced local context (not public exports):\ntype AnyRouter = any;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "OperationResultObserver",
+      "kind": "type",
+      "description": "@internal ",
+      "signature": "/**\n * @internal\n */\ntype OperationResultObserver<TRouter extends AnyRouter, TOutput> = Observer<OperationResultEnvelope<TOutput>, RSPCError>;\n\n// Referenced local context (not public exports):\ntype AnyRouter = any;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "OperationType",
+      "kind": "type",
+      "description": "",
+      "signature": "type OperationType = \"query\" | \"mutation\" | \"subscription\" | \"subscriptionStop\";",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "OperatorFunction",
+      "kind": "type",
+      "description": "",
+      "signature": "type OperatorFunction<TValueBefore, TErrorBefore, TValueAfter, TErrorAfter> = UnaryFunction<Subscribable<TValueBefore, TErrorBefore>, Subscribable<TValueAfter, TErrorAfter>>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "ProcedureDef",
+      "kind": "type",
+      "description": "",
+      "signature": "type ProcedureDef = {\n    key: string;\n    input: any;\n    result: any;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "ProceduresDef",
+      "kind": "type",
+      "description": "This type represents the Typescript bindings which are generated from the router by Rust.\n@internal ",
+      "signature": "/**\n * This type represents the Typescript bindings which are generated from the router by Rust.\n *\n * @internal\n */\ntype ProceduresDef = {\n    queries: ProcedureDef;\n    mutations: ProcedureDef;\n    subscriptions: ProcedureDef;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "ProceduresLike",
+      "kind": "type",
+      "description": "A type which allows inferring the type of the bindings",
+      "signature": "/**\n * A type which allows inferring the type of the bindings\n */\ntype ProceduresLike = {\n    _rspc_def: ProceduresDef;\n} | ProceduresDef;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "ProcedureType",
+      "kind": "type",
+      "description": "",
+      "signature": "type ProcedureType = any;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "PromiseAndCancel",
+      "kind": "type",
+      "description": "@internal ",
+      "signature": "/**\n * @internal\n */\ntype PromiseAndCancel<TValue> = {\n    promise: Promise<TValue>;\n    cancel: CancelFn;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "retryDelay",
+      "kind": "variable",
+      "description": "",
+      "signature": "retryDelay: (attemptIndex: number) => number",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "RSPCError",
+      "kind": "class",
+      "description": "",
+      "signature": "declare class RSPCError extends Error {\n    readonly cause: Error | undefined;\n    readonly shape: any;\n    readonly data: any;\n    readonly meta: Record<string, unknown> | undefined;\n    readonly code: number;\n    constructor(message: string, opts?: {\n        result?: any;\n        cause?: Error;\n        meta?: Record<string, unknown>;\n    });\n    static from(cause: Error, // TODO:  | TRPCErrorResponse<any>,\n    opts?: {\n        meta?: Record<string, unknown>;\n    }): RSPCError;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "share",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function share<TValue, TError>(_opts?: ShareConfig): MonoTypeOperatorFunction<TValue, TError>;\n\n// Referenced local context (not public exports):\ninterface ShareConfig {\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "splitLink",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function splitLink<TProcedures extends ProceduresDef = ProceduresDef>(opts: {\n    condition: (op: Operation) => boolean;\n    /**\n     * The link to execute next if the test function returns `true`.\n     */\n    true: TRPCLink<TProcedures> | TRPCLink<TProcedures>[];\n    /**\n     * The link to execute next if the test function returns `false`.\n     */\n    false: TRPCLink<TProcedures> | TRPCLink<TProcedures>[];\n}): TRPCLink<TProcedures>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "Subscribable",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface Subscribable<TValue, TError> {\n    subscribe(observer: Partial<Observer<TValue, TError>>): Unsubscribable;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "SubscriptionLike",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface SubscriptionLike extends Unsubscribable {\n    unsubscribe(): void;\n    readonly closed: boolean;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "tap",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function tap<TValue, TError>(observer: Partial<Observer<TValue, TError>>): MonoTypeOperatorFunction<TValue, TError>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "TCallbacks",
+      "kind": "type",
+      "description": "",
+      "signature": "type TCallbacks = WSCallbackObserver<ProceduresDef, unknown>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "TeardownLogic",
+      "kind": "type",
+      "description": "",
+      "signature": "type TeardownLogic = Unsubscribable | UnsubscribeFn | void;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "TRPCClientOutgoingMessage",
+      "kind": "type",
+      "description": "",
+      "signature": "type TRPCClientOutgoingMessage = any;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "TRPCClientRuntime",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface TRPCClientRuntime {\n    transformer: DataTransformer$1;\n    onError?: OnErrorFunction;\n}\n\n// Referenced local context (not public exports):\ntype DataTransformer$1 = any;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "TRPCFetch",
+      "kind": "type",
+      "description": "The default `fetch` implementation has an overloaded signature. By convention this library\nonly uses the overload taking a string and options object.",
+      "signature": "/**\n * The default `fetch` implementation has an overloaded signature. By convention this library\n * only uses the overload taking a string and options object.\n */\ntype TRPCFetch = (url: string, options?: RequestInit) => Promise<Response>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "TRPCLink",
+      "kind": "type",
+      "description": "@public ",
+      "signature": "/**\n * @public\n */\ntype TRPCLink<TRouter extends AnyRouter> = (opts: TRPCClientRuntime) => OperationLink<TRouter>;\n\n// Referenced local context (not public exports):\ntype AnyRouter = any;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "TRPCRequestMessage",
+      "kind": "type",
+      "description": "",
+      "signature": "type TRPCRequestMessage = any;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "TRPCRequestOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface TRPCRequestOptions {\n    /**\n     * Pass additional context to links\n     */\n    context?: OperationContext;\n    signal?: AbortSignal;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "TRPCResponseMessage",
+      "kind": "type",
+      "description": "",
+      "signature": "type TRPCResponseMessage<A = unknown, B = unknown> = any;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "TRPCSubscriptionObserver",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface TRPCSubscriptionObserver<TValue, TError> {\n    onStarted: () => void;\n    onData: (value: TValue) => void;\n    onError: (err: TError) => void;\n    onStopped: () => void;\n    onComplete: () => void;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "TRPCWebSocketClient",
+      "kind": "type",
+      "description": "",
+      "signature": "type TRPCWebSocketClient = {\n    close(): void;\n    request(op: Operation, callbacks: TCallbacks): UnsubscribeFn;\n};",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "UnaryFunction",
+      "kind": "type",
+      "description": "",
+      "signature": "type UnaryFunction<TSource, TReturn> = (source: TSource) => TReturn;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "Unsubscribable",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface Unsubscribable {\n    unsubscribe(): void;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "UnsubscribeFn",
+      "kind": "type",
+      "description": "",
+      "signature": "type UnsubscribeFn = () => void;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "WebSocketClientOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface WebSocketClientOptions {\n    url: string;\n    WebSocket?: typeof WebSocket;\n    retryDelayMs?: typeof retryDelay;\n    onOpen?: () => void;\n    onClose?: (cause?: {\n        code?: number;\n    }) => void;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "WebSocketLinkOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface WebSocketLinkOptions {\n    client: TRPCWebSocketClient;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "WSCallbackObserver",
+      "kind": "type",
+      "description": "",
+      "signature": "type WSCallbackObserver<TProcedures extends ProceduresDef, TOutput> = Observer<WSCallbackResult<TProcedures, TOutput>, RSPCError>;\n\n// Referenced local context (not public exports):\ntype WSCallbackResult<TProcedures extends ProceduresDef, TOutput> = TRPCResponseMessage<TOutput, inferRouterError<TProcedures>>;\n\ntype inferRouterError<A> = any;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "wsLink",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function wsLink<TProcedures extends ProceduresDef>(opts: WebSocketLinkOptions): TRPCLink<TProcedures>;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a"
+    }
+  ]
+}

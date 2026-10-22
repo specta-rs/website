@@ -1,0 +1,1023 @@
+{
+  "packages": [
+    {
+      "id": "ts-rspc-client",
+      "name": "@rspc/client",
+      "project": "rspc",
+      "language": "typescript",
+      "defaultVersion": "0.3.1",
+      "versions": [
+        {
+          "version": "0.3.1",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.3.1",
+          "data": "reference/typescript/ts-rspc-client/0.3.1.json"
+        },
+        {
+          "version": "0.3.0",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.3.0",
+          "data": "reference/typescript/ts-rspc-client/0.3.0.json"
+        },
+        {
+          "version": "0.2.4",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.2.4",
+          "data": "reference/typescript/ts-rspc-client/0.2.4.json"
+        },
+        {
+          "version": "0.2.3",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.2.3",
+          "data": "reference/typescript/ts-rspc-client/0.2.3.json"
+        },
+        {
+          "version": "0.2.2",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.2.2",
+          "data": "reference/typescript/ts-rspc-client/0.2.2.json"
+        },
+        {
+          "version": "0.2.1",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.2.1",
+          "data": "reference/typescript/ts-rspc-client/0.2.1.json"
+        },
+        {
+          "version": "0.2.0",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.2.0",
+          "data": "reference/typescript/ts-rspc-client/0.2.0.json"
+        },
+        {
+          "version": "0.0.0-main-b8b35d28",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-b8b35d28",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-b8b35d28.json"
+        },
+        {
+          "version": "0.0.0-main-45466c86",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-45466c86",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-45466c86.json"
+        },
+        {
+          "version": "0.0.0-main-9452a461",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-9452a461",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-9452a461.json"
+        },
+        {
+          "version": "0.0.0-main-a5d698cd",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-a5d698cd",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-a5d698cd.json"
+        },
+        {
+          "version": "0.0.0-main-5a753130",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-5a753130",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-5a753130.json"
+        },
+        {
+          "version": "0.0.0-main-842dee87",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-842dee87",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-842dee87.json"
+        },
+        {
+          "version": "1.0.0-rc.3",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/1.0.0-rc.3",
+          "data": "reference/typescript/ts-rspc-client/1.0.0-rc.3.json"
+        },
+        {
+          "version": "0.0.0-main-2e237f7b",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-2e237f7b",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-2e237f7b.json"
+        },
+        {
+          "version": "1.0.0-rc.2",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/1.0.0-rc.2",
+          "data": "reference/typescript/ts-rspc-client/1.0.0-rc.2.json"
+        },
+        {
+          "version": "0.0.0-main-50d5642f",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-50d5642f",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-50d5642f.json"
+        },
+        {
+          "version": "1.0.0-rc.1",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/1.0.0-rc.1",
+          "data": "reference/typescript/ts-rspc-client/1.0.0-rc.1.json"
+        },
+        {
+          "version": "0.0.0-main-52bdb3c1",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-52bdb3c1",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-52bdb3c1.json"
+        },
+        {
+          "version": "0.0.0-main-bca3242b",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-bca3242b",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-bca3242b.json"
+        },
+        {
+          "version": "0.0.0-main-f10683d0",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-f10683d0",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-f10683d0.json"
+        },
+        {
+          "version": "0.0.0-main-ee02fc57",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-ee02fc57",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-ee02fc57.json"
+        },
+        {
+          "version": "0.0.0-main-6ed8cc98",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-6ed8cc98",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-6ed8cc98.json"
+        },
+        {
+          "version": "0.0.0-main-9c15d2d4",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-9c15d2d4",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-9c15d2d4.json"
+        },
+        {
+          "version": "0.0.0-main-799eec5d",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-799eec5d",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-799eec5d.json"
+        },
+        {
+          "version": "0.0.0-main-4caedb14",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-4caedb14",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-4caedb14.json"
+        },
+        {
+          "version": "0.0.0-main-3c094789",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-3c094789",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-3c094789.json"
+        },
+        {
+          "version": "0.0.0-main-a312a505",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-a312a505",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-a312a505.json"
+        },
+        {
+          "version": "0.0.0-main-a2d5effc",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-a2d5effc",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-a2d5effc.json"
+        },
+        {
+          "version": "0.0.0-main-5d4b9791",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-5d4b9791",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-5d4b9791.json"
+        },
+        {
+          "version": "0.0.0-main-cc338619",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-cc338619",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-cc338619.json"
+        },
+        {
+          "version": "0.0.0-main-333a38d4",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-333a38d4",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-333a38d4.json"
+        },
+        {
+          "version": "0.0.0-main-f9ac6b78",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-f9ac6b78",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-f9ac6b78.json"
+        },
+        {
+          "version": "0.0.0-main-7cdd90da",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-7cdd90da",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-7cdd90da.json"
+        },
+        {
+          "version": "0.1.3",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.1.3",
+          "data": "reference/typescript/ts-rspc-client/0.1.3.json"
+        },
+        {
+          "version": "0.0.0-main-32fe3d8a",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-32fe3d8a",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-32fe3d8a.json"
+        },
+        {
+          "version": "0.0.0-main-7c0a67c1",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.0-main-7c0a67c1",
+          "data": "reference/typescript/ts-rspc-client/0.0.0-main-7c0a67c1.json"
+        },
+        {
+          "version": "0.1.2",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.1.2",
+          "data": "reference/typescript/ts-rspc-client/0.1.2.json"
+        },
+        {
+          "version": "0.1.1",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.1.1",
+          "data": "reference/typescript/ts-rspc-client/0.1.1.json"
+        },
+        {
+          "version": "0.1.0",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.1.0",
+          "data": "reference/typescript/ts-rspc-client/0.1.0.json"
+        },
+        {
+          "version": "0.0.7",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.7",
+          "data": "reference/typescript/ts-rspc-client/0.0.7.json"
+        },
+        {
+          "version": "0.0.6",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.6",
+          "data": "reference/typescript/ts-rspc-client/0.0.6.json"
+        },
+        {
+          "version": "0.0.5",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.5",
+          "data": "reference/typescript/ts-rspc-client/0.0.5.json"
+        },
+        {
+          "version": "0.0.4",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.4",
+          "data": "reference/typescript/ts-rspc-client/0.0.4.json"
+        },
+        {
+          "version": "0.0.3",
+          "url": "https://www.npmjs.com/package/@rspc/client/v/0.0.3",
+          "data": "reference/typescript/ts-rspc-client/0.0.3.json"
+        }
+      ]
+    },
+    {
+      "id": "ts-rspc-react",
+      "name": "@rspc/react",
+      "project": "rspc",
+      "language": "typescript",
+      "defaultVersion": "0.2.2",
+      "versions": [
+        {
+          "version": "0.2.2",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.2.2",
+          "data": "reference/typescript/ts-rspc-react/0.2.2.json"
+        },
+        {
+          "version": "0.2.1",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.2.1",
+          "data": "reference/typescript/ts-rspc-react/0.2.1.json"
+        },
+        {
+          "version": "0.2.0",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.2.0",
+          "data": "reference/typescript/ts-rspc-react/0.2.0.json"
+        },
+        {
+          "version": "0.0.0-main-b8b35d28",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-b8b35d28",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-b8b35d28.json"
+        },
+        {
+          "version": "0.0.0-main-45466c86",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-45466c86",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-45466c86.json"
+        },
+        {
+          "version": "0.0.0-main-9452a461",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-9452a461",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-9452a461.json"
+        },
+        {
+          "version": "0.0.0-main-842dee87",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-842dee87",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-842dee87.json"
+        },
+        {
+          "version": "1.0.0-rc.3",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/1.0.0-rc.3",
+          "data": "reference/typescript/ts-rspc-react/1.0.0-rc.3.json"
+        },
+        {
+          "version": "0.0.0-main-2e237f7b",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-2e237f7b",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-2e237f7b.json"
+        },
+        {
+          "version": "1.0.0-rc.2",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/1.0.0-rc.2",
+          "data": "reference/typescript/ts-rspc-react/1.0.0-rc.2.json"
+        },
+        {
+          "version": "0.0.0-main-50d5642f",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-50d5642f",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-50d5642f.json"
+        },
+        {
+          "version": "1.0.0-rc.1",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/1.0.0-rc.1",
+          "data": "reference/typescript/ts-rspc-react/1.0.0-rc.1.json"
+        },
+        {
+          "version": "0.0.0-main-52bdb3c1",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-52bdb3c1",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-52bdb3c1.json"
+        },
+        {
+          "version": "0.0.0-main-bca3242b",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-bca3242b",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-bca3242b.json"
+        },
+        {
+          "version": "0.0.0-main-f10683d0",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-f10683d0",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-f10683d0.json"
+        },
+        {
+          "version": "0.0.0-main-ee02fc57",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-ee02fc57",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-ee02fc57.json"
+        },
+        {
+          "version": "0.0.0-main-6ed8cc98",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-6ed8cc98",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-6ed8cc98.json"
+        },
+        {
+          "version": "0.0.0-main-9c15d2d4",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-9c15d2d4",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-9c15d2d4.json"
+        },
+        {
+          "version": "0.0.0-main-799eec5d",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-799eec5d",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-799eec5d.json"
+        },
+        {
+          "version": "0.0.0-main-4caedb14",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-4caedb14",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-4caedb14.json"
+        },
+        {
+          "version": "0.0.0-main-3c094789",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-3c094789",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-3c094789.json"
+        },
+        {
+          "version": "0.0.0-main-a312a505",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-a312a505",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-a312a505.json"
+        },
+        {
+          "version": "0.0.0-main-a2d5effc",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-a2d5effc",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-a2d5effc.json"
+        },
+        {
+          "version": "0.0.0-main-5d4b9791",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-5d4b9791",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-5d4b9791.json"
+        },
+        {
+          "version": "0.0.0-main-cc338619",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-cc338619",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-cc338619.json"
+        },
+        {
+          "version": "0.0.0-main-333a38d4",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-333a38d4",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-333a38d4.json"
+        },
+        {
+          "version": "0.0.0-main-f9ac6b78",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-f9ac6b78",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-f9ac6b78.json"
+        },
+        {
+          "version": "0.0.0-main-7cdd90da",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-7cdd90da",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-7cdd90da.json"
+        },
+        {
+          "version": "0.1.3",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.1.3",
+          "data": "reference/typescript/ts-rspc-react/0.1.3.json"
+        },
+        {
+          "version": "0.0.0-main-32fe3d8a",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-32fe3d8a",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-32fe3d8a.json"
+        },
+        {
+          "version": "0.0.0-main-7c0a67c1",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.0-main-7c0a67c1",
+          "data": "reference/typescript/ts-rspc-react/0.0.0-main-7c0a67c1.json"
+        },
+        {
+          "version": "0.1.2",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.1.2",
+          "data": "reference/typescript/ts-rspc-react/0.1.2.json"
+        },
+        {
+          "version": "0.1.1",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.1.1",
+          "data": "reference/typescript/ts-rspc-react/0.1.1.json"
+        },
+        {
+          "version": "0.1.0",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.1.0",
+          "data": "reference/typescript/ts-rspc-react/0.1.0.json"
+        },
+        {
+          "version": "0.0.6",
+          "url": "https://www.npmjs.com/package/@rspc/react/v/0.0.6",
+          "data": "reference/typescript/ts-rspc-react/0.0.6.json"
+        }
+      ]
+    },
+    {
+      "id": "ts-rspc-react-query",
+      "name": "@rspc/react-query",
+      "project": "rspc",
+      "language": "typescript",
+      "defaultVersion": "0.3.1",
+      "versions": [
+        {
+          "version": "0.3.1",
+          "url": "https://www.npmjs.com/package/@rspc/react-query/v/0.3.1",
+          "data": "reference/typescript/ts-rspc-react-query/0.3.1.json"
+        },
+        {
+          "version": "0.3.0",
+          "url": "https://www.npmjs.com/package/@rspc/react-query/v/0.3.0",
+          "unavailable": "No public declarations were found in this release."
+        },
+        {
+          "version": "0.2.4",
+          "url": "https://www.npmjs.com/package/@rspc/react-query/v/0.2.4",
+          "data": "reference/typescript/ts-rspc-react-query/0.2.4.json"
+        },
+        {
+          "version": "0.2.3",
+          "url": "https://www.npmjs.com/package/@rspc/react-query/v/0.2.3",
+          "data": "reference/typescript/ts-rspc-react-query/0.2.3.json"
+        },
+        {
+          "version": "0.0.0-main-a5d698cd",
+          "url": "https://www.npmjs.com/package/@rspc/react-query/v/0.0.0-main-a5d698cd",
+          "data": "reference/typescript/ts-rspc-react-query/0.0.0-main-a5d698cd.json"
+        },
+        {
+          "version": "0.0.0-main-5a753130",
+          "url": "https://www.npmjs.com/package/@rspc/react-query/v/0.0.0-main-5a753130",
+          "data": "reference/typescript/ts-rspc-react-query/0.0.0-main-5a753130.json"
+        }
+      ]
+    },
+    {
+      "id": "ts-rspc-solid",
+      "name": "@rspc/solid",
+      "project": "rspc",
+      "language": "typescript",
+      "defaultVersion": "0.2.1",
+      "versions": [
+        {
+          "version": "0.2.1",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.2.1",
+          "unavailable": "The published npm archive has no declaration file at its declared public type entrypoints."
+        },
+        {
+          "version": "0.2.0",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.2.0",
+          "data": "reference/typescript/ts-rspc-solid/0.2.0.json"
+        },
+        {
+          "version": "0.0.0-main-b8b35d28",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-b8b35d28",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-b8b35d28.json"
+        },
+        {
+          "version": "0.0.0-main-45466c86",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-45466c86",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-45466c86.json"
+        },
+        {
+          "version": "0.0.0-main-9452a461",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-9452a461",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-9452a461.json"
+        },
+        {
+          "version": "0.0.0-main-842dee87",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-842dee87",
+          "unavailable": "No public declarations were found in this release."
+        },
+        {
+          "version": "0.0.0-main-2e237f7b",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-2e237f7b",
+          "unavailable": "No public declarations were found in this release."
+        },
+        {
+          "version": "0.0.0-main-50d5642f",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-50d5642f",
+          "unavailable": "No public declarations were found in this release."
+        },
+        {
+          "version": "0.0.0-main-52bdb3c1",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-52bdb3c1",
+          "unavailable": "No public declarations were found in this release."
+        },
+        {
+          "version": "0.0.0-main-bca3242b",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-bca3242b",
+          "unavailable": "No public declarations were found in this release."
+        },
+        {
+          "version": "0.0.0-main-f10683d0",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-f10683d0",
+          "unavailable": "No public declarations were found in this release."
+        },
+        {
+          "version": "0.0.0-main-ee02fc57",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-ee02fc57",
+          "unavailable": "No public declarations were found in this release."
+        },
+        {
+          "version": "0.0.0-main-6ed8cc98",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-6ed8cc98",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-6ed8cc98.json"
+        },
+        {
+          "version": "0.0.0-main-9c15d2d4",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-9c15d2d4",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-9c15d2d4.json"
+        },
+        {
+          "version": "0.0.0-main-799eec5d",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-799eec5d",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-799eec5d.json"
+        },
+        {
+          "version": "0.0.0-main-4caedb14",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-4caedb14",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-4caedb14.json"
+        },
+        {
+          "version": "0.0.0-main-3c094789",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-3c094789",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-3c094789.json"
+        },
+        {
+          "version": "0.0.0-main-a312a505",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-a312a505",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-a312a505.json"
+        },
+        {
+          "version": "0.0.0-main-a2d5effc",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-a2d5effc",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-a2d5effc.json"
+        },
+        {
+          "version": "0.0.0-main-5d4b9791",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-5d4b9791",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-5d4b9791.json"
+        },
+        {
+          "version": "0.0.0-main-cc338619",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-cc338619",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-cc338619.json"
+        },
+        {
+          "version": "0.0.0-main-333a38d4",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-333a38d4",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-333a38d4.json"
+        },
+        {
+          "version": "0.0.0-main-f9ac6b78",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-f9ac6b78",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-f9ac6b78.json"
+        },
+        {
+          "version": "0.0.0-main-7cdd90da",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-7cdd90da",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-7cdd90da.json"
+        },
+        {
+          "version": "0.1.3",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.1.3",
+          "data": "reference/typescript/ts-rspc-solid/0.1.3.json"
+        },
+        {
+          "version": "0.0.0-main-32fe3d8a",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-32fe3d8a",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-32fe3d8a.json"
+        },
+        {
+          "version": "0.0.0-main-7c0a67c1",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-7c0a67c1",
+          "data": "reference/typescript/ts-rspc-solid/0.0.0-main-7c0a67c1.json"
+        },
+        {
+          "version": "0.1.2",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.1.2",
+          "data": "reference/typescript/ts-rspc-solid/0.1.2.json"
+        },
+        {
+          "version": "0.1.1",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.1.1",
+          "data": "reference/typescript/ts-rspc-solid/0.1.1.json"
+        },
+        {
+          "version": "0.1.0",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.1.0",
+          "data": "reference/typescript/ts-rspc-solid/0.1.0.json"
+        },
+        {
+          "version": "0.0.9",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.9",
+          "data": "reference/typescript/ts-rspc-solid/0.0.9.json"
+        },
+        {
+          "version": "0.0.8",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.8",
+          "data": "reference/typescript/ts-rspc-solid/0.0.8.json"
+        },
+        {
+          "version": "0.0.7",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.7",
+          "data": "reference/typescript/ts-rspc-solid/0.0.7.json"
+        },
+        {
+          "version": "0.0.6",
+          "url": "https://www.npmjs.com/package/@rspc/solid/v/0.0.6",
+          "data": "reference/typescript/ts-rspc-solid/0.0.6.json"
+        }
+      ]
+    },
+    {
+      "id": "ts-rspc-solid-query",
+      "name": "@rspc/solid-query",
+      "project": "rspc",
+      "language": "typescript",
+      "defaultVersion": "0.3.1",
+      "versions": [
+        {
+          "version": "0.3.1",
+          "url": "https://www.npmjs.com/package/@rspc/solid-query/v/0.3.1",
+          "data": "reference/typescript/ts-rspc-solid-query/0.3.1.json"
+        },
+        {
+          "version": "0.3.0",
+          "url": "https://www.npmjs.com/package/@rspc/solid-query/v/0.3.0",
+          "data": "reference/typescript/ts-rspc-solid-query/0.3.0.json"
+        },
+        {
+          "version": "0.2.4",
+          "url": "https://www.npmjs.com/package/@rspc/solid-query/v/0.2.4",
+          "data": "reference/typescript/ts-rspc-solid-query/0.2.4.json"
+        },
+        {
+          "version": "0.2.3",
+          "url": "https://www.npmjs.com/package/@rspc/solid-query/v/0.2.3",
+          "data": "reference/typescript/ts-rspc-solid-query/0.2.3.json"
+        },
+        {
+          "version": "0.0.0-main-a5d698cd",
+          "url": "https://www.npmjs.com/package/@rspc/solid-query/v/0.0.0-main-a5d698cd",
+          "data": "reference/typescript/ts-rspc-solid-query/0.0.0-main-a5d698cd.json"
+        },
+        {
+          "version": "0.0.0-main-5a753130",
+          "url": "https://www.npmjs.com/package/@rspc/solid-query/v/0.0.0-main-5a753130",
+          "data": "reference/typescript/ts-rspc-solid-query/0.0.0-main-5a753130.json"
+        }
+      ]
+    },
+    {
+      "id": "ts-rspc-svelte-query",
+      "name": "@rspc/svelte-query",
+      "project": "rspc",
+      "language": "typescript",
+      "defaultVersion": "0.3.1",
+      "versions": [
+        {
+          "version": "0.3.1",
+          "url": "https://www.npmjs.com/package/@rspc/svelte-query/v/0.3.1",
+          "data": "reference/typescript/ts-rspc-svelte-query/0.3.1.json"
+        },
+        {
+          "version": "0.3.0",
+          "url": "https://www.npmjs.com/package/@rspc/svelte-query/v/0.3.0",
+          "data": "reference/typescript/ts-rspc-svelte-query/0.3.0.json"
+        },
+        {
+          "version": "0.2.4",
+          "url": "https://www.npmjs.com/package/@rspc/svelte-query/v/0.2.4",
+          "unavailable": "No public declarations were found in this release."
+        },
+        {
+          "version": "0.2.3",
+          "url": "https://www.npmjs.com/package/@rspc/svelte-query/v/0.2.3",
+          "unavailable": "No public declarations were found in this release."
+        },
+        {
+          "version": "0.0.0-main-a5d698cd",
+          "url": "https://www.npmjs.com/package/@rspc/svelte-query/v/0.0.0-main-a5d698cd",
+          "data": "reference/typescript/ts-rspc-svelte-query/0.0.0-main-a5d698cd.json"
+        },
+        {
+          "version": "0.0.0-main-5a753130",
+          "url": "https://www.npmjs.com/package/@rspc/svelte-query/v/0.0.0-main-5a753130",
+          "data": "reference/typescript/ts-rspc-svelte-query/0.0.0-main-5a753130.json"
+        }
+      ]
+    },
+    {
+      "id": "ts-rspc-query-core",
+      "name": "@rspc/query-core",
+      "project": "rspc",
+      "language": "typescript",
+      "defaultVersion": "0.3.1",
+      "versions": [
+        {
+          "version": "0.3.1",
+          "url": "https://www.npmjs.com/package/@rspc/query-core/v/0.3.1",
+          "data": "reference/typescript/ts-rspc-query-core/0.3.1.json"
+        },
+        {
+          "version": "0.3.0",
+          "url": "https://www.npmjs.com/package/@rspc/query-core/v/0.3.0",
+          "unavailable": "No public declarations were found in this release."
+        },
+        {
+          "version": "0.2.4",
+          "url": "https://www.npmjs.com/package/@rspc/query-core/v/0.2.4",
+          "data": "reference/typescript/ts-rspc-query-core/0.2.4.json"
+        },
+        {
+          "version": "0.2.3",
+          "url": "https://www.npmjs.com/package/@rspc/query-core/v/0.2.3",
+          "data": "reference/typescript/ts-rspc-query-core/0.2.3.json"
+        },
+        {
+          "version": "0.2.2",
+          "url": "https://www.npmjs.com/package/@rspc/query-core/v/0.2.2",
+          "data": "reference/typescript/ts-rspc-query-core/0.2.2.json"
+        },
+        {
+          "version": "0.2.1",
+          "url": "https://www.npmjs.com/package/@rspc/query-core/v/0.2.1",
+          "data": "reference/typescript/ts-rspc-query-core/0.2.1.json"
+        },
+        {
+          "version": "0.0.0-main-a5d698cd",
+          "url": "https://www.npmjs.com/package/@rspc/query-core/v/0.0.0-main-a5d698cd",
+          "data": "reference/typescript/ts-rspc-query-core/0.0.0-main-a5d698cd.json"
+        },
+        {
+          "version": "0.0.0-main-5a753130",
+          "url": "https://www.npmjs.com/package/@rspc/query-core/v/0.0.0-main-5a753130",
+          "data": "reference/typescript/ts-rspc-query-core/0.0.0-main-5a753130.json"
+        }
+      ]
+    },
+    {
+      "id": "ts-rspc-tauri",
+      "name": "@rspc/tauri",
+      "project": "rspc",
+      "language": "typescript",
+      "defaultVersion": "0.3.1",
+      "versions": [
+        {
+          "version": "0.3.1",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.3.1",
+          "data": "reference/typescript/ts-rspc-tauri/0.3.1.json"
+        },
+        {
+          "version": "0.3.0",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.3.0",
+          "data": "reference/typescript/ts-rspc-tauri/0.3.0.json"
+        },
+        {
+          "version": "0.2.4",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.2.4",
+          "data": "reference/typescript/ts-rspc-tauri/0.2.4.json"
+        },
+        {
+          "version": "0.2.0",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.2.0",
+          "data": "reference/typescript/ts-rspc-tauri/0.2.0.json"
+        },
+        {
+          "version": "0.0.0-main-b8b35d28",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-b8b35d28",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-b8b35d28.json"
+        },
+        {
+          "version": "0.0.0-main-45466c86",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-45466c86",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-45466c86.json"
+        },
+        {
+          "version": "0.0.0-main-9452a461",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-9452a461",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-9452a461.json"
+        },
+        {
+          "version": "0.0.0-main-a5d698cd",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-a5d698cd",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-a5d698cd.json"
+        },
+        {
+          "version": "0.0.0-main-5a753130",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-5a753130",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-5a753130.json"
+        },
+        {
+          "version": "0.0.0-main-842dee87",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-842dee87",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-842dee87.json"
+        },
+        {
+          "version": "1.0.0-rc.3",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/1.0.0-rc.3",
+          "data": "reference/typescript/ts-rspc-tauri/1.0.0-rc.3.json"
+        },
+        {
+          "version": "0.0.0-main-2e237f7b",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-2e237f7b",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-2e237f7b.json"
+        },
+        {
+          "version": "1.0.0-rc.2",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/1.0.0-rc.2",
+          "data": "reference/typescript/ts-rspc-tauri/1.0.0-rc.2.json"
+        },
+        {
+          "version": "0.0.0-main-50d5642f",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-50d5642f",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-50d5642f.json"
+        },
+        {
+          "version": "1.0.0-rc.1",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/1.0.0-rc.1",
+          "data": "reference/typescript/ts-rspc-tauri/1.0.0-rc.1.json"
+        },
+        {
+          "version": "0.0.0-main-52bdb3c1",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-52bdb3c1",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-52bdb3c1.json"
+        },
+        {
+          "version": "0.0.0-main-bca3242b",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-bca3242b",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-bca3242b.json"
+        },
+        {
+          "version": "0.0.0-main-f10683d0",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-f10683d0",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-f10683d0.json"
+        },
+        {
+          "version": "0.0.0-main-ee02fc57",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-ee02fc57",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-ee02fc57.json"
+        },
+        {
+          "version": "0.0.0-main-6ed8cc98",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-6ed8cc98",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-6ed8cc98.json"
+        },
+        {
+          "version": "0.0.0-main-9c15d2d4",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-9c15d2d4",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-9c15d2d4.json"
+        },
+        {
+          "version": "0.0.0-main-799eec5d",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-799eec5d",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-799eec5d.json"
+        },
+        {
+          "version": "0.0.0-main-4caedb14",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-4caedb14",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-4caedb14.json"
+        },
+        {
+          "version": "0.0.0-main-3c094789",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-3c094789",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-3c094789.json"
+        },
+        {
+          "version": "0.0.0-main-a312a505",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-a312a505",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-a312a505.json"
+        },
+        {
+          "version": "0.0.0-main-a2d5effc",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-a2d5effc",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-a2d5effc.json"
+        },
+        {
+          "version": "0.0.0-main-5d4b9791",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-5d4b9791",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-5d4b9791.json"
+        },
+        {
+          "version": "0.0.0-main-cc338619",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-cc338619",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-cc338619.json"
+        },
+        {
+          "version": "0.0.0-main-333a38d4",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-333a38d4",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-333a38d4.json"
+        },
+        {
+          "version": "0.0.0-main-f9ac6b78",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-f9ac6b78",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-f9ac6b78.json"
+        },
+        {
+          "version": "0.0.0-main-7cdd90da",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-7cdd90da",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-7cdd90da.json"
+        },
+        {
+          "version": "0.1.3",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.1.3",
+          "data": "reference/typescript/ts-rspc-tauri/0.1.3.json"
+        },
+        {
+          "version": "0.0.0-main-32fe3d8a",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-32fe3d8a",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-32fe3d8a.json"
+        },
+        {
+          "version": "0.0.0-main-7c0a67c1",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-7c0a67c1",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.0-main-7c0a67c1.json"
+        },
+        {
+          "version": "0.1.2",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.1.2",
+          "data": "reference/typescript/ts-rspc-tauri/0.1.2.json"
+        },
+        {
+          "version": "0.1.1",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.1.1",
+          "data": "reference/typescript/ts-rspc-tauri/0.1.1.json"
+        },
+        {
+          "version": "0.1.0",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.1.0",
+          "data": "reference/typescript/ts-rspc-tauri/0.1.0.json"
+        },
+        {
+          "version": "0.0.7",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.7",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.7.json"
+        },
+        {
+          "version": "0.0.6",
+          "url": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.6",
+          "data": "reference/typescript/ts-rspc-tauri/0.0.6.json"
+        }
+      ]
+    },
+    {
+      "id": "ts-rspc-normi",
+      "name": "@rspc/normi",
+      "project": "rspc",
+      "language": "typescript",
+      "defaultVersion": "0.0.0-main-7c0a67c1",
+      "versions": [
+        {
+          "version": "0.0.0-main-32fe3d8a",
+          "url": "https://www.npmjs.com/package/@rspc/normi/v/0.0.0-main-32fe3d8a",
+          "data": "reference/typescript/ts-rspc-normi/0.0.0-main-32fe3d8a.json"
+        },
+        {
+          "version": "0.0.0-main-7c0a67c1",
+          "url": "https://www.npmjs.com/package/@rspc/normi/v/0.0.0-main-7c0a67c1",
+          "data": "reference/typescript/ts-rspc-normi/0.0.0-main-7c0a67c1.json"
+        }
+      ]
+    },
+    {
+      "id": "ts-rspc-playground",
+      "name": "@rspc/playground",
+      "project": "rspc",
+      "language": "typescript",
+      "defaultVersion": "0.0.0-main-7c0a67c1",
+      "versions": [
+        {
+          "version": "0.0.0-main-32fe3d8a",
+          "url": "https://www.npmjs.com/package/@rspc/playground/v/0.0.0-main-32fe3d8a",
+          "unavailable": "The published npm archive has no declaration file at its declared public type entrypoints."
+        },
+        {
+          "version": "0.0.0-main-7c0a67c1",
+          "url": "https://www.npmjs.com/package/@rspc/playground/v/0.0.0-main-7c0a67c1",
+          "unavailable": "The published npm archive has no declaration file at its declared public type entrypoints."
+        }
+      ]
+    },
+    {
+      "id": "ts-rspc-tanstack-query",
+      "name": "@rspc/tanstack-query",
+      "project": "rspc",
+      "language": "typescript",
+      "defaultVersion": "unreleased-30402a42a6a5",
+      "versions": [
+        {
+          "version": "unreleased-30402a42a6a5",
+          "url": "https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/packages/tanstack-query",
+          "data": "reference/typescript/ts-rspc-tanstack-query/unreleased-30402a42a6a5.json"
+        }
+      ]
+    }
+  ]
+}

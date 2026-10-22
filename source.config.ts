@@ -11,6 +11,8 @@ const extendedSchema = frontmatterSchema.extend({
   longTitle: z.string().optional(),
   hidden: z.boolean().optional(),
   disableLlmsTxt: z.boolean().optional(),
+  // Reference pages are generated from `reference/` snapshots at build time.
+  generated: z.boolean().optional(),
 });
 
 // You can customise Zod schemas for frontmatter and `meta.json` here

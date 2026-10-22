@@ -30,3 +30,6 @@ next-env.d.ts
 
 # local CDP before/after captures
 .captures
+
+# generated API reference pages (see scripts/reference/pages.mjs)
+content/docs/*/typescript-api/

@@ -1,0 +1,11 @@
+{
+  "symbols": [
+    {
+      "name": "TauriTransport",
+      "kind": "class",
+      "description": "",
+      "signature": "declare class TauriTransport implements Transport {\n    private requestMap;\n    private listener?;\n    clientSubscriptionCallback?: (id: string, value: any) => void;\n    constructor();\n    doRequest(operation: OperationType, key: string, input: any): Promise<any>;\n}\n\n// Referenced local context (not public exports):\ninterface Transport {\n    clientSubscriptionCallback?: (id: string, key: string, value: any) => void;\n    doRequest(operation: OperationType, key: string, input: any): Promise<any>;\n}\n\ntype OperationType = \"query\" | \"mutation\" | \"subscription\" | \"subscriptionStop\";",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/tauri/v/0.0.0-main-cc338619"
+    }
+  ]
+}

@@ -20,6 +20,7 @@
     "src/cloudflare-env.d.ts",
     "src/pages.gen.ts",
     "pnpm-lock.yaml",
-    "content/docs/rspc/*/integrations/axum.mdx"
+    "content/docs/rspc/*/integrations/axum.mdx",
+    "content/docs/*/typescript-api"
   ]
 }

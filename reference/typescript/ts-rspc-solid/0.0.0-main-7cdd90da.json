@@ -1,0 +1,25 @@
+{
+  "symbols": [
+    {
+      "name": "BaseOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "export interface BaseOptions<TProcedures extends ProceduresDef> {\n    rspc?: {\n        client?: Client<TProcedures>;\n    };\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-7cdd90da"
+    },
+    {
+      "name": "createSolidQueryHooks",
+      "kind": "function",
+      "description": "",
+      "signature": "export declare function createSolidQueryHooks<TProceduresLike extends ProceduresDef>(): any;",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-7cdd90da"
+    },
+    {
+      "name": "SubscriptionOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "export interface SubscriptionOptions<TOutput> {\n    enabled?: boolean;\n    onStarted?: () => void;\n    onData: (data: TOutput) => void;\n    onError?: (err: RSPCError) => void;\n}",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-7cdd90da"
+    }
+  ]
+}
