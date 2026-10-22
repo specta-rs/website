@@ -9,7 +9,7 @@ export interface ReferenceVersion {
   href: string;
   /** Whether `href` is a page on this site. */
   onSite: boolean;
-  /** Symbols came from a pinned source commit, not a published archive. */
+  /** Symbols came from a pinned source commit, not a published npm release. */
   unpublished?: boolean;
 }
 

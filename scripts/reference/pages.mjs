@@ -167,7 +167,7 @@ export function renderPackagePage({ pkg, version, artifact }) {
     ? `Public exports of \`${pkg.name}\` at version \`${version}\`.`
     : `No API documentation could be extracted for ${pkg.name}. ${
         release.unavailable ?? ""
-      } The source link above points at this exact release.`.trim();
+      } See [the published release](${release.url}).`.trim();
   const hidden = version !== home;
   const notes = [];
   if (hidden) {

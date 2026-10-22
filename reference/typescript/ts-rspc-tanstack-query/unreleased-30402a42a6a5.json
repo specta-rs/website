@@ -73,7 +73,6 @@
   ],
   "description": "Unreleased source snapshot of packages/tanstack-query at commit 30402a42a6a523e0a76d23f3b7ce80903386a98d; not a published npm version. The directory is documented as @rspc/tanstack-query, but its source package.json declares @rspc/query-core. Signatures preserve actual public source, including implementation bodies; they are not fabricated declaration output.",
   "published": false,
-  "sourceVersion": "unreleased-30402a42a6a5",
   "sourceCommit": "30402a42a6a523e0a76d23f3b7ce80903386a98d",
   "sourceRepository": "https://github.com/specta-rs/rspc",
   "sourceUrl": "https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/packages/tanstack-query",

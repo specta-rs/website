@@ -3,6 +3,7 @@ import {
   DocsDescription,
   DocsPage,
   DocsTitle,
+  PageLastUpdate,
 } from "fumadocs-ui/layouts/docs/page";
 import { createRelativeLink } from "fumadocs-ui/mdx";
 import { SquarePen } from "lucide-react";
@@ -83,17 +84,22 @@ export function DocsPageContent({ slugs }: { slugs: string[] }) {
         />
       </DocsBody>
 
-      {page.data.generated ? null : (
-        <a
-          href={`https://github.com/specta-rs/website/blob/main/content/docs/${page.path}`}
-          rel="noreferrer noopener"
-          target="_blank"
-          className="w-fit border rounded-lg py-1.5 px-2 font-medium text-xs text-fd-secondary-foreground bg-fd-secondary transition-colors hover:text-fd-accent-foreground hover:bg-fd-accent inline-flex items-center gap-1.5"
-        >
-          <SquarePen className="size-3.5" />
-          Edit on GitHub
-        </a>
-      )}
+      <div className="flex items-center justify-between">
+        {page.data.generated ? null : (
+          <a
+            href={`https://github.com/specta-rs/website/blob/main/content/docs/${page.path}`}
+            rel="noreferrer noopener"
+            target="_blank"
+            className="w-fit border rounded-lg py-1.5 px-2 font-medium text-xs text-fd-secondary-foreground bg-fd-secondary transition-colors hover:text-fd-accent-foreground hover:bg-fd-accent inline-flex items-center gap-1.5"
+          >
+            <SquarePen className="size-3.5" />
+            Edit on GitHub
+          </a>
+        )}
+        {page.data.lastModified && (
+          <PageLastUpdate date={page.data.lastModified} />
+        )}
+      </div>
     </DocsPage>
   );
 }

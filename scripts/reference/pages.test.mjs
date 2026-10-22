@@ -321,10 +321,34 @@ test("generated pages sit under rspc's sidebar with only the documented version 
     [...sidebar.pages].toSorted(),
     bundled.packages.map((pkg) => pkg.id).toSorted(),
   );
+  // Pinned by name, so swapping or dropping a package cannot pass on a count.
+  assert.deepEqual(bundled.packages.map((pkg) => pkg.id).toSorted(), [
+    "ts-rspc-client",
+    "ts-rspc-normi",
+    "ts-rspc-playground",
+    "ts-rspc-query-core",
+    "ts-rspc-react",
+    "ts-rspc-react-query",
+    "ts-rspc-solid",
+    "ts-rspc-solid-query",
+    "ts-rspc-svelte-query",
+    "ts-rspc-tanstack-query",
+    "ts-rspc-tauri",
+  ]);
   for (const pkg of bundled.packages) {
+    const folder = `content/docs/rspc/typescript-api/${pkg.id}`;
     assert.match(
-      await read(`content/docs/rspc/typescript-api/${pkg.id}/index.mdx`),
+      await read(`${folder}/index.mdx`),
       new RegExp(`version="${pkg.homeVersion.replace(/\./g, "\\.")}"`),
     );
+    // Every release the switcher offers as a page on this site must exist.
+    for (const release of pkg.versions) {
+      if (!release.onSite) continue;
+      const file =
+        release.version === pkg.homeVersion
+          ? "index.mdx"
+          : `${release.version}.mdx`;
+      assert.match(await read(`${folder}/${file}`), /^---\n/);
+    }
   }
 });
