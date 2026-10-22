@@ -65,7 +65,7 @@ export function getPageImage(page: InferPageType<typeof source>) {
 }
 
 // Generated reference pages keep their signatures in a lightweight `<pre>` so a
-// crate page does not ship hundreds of highlighted code blocks. That element is
+// package page does not ship hundreds of highlighted code blocks. That element is
 // an implementation detail, so the Markdown endpoints turn it back into a fence
 // and drop the version switcher, which is navigation rather than content.
 const generatedPre = /^<pre className="[^"]*">\{(.*)\}<\/pre>$/gm;

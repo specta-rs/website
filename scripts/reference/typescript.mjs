@@ -93,7 +93,7 @@ async function artifact(pkg, version, files, entries, sourceUrl, extra = {}) {
         .join("\n\n");
   }
   if (!symbols.length)
-    throw new Error("No public declarations found in this published archive.");
+    throw new Error("No public declarations were found in this release.");
   const data = `reference/typescript/${pkg.id}/${version}.json`;
   await mkdir(path.join(output, pkg.id), { recursive: true });
   await writeFile(
@@ -195,7 +195,6 @@ for (const snapshot of sourceSnapshots) {
     {
       description,
       published: false,
-      sourceVersion: version,
       sourceCommit: snapshot.commit,
       sourceRepository: snapshot.repository,
       sourceUrl,

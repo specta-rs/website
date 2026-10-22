@@ -31,8 +31,5 @@ next-env.d.ts
 # local CDP before/after captures
 .captures
 
-# downloaded release documentation used by reference:sync
-.reference-cache/
-
 # generated API reference pages (see scripts/reference/pages.mjs)
 content/docs/*/typescript-api/

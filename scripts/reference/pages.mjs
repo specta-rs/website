@@ -214,6 +214,9 @@ async function main() {
   }
 
   let pages = 0;
+  // Versions whose symbols came from a pinned source commit rather than a
+  // published archive, so the UI can say so without sniffing version strings.
+  const unpublished = new Set();
   for (const pkg of packages) {
     const folder = path.join(contentDir, pkg.project, referenceFolder, pkg.id);
     const home = homeVersion(pkg);
@@ -227,6 +230,8 @@ async function main() {
       const artifact = release.data
         ? JSON.parse(await readFile(path.join(root, release.data), "utf8"))
         : undefined;
+      if (artifact?.published === false)
+        unpublished.add(`${pkg.id}@${release.version}`);
       const file =
         release.version === home ? "index.mdx" : `${release.version}.mdx`;
       await mkdir(folder, { recursive: true });
@@ -263,16 +268,35 @@ async function main() {
     );
   }
 
-  // Catalog for the version switcher. Symbol data stays in `reference/`, and
-  // the page version is precomputed so the header links agree with the files.
+  // Catalog for the version switcher. Symbol data stays in `reference/`; the
+  // page route for each release and the snapshot flag are precomputed here so
+  // the UI never has to re-derive routing or sniff version strings.
   await writeFile(
     catalogFile,
     `${JSON.stringify(
       {
-        packages: packages.map((pkg) => ({
-          ...pkg,
-          homeVersion: homeVersion(pkg),
-        })),
+        packages: packages.map((pkg) => {
+          const home = homeVersion(pkg);
+          return {
+            ...pkg,
+            homeVersion: home,
+            versions: pkg.versions.map((release) => {
+              // On this site when the release has a generated page: it either
+              // has symbol data, or it is the version the page documents.
+              const onSite = Boolean(release.data || release.version === home);
+              return {
+                ...release,
+                onSite,
+                href: onSite
+                  ? pageUrl(pkg, release.version, home)
+                  : release.url,
+                ...(unpublished.has(`${pkg.id}@${release.version}`)
+                  ? { unpublished: true }
+                  : {}),
+              };
+            }),
+          };
+        }),
       },
       null,
       2,

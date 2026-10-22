@@ -65,13 +65,49 @@ test("reference catalog has usable, version-correct artifacts", async () => {
   }
 });
 
+test("every release resolves to a link the switcher can use", async () => {
+  const bundled = JSON.parse(
+    await readFile(new URL("src/lib/reference-catalog.json", root), "utf8"),
+  );
+  const unpublished = [];
+  for (const pkg of bundled.packages) {
+    assert.equal(pkg.language, "typescript");
+    for (const release of pkg.versions) {
+      assert.ok(release.href, `${pkg.id}@${release.version}: no href`);
+      assert.equal(typeof release.onSite, "boolean");
+      if (release.onSite) {
+        // A page here: the documented version owns the package URL, other
+        // releases sit one level below it.
+        assert.ok(
+          release.href.startsWith(
+            `/docs/${pkg.project}/typescript-api/${pkg.id}`,
+          ),
+          release.href,
+        );
+      } else {
+        assert.equal(release.href, release.url);
+        assert.equal(release.data, undefined);
+      }
+      if (release.unpublished) unpublished.push(`${pkg.id}@${release.version}`);
+    }
+    // A package with no symbols at all still documents one release on site.
+    const home = pkg.versions.find(
+      (release) => release.version === pkg.homeVersion,
+    );
+    assert.equal(home?.onSite, true, pkg.id);
+  }
+  assert.deepEqual(unpublished, [
+    "ts-rspc-tanstack-query@unreleased-30402a42a6a5",
+  ]);
+});
+
 test("bundled catalog mirrors the version metadata the pages are built from", async () => {
   const packages = await catalog();
   const bundled = JSON.parse(
     await readFile(new URL("src/lib/reference-catalog.json", root), "utf8"),
   );
-  // The switcher only needs release metadata, but it must not drift from the
-  // catalog the pages are generated from.
+  // The switcher needs resolved links on top of the catalog, but nothing it
+  // carries may drift from what the pages were generated from.
   assert.deepEqual(
     bundled.packages.map((pkg) => pkg.id),
     packages.map((pkg) => pkg.id),
@@ -80,7 +116,18 @@ test("bundled catalog mirrors the version metadata the pages are built from", as
     const built = bundled.packages[index];
     assert.equal(built.name, pkg.name);
     assert.equal(built.project, pkg.project);
+    assert.equal(built.language, pkg.language);
     assert.equal(built.defaultVersion, pkg.defaultVersion);
-    assert.deepEqual(built.versions, pkg.versions);
+    assert.deepEqual(
+      built.versions.map(
+        ({
+          href: _href,
+          onSite: _onSite,
+          unpublished: _unpublished,
+          ...rest
+        }) => rest,
+      ),
+      pkg.versions,
+    );
   }
 });
