@@ -1,11 +1,24 @@
 ---
 title: Zer
+description: Status and limits of the session-management prototype.
 ---
 
-# TODO
+`rspc-zer` is an unfinished session-management experiment. It reads a named cookie, decodes a signed JWT into a session type, and can create a response cookie for a new session.
 
-Focus:
+<Callout type="warn">
+  Do not use Zer as production authentication. The prototype disables required
+  JWT claims, can panic when decoding invalid cookies or tokens, and does not
+  set a complete secure cookie policy.
+</Callout>
 
-- Session management - Refresh token type thing
-- OAuth
-- Email auth???
+## What exists
+
+The [source](https://github.com/specta-rs/rspc/blob/30402a42a6a523e0a76d23f3b7ce80903386a98d/crates/zer/src/lib.rs) exposes `Zer::from_request`, `session`, `set_session`, and `ZerResponse::set_cookie_header`. The HTTP integration still has to read the request cookie and apply the response header.
+
+This is not a complete authentication system. It does not provide a finished OAuth flow, email sign-in, refresh-token rotation, or session revocation. `Zer::noop` is also unimplemented.
+
+## Application authentication
+
+Use an authentication library or service that fits your application. Verify the session in the transport or middleware, then put verified identity data in request context. Check authorization again for the resource each procedure accesses.
+
+See [context-switching middleware](/docs/rspc/1.0.0-rc.x/middleware/overview#change-context) for passing an authenticated context to a resolver.

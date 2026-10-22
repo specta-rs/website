@@ -1,112 +1,57 @@
 ---
 title: Overview
+description: Wrap resolvers with shared request and response behavior.
 ---
 
-<Callout>
-  These API's are still undergoing stabilisation. Feel free to use them but they
-  will likely change in the future updates!
-</Callout>
+Middleware runs around a procedure's resolver. It can inspect input, reject a call, change context, or transform a result. In the experimental API, attach it to a procedure builder with `.with(...)`.
 
-rspc allows adding middleware to your router which can intercept the request and response for procedures defined after it on the router. Middleware can also modify the context type which is passed to future procedures which is super powerful.
+## Log timing
 
-The middleware APIs are still fairly new. Better documentation will come in the future once they are more stable.
+```rust
+use rspc::{middleware::Middleware, Procedure};
 
-## Context switching
-
-Middleware are allowed to modify the context. This includes being able to change it's type. All operations below the middleware in the router will receive the new context type.
-
-```rs copy filename="src/main.rs"
-use rspc::Router;
-
-fn main() {
-    let router = Router::<()>::new()
-        .middleware(|mw| mw.middleware(|mw| async move {
-            let old_ctx: () = mw.ctx;
-            Ok(mw.with_ctx(42))
-        }))
-        .query("version", |t| {
-            t(|ctx: i32, _: ()| "1.0.0")
-        })
-        .query("anotherQuery", |t| t(|ctx: i32, _: ()| "Hello World!"))
-        .build();
-}
+let procedure = Procedure::builder::<ApiError>()
+    .with(Middleware::new(|ctx: (), input: (), next| async move {
+        let start = std::time::Instant::now();
+        let result = next.exec(ctx, input).await;
+        println!("request took {:?}", start.elapsed());
+        result
+    }))
+    .query(|_: (), _: ()| async { Ok("hello") });
 ```
 
-## Examples
+`ApiError` is the error type from the [procedure guide](/docs/rspc/1.0.0-rc.x/server/procedure). `next.exec(ctx, input)` calls the rest of the chain. Return an error without calling `next` to reject the request.
 
-### Logger middleware
+## Change context
 
-```rs copy filename="src/main.rs"
-let router = <Router>::new()
-    // Logger middleware
-    .middleware(|mw| {
-        mw.middleware(|mw| async move {
-            let state = (mw.req.clone(), mw.ctx.clone(), mw.input.clone());
-            Ok(mw.with_state(state))
-        })
-        .resp(|state, result| async move {
-            println!(
-                "[LOG] req='{:?}' ctx='{:?}'  input='{:?}' result='{:?}'",
-                state.0, state.1, state.2, result
-            );
-            Ok(result)
-        })
-    });
-```
+Middleware can require authentication before the resolver runs:
 
-### Authentication middleware
-
-```rs copy filename="src/main.rs"
-pub struct UnauthenticatedContext {
-    pub session_id: Option<String>,
+```rust
+struct PublicCtx {
+    user_id: Option<String>,
 }
 
-let router = Router::<UnauthenticatedContext>::new()
-    .query("unauthenticatedQuery", |t| {
-        t(|ctx: UnauthenticatedContext, _: ()| {
-            "Some Public Data!"
-        })
-    })
-    .middleware(|mw| {
-        mw.middleware(|mw| async move {
-            match mw.ctx.session_id {
-                Some(ref session_id) => {
-                    let user = db_get_user_from_session(session_id).await;
-                    // We use `.with_ctx` to switch the context type.
-                    Ok(mw.with_ctx(AuthenticatedCtx { user }))
-                }
-                None => Err(rspc::Error::new(
-                    ErrorCode::Unauthorized,
-                    "Unauthorized".into(),
-                )),
-            }
-        })
-    })
-    .query("authenticatedQuery", |t| {
-        // This query takes the context from the middleware.
-        t(|ctx: AuthenticatedCtx, _: ()| {
-            "Some Secure Data!"
-        })
-    });
+struct AuthCtx {
+    user_id: String,
+}
+
+let procedure = Procedure::builder::<ApiError>()
+    .with(Middleware::new(|ctx: PublicCtx, input: (), next| async move {
+        let Some(user_id) = ctx.user_id else {
+            return Err(ApiError::Unauthorized);
+        };
+        next.exec(AuthCtx { user_id }, input).await
+    }))
+    .query(|ctx: AuthCtx, _: ()| async move { Ok(ctx.user_id) });
 ```
 
-### Reject all middleware
+Add `Unauthorized` to your application error enum. The transport provides `PublicCtx`; the resolver only sees `AuthCtx` after the middleware accepts the call. The example assumes the user ID came from a verified session, not an untrusted header.
 
-```rs copy filename="src/main.rs"
-let router = <Router>::new()
-    // Reject all middleware
-    .middleware(|mw| {
-        mw.middleware(|mw| async move {
-            Err(rspc::Error::new(
-                ErrorCode::Unauthorized,
-                "Unauthorized".into(),
-            )) as Result<MiddlewareContext<_>, _>
-        })
-    })
-    // The middleware was stop this query from being called.
-    .query("unreachableQuery", |t| {
-        t(|ctx: (), _: ()| {
-            "Some Unreachable Data!"
-        })
-    });
-```
+## Reuse middleware
+
+Put shared middleware in a [base procedure builder](/docs/rspc/1.0.0-rc.x/server/procedure#shared-procedure-builders). This makes the required policy explicit when each procedure is defined. A public procedure does not accidentally inherit authentication from its position in a router.
+
+## Available extensions
+
+- [Tracing](/docs/rspc/1.0.0-rc.x/middleware/tracing) records resolver timing and debug values.
+- [Cache](/docs/rspc/1.0.0-rc.x/middleware/cache), [Zer](/docs/rspc/1.0.0-rc.x/middleware/zer), [invalidation](/docs/rspc/1.0.0-rc.x/middleware/invalidation), and [OpenAPI](/docs/rspc/1.0.0-rc.x/middleware/openapi) contain incomplete prototypes. Read their limitations before using them.

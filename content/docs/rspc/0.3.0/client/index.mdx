@@ -77,11 +77,24 @@ const client = createClient<Procedures>({
 
 ### Fetch Authentication
 
-Guide coming soon...
+Use a custom fetch function to attach credentials. This example assumes `getAccessToken()` returns your current application token:
+
+```typescript
+const client = createClient<Procedures>({
+  transport: new FetchTransport("/rspc", (input, init) => {
+    const headers = new Headers(init?.headers);
+    const token = getAccessToken();
+    if (token) headers.set("Authorization", `Bearer ${token}`);
+    return fetch(input, { ...init, headers });
+  }),
+});
+```
+
+The server must verify the token before trusting it. For cookie sessions on another origin, use `credentials: "include"` as shown above and configure an explicit CORS origin with credentials support. Protect state-changing cookie-authenticated requests against CSRF.
 
 ## Websocket Transport
 
-Transport build on the standard [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) API. This uses HTTP GET and POST requests under the hood.
+This transport sends messages over a standard [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) connection after the HTTP upgrade.
 
 ```ts /WebsocketTransport/ copy filename="index.ts"
 import { createClient, WebsocketTransport } from "@rspc/client";
@@ -94,4 +107,8 @@ const client = createClient<Procedures>({
 
 ### Websocket Authentication
 
-Guide coming soon...
+The browser WebSocket API does not support arbitrary authorization headers, and this transport has no custom handshake-header callback.
+
+Use a same-origin cookie session if your server authenticates upgrade requests. Validate the origin and authorize each protected operation. Reconnect after a login or logout when the connection's credentials need to change. Use `wss://` for an HTTPS site.
+
+If your application needs bearer headers, use `FetchTransport` for queries and mutations or implement a transport with an explicit authentication exchange. Avoid long-lived tokens in WebSocket URLs.

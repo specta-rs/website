@@ -1,12 +1,33 @@
 ---
 title: Deployment
+description: Build and deploy an existing rspc 0.3.0 server.
 ---
 
-## Coming soon...
+rspc runs inside your application server. Deploy the server binary and its configuration, not a separate rspc service.
 
-We will document how to deploy an rspc API to:
+## Build
 
-- [Vercel Functions](https://vercel.com/docs/concepts/functions) - Tracked in issue [#9](https://github.com/oscartbeaumont/rspc/issues/9)
-- [Netlify Functions](https://www.netlify.com/products/functions/)
-- [Fly.io](https://fly.io)
-- [Docker Container](https://www.docker.com/)
+1. Keep `Cargo.lock` and your frontend lockfile checked in.
+2. Generate TypeScript bindings in a development build or test.
+3. Type-check and build the frontend against those bindings.
+4. Build the Rust server with `cargo build --release --locked`.
+
+`Config::export_ts_bindings` runs only in debug builds. A release build alone will not refresh the frontend types.
+
+## Run a server or container
+
+An Axum server can run on a VM, a container platform, or a host such as Fly.io. Bind to the interface and port required by the host. A container normally needs `0.0.0.0`, not a loopback-only listener.
+
+Supply secrets through the host's secret configuration. Terminate TLS at the server or proxy, add a health-check route outside rspc, and allow the process time to finish in-flight requests during shutdown.
+
+If you use Docker, build the binary for the runtime image's architecture and C library. Include any runtime libraries and CA certificates your application needs. The required packages depend on your application and cannot be inferred from rspc alone.
+
+## Frontend routing
+
+Prefer a same-origin `/rspc` path through a reverse proxy. If the frontend calls another origin, configure CORS and credentials explicitly. Avoid placing private query responses in a shared CDN cache.
+
+For subscriptions, the host and proxy must support WebSocket upgrades and long-lived connections. Use `wss://` from an HTTPS page.
+
+## Serverless functions
+
+This release does not include dedicated Vercel or Netlify function adapters. A Rust HTTP bridge may be possible, but you must verify its runtime and request mapping. Do not assume a request-based function host supports WebSocket subscriptions or keeps process state between calls.

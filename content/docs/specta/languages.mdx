@@ -1,6 +1,89 @@
 ---
 title: Languages
-description: TODO
+description: Choose and configure a language exporter.
 ---
 
-TODO
+Language exporters turn a Specta type collection into source code or a schema. Install the exporter separately from `specta` and pass a format that matches your serializer.
+
+## TypeScript
+
+Install the versions in the [getting started guide](/docs/specta), then export your registered types:
+
+```rust copy
+use specta::{Type, Types};
+use specta_typescript::{Layout, Typescript};
+
+#[derive(Type)]
+struct User {
+    id: u32,
+    name: String,
+}
+
+let types = Types::default().register::<User>();
+Typescript::default()
+    .layout(Layout::FlatFile)
+    .export_to("./bindings.ts", &types, specta_serde::Format)?;
+```
+
+Use `.export(&types, specta_serde::Format)` to return a `String` instead of writing a file.
+
+### Output layouts
+
+| Layout               | Output                                   | Use when                                               |
+| -------------------- | ---------------------------------------- | ------------------------------------------------------ |
+| `FlatFile`           | One file with unqualified type names     | Your type names are unique. This is the default.       |
+| `ModulePrefixedName` | One file with module paths in type names | Different modules contain types with the same name.    |
+| `Namespaces`         | One file with TypeScript namespaces      | You want to preserve module grouping in a single file. |
+| `Files`              | A file for each Rust module              | You want separate modules and imports.                 |
+
+With `Layout::Files`, pass a directory to `export_to`. The string-returning `export` method does not support that layout.
+
+Use `.header("/* eslint-disable */")` to add a file header. Configure your formatter to ignore generated files if it would otherwise rewrite them.
+
+## JavaScript with JSDoc
+
+`JSDoc` is part of `specta-typescript`. It writes JavaScript with type annotations for editors and JavaScript type checking.
+
+```rust copy
+use specta_typescript::JSDoc;
+
+JSDoc::default().export_to(
+    "./bindings.js",
+    &types,
+    specta_serde::Format,
+)?;
+```
+
+Use the same `Types` collection as in the TypeScript example. JSDoc does not support the `Namespaces` layout.
+
+## Swift
+
+Add `specta-swift` alongside `specta` and `specta-serde`:
+
+```bash
+cargo add specta-swift@0.0.5
+```
+
+```rust copy
+use specta_swift::Swift;
+
+Swift::default().export_to(
+    "./Types.swift",
+    &types,
+    specta_serde::Format,
+)?;
+```
+
+See the [Swift API reference](https://docs.rs/specta-swift) for naming, indentation, optional, and generic settings. Test the generated code against the encoding and decoding rules used by your Swift client.
+
+## Schema and other exporters
+
+The [Specta workspace](https://github.com/specta-rs/specta) also contains exporters for OpenAPI, JSON Schema, Go, Java, Kotlin, Zod, and Valibot. Their coverage and release status differ. Read each crate's documentation before choosing it for an application.
+
+`specta-openapi` exports reusable schemas and supports describing operations. Exporting a collection of data types alone does not discover your HTTP routes.
+
+## Check compatibility
+
+Exporter versions do not use the same version numbers as the core crate. Use the versions shown by that exporter's documentation. In particular, do not combine Specta v1 examples or older v2 release candidates with the current `Types` and format APIs.
+
+Generated type definitions describe the expected wire data. They do not validate untrusted values at runtime unless the selected exporter provides validation code and you call it.

@@ -1,8 +1,42 @@
 ---
 title: Request
+description: Pass request data to resolvers through context.
 ---
 
-- How to use request from procedures
-- Cookie APIs
-- Setting response HTTP headers
-- How to access the HTTP headers on the frontend
+The released 0.3.0 router does not expose a universal request, cookie, or response-header object to every resolver. Those are transport concerns. Extract the data you need in the integration and pass it through context.
+
+## Read request headers
+
+For the 0.3.0 Axum adapter, the context callback can accept request parts:
+
+```rust
+use axum::http::request::Parts;
+
+#[derive(Clone)]
+struct Ctx {
+    authorization: Option<String>,
+}
+
+let app = axum::Router::new().nest(
+    "/rspc",
+    rspc_axum::endpoint(router.arced(), |parts: Parts| Ctx {
+        authorization: parts.headers.get("authorization")
+            .and_then(|value| value.to_str().ok())
+            .map(str::to_owned),
+    }),
+);
+```
+
+Here `router` must be a built `Router<Ctx>`. The header is still untrusted. Verify the credential before treating it as a session or identity.
+
+## Cookies and response headers
+
+Read cookies from the request headers or a compatible Axum extractor. There is no built-in rspc cookie jar in this release.
+
+Set response headers in your web framework's route or middleware layer. A resolver's return value is data inside rspc's response envelope, not an HTTP response object. A dedicated login or logout route is often simpler for setting session cookies.
+
+## Read headers in the frontend
+
+`FetchTransport` returns the procedure's decoded value, not a `Response`. Supply a custom fetch implementation if you need to inspect response headers before the transport decodes the body.
+
+For cross-origin responses, the server must expose custom headers through CORS. Browsers do not let JavaScript read `Set-Cookie`; let the browser manage cookies instead.

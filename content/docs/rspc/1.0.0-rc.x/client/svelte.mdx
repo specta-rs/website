@@ -1,29 +1,53 @@
 ---
 title: Svelte
+description: Use the typed client as a Svelte query function.
 ---
 
-rspc can be used on the frontend with [Svelte](https://svelte.dev) via [Tanstack Svelte Query](https://tanstack.com/query/latest/docs/framework/svelte/overview) which provides caching, refetching and a lot more.
+Use the [vanilla client](/docs/rspc/1.0.0-rc.x/client/vanilla) as a TanStack Query request function. This avoids depending on the experimental rspc Svelte adapter's context setup.
 
-To get started first install the required packages.
+The example below uses the Svelte 4 store-based API with TanStack Svelte Query 5.71.10. For a newer adapter generation, follow its setup guide and keep the typed `client.query` call as the query function.
 
-```npm copy
-npm i @rspc/client # The core client
-npm i @rspc/svelte-query # The integration
+```bash
+npm install @rspc/client@0.3.1 @tanstack/svelte-query@5.71.10
 ```
 
-Then you can do the following:
+## Provide a query client
 
-```svelte copy filename="index.svelte"
+```svelte copy filename="src/App.svelte"
 <script lang="ts">
-    import { createSvelteQueryHooks } from "@rspc/svelte-query";
-    import type { Procedures } from "../../../../bindings.ts";
+  import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
+  import Version from "./Version.svelte";
 
-    const rspc = createSvelteQueryHooks<Procedures>();
-
-    const version = rspc.createQuery(["version"]);
+  const queryClient = new QueryClient();
 </script>
 
-<div>
-    <p>Using rspc version: {$version.data}</p>
-</div>
+<QueryClientProvider client={queryClient}>
+  <Version />
+</QueryClientProvider>
 ```
+
+## Call a query
+
+Create `api.ts` using the [quickstart client setup](/docs/rspc/1.0.0-rc.x/quickstart#call-it-from-typescript), then use it in a child component:
+
+```svelte copy filename="src/Version.svelte"
+<script lang="ts">
+  import { createQuery } from "@tanstack/svelte-query";
+  import { client } from "./api";
+
+  const version = createQuery({
+    queryKey: ["version"],
+    queryFn: () => client.query(["version", null]),
+  });
+</script>
+
+{#if $version.isPending}
+  <p>Loading...</p>
+{:else if $version.isError}
+  <p>Could not load version.</p>
+{:else}
+  <p>{$version.data}</p>
+{/if}
+```
+
+For server-side rendering, create query clients per request and use a server-reachable API URL. Do not share a cache containing user-specific data across requests.

@@ -2,13 +2,12 @@
 title: SolidJS
 ---
 
-rspc can be used on the frontend with [SolidJS](https://www.solidjs.com/) via [Tanstack Solid Query](https://tanstack.com/query/v4/docs/adapters/solid-query) which provides caching, refetching and a lot more.
+The `@rspc/solid-query` adapter wraps TanStack Query v5 for Solid. This example uses the tuple client and bindings from the [quickstart](/docs/rspc/1.0.0-rc.x/quickstart).
 
 To get started first install the required packages.
 
 ```npm copy
-npm i @rspc/client # The core client
-npm i @rspc/solid # The SolidJS integration
+npm install @rspc/client@0.3.1 @rspc/solid-query@0.3.1 @tanstack/solid-query@5
 ```
 
 Then you can do the following:
@@ -16,31 +15,27 @@ Then you can do the following:
 ```tsx copy filename="index.ts"
 import { QueryClient } from "@tanstack/solid-query";
 import { FetchTransport, createClient } from "@rspc/client";
-import { createSolidQueryHooks } from "@rspc/solid";
+import { createSolidQueryHooks } from "@rspc/solid-query";
 
-import type { Procedures } from "./ts/index"; // These were the bindings exported from your Rust code!
+import type { ProceduresLegacy as Procedures } from "./bindings";
 
 // You must provide the generated types as a generic and create a transport (in this example we are using HTTP Fetch) so that the client knows how to communicate with your API.
 const client = createClient<Procedures>({
   // Refer to the integration your using for the correct transport.
-  transport: new FetchTransport("http://localhost:4000/rspc"),
+  transport: new FetchTransport("/rspc"),
 });
 
 const queryClient = new QueryClient();
 const rspc = createSolidQueryHooks<Procedures>();
 
 function SomeComponent() {
-  const echo = rspc.createQuery(() => ({
-    queryKey: ["echo", "somevalue"],
-  }));
-  const sendMsg = rspc.createMutation(() => ({
-    mutationKey: "sendMsg",
-  }));
+  const version = rspc.createQuery(() => ["version", null]);
+  const greeting = rspc.createMutation(() => "greet");
 
   return (
     <>
-      <p>{echo.data}</p>
-      <button onClick={() => sendMsg.mutate("newVersion")}>Do thing</button>
+      <p>{version.data}</p>
+      <button onClick={() => greeting.mutate("Ada")}>Greet</button>
     </>
   );
 }

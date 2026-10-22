@@ -1,6 +1,115 @@
 ---
 title: Specta Core
-description: TODO
+description: Derive, collect, and format Rust type definitions.
 ---
 
-TODO
+Specta separates type information from serialization and language output:
+
+1. `Type` describes a Rust type.
+2. `Types` collects named types and their dependencies.
+3. A format applies serialization rules.
+4. An exporter writes the target language.
+
+## Derive Type
+
+Enable Specta's `derive` feature, then derive `Type` on each custom type you expose.
+
+```rust copy
+use specta::{Type, Types};
+
+#[derive(Type)]
+struct Address {
+    city: String,
+}
+
+#[derive(Type)]
+struct User {
+    name: String,
+    address: Option<Address>,
+}
+
+let types = Types::default().register::<User>();
+```
+
+Registering `User` also registers `Address`. Built-in types such as `String`, `Vec<T>`, and `Option<T>` already implement `Type` when their inner types do.
+
+Use `.register::<AnotherType>()` to add more roots. Use `register_mut::<T>()` when you need to update an existing collection in place.
+
+## Third-party types
+
+Specta has optional features for common crates, including `uuid`, `chrono`, `time`, `url`, and `serde_json`. Enable the matching feature when a shared type contains one of those types:
+
+```toml filename="Cargo.toml"
+[dependencies]
+specta = { version = "=2.0.0-rc.27", features = ["derive", "uuid"] }
+```
+
+Check the [crate feature list](https://docs.rs/crate/specta/2.0.0-rc.27/features) for supported crates. A feature does not replace the dependency on that crate in your application.
+
+## Serde support
+
+The core type graph is format agnostic. Pass `specta_serde::Format` to the exporter when your data uses Serde. It handles attributes that affect the wire shape, including field renames, enum tags, defaults, and flattening.
+
+```rust copy
+use serde::{Deserialize, Serialize};
+use specta::{Type, Types};
+
+#[derive(Type, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct User {
+    display_name: String,
+}
+
+let types = Types::default().register::<User>();
+let output = specta_typescript::Typescript::default()
+    .export(&types, specta_serde::Format)?;
+```
+
+The exported field is `displayName`, not `display_name`. Add Serde with its `derive` feature to use this example.
+
+### Different input and output shapes
+
+Some Serde attributes change serialization and deserialization in different ways. Use `specta_serde::PhasesFormat` when you need exact types for each direction or a single shared shape cannot represent the type.
+
+```rust
+let output = specta_typescript::Typescript::default()
+    .export(&types, specta_serde::PhasesFormat)?;
+```
+
+This can produce separate serialize and deserialize aliases. A request sent to Rust uses the deserialize shape. A response sent from Rust uses the serialize shape.
+
+### Custom serializers
+
+Specta cannot infer the output of arbitrary serializer functions. If `#[serde(with = "...")]`, `serialize_with`, or `deserialize_with` changes a field's wire type, declare that type explicitly:
+
+```rust
+#[derive(specta::Type, serde::Serialize, serde::Deserialize)]
+struct Digest {
+    #[serde(with = "hex_bytes")]
+    #[specta(type = String)]
+    value: Vec<u8>,
+}
+```
+
+Here `hex_bytes` is your Serde codec module. The override describes its string representation. It does not change the field in Rust or implement serialization. Use `specta_serde::Phased<SerializeType, DeserializeType>` with `PhasesFormat` if the codec uses different types in each direction.
+
+## Collect types automatically
+
+The optional `collect` feature registers derived types in a global collection. Export it with:
+
+```rust
+let types = specta::collect();
+specta_typescript::Typescript::default()
+    .export_to("./bindings.ts", &types, specta_serde::Format)?;
+```
+
+Use explicit registration when you want a small, predictable public API. Automatic collection can include types that are not part of that API. `#[specta(collect = false)]` opts a derived type out of automatic collection.
+
+## Troubleshooting
+
+- **`Type` is not implemented:** derive it on the custom type, enable the relevant crate feature, or provide an override that matches the wire type.
+- **Unsupported Serde attributes:** check whether the type needs directional export or an explicit wire-type override.
+- **Duplicate exported names:** rename the types or use a TypeScript layout that preserves module paths.
+- **Large integers:** JavaScript numbers cannot represent every 64-bit or 128-bit integer. Choose a wire representation that preserves the values your API accepts. A type override alone does not convert JSON numbers into strings or JavaScript `bigint` values.
+
+See the [core API reference](https://docs.rs/specta/2.0.0-rc.27/specta/) for manual `Type` implementations and datatype inspection.

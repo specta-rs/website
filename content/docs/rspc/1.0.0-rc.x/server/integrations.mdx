@@ -2,4 +2,20 @@
 title: Integrations
 ---
 
-TODO: Show all of them and how to set them up.
+An integration creates request context and executes built procedures over a transport. Build the router once, export its metadata, then pass the executable `Procedures` to the adapter.
+
+| Integration                                               | Transport                                                    | Setup                                                                 |
+| --------------------------------------------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------- |
+| [Axum](/docs/rspc/1.0.0-rc.x/integrations/axum)           | HTTP queries and mutations, optional WebSocket subscriptions | Mount `rspc_axum::endpoint` under a path such as `/rspc`.             |
+| [Tauri](/docs/rspc/1.0.0-rc.x/integrations/tauri)         | Tauri v2 IPC                                                 | Install `tauri_plugin_rspc::init` and use a matching client protocol. |
+| [Actix Web](/docs/rspc/1.0.0-rc.x/integrations/actix-web) | No adapter in the checked rewrite                            | Keep the older compatible stack or implement an adapter.              |
+
+Use core and adapter crates from the same source revision. The [quickstart](/docs/rspc/1.0.0-rc.x/quickstart) pins one revision and includes a complete Axum server.
+
+## Create context
+
+The adapter's callback constructs the context consumed by your procedures. Put shared resources behind cheap cloneable handles such as `Arc`, and add verified request data such as a user session. Context creation is transport-specific; resolver logic need not be.
+
+## Custom integrations
+
+See [HTTP](/docs/rspc/1.0.0-rc.x/integrations/http) for the wire protocol and [internals](/docs/rspc/1.0.0-rc.x/internal/advanced) for executing procedures directly. A custom adapter must handle decoding, errors, streaming, cancellation, and response serialization. Forwarding a path to a resolver is only one part of that work.

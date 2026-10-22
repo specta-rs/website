@@ -1,6 +1,44 @@
 ---
 title: Build a Framework
-description: TODO
+description: Use Specta in applications and framework integrations.
 ---
 
-TODO
+Use Specta directly when you need shared data types. Use a framework integration when you also want generated functions for commands or API procedures.
+
+## Application integrations
+
+### Tauri Specta
+
+[Tauri Specta](/docs/tauri-specta) generates typed calls for Tauri commands and events. It collects the types used by your commands, so you do not need to register each payload by hand.
+
+Use the versions required by Tauri Specta. Both crates must agree on the Specta release candidate.
+
+### rspc
+
+[rspc](/docs/rspc) uses Specta to describe procedure inputs, outputs, and errors. Its router exports bindings for a TypeScript client.
+
+rspc is no longer maintained. Its older releases use different Specta APIs. Keep an existing rspc application's dependency versions together rather than updating Specta alone.
+
+### Other integrations
+
+[TauRPC](https://github.com/MatsDK/TauRPC) and [orpc-rs](https://github.com/ahonn/orpc-rs) also use Specta. Follow the integration's setup guide and version requirements.
+
+## Build an integration
+
+A framework usually needs to:
+
+1. Collect the types used by its public operations.
+2. Apply serialization rules for each input and output.
+3. Export those types and generate the code that calls the transport.
+
+Enable Specta's `function` and `derive` features to collect Rust function metadata with `#[specta::specta]`. This metadata describes a function. It does not make the function remotely callable.
+
+The TypeScript exporter provides `framework_runtime` for generated runtime code and `framework_prelude` for a shared file prelude. Use the `FrameworkExporter` passed to the runtime callback to render type references. This keeps generated references consistent with the selected output layout.
+
+Do not concatenate Rust type names into TypeScript imports. Names can change with layout, module paths, generics, and serialization phases. See the [exporter API](https://docs.rs/specta-typescript/latest/specta_typescript/struct.Exporter.html) and [Tauri Specta source](https://github.com/specta-rs/tauri-specta/tree/main/src) for an implementation.
+
+## Keep the wire contract accurate
+
+Deriving `Type` is not enough to define a transport. The framework still owns argument encoding, serialization, errors, and runtime validation.
+
+For a Serde-based transport, use the deserialize shape for arguments sent to Rust and the serialize shape for results sent from Rust. Test the generated bindings against actual serialized values, including tagged enums, optional fields, custom codecs, and errors.

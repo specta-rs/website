@@ -1,9 +1,21 @@
 ---
 title: Invalidation
+description: Refresh client data after mutations and understand the server prototype.
 ---
 
-<Callout type="warn">
+Invalidation marks cached query data as stale after a change. In a frontend using TanStack Query, invalidate the relevant query after a successful mutation so active observers can refetch it.
 
-The invalidation middleware is not yet available but we are actively working on it. Stay tuned!
+```typescript
+await client.mutation(["updateUser", input]);
+await queryClient.invalidateQueries({ queryKey: ["getUser", input.id] });
+```
 
-</Callout>
+This example assumes those procedures exist and uses the same key for querying and invalidating a user. Keep cache keys consistent across the application.
+
+## Server-driven invalidation
+
+`rspc-invalidation` contains an experimental event queue. `Invalidator::invalidate` queues events, `Invalidator::with` maps an event to affected inputs, and `queue` collects result streams.
+
+The [prototype](https://github.com/specta-rs/rspc/blob/30402a42a6a523e0a76d23f3b7ce80903386a98d/crates/invalidation/src/lib.rs) is incomplete. The `Any` and `Many` paths are unimplemented, and the single-input path uses a hard-coded procedure name. It is not a working general-purpose invalidation system.
+
+Do not rely on it for single-flight mutations or automatic cache synchronization. Use explicit client invalidation, or implement application-specific events with a transport you control.

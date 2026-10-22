@@ -2,4 +2,16 @@
 title: Actix Web
 ---
 
-TODO
+The procedure-based rewrite does not include an Actix Web adapter in the [checked source revision](https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/integrations). Do not use an older `rspc-actix-web` package with this router API unless you have verified compatibility.
+
+## Available options
+
+- Use the [Axum adapter](/docs/rspc/1.0.0-rc.x/integrations/axum) for the experimental router.
+- Keep an existing Actix application on its matching rspc and adapter versions.
+- Write an adapter around `Procedures<TCtx>` if you need to keep Actix and adopt the rewrite.
+
+## Adapter requirements
+
+An Actix adapter must extract request context, find the procedure, deserialize its input, poll its result stream, and encode the response expected by the client. It also owns request limits and transport errors.
+
+For subscriptions, add WebSocket message routing and cancellation. See the [HTTP protocol](/docs/rspc/1.0.0-rc.x/integrations/http) and [execution API](/docs/rspc/1.0.0-rc.x/internal/advanced) before starting an implementation.

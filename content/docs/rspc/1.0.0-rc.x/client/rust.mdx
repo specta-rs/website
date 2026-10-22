@@ -1,11 +1,21 @@
 ---
 title: Rust
+description: Status and limitations of the Rust client prototype.
 ---
 
-<Callout type="warn">
+`rspc-client` is an experimental Rust HTTP client. It is not a supported production client.
 
-The Rust client is currently still very experimental and will likely change before it's stable release.
+## API shape
 
-</Callout>
+The [prototype](https://github.com/specta-rs/rspc/blob/30402a42a6a523e0a76d23f3b7ce80903386a98d/crates/client/src/lib.rs) exposes `Client<P>::new(url)` and `exec::<Operation>(input)`. Each operation implements a `Procedure` trait with input, output, error, key, and operation-kind metadata.
 
-Coming soon...
+Queries use GET with a JSON `input` parameter. Mutations use POST with a JSON body. The client expects a legacy response envelope.
+
+## Limits
+
+- Network, decoding, and serialization failures can panic instead of returning a usable error.
+- Application and framework errors are not fully handled.
+- Subscriptions are unimplemented.
+- The Rust binding exporter is disabled in the checked rewrite, so there is no complete generated-client setup to recommend.
+
+For Rust code running in the server process, execute the built procedures directly rather than adding an HTTP round trip. See [execution internals](/docs/rspc/1.0.0-rc.x/internal/advanced). For a separate Rust service, use an explicitly supported HTTP contract and client.

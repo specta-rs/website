@@ -1,147 +1,81 @@
 ---
 title: Quickstart
+description: Run the released rspc 0.3.0 API with Axum.
 ---
 
-import { Step, Steps } from "fumadocs-ui/components/steps";
-import { Tab, Tabs } from "fumadocs-ui/components/tabs";
+This guide is for an existing application using rspc 0.3.0. rspc is no longer maintained. Do not mix these dependencies with the experimental procedure API.
 
-Get rspc up and running in your own project.
-
-<Steps>
-
-<Step>
-
-### Create new project (optional)
-
-If you haven't got a Rust project already setup, create a new one using the following command.
+## Create a project
 
 ```bash
-cargo new <project-name>
-cd <project-name>
-cargo add tokio --features full # rspc requires an async runtime
+cargo new rspc-example
+cd rspc-example
+cargo add rspc@=0.3.0 rspc-axum@=0.2.0 axum@0.7
+cargo add tokio --features macros,rt-multi-thread,net
 ```
 
-</Step>
+If you add Specta directly for custom payload derives, use the `2.0.0-rc.20` release required by rspc 0.3.0, not the version in the current Specta guide.
 
-<Step>
+## Define and expose a router
 
-### Install rspc
-
-`rspc` is distributed through a Rust crate hosted on [crates.io](https://crates.io/crates/rspc). Add it to your project using the following command:
-
-```bash
-cargo add rspc specta
-```
-
-This command will not exist if you're running a Rust version earlier than `1.62.0`, please upgrade your Rust version if this is the case.
-
-</Step>
-
-<Step>
-
-### Create a router
-
-Go into `src/main.rs` and add the following code:
-
-```rs copy filename="src/main.rs"
-use rspc::Router;
+```rust copy filename="src/main.rs"
+use rspc::{Config, Router};
 
 fn router() -> Router<()> {
-    <Router>::new()
-        .query("version", |t| t(|ctx, input: ()| env!("CARGO_PKG_VERSION")))
+    Router::new()
+        .config(Config::new().export_ts_bindings("./bindings.ts"))
+        .query("version", |t| {
+            t(|_: (), _: ()| env!("CARGO_PKG_VERSION"))
+        })
         .build()
 }
 
 #[tokio::main]
 async fn main() {
-    let router = router();
+    let app = axum::Router::new()
+        .nest("/rspc", rspc_axum::endpoint(router().arced(), || ()));
 
-    // TODO: Mount an integration to expose your API
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:4000")
+        .await
+        .expect("failed to bind server");
+    axum::serve(listener, app).await.expect("server failed");
 }
 
 #[cfg(test)]
 mod tests {
-    // It is highly recommended to unit test your rspc router by creating it
-    // This will ensure it doesn't have any issues and also export updated Typescript types.
-
     #[test]
-    fn test_rspc_router() {
+    fn router_builds() {
         super::router();
     }
 }
 ```
 
-</Step>
+Run `cargo run` to export `bindings.ts` and start the server. Binding export through `Config` happens only in debug builds. Run the router test in CI before building the frontend.
 
-<Step>
+## Create a frontend client
 
-### Exposing your router
-
-Now that you have a router you're probably wondering how you access it from your frontend. This is done through an rspc integration. I would recommend starting with [Axum](https://github.com/tokio-rs/axum), by following [this](/docs/rspc/0.3.0/integrations/axum).
-
-</Step>
-
-<Step>
-
-### Usage on the frontend
-
-Install the frontend package using the following command:
-
-<Tabs items={['React', 'Solid']}>
-<Tab value="React">
-
-```npm
-npm install @rspc/client @rspc/react
+```bash
+npm install @rspc/client@0.3.1
 ```
 
-```tsx copy filename="src/MyComponent.tsx"
-import { rspc } from "./rspc";
+Copy or export the bindings into your frontend source directory:
 
-function SomeComponent() {
-  const version = rspc.useQuery(["version"]);
+```typescript copy filename="src/api.ts"
+import { createClient, FetchTransport } from "@rspc/client";
+import type { Procedures } from "./bindings";
 
-  return (
-    <>
-      <p>{version.data}</p>
-    </>
-  );
-}
+export const client = createClient<Procedures>({
+  transport: new FetchTransport("/rspc"),
+});
+
+console.log(await client.query(["version"]));
 ```
 
-</Tab>
-<Tab value="Solid">
+Proxy the same-origin `/rspc` path to the Rust server during development. For a cross-origin API, use its full URL and configure CORS in Axum.
 
-```npm
-npm install @rspc/client @rspc/solid
-```
+## Next steps
 
-```tsx copy filename="src/MyComponent.tsx"
-import { rspc } from "./rspc";
-
-function SomeComponent() {
-  const version = rspc.createQuery(() => ({
-    queryKey: ["version"],
-  }));
-
-  return (
-    <>
-      <p>{version.data}</p>
-    </>
-  );
-}
-```
-
-</Tab>
-</Tabs>
-
-</Step>
-
-<Step>
-
-### (Optional) Setup your editor
-
-If you are using [Visual Studio Code](https://code.visualstudio.com) you can optionally install the [rspc extension](https://marketplace.visualstudio.com/items?itemName=oscartbeaumont.rspc-vscode) for useful code shortcuts.
-
-</Step>
-
-</Steps>
+- [Router](/docs/rspc/0.3.0/server/router): add procedures, merge routers, and export bindings.
+- [Middleware](/docs/rspc/0.3.0/server/middleware): authenticate requests and change context.
+- [Vanilla client](/docs/rspc/0.3.0/client): configure transports and credentials.
+- [Deployment](/docs/rspc/0.3.0/ecosystem/deployment): generate bindings and deploy the server.

@@ -1,15 +1,58 @@
 ---
 title: HTTP
+description: Understand the HTTP and WebSocket transport contract.
 ---
 
-TODO
+The [Axum adapter](/docs/rspc/1.0.0-rc.x/integrations/axum) is the reference implementation for this experimental API. The protocol is not plain REST and is not compatible with tRPC's client.
 
-## TODO:
+## Queries and mutations
 
-- Explain wire protocol w/ reference implementation
-- Explain extractors and content types
-- Using Workers, Lambda, Vercel/Netlify functions via Axum adapater
-- Explain supporting 3rd party web frameworks & contributing them back into rspc.
-- CDN caching
-- WebSocket
-- Allow `form` to submit to a specific query. Maybe a custom endpoint for it specifically.
+For an endpoint mounted at `/rspc`:
+
+| Operation | Request                  | Input                                           |
+| --------- | ------------------------ | ----------------------------------------------- |
+| Query     | `GET /rspc/<procedure>`  | JSON in the URL-encoded `input` query parameter |
+| Mutation  | `POST /rspc/<procedure>` | JSON request body                               |
+
+Nested procedure names use dots, for example `users.list`. A query with a string input can be called with:
+
+```bash
+curl --get 'http://localhost:4000/rspc/echo' \
+  --data-urlencode 'input="hello"'
+```
+
+A mutation with an object input uses:
+
+```bash
+curl 'http://localhost:4000/rspc/createUser' \
+  -H 'Content-Type: application/json' \
+  --data '{"name":"Ada"}'
+```
+
+These calls assume the corresponding procedures exist. Inputs are JSON values, not arbitrary form fields. Native form submissions and multipart uploads need separate handling.
+
+## Responses and errors
+
+The adapter wraps results in a JSON-RPC-style envelope. Clients read `result.type` and `result.data`; they do not receive the resolver value as the whole response body. A successful response has a `response` result type. Procedure failures use an `error` result type.
+
+An HTTP status alone is not enough to identify success. Resolver failures can be carried in an HTTP 200 response. Decode the envelope and test both application errors and protocol errors when implementing a client.
+
+Use the [adapter implementation](https://github.com/specta-rs/rspc/blob/30402a42a6a523e0a76d23f3b7ce80903386a98d/integrations/axum/src/v2.rs) and its `jsonrpc` module as the exact protocol reference. Error representation differs between the old and experimental APIs.
+
+## WebSockets
+
+With the `ws` feature enabled, Axum accepts a WebSocket connection at `/rspc/ws`. Requests carry an ID, an operation method, and parameters containing the procedure path and input. Response IDs associate results with requests; subscriptions deliver multiple events and need cancellation handling.
+
+WebSocket messages are not HTTP GET or POST requests after the upgrade. Use a client from the same protocol generation rather than constructing messages from an older guide.
+
+## Authentication and caching
+
+HTTP transports can send cookies or authorization headers through a custom fetch function. See [client authentication](/docs/rspc/1.0.0-rc.x/client/vanilla#fetch-authentication).
+
+Do not cache authenticated responses in a shared CDN by default. A safe cache policy must account for the user, procedure path, input, and response headers. A GET request does not imply that its response is public.
+
+## Serverless and other servers
+
+rspc does not provide a deployment adapter for every serverless platform. If a platform supports Axum through an HTTP bridge, verify its request, response, and runtime requirements. WebSocket subscriptions also need a platform that supports long-lived connections.
+
+For another Rust web framework, implement the same decoding and response contract around the built procedures. See [custom integrations](/docs/rspc/1.0.0-rc.x/internal/advanced). Do not assume that returning serialized resolver output is protocol compatible.

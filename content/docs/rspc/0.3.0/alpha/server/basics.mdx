@@ -1,162 +1,96 @@
 ---
 title: Basics
+description: Read the archived alpha notes without mixing incompatible APIs.
 ---
 
-Getting started with rspc on the server. This guide will take you through all the parts of rspc and explain how they work.
+These alpha pages were early drafts. Some examples used a proposed `Rspc` API that is not exported by the released 0.3.0 crate. For an application pinned to 0.3.0, use the API below and the [0.3.0 quickstart](/docs/rspc/0.3.0/quickstart).
 
-### Router
-
-First start by creating a new router with the default context type (we will touch on this later). A router is a collection of procedures which is a similar to a REST endpoint Eg. `/api/users`.
+## Router and bindings
 
 ```rust
-fn router() -> Router {
-    let router = <Router>::new();
+use rspc::{Config, Router};
+
+fn router() -> Router<()> {
+    Router::new()
+        .config(Config::new().export_ts_bindings("./bindings.ts"))
+        .query("version", |t| t(|_: (), _: ()| env!("CARGO_PKG_VERSION")))
+        .build()
 }
 ```
 
-Next you will want to export the router's bindings to Typescript so the frontend code can use them. rspc's typesafe works by converting your Rust code into a Typescript declaration file.
+The configuration exports bindings when the router is built in debug mode. Build the router in a test to catch naming and export failures before starting the server.
+
+## Transports
+
+The [0.3.0 Axum integration](/docs/rspc/0.3.0/integrations/axum) accepts an `Arc<Router<TCtx>>`. It creates the request context through a callback. Do not pass this router to the experimental rewrite's adapter, which accepts `Procedures<TCtx>` instead.
+
+## Context
+
+Context holds shared resources and request-specific state. It does not have to be an immutable reference. An owned struct with `Arc` fields is a common choice:
 
 ```rust
-use rspc::{Rspc, Router};
-
-const R: Rspc<()> = Rspc::new();
-
-fn router() -> Router {
-    let router = R.router().build().unwrap();
-
-    #[cfg(debug_assertions)] // Only export in development builds
-    router
-        .export_ts(ExportConfig::new(
-            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("./bindings.ts"),
-        ))
-        .unwrap();
-
-    router
+#[derive(Clone)]
+struct Ctx {
+    message: std::sync::Arc<String>,
 }
 
-fn main() {
-   let router = router();
-}
-
-#[cfg(test)]
-mod test {
-    // I recommend doing this as rspc's router can fail to build and this ensures it will be caught by the tests
-    #[test]
-    fn export_bindings() {
-        super::router();
-    }
-}
+let router = Router::<Ctx>::new()
+    .query("message", |t| t(|ctx: Ctx, _: ()| (*ctx.message).clone()))
+    .build();
 ```
 
-### Transports
+Construct it in the transport callback. Use interior mutability only for state that actually needs mutation.
 
-Now that you have a basic router you will want to expose it to the outside world. rspc provides are multiple methods for doing this but I recommend using [Axum](https://github.com/tokio-rs/axum).
+## Queries and mutations
 
-```rs
-
-
-```
-
-### Context
-
-A router is cool and all but your application has state such as a database connection you will want to be able to access from your procedures.
+Queries read data. Mutations perform actions with side effects. Both take a context and one input value:
 
 ```rust
-use my_database_library::DatabaseConn;
-
-#[derive(Clone)] // Clone is generally required
-struct MyCtx { db: DatabaseConn }
-
-fn main() {
-    let router = Router::<MyCtx>::new();
-}
+let router = Router::<()>::new()
+    .query("echo", |t| t(|_: (), input: String| input))
+    .mutation("greet", |t| t(|_: (), name: String| async move {
+        format!("Hello, {name}!")
+    }))
+    .build();
 ```
 
-<Callout type="info">
-  The context type must be an immutable reference (`&T`). If your type doesn't satisfy this property you will want to wrap your data (`T`) in an [`Arc<T>`](https://doc.rust-lang.org/std/sync/struct.Arc.html) or an [`Arc<Mutex<T>>`](https://doc.rust-lang.org/std/sync/struct.Mutex.html) depending on if your require mutability (this pattern is known as [interior mutability](https://doc.rust-lang.org/book/ch15-05-interior-mutability.html)).
-</Callout>
+Use a struct for several input fields. Inputs need Serde `Deserialize` and Specta `Type`; outputs need `Serialize` and `Type`.
 
-#### Request context
+## Subscriptions
 
-rspc deal with context differently than you might expect if your coming from other popular Rust libraries. A new context is created for every incoming request or websocket connection. This may seem weird at first but it allows your context to include both system data such as a database connection and user data such as the users session.
+A subscription resolver returns a `Stream`. Add `futures` for this example:
 
-### Procedure
-
-A procedure represents a single operation on the server. Thing of this as a regular REST endpoint Eg. `/users`. It can take in an argument and return a result.
-
-#### Queries
-
-A query is a request for data. It's important it has no [side-effects](<https://en.wikipedia.org/wiki/Side_effect_(computer_science)>) as it's possible for a query to be retried. When using the React or Solid integrations the data will always be refetched periodically.
-
-```rs
-use serde::Deserialize; // This requires the 'derive' feature to be enabled.
-use specta::Type;
-
-#[derive(Deserialize, Type)]
-pub struct MyCustomType {
-
-}
-
-# TODO
+```rust
+let router = Router::<()>::new()
+    .subscription("numbers", |t| {
+        t(|_: (), _: ()| futures::stream::iter([1_u32, 2, 3]))
+    })
+    .build();
 ```
 
-#### Mutations
+The adapter and frontend transport must support subscriptions. For Axum, enable the adapter's `ws` feature and use `WebsocketTransport`.
 
-TODO
+## Merge routers
 
-#### Subscriptions
+```rust
+let users = Router::<()>::new()
+    .query("list", |t| t(|_: (), _: ()| Vec::<String>::new()));
 
-{/* TODO: Must be enabled the Rust features */}
-
-TODO
-
-### Merging routers
-
-Ok now your starting to build your app but your finding that your file is getting a bit big. It might be time to split up your procedures across multiple routers.
-
-```rs
-# TODO
+let router = Router::<()>::new()
+    .merge("users.", users)
+    .build();
 ```
 
-### Advanced Procedures
+Call the merged procedure as `users.list`. Merge the child builder before calling `build` on the parent.
 
-#### Custom Types
+## Custom types and errors
 
-```rs
-# TODO
-```
+Derive the Serde and Specta traits on payload structs. For fallible resolvers, return `Result<T, rspc::Error>` and map application failures to an `ErrorCode` and a safe public message. See [error handling](/docs/rspc/0.3.0/server/error-handling).
 
-#### Error handling
+## Middleware
 
-Now we all think our code is perfect,
+Version 0.3.0 attaches middleware to the router. Middleware affects procedures registered after it and can change their context type. See [middleware](/docs/rspc/0.3.0/server/middleware) for authentication and logging examples.
 
-```rs
-# TODO
-```
+## Avoid captured resources
 
-#### Custom error types
-
-Look, rspc's error type is cool but what if i'm using my own.
-
-```rs
-# TODO
-```
-
-### Middleware
-
-This is all cool but i'm building a real application. I need to be able to do authentication, authorization, logging and more! This is where the rspc's powerful middleware system comes in.
-
-<Callout>
-  Docs coming soon as the syntax is undergoing breaking changes! <br />
-  If your interesting in using them jump in the Discord!
-</Callout>
-
-### Footguns
-
-#### Capturing context
-
-You should NOT capture variable into your handler function and instead use the request context. Their are exceptions to this rule but you should ideally be able to build the router without a connection to any external resources such as your database.
-
-```rs
-# TODO
-```
+Prefer reading a database handle from context to capturing it in a resolver closure. This keeps router construction independent of external services and makes it possible to validate and export the router in a test.

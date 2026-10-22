@@ -1,6 +1,35 @@
 ---
 title: Advanced
+description: Execute erased procedures and design a custom integration.
 ---
 
--- TOOD: Zero-copy deserialization
--- TODO: Custom integration
+## Execute a procedure
+
+After `Router::build`, use `procedures.get(path)` to find a handler. The low-level procedure API accepts either a typed value or a deserializer and returns a stream of dynamic results.
+
+The [Axum implementation](https://github.com/specta-rs/rspc/blob/30402a42a6a523e0a76d23f3b7ce80903386a98d/integrations/axum/src/jsonrpc_exec.rs) shows path lookup, `exec_with_deserializer`, result polling, and serialization. Use it as a reference rather than assuming one resolver always produces one value.
+
+## Implement an integration
+
+A transport adapter must define:
+
+1. How it parses paths, operation kinds, request IDs, and inputs.
+2. How it builds context and rejects invalid credentials.
+3. How it maps missing procedures and input failures to protocol errors.
+4. How it polls and serializes successful values and resolver errors.
+5. How it cancels streams when a subscription stops or the connection closes.
+6. How it limits request size, concurrency, and output buffering.
+
+Test the adapter against the exact client it serves. The old tuple client and experimental next client do not share every protocol or error assumption.
+
+## Deserialization and borrowing
+
+Dynamic input supports a deserializer path so adapters do not have to model every Rust input type. This does not make the full request pipeline zero-copy. The adapter can buffer the body or build a JSON value, and resolver inputs must satisfy the API's ownership and lifetime bounds.
+
+Do not return values borrowing from a temporary request buffer into a stream that outlives that buffer. Check the concrete input and output APIs before adding a custom codec.
+
+## Shared state
+
+Router and procedure setup callbacks populate shared `State` during construction. Middleware can read mounted extension state through procedure metadata. Request-specific state belongs in context instead.
+
+Several prototypes still have placeholder metadata and unchecked downcasts. Treat this code as experimental and test missing state, type mismatches, cancellation, and serialization failures explicitly.
