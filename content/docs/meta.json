@@ -1,3 +1,5 @@
 {
+  "title": "specta-rs",
+  "description": "Rust crates for building better web apps",
   "pages": ["index", "---Frameworks---", "specta", "tauri-specta", "rspc"]
 }

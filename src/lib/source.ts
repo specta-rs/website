@@ -1,5 +1,6 @@
 import { docs } from "fumadocs-mdx:collections/server";
-import { type InferPageType, loader } from "fumadocs-core/source";
+import type { Item, Node, Root } from "fumadocs-core/page-tree";
+import { type InferPageType, llms, loader } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
 import { icons } from "lucide-react";
 import { createElement } from "react";
@@ -69,4 +70,87 @@ export async function getLLMText(page: InferPageType<typeof source>) {
   return `# ${page.data.longTitle || page.data.title}
 
 ${processed}`;
+}
+
+/**
+ * Drafts (`hidden`) and the deprecated rspc 0.3.0 docs stay out of the
+ * machine-readable outputs: the sitemap, the search index and `llms.txt`.
+ */
+export function isIndexable(page: InferPageType<typeof source>): boolean {
+  return !page.data.hidden && !isDeprecatedPage(page.slugs);
+}
+
+/**
+ * A page that is allowed in `llms.txt`/`llms-full.txt`. On top of
+ * `isIndexable`, a page can opt out with `disableLlmsTxt`.
+ */
+function isLLMsPage(page: InferPageType<typeof source>): boolean {
+  return isIndexable(page) && !page.data.disableLlmsTxt;
+}
+
+// Folder paths, relative to `content/docs`, that are excluded wholesale. A
+// folder can hold external links (which have no page to inspect), so it needs
+// its own check on top of `isIndexable`.
+const EXCLUDED_FOLDER_PREFIXES = ["rspc/0.3.0"];
+
+function isExcludedFolder(path: string | undefined): boolean {
+  return (
+    path !== undefined &&
+    EXCLUDED_FOLDER_PREFIXES.some(
+      (prefix) => path === prefix || path.startsWith(`${prefix}/`),
+    )
+  );
+}
+
+function isExcludedItem(item: Item): boolean {
+  const page = source.getNodePage(item);
+  return page ? !isLLMsPage(page) : false;
+}
+
+function pruneNode(node: Node): Node | null {
+  if (node.type === "page") return isExcludedItem(node) ? null : node;
+  if (node.type === "separator") return node;
+  if (isExcludedFolder(node.$ref?.folder)) return null;
+
+  const children = node.children
+    .map(pruneNode)
+    .filter((child): child is Node => child !== null);
+  const index =
+    node.index && !isExcludedItem(node.index) ? node.index : undefined;
+
+  // A folder with nothing left to show is dropped entirely.
+  if (children.length === 0 && !index) return null;
+
+  return { ...node, children, index };
+}
+
+function pruneRoot(root: Root): Root {
+  return {
+    ...root,
+    children: root.children
+      .map(pruneNode)
+      .filter((child): child is Node => child !== null),
+    fallback: root.fallback ? pruneRoot(root.fallback) : undefined,
+  };
+}
+
+// `llms()` builds the `llms.txt` index from the page tree, so excluded pages
+// have to be pruned from the tree as well as from `getPages()`.
+const llmsSource = Object.assign(Object.create(source) as typeof source, {
+  getPages: (lang?: string) => source.getPages(lang).filter(isLLMsPage),
+  getPageTree: (lang?: string) => pruneRoot(source.getPageTree(lang)),
+});
+
+/**
+ * `llms.txt` — the index: a title, a summary and a link per page.
+ */
+export function getLLMsIndex() {
+  return llms(llmsSource).index();
+}
+
+/**
+ * `llms-full.txt` — the same pages, rendered in full.
+ */
+export function getLLMsFull() {
+  return llms(llmsSource, { renderPage: getLLMText }).full();
 }

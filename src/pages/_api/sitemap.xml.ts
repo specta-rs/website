@@ -1,4 +1,4 @@
-import { isDeprecatedPage, source } from "@/lib/source";
+import { isIndexable, source } from "@/lib/source";
 
 const canonical = "https://specta.dev";
 
@@ -6,9 +6,7 @@ const canonical = "https://specta.dev";
 // enough. Deprecated and hidden pages are left out so search engines only see
 // the documentation we want indexed.
 export async function GET() {
-  const pages = source
-    .getPages()
-    .filter((page) => !page.data.hidden && !isDeprecatedPage(page.slugs));
+  const pages = source.getPages().filter(isIndexable);
 
   const entries: { loc: string; lastmod?: string }[] = [
     { loc: `${canonical}/` },

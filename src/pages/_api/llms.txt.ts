@@ -1,18 +1,9 @@
-import { getLLMText, isDeprecatedPage, source } from "@/lib/source";
+import { getLLMsIndex } from "@/lib/source";
 
 export async function GET() {
-  const scan = source
-    .getPages()
-    .filter(
-      (page) =>
-        !page.data.hidden &&
-        !page.data.disableLlmsTxt &&
-        !isDeprecatedPage(page.slugs),
-    )
-    .map(getLLMText);
-  const scanned = await Promise.all(scan);
-
-  return new Response(scanned.join("\n\n"));
+  return new Response(await getLLMsIndex(), {
+    headers: { "Content-Type": "text/plain; charset=utf-8" },
+  });
 }
 
 export function getConfig() {
