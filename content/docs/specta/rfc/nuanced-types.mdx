@@ -4,17 +4,19 @@ hidden: true
 ---
 
 Goal:
- - Treat a `Date` as a date
- - Properly handle BigInt types
+
+- Treat a `Date` as a date
+- Properly handle BigInt types
 
 Assumptions:
- - Specta will provide the primitives but a framework will be required to assemble it.
+
+- Specta will provide the primitives but a framework will be required to assemble it.
 
 ### BigInt
 
 Javascript can't properly represent large integer types (`*64` and up + `*size` depending on platform) from Rust using it's `number` type. The current Specta version prevents exporting these types by default and recommends serialising the numbers to strings in Rust and converting back on the frontend. Although this works it's really painful, especially for numbers out of the users control like in 3rd party crates (Eg `std::time::SystemTime`).
 
-As Tauri and rspc use JSON for the communication standard we are limited by it's spec but luckily it *does* allow the bigint-style numbers in a JSON number field. [ref](https://stackoverflow.com/questions/13502398/json-integers-limit-on-size). This is great because we don't want to invest a whole new serialisation format.
+As Tauri and rspc use JSON for the communication standard we are limited by it's spec but luckily it _does_ allow the bigint-style numbers in a JSON number field. [ref](https://stackoverflow.com/questions/13502398/json-integers-limit-on-size). This is great because we don't want to invest a whole new serialisation format.
 
 #### `json-bigint`
 
@@ -59,8 +61,8 @@ Another potential solution is to implement a custom `serde::Serializer` which wr
 This would require a system to convert them from strings back to `BigInt`/`number` on the frontend but that could work similar to the `Date` idea (shown below)
 
 Issues:
- - How would this be confiugured? I think it would need to enabled/disabled on a per-invoke call.
 
+- How would this be confiugured? I think it would need to enabled/disabled on a per-invoke call.
 
 ### Date
 
@@ -92,9 +94,10 @@ my_command: (args: ...) => {
 ```
 
 Some notes:
- - I don't think we need to map arguments because `JSON.stringify(new Date())` works
- - Arguments should probally be typed as `number | BigInt` (do this in phase-specific types work)
- - We need to account for accounts by mapping each item
+
+- I don't think we need to map arguments because `JSON.stringify(new Date())` works
+- Arguments should probally be typed as `number | BigInt` (do this in phase-specific types work)
+- We need to account for accounts by mapping each item
 
 What about rspc? One advantage of Tauri Specta is that the frontend bindings are tied to a specific build so generating custom code is fine, with rspc the frontend and backend can be deployed out of sync which coluld major issues if we use the same system.
 

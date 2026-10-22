@@ -53,14 +53,15 @@ Transport is built on the standard [Fetch](https://developer.mozilla.org/en-US/d
 
 rspc uses:
 
-* `GET` requests for queries
-* `POST` requests for mutations
+- `GET` requests for queries
+- `POST` requests for mutations
 
 <Callout type="warn">
-**Important:** While rspc primarily uses `GET` requests for queries,
-it may also use `POST` requests for queries in certain scenarios (similar to how GraphQL operates).
-**Mutations will always use `POST` requests and will never use `GET`.**
-This behavior is an implementation detail and **isn't guaranteed** to remain the same in the future.
+  **Important:** While rspc primarily uses `GET` requests for queries, it may
+  also use `POST` requests for queries in certain scenarios (similar to how
+  GraphQL operates). **Mutations will always use `POST` requests and will never
+  use `GET`.** This behavior is an implementation detail and **isn't
+  guaranteed** to remain the same in the future.
 </Callout>
 
 </details>

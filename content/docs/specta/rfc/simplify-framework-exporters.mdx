@@ -4,7 +4,8 @@ hidden: true
 ---
 
 Goal:
- - Currently most frameworks Tauri Specta and TauRPC use string building for the final bindings file. This is error prone, generally badly formatted and more maintaince on maintainers. Is it possible to bring this into Specta?
+
+- Currently most frameworks Tauri Specta and TauRPC use string building for the final bindings file. This is error prone, generally badly formatted and more maintaince on maintainers. Is it possible to bring this into Specta?
 
 ## Struct-like builder
 
@@ -22,7 +23,7 @@ Okay this is not so easy while keeping it simple.
 
 This makes sense in theory as it can be used with `Struct::named()`'s builder interface.
 
-Downsides: This *will* be used in *Type* implementations not just the exporter code which is abusing it. This sort of abuse would make multi-language support for exporter more error prone.
+Downsides: This _will_ be used in _Type_ implementations not just the exporter code which is abusing it. This sort of abuse would make multi-language support for exporter more error prone.
 
 ## Exporter references
 
@@ -34,7 +35,7 @@ let ref: Reference = ts.raw("'HELLO WORLD'");
 ts::inline(&ts, &Default::default(), ref.into())
 ```
 
-This should *just work* when the major `Reference` refactor lands as it will simplify virtual SpectaID's and we can just extend `reference_dt`:
+This should _just work_ when the major `Reference` refactor lands as it will simplify virtual SpectaID's and we can just extend `reference_dt`:
 
 ```rs
 fn reference_dt(...) -> Result<(), Error> {
@@ -54,10 +55,10 @@ fn reference_dt(...) -> Result<(), Error> {
 ```
 
 TODO:
- - How does this interact with Serde checks?
- - How does this interact with inlining?
- - What happens if reference is given to wrong `Typescript`? We should have error instead of panic.
 
+- How does this interact with Serde checks?
+- How does this interact with inlining?
+- What happens if reference is given to wrong `Typescript`? We should have error instead of panic.
 
 TODO: Can we use this for `Channel`'s import?
 

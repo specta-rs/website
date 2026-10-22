@@ -3,31 +3,25 @@ title: Phase-specific types & runtime Serde handling
 hidden: true
 ---
 
-
 ## Serde attributes
-
 
 ### Container atributes
 
- - `#[serde(rename = "")]`
-
-
+- `#[serde(rename = "")]`
 
 ### Field variants atributes
 
 ### Field variants atributes
-
-
-
 
 TODO: Group them by requirement or not
 
 ## `DataType` layer design
 
 TODO:
- - Should this go on `struct/enum` or named type?
- - Should primitives be able to be phase specific or just adjust attributes??
- - End-users can do custom impls so them matching type isn't a safe assumption.
+
+- Should this go on `struct/enum` or named type?
+- Should primitives be able to be phase specific or just adjust attributes??
+- End-users can do custom impls so them matching type isn't a safe assumption.
 
 ## Chat
 
@@ -42,31 +36,30 @@ We could either split inner: DataType on NamedDataType in two, or we could take 
 I suspect we will end up with the former just due to it's incredible flexibility but it will probs be a lot more annoying.
 I suppose if it's done at the Serde level it would be DataType in the core and then we would transform it per-phase so from the core-perspective it wouldn't need to know anything.
 
-
 ## Dump
 
 Can `inflection.rs` be moved into `specta-serde` somehow?
 We would still need to stablise `RenameRule`???
 Move `rename_all` inflection to runtime
 
-
 What if all macro attributes are just stored directly in the `DataType` module and then parsed and used in `specta-serde` to actually apply them.
 
 We could overhaul `specta-macros` to just dump `#[serde(...)]` as a map-like struct in the datatype layer and then leave it to `specta-serde` to apply.
 What about:
- - Which `#[specta(...)] attributes should remain?
 
-
+- Which `#[specta(...)] attributes should remain?
 
 I think `specta-macros` needs a massive overhaul. If `specta-serde` is gonna stick around I think we need to in the macro not apply `#[serde(...)]` attributes and instead just dump them as raw values into the datatype layer and have them completly done by `specta-serde`.
 
 TODO:
- - Drop as many core attributes from the core `#[specta(...)]` and core handling
- - Remove enum repr from core
- - Parse non-Specta attributes and store them in datatype layer (maybe as `TokenStream`)
- - `specta-serde` should runtime apply attributes for rename, etc.
- - `specta-serde` should handle being phase-specfic
- - https://github.com/specta-rs/specta/issues/384
+
+- Drop as many core attributes from the core `#[specta(...)]` and core handling
+- Remove enum repr from core
+- Parse non-Specta attributes and store them in datatype layer (maybe as `TokenStream`)
+- `specta-serde` should runtime apply attributes for rename, etc.
+- `specta-serde` should handle being phase-specfic
+- https://github.com/specta-rs/specta/issues/384
 
 Closes:
- - https://github.com/specta-rs/specta/issues/232 & a lot more
+
+- https://github.com/specta-rs/specta/issues/232 & a lot more

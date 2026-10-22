@@ -12,26 +12,29 @@ From 2/12/2025 to 9/01/2026
 ## General
 
 These things are pretty self-explainatory:
- - General repo maintenance including upgrading to edition 2024.
- - `diagnostic::on_unimplemented` for better errors - [#401](https://github.com/specta-rs/specta/issues/401)
- - Official `geojson` crate integration - [#437](https://github.com/specta-rs/specta/pull/437) - will merge after (#430) allowing you to remove your fork
- - Official `geozero` crate integration - [#436](https://github.com/specta-rs/specta/pull/436) - will merge after (#430) allowing you to remove your fork
- - Heavily reduce the usage of `specta::internal`.
- - Rename `export` to `collect` - [#388](https://github.com/specta-rs/specta/pull/388)
- - `std` feature like Serde has - [#437](https://github.com/specta-rs/specta/pull/437)
- - Specta attribute bug - [#393](https://github.com/specta-rs/specta/issues/393)
- - Migrate tests to `insta` for Snapshot testing - [#434](https://github.com/specta-rs/specta/pull/434)
- - Fixed flood of warnings and Clippy issues when compiling
- - Drop `#[specta(rename_from_path = ...)]` attribute. It was only ever used by PCR as far as I know and undocumented.
+
+- General repo maintenance including upgrading to edition 2024.
+- `diagnostic::on_unimplemented` for better errors - [#401](https://github.com/specta-rs/specta/issues/401)
+- Official `geojson` crate integration - [#437](https://github.com/specta-rs/specta/pull/437) - will merge after (#430) allowing you to remove your fork
+- Official `geozero` crate integration - [#436](https://github.com/specta-rs/specta/pull/436) - will merge after (#430) allowing you to remove your fork
+- Heavily reduce the usage of `specta::internal`.
+- Rename `export` to `collect` - [#388](https://github.com/specta-rs/specta/pull/388)
+- `std` feature like Serde has - [#437](https://github.com/specta-rs/specta/pull/437)
+- Specta attribute bug - [#393](https://github.com/specta-rs/specta/issues/393)
+- Migrate tests to `insta` for Snapshot testing - [#434](https://github.com/specta-rs/specta/pull/434)
+- Fixed flood of warnings and Clippy issues when compiling
+- Drop `#[specta(rename_from_path = ...)]` attribute. It was only ever used by PCR as far as I know and undocumented.
 
 Bugs:
- - Typescript header being exported twice [#414](https://github.com/specta-rs/specta/issues/414)
- - Small TS exporter bug - [#231](https://github.com/specta-rs/specta/issues/231)
- - Prevent ctor segfaults if Specta stack overflows when using `export` feature - [#324](https://github.com/specta-rs/specta/issues/324)
- - Fix invalid output from when exporting w/ TS namespaces - [#409](https://github.com/specta-rs/specta/issues/409)
+
+- Typescript header being exported twice [#414](https://github.com/specta-rs/specta/issues/414)
+- Small TS exporter bug - [#231](https://github.com/specta-rs/specta/issues/231)
+- Prevent ctor segfaults if Specta stack overflows when using `export` feature - [#324](https://github.com/specta-rs/specta/issues/324)
+- Fix invalid output from when exporting w/ TS namespaces - [#409](https://github.com/specta-rs/specta/issues/409)
 
 Minor:
- - Remove `specta::json` as it's useless in it's current form and i'm unsure whether it would be possible without major tradeoffs (tracked in [#94](https://github.com/specta-rs/specta/issues/94)) - [bbb9c01](https://github.com/specta-rs/specta/commit/bbb9c019264ff389a4f65feca6b3f4d79f796d62)
+
+- Remove `specta::json` as it's useless in it's current form and i'm unsure whether it would be possible without major tradeoffs (tracked in [#94](https://github.com/specta-rs/specta/issues/94)) - [bbb9c01](https://github.com/specta-rs/specta/commit/bbb9c019264ff389a4f65feca6b3f4d79f796d62)
 
 ## Reference overhaul
 
@@ -47,7 +50,7 @@ One issue in older versions of SpectaID is that types where assigned an identifi
 
 This causes major DX issues with `TypeCollection` because if it can be `Clone`d then the `Atomic` would reset and potentially issue overlapping identifiers. One potential solution is that you could wrap it the `AtomicUsize` in an `Arc` to allow it to be shared but this introduces issues with which type collection is responsible for a type as they could branch when cloned but still issue duplicate identifiers from that point forward. This is all confusing and something we don't want end-users to have to think about.
 
-I have rebuilt the system to internally use a custom `ArcId` type which hashes the pointer to a heap allocated or static reference. This gives a unique identifier without us needing to uphold the uniqueness guarantees as that's done by the Rust compiler. All references to a type hold the `ArcId` so the ID (pointer) can never be reused until every single reference is dropped, meaning we can't issue overlapping identifiers *ever*. This also allowed us to restore `Clone` on `TypeCollection` without introducing any confusion. Now supporting runtime types is something that just works how you would expect it.
+I have rebuilt the system to internally use a custom `ArcId` type which hashes the pointer to a heap allocated or static reference. This gives a unique identifier without us needing to uphold the uniqueness guarantees as that's done by the Rust compiler. All references to a type hold the `ArcId` so the ID (pointer) can never be reused until every single reference is dropped, meaning we can't issue overlapping identifiers _ever_. This also allowed us to restore `Clone` on `TypeCollection` without introducing any confusion. Now supporting runtime types is something that just works how you would expect it.
 
 ### Drop `DataType::Literal`
 
@@ -87,6 +90,7 @@ impl<T> Type for Any<T> {
 ```
 
 Then in the Typescript exporter we do something like:
+
 ```rust
 fn export_reference(reference: &Reference) -> String {
     // Note: This is a simplification of the real-world. We actually use "exporter references" to implement this (but they are explained in the next section).
@@ -99,6 +103,7 @@ fn export_reference(reference: &Reference) -> String {
 ```
 
 In result this allows us to do something like the following:
+
 ```rust
 #[derive(Type)]
 pub struct Something {
@@ -129,7 +134,7 @@ The core reason why these types are usually manually constructed in strings inst
 export const commands = {
   my_command: (...) => TAURI_INVOKE("command", ...)
 }
-````
+```
 
 a closure and it's runtime code can't be expressed by `specta::DataType` because that would require being able to represent all Typescript syntax 😅.
 
@@ -165,11 +170,12 @@ fn export_reference(reference: &Reference) -> String {
 ```
 
 This results of this are:
- - Easier maintaince for TauRPC and Tauri Specta (once they adopt the new API)
- - More reliable due to a single shared implementation across Specta-based frameworks which can be well tested
- - Mostly-support for multi-file exporting without Tauri Specta and TauRPC needing to think about type imports
- - More consistent bindings format (Specta can have a consistent reasonable default for people who disable formatting on that file)
- - Implicit JSDoc support. Eg. `specta_typescript::Typescript` can be rewritten as `specta_typescript::JSDoc` and it should *just work*, no other changes (*unless the runtime injects custom code into the bindings file*)
+
+- Easier maintaince for TauRPC and Tauri Specta (once they adopt the new API)
+- More reliable due to a single shared implementation across Specta-based frameworks which can be well tested
+- Mostly-support for multi-file exporting without Tauri Specta and TauRPC needing to think about type imports
+- More consistent bindings format (Specta can have a consistent reasonable default for people who disable formatting on that file)
+- Implicit JSDoc support. Eg. `specta_typescript::Typescript` can be rewritten as `specta_typescript::JSDoc` and it should _just work_, no other changes (_unless the runtime injects custom code into the bindings file_)
 
 ## Drop `NamedType` and `Flatten`
 
@@ -204,6 +210,7 @@ With the new Specta system when we create `DataType::Struct` we also include a l
 Supporting multiple formats is cool but how is this generally useful? This enables per-phase attributes.
 
 For example `specta_serde` can expose:
+
 ```rust
 // This is not an actual API but it shows the idea better and the final API is undecided.
 
@@ -216,28 +223,38 @@ pub fn transform_for_both(dt: DataType) -> DataType;
 
 When paired with Specta Typescript you can export your type and account for attributes which are differently by Serde between `Serialize` and `Deserialize`. In practice this feature is a bit advanced for an average user but my vision is that TauRPC and Tauri Specta will just handle this internally and end-users don't even need to know about it.
 
-<Callout>This PR implements the Specta core support for per-phase attributes but doesn't actually expose the data from the Serde crate at the moment as it's unclear what the correct API is. <br /> <br /> One major concern I have is that if a type is used by the user for both serialization and deserialization it will need to be exported twice in the bindings file which I could see users disliking. I have some ideas to fix this but for now the Specta core support is the main focus, I can iterate on the high-level APIs later.</Callout>
+<Callout>
+  This PR implements the Specta core support for per-phase attributes but
+  doesn't actually expose the data from the Serde crate at the moment as it's
+  unclear what the correct API is. <br /> <br /> One major concern I have is
+  that if a type is used by the user for both serialization and deserialization
+  it will need to be exported twice in the bindings file which I could see users
+  disliking. I have some ideas to fix this but for now the Specta core support
+  is the main focus, I can iterate on the high-level APIs later.
+</Callout>
 
 This PR also aims to implement many missing Serde attributes.
 
 #258 & #232 & #332 & #229 & #328 & #332 & #114 & #229 & #402 & #395 & #132 & #130 & #22
 
 This PR should close the following issues:
- - [#258](https://github.com/specta-rs/specta/issues/258)
- - [#232](https://github.com/specta-rs/specta/issues/232)
- - [#332](https://github.com/specta-rs/specta/issues/332)
- - [#229](https://github.com/specta-rs/specta/issues/229)
- - [#328](https://github.com/specta-rs/specta/issues/328)
- - [#114](https://github.com/specta-rs/specta/issues/114)
- - [#402](https://github.com/specta-rs/specta/issues/402)
- - [#395](https://github.com/specta-rs/specta/issues/395)
- - [#132](https://github.com/specta-rs/specta/issues/132)
- - [#130](https://github.com/specta-rs/specta/issues/130)
- - [#22](https://github.com/specta-rs/specta/issues/22)
+
+- [#258](https://github.com/specta-rs/specta/issues/258)
+- [#232](https://github.com/specta-rs/specta/issues/232)
+- [#332](https://github.com/specta-rs/specta/issues/332)
+- [#229](https://github.com/specta-rs/specta/issues/229)
+- [#328](https://github.com/specta-rs/specta/issues/328)
+- [#114](https://github.com/specta-rs/specta/issues/114)
+- [#402](https://github.com/specta-rs/specta/issues/402)
+- [#395](https://github.com/specta-rs/specta/issues/395)
+- [#132](https://github.com/specta-rs/specta/issues/132)
+- [#130](https://github.com/specta-rs/specta/issues/130)
+- [#22](https://github.com/specta-rs/specta/issues/22)
 
 It also makes progress towards another 5-or-so more but they require more specific work.
 
 One major thing to note with this change is that previously the following would compile:
+
 ```rust
 #[derive(Specta)]
 #[serde(untagged)] // Any `serde` attributes.
@@ -247,6 +264,7 @@ enum Testing { ... }
 but with the new system `serde` attributes are treated as unknown by Specta so the user will be asked by Rust to include `serde::Serialize`. This is great as in a real-world senario if your using a Serde attribute, you will need to Serde runtime on your type.
 
 Another example of this is that previously:
+
 ```rust
 #[derive(Specta)]
 #[specta(untagged)] // Any `serde`-format attributes passed to `specta`
@@ -283,13 +301,14 @@ I have done up a PR for removing this stuff but it would be a breaking change to
 
 Also with the introduction of `Reference::opaque` I also want to change the `Type` implementation for `Channel` which is going to be rough.
 
-This work is generally skewed towards Tauri Specta as TauRPC doesn't use the function macros from my knowledge (it only uses the `tauri::Channel` implementation) but these changes are *major* blockers for the next Specta release going forward.
+This work is generally skewed towards Tauri Specta as TauRPC doesn't use the function macros from my knowledge (it only uses the `tauri::Channel` implementation) but these changes are _major_ blockers for the next Specta release going forward.
 
 I came up with a prototype for the minimal changes to Tauri to allow us to drop `specta::specta` from Tauri Specta [here](https://github.com/oscartbeaumont/tauri/commit/5719486dc97a17f90e94d018505eaa31677960c5). These need some more cleanup before I will do an upstream PR but it's promising. I also chatted with Lucas from the Tauri core-team and he seemed to be able to get behind it but i'm not sure if everyone will be thrilled by these changes as they are basically Tauri Specta-specific code in the Tauri code (although a very minimal amount).
 
 This also closes function system related issues as not planned:
- - [#379](https://github.com/specta-rs/specta/issues/379)
- - [#213](https://github.com/specta-rs/specta/issues/213) - leaving open until we have a solution with the next version of the function integration.
+
+- [#379](https://github.com/specta-rs/specta/issues/379)
+- [#213](https://github.com/specta-rs/specta/issues/213) - leaving open until we have a solution with the next version of the function integration.
 
 [#432](https://github.com/specta-rs/specta/pull/432)
 
@@ -300,40 +319,44 @@ From 9/01/2026 to 30/01/2026
 ## General
 
 These things are pretty self-explainatory:
- - Support for [bytes](https://docs.rs/bytes) - [ref](https://github.com/specta-rs/specta/commit/40e77f9e38cf8a6c715f045f44a851a2c890bc3f)
- - Support for renaming the `selection!` struct - [ref](https://github.com/specta-rs/specta/commit/9e2fc59b06fbd89692dc2311c17a938b4b98804d)
- - Finish off and merge runtime attribute handling from phase 1 -[#430](https://github.com/specta-rs/specta/pull/430)
- - Add `TypeCollection::merge` - [ref](https://github.com/specta-rs/specta/commit/ccfd7d760ec3d7c0e5851c4399f1ff60656ce1e3)
- - Make `specta_typescript::primitives::reference` take `Reference` instead of `DataType` for correctness - [ref](https://github.com/specta-rs/specta/commit/862b52e756340b794f929e65f52554197b7908bf)
+
+- Support for [bytes](https://docs.rs/bytes) - [ref](https://github.com/specta-rs/specta/commit/40e77f9e38cf8a6c715f045f44a851a2c890bc3f)
+- Support for renaming the `selection!` struct - [ref](https://github.com/specta-rs/specta/commit/9e2fc59b06fbd89692dc2311c17a938b4b98804d)
+- Finish off and merge runtime attribute handling from phase 1 -[#430](https://github.com/specta-rs/specta/pull/430)
+- Add `TypeCollection::merge` - [ref](https://github.com/specta-rs/specta/commit/ccfd7d760ec3d7c0e5851c4399f1ff60656ce1e3)
+- Make `specta_typescript::primitives::reference` take `Reference` instead of `DataType` for correctness - [ref](https://github.com/specta-rs/specta/commit/862b52e756340b794f929e65f52554197b7908bf)
 
 ## References v2
 
 The reference system overhaul that was implemented in Phase 1 was a remarkable improvement but in spending some time thinking of how we can support branded types I noticed that the system still could use some more work.
 
 One major change is the realisation that references break down into 3 categories:
- - Named static (Eg. `pub struct` with derive `Type`)
- - Named dynamic (Eg. `NamedDataTypeBuilder::new(...).build(...)`)
- - Opaque - A reference to a string in the exporter (usually of raw-Typescript code) (Eg. `specta_typescript::Any`)
+
+- Named static (Eg. `pub struct` with derive `Type`)
+- Named dynamic (Eg. `NamedDataTypeBuilder::new(...).build(...)`)
+- Opaque - A reference to a string in the exporter (usually of raw-Typescript code) (Eg. `specta_typescript::Any`)
 
 The major issues with the current system are:
- - You can't differentiate between a named dynamic and opaque type as they are both `ArcId::Dyanmic`.
- - You can `Reference::get` on an opaque type. This makes no sense because they are always inlined.
- - You can insert an opaque type into the `TypeCollection` due to the shared `ArcId`. This makes no sense because they are always inlined.
+
+- You can't differentiate between a named dynamic and opaque type as they are both `ArcId::Dyanmic`.
+- You can `Reference::get` on an opaque type. This makes no sense because they are always inlined.
+- You can insert an opaque type into the `TypeCollection` due to the shared `ArcId`. This makes no sense because they are always inlined.
 
 We had effectively conflated named dynamic and opaque types as one concept which isn't true in practice.
 
 So to fix this we defined `Reference` to be the following:
- ```rs
+
+```rs
 pub enum Reference {
-    Named(NamedReference),
-    Opaque(OpaqueReference),
+   Named(NamedReference),
+   Opaque(OpaqueReference),
 }
 
 pub struct NamedReference {
-    // `ArcId` becomes `NamedId`.
-    pub(crate) id: NamedId,
-    pub(crate) generics: ...,
-    pub(crate) inline: bool,
+   // `ArcId` becomes `NamedId`.
+   pub(crate) id: NamedId,
+   pub(crate) generics: ...,
+   pub(crate) inline: bool,
 }
 
 // Technically `dyn Any` is `dyn DynOpaqueReference` but that's too in the weeds for this.
@@ -341,25 +364,29 @@ pub struct OpaqueReference(Arc<dyn Any>);
 ```
 
 With this restructure the benefits we get are:
- - Can no longer insert or get opaque type into `TypeCollection` (Eg. `NamedReference::get` can't be called with an opaque reference)
- - Can no longer access `inline` or `generic` attributes of opaque type as they are on `NamedReference`.
- - Language exporters can detect unhandled opaque references and give a helpful error. (Eg. if you pass `specta_typescript::Any` to the Swift/Go/etc exporter)
+
+- Can no longer insert or get opaque type into `TypeCollection` (Eg. `NamedReference::get` can't be called with an opaque reference)
+- Can no longer access `inline` or `generic` attributes of opaque type as they are on `NamedReference`.
+- Language exporters can detect unhandled opaque references and give a helpful error. (Eg. if you pass `specta_typescript::Any` to the Swift/Go/etc exporter)
 
 Another change is that the previous opaque reference system was structured. Each new `Reference` was a "unique" pointer that had to be carefully cloned to ensure it pointed to the same type. This is what lead to the very unergonomic `Reference::opaque_from_sentinel` API.
 
 With the new implementation:
- - References are nominal (compared by value)
- - References now have a value (`T`) which means they can hold data.
+
+- References are nominal (compared by value)
+- References now have a value (`T`) which means they can hold data.
 
 The benefits of this design is that:
- - Enables branded types as we can store the type and brand information on the opaque reference.
- - You can now define a Typescript framework reference without the `Typescript` instance. This is `specta_typescript::define` in the new API.
+
+- Enables branded types as we can store the type and brand information on the opaque reference.
+- You can now define a Typescript framework reference without the `Typescript` instance. This is `specta_typescript::define` in the new API.
 
 The value held on the opaque reference is basically stored in an `Arc<Box<dyn Any>>`, however we had to do some special work to make `PartialEq` and `Eq` work.
 
 With this system:
- - `Reference::opaque(5) == Reference::opaque(5)`
- - `Reference::opaque(5) != Reference::opaque(10)`
+
+- `Reference::opaque(5) == Reference::opaque(5)`
+- `Reference::opaque(5) != Reference::opaque(10)`
 
 This works well for all usecases as the previous behavior of `opaque_from_sentinel` can be achieved by implementing an empty struct:
 
@@ -459,12 +486,14 @@ pub struct Account {
     I am happy with the low-level implementation ontop of opaque references but I quickly threw together the user-facing API for testing.
 
     I think the `branded` macro_rules will probably stay but I can't say for sure and whether it's syntax will change or not.
+
 </Callout>
 
 The API:
- - Can only have a tuple struct with a single field which is inherently transparent (Eg. we export as `String` not `AccountId` in the previous example)
- - Works with generics
- - Allows omitting `as "brand"` and it will fallback to the struct ident (Eg. `AccountId` in the previous example)
+
+- Can only have a tuple struct with a single field which is inherently transparent (Eg. we export as `String` not `AccountId` in the previous example)
+- Works with generics
+- Allows omitting `as "brand"` and it will fallback to the struct ident (Eg. `AccountId` in the previous example)
 
 The way this is implemented under the hood is using an opaque reference:
 
@@ -513,12 +542,13 @@ impl<T> Type for Channel<T> {
 This makes heaps of sense but how does the opaque reference becomes some Typescript code?
 
 Well we get two options:
- - Make `tauri` depend on `specta_typescript`, or
- - Make `specta_typescript` depend on `tauri`
+
+- Make `tauri` depend on `specta_typescript`, or
+- Make `specta_typescript` depend on `tauri`
 
 We either need to call `Channel::definition` in the `specta_typescript` so we can `if incoming_ref == get_ref(Channel::definition()) { ... }` to branch on the channel or we need to use `specta_typescript::define` in Tauri. Neither of these are a viable option for semver reasons so we need to look somewhere else.
 
-Using opaque references would also require a major breaking change in Tauri which is would not be viable. This systems means we only need this small upstream change ([tauri-apps/tauri#14812](https://github.com/tauri-apps/tauri/pull/14812))  to drop `#[specta(rename = ...)]` from `Channel`.
+Using opaque references would also require a major breaking change in Tauri which is would not be viable. This systems means we only need this small upstream change ([tauri-apps/tauri#14812](https://github.com/tauri-apps/tauri/pull/14812)) to drop `#[specta(rename = ...)]` from `Channel`.
 
 Instead inside of Specta we patch over the Tauri channel type with the following taken from `named.rs`:
 
@@ -588,16 +618,18 @@ Long term I want to remove Specta's function handling system (`specta::function:
 I built a prototype of this in a fresh crate and started work on a PR to Tauri but it's incomplete.
 
 At a core level if Tauri exposes:
- - the names of the command arguments
- - the doc comments on a command
- - the deprecated attribute of a command
+
+- the names of the command arguments
+- the doc comments on a command
+- the deprecated attribute of a command
 
 Tauri Specta could work without requiring the `#[specta::specta]` macro and without stabilising the `specta::function::*` and `specta::specta` macro.
 
 Although these changes are for Tauri Specta they are being done under the higher-level goal of reducing the API surface of Specta for better maintainability & reliability.
 
 <Callout title="Incomplete work" type="warning">
-    This work on removing the function stuff from the core is incomplete but being documented as I did more research into it's viability.
+  This work on removing the function stuff from the core is incomplete but being
+  documented as I did more research into it's viability.
 </Callout>
 
 ## Restructure `specta_typescript`
@@ -619,36 +651,39 @@ impl Default for JSDoc {
 ```
 
 now we have refactored so that both `JSDoc` and `Typescript` wrap an `Exporter` struct which contains the implementation. This is useful because:
- - You can erase a `Typescript` or `JSDoc` into an `Exporter` so more of your export code can be shared.
- - It's clearer how conversions work. Eg. What does converting from a `JSDoc` to a `Typescript` do, should it disable JSDoc or not. Previously it did but that mean you couldn't get a exporter-type which spanned both languages without a generic + trait system.
+
+- You can erase a `Typescript` or `JSDoc` into an `Exporter` so more of your export code can be shared.
+- It's clearer how conversions work. Eg. What does converting from a `JSDoc` to a `Typescript` do, should it disable JSDoc or not. Previously it did but that mean you couldn't get a exporter-type which spanned both languages without a generic + trait system.
 
 This also allowed moving some of the more low-level framework APIs from `Typescript` to `Exporter` making them harder to use. The user must explicitly `Export::from(Typescript::default())` to set certain parameter.
 
 The logic in the `Exporter` was rewritten to:
- - be more reliable
- - for `Layout::Files` generate the files before any FS operations so any thrown errors don't leave an invalid state on disk
- - for `Layout::Files` properly cleanup leftover files in the directory (even when converting between `.ts` and `.js` extensions)
- - Check for duplicate type names, modules or import for each logical scope (whether that be a file or a namespace). The previous system only checked for duplicates on `Layout::FlatFile` which is wrong.
- - Handle `Reference::requires_reference` to omit creating a named export for any types which are container inlined (Eg. Tauri Channel) and hence will never be referenced.
- - Factor the code out into helper functions, allowing for more code reuse.
- - Omit creating files or namespaces if the module is empty
- - Restructured `Layout::Namespace` to properly create references across namespaces without shadowing issues.
- - Ensure a consistent type export order in `Layout::Files` or `Layout::Namespaces`. Copied from the `TypeCollection::into_sorted_iter`
- - Convert `framework_runtime` into a function which takes in `FrameworkExporter` giving access to the `TypeCollection` and a way of interspersing user types within the runtime code (instead of it being appended which is the default).
- - When doing `Layout::Files` create `export * as module_name from "./module_name"` exports so that you can easily go `module.module.Type` in Typescript
- - wip: progress towards fixing imports across files with `Layout::Files`
 
- This has been a lot of work but it is going to be a huge pay of for the ecosystem. Previously a lot of this logic in various forms was in Specta, Tauri Specta and TauRPC. By formalising it and centralising it within Specta all of the frameworks can hand off the maintenance burden to a single well-tested implementation in Specta.
+- be more reliable
+- for `Layout::Files` generate the files before any FS operations so any thrown errors don't leave an invalid state on disk
+- for `Layout::Files` properly cleanup leftover files in the directory (even when converting between `.ts` and `.js` extensions)
+- Check for duplicate type names, modules or import for each logical scope (whether that be a file or a namespace). The previous system only checked for duplicates on `Layout::FlatFile` which is wrong.
+- Handle `Reference::requires_reference` to omit creating a named export for any types which are container inlined (Eg. Tauri Channel) and hence will never be referenced.
+- Factor the code out into helper functions, allowing for more code reuse.
+- Omit creating files or namespaces if the module is empty
+- Restructured `Layout::Namespace` to properly create references across namespaces without shadowing issues.
+- Ensure a consistent type export order in `Layout::Files` or `Layout::Namespaces`. Copied from the `TypeCollection::into_sorted_iter`
+- Convert `framework_runtime` into a function which takes in `FrameworkExporter` giving access to the `TypeCollection` and a way of interspersing user types within the runtime code (instead of it being appended which is the default).
+- When doing `Layout::Files` create `export * as module_name from "./module_name"` exports so that you can easily go `module.module.Type` in Typescript
+- wip: progress towards fixing imports across files with `Layout::Files`
+
+This has been a lot of work but it is going to be a huge pay of for the ecosystem. Previously a lot of this logic in various forms was in Specta, Tauri Specta and TauRPC. By formalising it and centralising it within Specta all of the frameworks can hand off the maintenance burden to a single well-tested implementation in Specta.
 
 ## Upgrade frameworks
 
 Tauri Specta:
- - Rewrite exporting logic around `Exporter`
- - Using `framework_runtime` so that layouts are supported
- - Making `tauri::ipc::Channel` work with the new integration.
- - Improve the bindings format to be much cleaner and hand off more of it's generation to Specta using the new opaque references system
- - Only include parts of the file as required. Eg. imports or runtime functions are detected and omitted if not used.
- - Rethinking error handling based on Typescript type-inference to allow support for EffectTS, neverthrow and other similar methods. We are going to port this to TauRPC in a future phase!
+
+- Rewrite exporting logic around `Exporter`
+- Using `framework_runtime` so that layouts are supported
+- Making `tauri::ipc::Channel` work with the new integration.
+- Improve the bindings format to be much cleaner and hand off more of it's generation to Specta using the new opaque references system
+- Only include parts of the file as required. Eg. imports or runtime functions are detected and omitted if not used.
+- Rethinking error handling based on Typescript type-inference to allow support for EffectTS, neverthrow and other similar methods. We are going to port this to TauRPC in a future phase!
 
 TauRPC: Sadly ran out of time to complete this. Will be first thing in next phase but should be fairly smooth now that Tauri Specta has proven out the flexibility of the new APIs.
 
@@ -665,7 +700,9 @@ The new harness also defines types to test separately from the tests themselves.
 I also spent some time rename and removing clearly duplicate tests.
 
 <Callout title="Work is incomplete" type="warning">
-    I have built the new harness and migrated tests however the snapshots being generated do contain bugs. I need to spend some time ensuring the snapshots for things that were previously untested are correct.
+  I have built the new harness and migrated tests however the snapshots being
+  generated do contain bugs. I need to spend some time ensuring the snapshots
+  for things that were previously untested are correct.
 </Callout>
 
 ## Phase 3
@@ -677,58 +714,59 @@ From 9/02/2026 to 27/02/2026
 ## Stability
 
 Focusing on stability and bug fixes. Including:
- - Fix internal/adjacent enums with only Fields::Unit's variants - [591a5f3](https://github.com/specta-rs/specta/commit/591a5f3ddc78348abf4cbb541d599d65306d92b9)
- - Support generics on `tauri::ipc::Channel` (a bit of a oversight missing this 😅) - [253e6cc](https://github.com/specta-rs/specta/commit/253e6cc48e5dfc1974ac64c83dfeca4aaff464d0)
- - Fix issue with ICF and invariant of type identifiers breaking Specta in non-development builds - [#447](https://github.com/specta-rs/specta/pull/447)
- - Fix attribute parsing and lowering which would break `#[derive(thiserror::Error)]` - [11e76f1](https://github.com/specta-rs/specta/commit/11e76f1773854d47377002123e0c50d557c6d47f)
- - Sometimes `DataType::Generic` would be exported when inlining so you might see `T` in contexts where it was never defined - [29a1379](https://github.com/specta-rs/specta/commit/29a1379f97e198a8ab40dafae57927ea13fffa02)
- - Remove `String::leak` which got unintentionally left in the Typescript exporter - [a6fd79c](https://github.com/specta-rs/specta/commit/a6fd79cf011918fb2f070e171d937d91615d11b7)
- - Ensure reexports are rendered even if framework runtime is empty - [f5b7c86](https://github.com/specta-rs/specta/commit/f5b7c86fb0978990d22919e7549fee293e1776c3)
- - `export_internal` should implicitly handle JSDoc instead of it being done externally - [e6c76a7](https://github.com/specta-rs/specta/commit/e6c76a74bfc4a99ea8dbef1dd107f5443dab7457)
- - Don't panic on dangling references in the Typescript exporter - [db9f060](https://github.com/specta-rs/specta/commit/db9f060e51704277d17c15a9940d73f1c388870e)
- - Ensure we don't export empty namespaces (This was a bug due to the filtering of `requires_reference`) - [68804d7](https://github.com/specta-rs/specta/commit/68804d76d2df8110f2f3c1e43fe96b2fc49075f4)
- - Ensure all types on `#[specta(collect = false)]` is on all types in test-suite - [c80a485](https://github.com/specta-rs/specta/commit/c80a485a27cb68c8df9c8772c4c9959601b670ed)
- - Fix padding for namespace exporting as it's inconsistent - [5657070](https://github.com/specta-rs/specta/commit/56570703e62b86539975cc70f6a481e28c8aab2b)
- - Make the FS exporting in `Exporter::export_to` more reliable - [d044b4b](https://github.com/specta-rs/specta/commit/d044b4bdfc90fadb1578bd650c21c58337d80d59)
- - Fix branded types demo as `T & string` is not a proper brand - [29abcf6](https://github.com/specta-rs/specta/commit/29abcf61ae287c9ce262da7a426a34daf7b3494a)
- - Allow user to configure the branded types template (Eg. use `ts-brand` or EffectTS branded types) - [90547b4](https://github.com/specta-rs/specta/commit/90547b4f84aa771307799d557d37fea1b8fc36c2)
- - Bring back `specta_typescript::collect_references` for tracking cross-file imports - [711fe6f](https://github.com/specta-rs/specta/commit/711fe6f7190092d1769e99866f617ca61918a483)
- - Make `Layout::Files` properly generate imports and references for types defined in other files - [24f3469](https://github.com/specta-rs/specta/commit/24f3469c1381bd9356c1d399cfe87dc0adcf4de6)
- - Make all crates and tests compile again - [adb1455](https://github.com/specta-rs/specta/commit/adb1455edc8697b1686c241f8d23ebfb0e28e11e), [d918b63](https://github.com/specta-rs/specta/commit/d918b63616408a4889bf522f7784941d8bb1fcde), [7d574fe](https://github.com/specta-rs/specta/commit/7d574feb4fa5391d95c66f5a654f1e2556970be2)
- - Give proper migration hint in compiler errors on the usage of deprecated `#[specta(...)]` attributes - [a658b1b](https://github.com/specta-rs/specta/commit/a658b1b43837247f7bab89284781b42a993e9fda)
- - Fix exporting of comments and the deprecated attribute [135aa8b](https://github.com/specta-rs/specta/commit/135aa8b1c4058e773573bc8f33e9df18e10a3926)
- - Upgrade all Rust dependencies to solve RUSTSEC issues - [84a7f4a](https://github.com/specta-rs/specta/commit/84a7f4afe87c29b84bc47c0d3f34c31e304348e4)
- - Fix inline behaviour at field and container level as it was not working - [0d868f9](https://github.com/specta-rs/specta/commit/0d868f9202680eb4931b20a488eede177c3f3f46)
- - Improve the formatting of the generate Typescript bindings - [ae567af](https://github.com/specta-rs/specta/commit/ae567af05ef841f9ee44ae7e8cc482f905af2ee9), [393ce96](https://github.com/specta-rs/specta/commit/393ce96a1fe27036db17c034b96c570984e8c545), [5965190](https://github.com/specta-rs/specta/commit/5965190769aab0c8156a5bc484645529bafa76e0)
- - Make `specta_typescript::primitives::export` take `impl Iterator<Item = &NamedDatatype>` for better JSDoc rendering & formatting - [1b14234](https://github.com/specta-rs/specta/commit/1b1423482244e9cdf6fa3b03fa037ed26115d5f8), [9ea28b8](https://github.com/specta-rs/specta/commit/9ea28b83b7a81ca18ecaaeea9cb357262238d0f6)
- - Ensure JSDoc exporter does imports correctly - [697fe23](https://github.com/specta-rs/specta/commit/697fe238c4bb7da54afec972fc2f63d46096f32b), [2127c99](https://github.com/specta-rs/specta/commit/2127c99a48ffbfe566ab599a3ca2a779a177a6de)
- - Fix Cargo warning about multiple examples with the same name conflicting - [af55947](https://github.com/specta-rs/specta/commit/af55947669b4d186febbf19b665295b346bba06e)
- - Fix `unreachable!()` when constructing enums using builder API - [c7f1dc3](https://github.com/specta-rs/specta/commit/c7f1dc3cb105a8334fe64433997d67ccee5e3fe7)
- - Cleanup workspace lints, fix Clippy warnings and ensure all public types have docs - [e2f4f9f](https://github.com/specta-rs/specta/commit/e2f4f9fc509aa6248dbc4b22e1ecd25accac0ca6), [14a4ee8](https://github.com/specta-rs/specta/commit/14a4ee845c0a45169bc622dad2edbbd0d22cbf97)
- - Migrate final tests from the old test suite to the new one - [0ea4c6c](https://github.com/specta-rs/specta/commit/0ea4c6cfcee4874a05e8c08ffbcda166c08d21c7)
- - Make the `framework.rs` example emit into a `.gitignore`'d directory - [68b8dc7](https://github.com/specta-rs/specta/commit/68b8dc72eeb84c9ada214c03241fe06287a14dc0)
- - Fix `Error::InvalidUsageOfSkip` issue in the Serde checking logic - [4b59e77](https://github.com/specta-rs/specta/commit/4b59e77a3e6e6bb2fcdbd919bb7cb45b06aeaa89)
- - Fix bugs with variant inline & tuple exporting when using Serde transformer - [3e64c30](https://github.com/specta-rs/specta/commit/3e64c30d40f49ddfe0a478e270f2496cf1196563)
- - Fix issues with Serde tagging on enums & JSDoc formatting issues with comments in comments - [345b9fe](https://github.com/specta-rs/specta/commit/345b9fe6a7a33e9ec91cf57922001515f5bc8075)
- - Remove `is_export` from Specta Typescript internals. This means comments are exported when inlining - required for Tauri Specta/TauRPC - [7396d94](https://github.com/specta-rs/specta/commit/7396d94ccbb7fd4ffff5f2d363ad0580faf6cc40)
- - Deterministic order of snapshot test results - [b25ec77](https://github.com/specta-rs/specta/pull/452/changes/b25ec77cc6f66f4a036dff837fdf2fc3be1d0acb)
- - Support `#[specta(type = ...)]` on container (used in one of TauRPC's examples) - [#452](https://github.com/specta-rs/specta/pull/452)
- - Fix object key escaping. An empty field name would be exported as `: {}` which is not valid - [d874898](https://github.com/specta-rs/specta/commit/d874898caec267a051b473113b18f5f9f389a644) & [9bbab84](https://github.com/specta-rs/specta/commit/9bbab84e0ff3d92de47d79d2e0016595ca88fded)
- - Setup dependabot with PR grouping for keeping dependencies updated - [6be7a76](https://github.com/specta-rs/specta/commit/6be7a76fd85a3efedc33227fc7bf5d8735600ef0)
- - seal Typescript error type - closes [#446](https://github.com/specta-rs/specta/issues/446) - [22cc21e](https://github.com/specta-rs/specta/commit/22cc21ef54521374c888c6ce907768b0a72f4b62)
- - Fix `null | null` being the result of `Option<()>` - [f4ea005](https://github.com/specta-rs/specta/commit/f4ea005a9217731b316aeb6f89e2f4c578fb1420)
- - Allow tracking the source of `specta_typescript::Error::framework` - [688100e](https://github.com/specta-rs/specta/commit/688100ea7f1dee064a0de2b8692ec5c77f348027)
- - Dyn-safe callbacks for branded types and runtime generation (required by TauRPC) - [7206c6c](https://github.com/specta-rs/specta/commit/7206c6c9ec6c31d21ea813c6040f3f923bae78b7) & [f3988f6](https://github.com/specta-rs/specta/commit/f3988f6a513cfbf72480bffbdcf4259775416974)
- - Allow branded type exporter to properly render datatypes with access to `TypeCollection` and local `Typescript` instance - [955019d](https://github.com/specta-rs/specta/commit/955019d52c241c18a98c2847bb5e584d15080c97)
- - Protect against duplicate field names - closes [#330](https://github.com/specta-rs/specta/issues/330)
- - Review transparent and inlining implementation - closes [#313](https://github.com/specta-rs/specta/issues/313) & closes [#311](https://github.com/specta-rs/specta/issues/311)
- - Decided it's a bad idea to implement `impl_for!` - closes [#424](https://github.com/specta-rs/specta/issues/424)
- - Renders comments in single line if possible for Typescript exporter - closes [#450](https://github.com/specta-rs/specta/issues/450) - [3dd634d](https://github.com/specta-rs/specta/commit/3dd634d7d90057eb89caf1411c8277a446c7c94c)
- - Closed some issues as completed, duplicate or not planned - [#361](https://github.com/specta-rs/specta/issues/361), [#357](https://github.com/specta-rs/specta/issues/357), [#346](https://github.com/specta-rs/specta/issues/346), [#336](https://github.com/specta-rs/specta/issues/336), [#258](https://github.com/specta-rs/specta/issues/258), [#193](https://github.com/specta-rs/specta/issues/193), [#187](https://github.com/specta-rs/specta/issues/187), [#145](https://github.com/specta-rs/specta/issues/145), [#302](https://github.com/specta-rs/specta/issues/302)
 
- Although bugs still remain I have been going through each of the snapshots generated by the new test suite and comparing each result to the legacy tests to ensure they are valid. This has led to fixing a lot of bugs.
+- Fix internal/adjacent enums with only Fields::Unit's variants - [591a5f3](https://github.com/specta-rs/specta/commit/591a5f3ddc78348abf4cbb541d599d65306d92b9)
+- Support generics on `tauri::ipc::Channel` (a bit of a oversight missing this 😅) - [253e6cc](https://github.com/specta-rs/specta/commit/253e6cc48e5dfc1974ac64c83dfeca4aaff464d0)
+- Fix issue with ICF and invariant of type identifiers breaking Specta in non-development builds - [#447](https://github.com/specta-rs/specta/pull/447)
+- Fix attribute parsing and lowering which would break `#[derive(thiserror::Error)]` - [11e76f1](https://github.com/specta-rs/specta/commit/11e76f1773854d47377002123e0c50d557c6d47f)
+- Sometimes `DataType::Generic` would be exported when inlining so you might see `T` in contexts where it was never defined - [29a1379](https://github.com/specta-rs/specta/commit/29a1379f97e198a8ab40dafae57927ea13fffa02)
+- Remove `String::leak` which got unintentionally left in the Typescript exporter - [a6fd79c](https://github.com/specta-rs/specta/commit/a6fd79cf011918fb2f070e171d937d91615d11b7)
+- Ensure reexports are rendered even if framework runtime is empty - [f5b7c86](https://github.com/specta-rs/specta/commit/f5b7c86fb0978990d22919e7549fee293e1776c3)
+- `export_internal` should implicitly handle JSDoc instead of it being done externally - [e6c76a7](https://github.com/specta-rs/specta/commit/e6c76a74bfc4a99ea8dbef1dd107f5443dab7457)
+- Don't panic on dangling references in the Typescript exporter - [db9f060](https://github.com/specta-rs/specta/commit/db9f060e51704277d17c15a9940d73f1c388870e)
+- Ensure we don't export empty namespaces (This was a bug due to the filtering of `requires_reference`) - [68804d7](https://github.com/specta-rs/specta/commit/68804d76d2df8110f2f3c1e43fe96b2fc49075f4)
+- Ensure all types on `#[specta(collect = false)]` is on all types in test-suite - [c80a485](https://github.com/specta-rs/specta/commit/c80a485a27cb68c8df9c8772c4c9959601b670ed)
+- Fix padding for namespace exporting as it's inconsistent - [5657070](https://github.com/specta-rs/specta/commit/56570703e62b86539975cc70f6a481e28c8aab2b)
+- Make the FS exporting in `Exporter::export_to` more reliable - [d044b4b](https://github.com/specta-rs/specta/commit/d044b4bdfc90fadb1578bd650c21c58337d80d59)
+- Fix branded types demo as `T & string` is not a proper brand - [29abcf6](https://github.com/specta-rs/specta/commit/29abcf61ae287c9ce262da7a426a34daf7b3494a)
+- Allow user to configure the branded types template (Eg. use `ts-brand` or EffectTS branded types) - [90547b4](https://github.com/specta-rs/specta/commit/90547b4f84aa771307799d557d37fea1b8fc36c2)
+- Bring back `specta_typescript::collect_references` for tracking cross-file imports - [711fe6f](https://github.com/specta-rs/specta/commit/711fe6f7190092d1769e99866f617ca61918a483)
+- Make `Layout::Files` properly generate imports and references for types defined in other files - [24f3469](https://github.com/specta-rs/specta/commit/24f3469c1381bd9356c1d399cfe87dc0adcf4de6)
+- Make all crates and tests compile again - [adb1455](https://github.com/specta-rs/specta/commit/adb1455edc8697b1686c241f8d23ebfb0e28e11e), [d918b63](https://github.com/specta-rs/specta/commit/d918b63616408a4889bf522f7784941d8bb1fcde), [7d574fe](https://github.com/specta-rs/specta/commit/7d574feb4fa5391d95c66f5a654f1e2556970be2)
+- Give proper migration hint in compiler errors on the usage of deprecated `#[specta(...)]` attributes - [a658b1b](https://github.com/specta-rs/specta/commit/a658b1b43837247f7bab89284781b42a993e9fda)
+- Fix exporting of comments and the deprecated attribute [135aa8b](https://github.com/specta-rs/specta/commit/135aa8b1c4058e773573bc8f33e9df18e10a3926)
+- Upgrade all Rust dependencies to solve RUSTSEC issues - [84a7f4a](https://github.com/specta-rs/specta/commit/84a7f4afe87c29b84bc47c0d3f34c31e304348e4)
+- Fix inline behaviour at field and container level as it was not working - [0d868f9](https://github.com/specta-rs/specta/commit/0d868f9202680eb4931b20a488eede177c3f3f46)
+- Improve the formatting of the generate Typescript bindings - [ae567af](https://github.com/specta-rs/specta/commit/ae567af05ef841f9ee44ae7e8cc482f905af2ee9), [393ce96](https://github.com/specta-rs/specta/commit/393ce96a1fe27036db17c034b96c570984e8c545), [5965190](https://github.com/specta-rs/specta/commit/5965190769aab0c8156a5bc484645529bafa76e0)
+- Make `specta_typescript::primitives::export` take `impl Iterator<Item = &NamedDatatype>` for better JSDoc rendering & formatting - [1b14234](https://github.com/specta-rs/specta/commit/1b1423482244e9cdf6fa3b03fa037ed26115d5f8), [9ea28b8](https://github.com/specta-rs/specta/commit/9ea28b83b7a81ca18ecaaeea9cb357262238d0f6)
+- Ensure JSDoc exporter does imports correctly - [697fe23](https://github.com/specta-rs/specta/commit/697fe238c4bb7da54afec972fc2f63d46096f32b), [2127c99](https://github.com/specta-rs/specta/commit/2127c99a48ffbfe566ab599a3ca2a779a177a6de)
+- Fix Cargo warning about multiple examples with the same name conflicting - [af55947](https://github.com/specta-rs/specta/commit/af55947669b4d186febbf19b665295b346bba06e)
+- Fix `unreachable!()` when constructing enums using builder API - [c7f1dc3](https://github.com/specta-rs/specta/commit/c7f1dc3cb105a8334fe64433997d67ccee5e3fe7)
+- Cleanup workspace lints, fix Clippy warnings and ensure all public types have docs - [e2f4f9f](https://github.com/specta-rs/specta/commit/e2f4f9fc509aa6248dbc4b22e1ecd25accac0ca6), [14a4ee8](https://github.com/specta-rs/specta/commit/14a4ee845c0a45169bc622dad2edbbd0d22cbf97)
+- Migrate final tests from the old test suite to the new one - [0ea4c6c](https://github.com/specta-rs/specta/commit/0ea4c6cfcee4874a05e8c08ffbcda166c08d21c7)
+- Make the `framework.rs` example emit into a `.gitignore`'d directory - [68b8dc7](https://github.com/specta-rs/specta/commit/68b8dc72eeb84c9ada214c03241fe06287a14dc0)
+- Fix `Error::InvalidUsageOfSkip` issue in the Serde checking logic - [4b59e77](https://github.com/specta-rs/specta/commit/4b59e77a3e6e6bb2fcdbd919bb7cb45b06aeaa89)
+- Fix bugs with variant inline & tuple exporting when using Serde transformer - [3e64c30](https://github.com/specta-rs/specta/commit/3e64c30d40f49ddfe0a478e270f2496cf1196563)
+- Fix issues with Serde tagging on enums & JSDoc formatting issues with comments in comments - [345b9fe](https://github.com/specta-rs/specta/commit/345b9fe6a7a33e9ec91cf57922001515f5bc8075)
+- Remove `is_export` from Specta Typescript internals. This means comments are exported when inlining - required for Tauri Specta/TauRPC - [7396d94](https://github.com/specta-rs/specta/commit/7396d94ccbb7fd4ffff5f2d363ad0580faf6cc40)
+- Deterministic order of snapshot test results - [b25ec77](https://github.com/specta-rs/specta/pull/452/changes/b25ec77cc6f66f4a036dff837fdf2fc3be1d0acb)
+- Support `#[specta(type = ...)]` on container (used in one of TauRPC's examples) - [#452](https://github.com/specta-rs/specta/pull/452)
+- Fix object key escaping. An empty field name would be exported as `: {}` which is not valid - [d874898](https://github.com/specta-rs/specta/commit/d874898caec267a051b473113b18f5f9f389a644) & [9bbab84](https://github.com/specta-rs/specta/commit/9bbab84e0ff3d92de47d79d2e0016595ca88fded)
+- Setup dependabot with PR grouping for keeping dependencies updated - [6be7a76](https://github.com/specta-rs/specta/commit/6be7a76fd85a3efedc33227fc7bf5d8735600ef0)
+- seal Typescript error type - closes [#446](https://github.com/specta-rs/specta/issues/446) - [22cc21e](https://github.com/specta-rs/specta/commit/22cc21ef54521374c888c6ce907768b0a72f4b62)
+- Fix `null | null` being the result of `Option<()>` - [f4ea005](https://github.com/specta-rs/specta/commit/f4ea005a9217731b316aeb6f89e2f4c578fb1420)
+- Allow tracking the source of `specta_typescript::Error::framework` - [688100e](https://github.com/specta-rs/specta/commit/688100ea7f1dee064a0de2b8692ec5c77f348027)
+- Dyn-safe callbacks for branded types and runtime generation (required by TauRPC) - [7206c6c](https://github.com/specta-rs/specta/commit/7206c6c9ec6c31d21ea813c6040f3f923bae78b7) & [f3988f6](https://github.com/specta-rs/specta/commit/f3988f6a513cfbf72480bffbdcf4259775416974)
+- Allow branded type exporter to properly render datatypes with access to `TypeCollection` and local `Typescript` instance - [955019d](https://github.com/specta-rs/specta/commit/955019d52c241c18a98c2847bb5e584d15080c97)
+- Protect against duplicate field names - closes [#330](https://github.com/specta-rs/specta/issues/330)
+- Review transparent and inlining implementation - closes [#313](https://github.com/specta-rs/specta/issues/313) & closes [#311](https://github.com/specta-rs/specta/issues/311)
+- Decided it's a bad idea to implement `impl_for!` - closes [#424](https://github.com/specta-rs/specta/issues/424)
+- Renders comments in single line if possible for Typescript exporter - closes [#450](https://github.com/specta-rs/specta/issues/450) - [3dd634d](https://github.com/specta-rs/specta/commit/3dd634d7d90057eb89caf1411c8277a446c7c94c)
+- Closed some issues as completed, duplicate or not planned - [#361](https://github.com/specta-rs/specta/issues/361), [#357](https://github.com/specta-rs/specta/issues/357), [#346](https://github.com/specta-rs/specta/issues/346), [#336](https://github.com/specta-rs/specta/issues/336), [#258](https://github.com/specta-rs/specta/issues/258), [#193](https://github.com/specta-rs/specta/issues/193), [#187](https://github.com/specta-rs/specta/issues/187), [#145](https://github.com/specta-rs/specta/issues/145), [#302](https://github.com/specta-rs/specta/issues/302)
 
- I will keep focusing on this until I feel confident we don't have a lot of remaining issues and will cut a Specta release.
+Although bugs still remain I have been going through each of the snapshots generated by the new test suite and comparing each result to the legacy tests to ensure they are valid. This has led to fixing a lot of bugs.
+
+I will keep focusing on this until I feel confident we don't have a lot of remaining issues and will cut a Specta release.
 
 ## MaybeUndefined
 
@@ -748,9 +786,10 @@ pub enum MaybeUndefined<T> {
 ```
 
 From my research this is not something I see a clear way of supporting in Specta as it comes with a lot of issues:
- - Not using `#[serde(default, skip_serializing_if = "MaybeUndefined::is_undefined")]` on *every* field using `MaybeUndefined` will result in unexpected behavior.
- - `MaybeUndefined::<T>::Null` is serialized as `null` directly, which is confusing. `undefined` is the lack of a field and Serde doesn't understand this inside of a field.
- - `MaybeUndefined::Undefined` is really hard to type because "undefined" is not understood by Specta's core and I think I want to keep it that way.
+
+- Not using `#[serde(default, skip_serializing_if = "MaybeUndefined::is_undefined")]` on _every_ field using `MaybeUndefined` will result in unexpected behavior.
+- `MaybeUndefined::<T>::Null` is serialized as `null` directly, which is confusing. `undefined` is the lack of a field and Serde doesn't understand this inside of a field.
+- `MaybeUndefined::Undefined` is really hard to type because "undefined" is not understood by Specta's core and I think I want to keep it that way.
 
 In the [GitHub Issue #157](https://github.com/specta-rs/specta/issues/157), I have posted a slightly improved example but I don't think I see a way of supporting this without a lot of asterisks so for now it can stay userspace.
 
@@ -769,6 +808,7 @@ I have also been investigating type-safe error handling. As TauRPC uses the `spe
 The fact that we have decoupled Serde from the attribute parsing is actually proving to have had a lot of really cool side-effects.
 
 For example the following:
+
 ```rs
 #[derive(Type)] // - notice no `Serialize`/`Deserialize`
 #[serde(untagged)]
@@ -780,6 +820,7 @@ pub struct Foo {
 This used to be valid as the Specta attribute "advertised" it could handle `#[serde(...)]`, but we don't actually require that so it's been removed. Now you will be required to add `#[derive(Serialize)]` (and/or `Deserialize`) as that is required for it to work on your type at runtime.
 
 We used to support the following:
+
 ```rs
 #[derive(Type, Serialize)]
 #[specta(untagged)] // - notice `specta` not `serde`
@@ -801,6 +842,7 @@ I originally did this inlining in the macro could cause stack overflows as a typ
 This had a cool implication, when using `#[serde(inline)]` which cause a type definition to be "flattened" in the past we could only flatten a single level as it was done in the macro. Now we can be much smarter and flatten through transparent types like `Option` and `Box`.
 
 In practice this means:
+
 ```rs
 #[derive(Type)]
 pub struct Foo {
@@ -850,10 +892,10 @@ From 27/02/2026 to 13/03/2026
 
 Some remaining issues carried over from the last sprint that where blocking a new release:
 
- - Fix final known failing tests - [fe39669](https://github.com/specta-rs/specta/commit/fe396690e078ad7213ffef0b754715cda760b80a) & [ee2352d](https://github.com/specta-rs/specta/commit/ee2352d69eb5daf6dd88cb6ca03a14d9a66a0faf) & [429bdd4](https://github.com/specta-rs/specta/commit/429bdd4b9173a0f36a5b4051829e37fd2df74294)
- - Fix `f16` and `f128` implementation on nightly - [1257bb4](https://github.com/specta-rs/specta/commit/1257bb4867f5266b8b9492dabfb5ff23d52712c0)
- - Fix CI workflows. The snapshots generated differently on Windows so this took some changes to it's format. - [f3143fe](https://github.com/specta-rs/specta/commit/f3143fe210ce483b983d413e516914da990c6bbc) & [ac74b0a](https://github.com/specta-rs/specta/commit/ac74b0ad45e5ea99c123d51e4f778a073b2e3c0d) & [0f501b9](https://github.com/specta-rs/specta/commit/0f501b991e46298625fb397b46ea808d3d693d27)
- - Add alpha warning to all non-typescript crates ahead of publishing them for the first time - [0c69ad9](https://github.com/specta-rs/specta/commit/0c69ad959c7617a8ebac1f490629346fa71cc73c)
+- Fix final known failing tests - [fe39669](https://github.com/specta-rs/specta/commit/fe396690e078ad7213ffef0b754715cda760b80a) & [ee2352d](https://github.com/specta-rs/specta/commit/ee2352d69eb5daf6dd88cb6ca03a14d9a66a0faf) & [429bdd4](https://github.com/specta-rs/specta/commit/429bdd4b9173a0f36a5b4051829e37fd2df74294)
+- Fix `f16` and `f128` implementation on nightly - [1257bb4](https://github.com/specta-rs/specta/commit/1257bb4867f5266b8b9492dabfb5ff23d52712c0)
+- Fix CI workflows. The snapshots generated differently on Windows so this took some changes to it's format. - [f3143fe](https://github.com/specta-rs/specta/commit/f3143fe210ce483b983d413e516914da990c6bbc) & [ac74b0a](https://github.com/specta-rs/specta/commit/ac74b0ad45e5ea99c123d51e4f778a073b2e3c0d) & [0f501b9](https://github.com/specta-rs/specta/commit/0f501b991e46298625fb397b46ea808d3d693d27)
+- Add alpha warning to all non-typescript crates ahead of publishing them for the first time - [0c69ad9](https://github.com/specta-rs/specta/commit/0c69ad959c7617a8ebac1f490629346fa71cc73c)
 
 Cut release [2.0.0-rc.23](https://github.com/specta-rs/specta/releases/tag/v2.0.0-rc.23)
 
@@ -951,11 +993,12 @@ I did a heap of research around this and generated [this plan](https://hackmd.io
 ### A solution enters the chat
 
 What if every format crate exports a `parser!` macro. This would take in something like:
- - `parser!(@container; #[serde(...)]`
- - `parser!(@container; #[doc = "Rustdocs"]`
- - `parser!(@container; #[error(...)]`
- - `parser!(@variant; #[serde(...)]`
- - `parser!(@field; #[serde(...)]`
+
+- `parser!(@container; #[serde(...)]`
+- `parser!(@container; #[doc = "Rustdocs"]`
+- `parser!(@container; #[error(...)]`
+- `parser!(@variant; #[serde(...)]`
+- `parser!(@field; #[serde(...)]`
 
 This macro would be able to parse any incoming attribute it cares about, and also generate code such as the required `<T as specta::Type>::definition(...)` for `#[specta(into = ...)]`. The macro returns an arbitrary struct which it stored in an `Attributes` container which is basically a container for any type (more or less a `HashMap<TypeId, Arc<dyn Any>>`). Now the macro can pass the structures and we can `Attributes::downcast::<SerdeAttributes()` to get access to them at runtime to apply them to the `DataType` layer.
 
@@ -976,8 +1019,9 @@ By splitting it out of the core we can allow the Serde runtime to handle the dif
 ### The public API?
 
 With this refactor we now have the following API:
- - `specta_serde::apply(types: specta::Types) -> Result<specta::ResolvedTypes, specta_serde::Error>`
- - `specta_serde::apply_phases(types: specta::Types) -> Result<specta::ResolvedTypes, specta_serde::Error>`
+
+- `specta_serde::apply(types: specta::Types) -> Result<specta::ResolvedTypes, specta_serde::Error>`
+- `specta_serde::apply_phases(types: specta::Types) -> Result<specta::ResolvedTypes, specta_serde::Error>`
 
 Note that both of these return `ResolvedTypes`. This is just a specially named wrapper around the existing `Types` struct, however this is used to indicate it has been processed by a specific-format, in this case Serde.
 
@@ -990,9 +1034,10 @@ With this Specta Typescript no longer depends on Specta Serde. The two component
 So `specta_serde::apply` is the old API your used to, except that the presence of phase-specific attributes like `#[serde(skip_serializing_if = ...)]` now throw as an error as it is impossible for a single type to be generated.
 
 `specta_serde::apply_phases` looks through each of your types for phase-specific properties and if they are found it split the type into the following:
- - `MyType` which is replaced with `MyType_Serialize | MyType_Deserialize`.
- - `MyType_Serialize` - which is the version with serialize attributes applied
- - `MyType_Deserialize` - which is the version with deserialize attributes applied
+
+- `MyType` which is replaced with `MyType_Serialize | MyType_Deserialize`.
+- `MyType_Serialize` - which is the version with serialize attributes applied
+- `MyType_Deserialize` - which is the version with deserialize attributes applied
 
 It also traces all depent types and may split them automatically so we can dispatch to the proper phase type.
 
@@ -1003,10 +1048,11 @@ This all means a framework like TauRPC and Tauri Specta is now able to be much s
 Following this I have worked through supporting as many Serde attributes as possible across all phases as previously we only really had the import ones supported. Although I suspect i'm not yet at 100% support we definitely have much better support.
 
 Attribute coverage expanded significantly during this phase:
- - `variant_identifier` / `field_identifier` - [aba3540](https://github.com/specta-rs/specta/commit/aba3540)
- - `into` / `from` / `try_from` - [8ec2663](https://github.com/specta-rs/specta/commit/8ec2663)
- - `variant #[specta(type = ...)]` + broader attribute support cleanup - [e9a592d](https://github.com/specta-rs/specta/commit/e9a592d)
- - container `type = ...` inference fix and `serde-repr` example - [4ff1c2a](https://github.com/specta-rs/specta/commit/4ff1c2a)
+
+- `variant_identifier` / `field_identifier` - [aba3540](https://github.com/specta-rs/specta/commit/aba3540)
+- `into` / `from` / `try_from` - [8ec2663](https://github.com/specta-rs/specta/commit/8ec2663)
+- `variant #[specta(type = ...)]` + broader attribute support cleanup - [e9a592d](https://github.com/specta-rs/specta/commit/e9a592d)
+- container `type = ...` inference fix and `serde-repr` example - [4ff1c2a](https://github.com/specta-rs/specta/commit/4ff1c2a)
 
 ### `specta_serde::Phased`
 
@@ -1024,19 +1070,20 @@ This is really cool because it is a way of supporting something like `#[specta(t
 
 ### Notes about attributes
 
- - `#[serde(with = ...)]` requires `#[specta(type = ...)]` annotation to work as we can't infer the type.
- - `serde-with` crate doesn't require a special support as it just emits `#[serde(with = ...)]` internally, which Specta can see.
+- `#[serde(with = ...)]` requires `#[specta(type = ...)]` annotation to work as we can't infer the type.
+- `serde-with` crate doesn't require a special support as it just emits `#[serde(with = ...)]` internally, which Specta can see.
 
 ## Other stuff
 
 ### Issue count down, down and staying down
 
-I have also spent quite a bit of work going through GitHub issues and fixing them. We are currently at 27 open PRs. when stating this contract we were at *100*. That's absolutely huge!!!!!
+I have also spent quite a bit of work going through GitHub issues and fixing them. We are currently at 27 open PRs. when stating this contract we were at _100_. That's absolutely huge!!!!!
 
 TODO:
- - Added parity with crates supported by `ts-rs` - [#454](https://github.com/specta-rs/specta/pull/454) & [2b3aafa](https://github.com/specta-rs/specta/commit/2b3aafa)
- - Add `error-stack` support - [e33a2d2](https://github.com/specta-rs/specta/commit/e33a2d2) (closes [#249](https://github.com/specta-rs/specta/issues/249))
- - Review hidden API surface and docs - [9a13b7e](https://github.com/specta-rs/specta/commit/9a13b7e) (closes [#325](https://github.com/specta-rs/specta/issues/325))
+
+- Added parity with crates supported by `ts-rs` - [#454](https://github.com/specta-rs/specta/pull/454) & [2b3aafa](https://github.com/specta-rs/specta/commit/2b3aafa)
+- Add `error-stack` support - [e33a2d2](https://github.com/specta-rs/specta/commit/e33a2d2) (closes [#249](https://github.com/specta-rs/specta/issues/249))
+- Review hidden API surface and docs - [9a13b7e](https://github.com/specta-rs/specta/commit/9a13b7e) (closes [#325](https://github.com/specta-rs/specta/issues/325))
 
 ### Zod exporter
 
@@ -1074,25 +1121,28 @@ Basically it all boils down to the following which goes through how each tagging
 
 ```ts
 // For internally tagged the tag acts as the differentiator so we don't need to do anything special
-type A = { type: "A"} | { type: "B", data: string };
-const a: A = { "type": "A" };
-const b: A = { "type": "B", data: "todo" };
-const c: A = { "type": "A", data: "todo" }; // type error
+type A = { type: "A" } | { type: "B"; data: string };
+const a: A = { type: "A" };
+const b: A = { type: "B", data: "todo" };
+const c: A = { type: "A", data: "todo" }; // type error
 
 // For adjacently tagged the tag acts as the differentiator so we don't need to do anything special
-type C = { type: "A", data: { data: string } } | { type: "B", data: { another: number }  };
+type C =
+  | { type: "A"; data: { data: string } }
+  | { type: "B"; data: { another: number } };
 const g: C = { type: "A", data: { data: "string" } };
 const h: C = { type: "B", data: { another: 42 } };
 const i: C = { type: "A", data: { data: "string", another: 42 } }; // type error
 
 // For untagged we need to add the `?: never` fields so both variants can't be initiated at once.
-type B = { data: string, another?: never } | { another: number, data?: never };
+type B = { data: string; another?: never } | { another: number; data?: never };
 const d: B = { another: 42 };
 const e: B = { data: "bruh" };
 const f: B = { data: "bruh", another: 42 }; // type error
 
 // For externally tagged we need to add the `?: never` fields so both variants can't be initiated at once.
-type D = { A: { data: string }, B?: never } | { B: { another: number }, A?: never };
+type D =
+  { A: { data: string }; B?: never } | { B: { another: number }; A?: never };
 const j: D = { A: { data: "bruh" } };
 const k: D = { B: { another: 42 } };
 const l: D = { A: { data: "bruh" }, B: { another: 42 } }; // type error
@@ -1105,6 +1155,7 @@ implemented in [9e782e4](https://github.com/specta-rs/specta/commit/9e782e4d89a2
 ## Issues with format system
 
 In working on upgrading Tauri Specta and TauRPC I noticed another major issue with our new format system approach. I was getting the following error on a perfectly valid enum:
+
 ```bash
 thread 'main' (4981415) panicked at examples/app/src-tauri/src/main.rs:155:14:
 Failed to export typescript bindings: Framework error: Specta Serde validation failed: Invalid externally tagged enum variant 'IoError': variant payload is fully skipped
@@ -1123,8 +1174,9 @@ Conclusion: As much as the experiment has been worth it for providing the founda
 The core issue is that the macro runs across types in the entire crate-graph, so we need to collect up format information from all of them, however we can't import the format crate from all crates in the graph (as it had to have been a preexisting dependency) so you end up with incomplete attribute information and invalid and wierd types.
 
 Going forwards:
- - `specta::datatype::Atributes` is now `HashMap<String, Box<dyn Any>>` so we can store attributes in a form like `serde:rename = "new_name"`. This means we don't need to import `specta_serde` to construct it's attributes.
- - `specta_serde::parser!`'s logic is moved into `specta-macros` which now has a non-default `serde` feature which enables the collection of the Serde attributes (this is enabled if `specta_serde` is anywhere in the crate graph)
+
+- `specta::datatype::Atributes` is now `HashMap<String, Box<dyn Any>>` so we can store attributes in a form like `serde:rename = "new_name"`. This means we don't need to import `specta_serde` to construct it's attributes.
+- `specta_serde::parser!`'s logic is moved into `specta-macros` which now has a non-default `serde` feature which enables the collection of the Serde attributes (this is enabled if `specta_serde` is anywhere in the crate graph)
 
 This makes the Serde integration work really well and still keeps it agnostic from the `specta` crate, however the `specta-macros` crate can't get away without bundling support for it. If we want to support a non-Serde formats we would need to introduce them into `specta-macros` which is worse than the original plan to allow any 3rd party crate to define it, but this is overall still a solid final outcome and is the best we can do with the technical constraints.
 
@@ -1155,21 +1207,25 @@ This results in the following in the `bindings.ts` file:
 ```ts
 // ...
 
-export type PhaseSpecificRename = PhaseSpecificRename_Serialize | PhaseSpecificRename_Deserialize;
+export type PhaseSpecificRename =
+  PhaseSpecificRename_Serialize | PhaseSpecificRename_Deserialize;
 
 export type PhaseSpecificRename_Deserialize = {
-	deserialized_value: string,
+  deserialized_value: string;
 };
 
 export type PhaseSpecificRename_Serialize = {
-	serialized_value: string,
+  serialized_value: string;
 };
 
 // ...
 
 export const commands = {
-    // Notice how we specialise the types for the usage!
-	phaseSpecificRename: (input: PhaseSpecificRename_Deserialize) => __TAURI_INVOKE<PhaseSpecificRename_Serialize>("phase_specific_rename", { input }),
+  // Notice how we specialise the types for the usage!
+  phaseSpecificRename: (input: PhaseSpecificRename_Deserialize) =>
+    __TAURI_INVOKE<PhaseSpecificRename_Serialize>("phase_specific_rename", {
+      input,
+    }),
 };
 ```
 
@@ -1187,7 +1243,60 @@ When paired with a framework like Tauri Specta (or TauRPC) it can produce someth
 
 ```ts
 export const commands = {
-  specialTypes: (input: SpecialTypes_Deserialize) => __TAURI_INVOKE<[SpecialTypes_Deserialize, SpecialTypes_Deserialize]>("special_types", { input }).then((v) => [(() => { let __value1 = v[0]; { const next = BigInt(__value1["u128_max"]); if (next !== __value1["u128_max"]) __value1 = { ...__value1, "u128_max": next }; } { const next = BigInt(__value1["u128_min"]); if (next !== __value1["u128_min"]) __value1 = { ...__value1, "u128_min": next }; } { const next = BigInt(__value1["i128_max"]); if (next !== __value1["i128_max"]) __value1 = { ...__value1, "i128_max": next }; } { const next = BigInt(__value1["i128_min"]); if (next !== __value1["i128_min"]) __value1 = { ...__value1, "i128_min": next }; } return __value1; })(), (() => { let __value2 = v[1]; { const next = BigInt(__value2["u128_max"]); if (next !== __value2["u128_max"]) __value2 = { ...__value2, "u128_max": next }; } { const next = BigInt(__value2["u128_min"]); if (next !== __value2["u128_min"]) __value2 = { ...__value2, "u128_min": next }; } { const next = BigInt(__value2["i128_max"]); if (next !== __value2["i128_max"]) __value2 = { ...__value2, "i128_max": next }; } { const next = BigInt(__value2["i128_min"]); if (next !== __value2["i128_min"]) __value2 = { ...__value2, "i128_min": next }; } return __value2; })()]),
+  specialTypes: (input: SpecialTypes_Deserialize) =>
+    __TAURI_INVOKE<[SpecialTypes_Deserialize, SpecialTypes_Deserialize]>(
+      "special_types",
+      { input },
+    ).then((v) => [
+      (() => {
+        let __value1 = v[0];
+        {
+          const next = BigInt(__value1["u128_max"]);
+          if (next !== __value1["u128_max"])
+            __value1 = { ...__value1, u128_max: next };
+        }
+        {
+          const next = BigInt(__value1["u128_min"]);
+          if (next !== __value1["u128_min"])
+            __value1 = { ...__value1, u128_min: next };
+        }
+        {
+          const next = BigInt(__value1["i128_max"]);
+          if (next !== __value1["i128_max"])
+            __value1 = { ...__value1, i128_max: next };
+        }
+        {
+          const next = BigInt(__value1["i128_min"]);
+          if (next !== __value1["i128_min"])
+            __value1 = { ...__value1, i128_min: next };
+        }
+        return __value1;
+      })(),
+      (() => {
+        let __value2 = v[1];
+        {
+          const next = BigInt(__value2["u128_max"]);
+          if (next !== __value2["u128_max"])
+            __value2 = { ...__value2, u128_max: next };
+        }
+        {
+          const next = BigInt(__value2["u128_min"]);
+          if (next !== __value2["u128_min"])
+            __value2 = { ...__value2, u128_min: next };
+        }
+        {
+          const next = BigInt(__value2["i128_max"]);
+          if (next !== __value2["i128_max"])
+            __value2 = { ...__value2, i128_max: next };
+        }
+        {
+          const next = BigInt(__value2["i128_min"]);
+          if (next !== __value2["i128_min"])
+            __value2 = { ...__value2, i128_min: next };
+        }
+        return __value2;
+      })(),
+    ]),
 };
 ```
 
@@ -1222,37 +1331,43 @@ The approach does require quite a few changes to Tauri so I definitely would hav
 This all comes together to make the following possible with the regular Tauri `invoke` API:
 
 ```ts
-invoke("special_types", {
-  input: {
-    u128_max: (1n << 128n) - 1n,
-    u128_min: 0n,
-    i128_max: (1n << 127n) - 1n,
-    i128_min: -(1n << 127n),
-} }, {
-  reviver: (key, value, context) => {
-   if (
-     context &&
-     typeof value === "number" &&
-     Number.isInteger(value) &&
-     /^-?\d+$/.test(context.source) &&
-     !Number.isSafeInteger(value)
-   ) return BigInt(context.source);
-   return value;
- }
-}).then((echo) => {
-    console.log(
-      "ASSERTIONS:",
-      echo.u128_max == (1n << 128n) - 1n,
-      echo.u128_min == 0n,
-      echo.i128_max == (1n << 127n) - 1n,
-      echo.i128_min == -(1n << 127n)
-    );
+invoke(
+  "special_types",
+  {
+    input: {
+      u128_max: (1n << 128n) - 1n,
+      u128_min: 0n,
+      i128_max: (1n << 127n) - 1n,
+      i128_min: -(1n << 127n),
+    },
+  },
+  {
+    reviver: (key, value, context) => {
+      if (
+        context &&
+        typeof value === "number" &&
+        Number.isInteger(value) &&
+        /^-?\d+$/.test(context.source) &&
+        !Number.isSafeInteger(value)
+      )
+        return BigInt(context.source);
+      return value;
+    },
+  },
+).then((echo) => {
+  console.log(
+    "ASSERTIONS:",
+    echo.u128_max == (1n << 128n) - 1n,
+    echo.u128_min == 0n,
+    echo.i128_max == (1n << 127n) - 1n,
+    echo.i128_min == -(1n << 127n),
+  );
 });
 ```
 
 Then when wrapped with `specta-tags` we end up with support for large integer types without any loss of precion, without any user-defined glue code or changes. Working in both TauRPC and Tauri Specta!
 
-This feature makes your code *just work* without the application developer even needing to be aware of all the issues with large integer types.
+This feature makes your code _just work_ without the application developer even needing to be aware of all the issues with large integer types.
 
 #### Removal of `BigIntExportBehavior`
 
@@ -1266,26 +1381,26 @@ The Typescript exporter will always error (as if `BigIntExportBehavior::Fail`) w
  Specta Typescript intentionally forbids exporting BigInt-style Rust integer types.
  This includes [usize], [isize], [i64], [u64], [u128], [i128] and [f128].
 
- This guard exists because `JSON.parse` will truncate large integers to fit into a JavaScript `number` type so we explicitly forbid exporting them.
+This guard exists because `JSON.parse` will truncate large integers to fit into a JavaScript `number` type so we explicitly forbid exporting them.
 
- If you encounter this error, there are a few common migration paths (in order of preference):
+If you encounter this error, there are a few common migration paths (in order of preference):
 
- 1. Use a smaller integer types (any of `u8`/`i8`/`u16`/`i16`/`u32`/`i32`/`f64`).
+1.  Use a smaller integer types (any of `u8`/`i8`/`u16`/`i16`/`u32`/`i32`/`f64`).
     - Only possible when the biggest integer you need to represent is small enough to be represented by a `number` in JS.
     - This approach forces your application code to handle overflow/underflow values explicitly
     - Downside is that it can introduce annoying glue code and doesn't actually work if your need large values.
 
- 2. Serialize the value as a string
-     - This can be done using `#[specta(type = String)]` combined with a Serde `#[serde(with = "...")]` attribute.
-     - Downside is that it can introduce annoying glue code, both on in Rust and in JS as you will need to turn it back into a `new BigInt(myString)` in JS.
+2.  Serialize the value as a string
+    - This can be done using `#[specta(type = String)]` combined with a Serde `#[serde(with = "...")]` attribute.
+    - Downside is that it can introduce annoying glue code, both on in Rust and in JS as you will need to turn it back into a `new BigInt(myString)` in JS.
 
- 3. Use a Specta-based framework
-     - Frameworks like [Tauri Specta](https://github.com/specta-rs/tauri-specta) and [TauRPC](https://github.com/MatsDK/TauRPC) take care of this for you.
-     - They use special internals to preserve the values and make use of [`specta-tags`](http://docs.rs/specta-tags) for generating glue-code automatically.
+3.  Use a Specta-based framework
+    - Frameworks like [Tauri Specta](https://github.com/specta-rs/tauri-specta) and [TauRPC](https://github.com/MatsDK/TauRPC) take care of this for you.
+    - They use special internals to preserve the values and make use of [`specta-tags`](http://docs.rs/specta-tags) for generating glue-code automatically.
 
- 4. UNSAFE: Accept precision loss
-     - Accept that large numbers may be deserialized differently and use `#[specta(type = f64)]` to bypass this warning on a per-field basis.
-     - This can't be set globally as it is designed intentionally to introduce friction, as you are accepting the risk of data loss which is not okay.
+4.  UNSAFE: Accept precision loss
+    - Accept that large numbers may be deserialized differently and use `#[specta(type = f64)]` to bypass this warning on a per-field basis.
+    - This can't be set globally as it is designed intentionally to introduce friction, as you are accepting the risk of data loss which is not okay.
 
 </Callout>
 
@@ -1381,11 +1496,12 @@ pub struct B {
 Your unlikely to notice this in practice as Serde doesn't actually support `[T; N]` by default but with external helper crates or `with` implementations it is possible so it's still important that Specta is able to properly handle it.
 
 To solve this I defined a set of rules:
- - If your in a named type with const generics we can't include length (Eg. always export as T[], instead of [T, T, T] (depending on length)).
-    - Inside `[T; N]`'s `Type` implementation we can't tell if the `N` is static or based on the const function so we just have to always ignore it.
-    - This means `[usize; 2]` will become `number[]` instead of `[number, number]`
- - If your in a named type without const generics or outside of a named type all together we know that `N` must be static (as associated const parameters are also unsupported and can't be supported)
-    So `[usize; 2]` will become `[number, number]` always
+
+- If your in a named type with const generics we can't include length (Eg. always export as T[], instead of [T, T, T] (depending on length)).
+  - Inside `[T; N]`'s `Type` implementation we can't tell if the `N` is static or based on the const function so we just have to always ignore it.
+  - This means `[usize; 2]` will become `number[]` instead of `[number, number]`
+- If your in a named type without const generics or outside of a named type all together we know that `N` must be static (as associated const parameters are also unsupported and can't be supported)
+  So `[usize; 2]` will become `[number, number]` always
 
 With this I introduced [`CONTEXT_HAS_CONST_PARAMS`](https://github.com/specta-rs/specta/blob/3e93f7c07770885d79b153191a598f218a1e7b3f/specta/src/datatype/named.rs#L60) which is a thread_local to track the scope and modify the type implementation according to the rules above.
 
@@ -1419,36 +1535,37 @@ we get the following:
 ```ts
 // This file has been generated by Specta. Do not edit this file manually.
 export type ContainsDemo = {
-	a: {
-		one: [number, number], // Notice we "baked" N=2
-		two: [number, number, number],
-	},
-	b: {
-		one: [number, number, number], // Notice we "baked" N=3
-		two: [number, number, number],
-	},
-	c: Demo, // because it's not inlined, we fallback to the generalised `number[]` definition
+  a: {
+    one: [number, number]; // Notice we "baked" N=2
+    two: [number, number, number];
+  };
+  b: {
+    one: [number, number, number]; // Notice we "baked" N=3
+    two: [number, number, number];
+  };
+  c: Demo; // because it's not inlined, we fallback to the generalised `number[]` definition
 };
 
 export type Demo = {
-	one: number[],
-	two: number[],
+  one: number[];
+  two: number[];
 };
 ```
 
 instead of the previous version of Specta returning:
+
 ```ts
 // This file has been generated by Specta. Do not edit this file manually.
 export type ContainsDemo = {
-	a: {
-		one: number[], // Notice this is fixed length. It's just `Demo` pasted in place.
-		two: number[], // Notice this is fixed length. It's just `Demo` pasted in place.
-	},
-	b: {
-		one: number[], // Notice this is fixed length. It's just `Demo` pasted in place.
-		two: number[], // Notice this is fixed length. It's just `Demo` pasted in place.
-	},
-	c: Demo,
+  a: {
+    one: number[]; // Notice this is fixed length. It's just `Demo` pasted in place.
+    two: number[]; // Notice this is fixed length. It's just `Demo` pasted in place.
+  };
+  b: {
+    one: number[]; // Notice this is fixed length. It's just `Demo` pasted in place.
+    two: number[]; // Notice this is fixed length. It's just `Demo` pasted in place.
+  };
+  c: Demo;
 };
 ```
 
@@ -1489,9 +1606,10 @@ it also means references can be simplified from `Demo<string>` to `Demo` as the 
 [#431](https://github.com/specta-rs/specta/issues/431)
 
 Instead of exposing:
- - `T::field(&self) -> &U`
- - `T::field(&mut self) -> &mut U`
- - `T::set_field(&mut self, v: U)`
+
+- `T::field(&self) -> &U`
+- `T::field(&mut self) -> &mut U`
+- `T::set_field(&mut self, v: U)`
 
 I have just exposed the fields as `pub field: T`. This is cleaner and at the end of the day I am not sure the extra flexibility is going to be useful as the conctete type is already baked into most of the accessor methods anyway.
 
@@ -1545,7 +1663,7 @@ We also dropped the `type_overridden` field from `Fields` and instead replaced w
 
 These changes have all been part of me ensuring the Specta-core is ready for v2 by going through it at a fine detail to ensure everything is correct.
 
-I have also defined a strict requirement on `DataType::Generic`'s  only appearing in the `ty` field of `NamedDataType`, as oppose to it being returned from calls to `<T as Type>::definition(...)` as we are now removing the generic replacement code from the language exporters, this is required for desired behavior and makes more logical sense.
+I have also defined a strict requirement on `DataType::Generic`'s only appearing in the `ty` field of `NamedDataType`, as oppose to it being returned from calls to `<T as Type>::definition(...)` as we are now removing the generic replacement code from the language exporters, this is required for desired behavior and makes more logical sense.
 
 I have not finished work on implementation all of this [#483](https://github.com/specta-rs/specta/pull/483) but I will be complete it within the coming week!
 
@@ -1588,6 +1706,7 @@ As much as I don't think this the right move philosophically I think Specta's ad
 The major risk if any downstream dependencies (or their children) which have the `link` propery set end up colliding as only one version of each of them can exist in the crate graph at once. This forbids up from shipping `Type` for any Tauri Plugins for example but also you would likely hit a circular dependency graph before that in practice. Also any low level libraries may cause issues. If this condition happens we probs have no choice but to do Specta v3 and review this decision.
 
 They will be in the format `{crate_name}{major}`. Eg:
+
 - `uuid1`
 - `tokio1`
 - etc.
@@ -1605,12 +1724,13 @@ From 24/04/2026 to 07/05/2026
 I started the sprint completing some of the remaining work from the framework map function outlined in the last sprint on [#470](https://github.com/specta-rs/specta/pull/470). This has been really good for reducing complexity in the Tauri Specta and TauRPC code which should hopefully reduce future bugs.
 
 Closed the following issues:
- - `serde_json::Value` broken with latest release - [#455](https://github.com/specta-rs/specta/issues/455)
- - Support for `rename_all` for `#[specta::specta]` - [#213](https://github.com/specta-rs/specta/issues/213)
- - Fix Rustdoc exporting for singleline comments - [#450](https://github.com/specta-rs/specta/issues/450)
- - Fix bug with enum merging - [#482](https://github.com/specta-rs/specta/issues/482)
- - Improve Rustdoc comments across all crates  - [#299](https://github.com/specta-rs/specta/issues/299)
- - Break examples out into separate crates - [#112](https://github.com/specta-rs/specta/issues/112)
+
+- `serde_json::Value` broken with latest release - [#455](https://github.com/specta-rs/specta/issues/455)
+- Support for `rename_all` for `#[specta::specta]` - [#213](https://github.com/specta-rs/specta/issues/213)
+- Fix Rustdoc exporting for singleline comments - [#450](https://github.com/specta-rs/specta/issues/450)
+- Fix bug with enum merging - [#482](https://github.com/specta-rs/specta/issues/482)
+- Improve Rustdoc comments across all crates - [#299](https://github.com/specta-rs/specta/issues/299)
+- Break examples out into separate crates - [#112](https://github.com/specta-rs/specta/issues/112)
 
 ### Inline refactor
 
@@ -1706,26 +1826,23 @@ impl Type for B {
 So how should we solve this?
 
 The changes:
- - Make every type other than primitives return a `NamedDataType`.
-    - Eg. `std::string::String` will end up in `Types`. It is marked `#[specta(inline)]` effectively on the container so you don't get `export String = ...;` in JS.
-    - This has the superpower that it allows exporters to detect types and change their behaviour. For example a Rust exporter can now differentiate between a `HashMap` and a `BTreeMap`, where previously it only knew it was a `DataType::Map`.
- - Split up `NamedReference` into an enum with 3 variants
-    - `Inline`
-        - It tells the language exporter that the `NamedReference` should be inlined.
-        - This is what `std::string::String` uses for example, or anywhere your using `#[specta(inline)]`.
-        - It is as if it doesn't exist in the language output but the exporter could match on the `NamedDataType` to change it's behaviour.
-    - `Recursive`
-        - This is emitted when a recursive inline is reached.
-        - This is just a marker than the language exporter should error, it includes a stack of the recursive references for better errors.
-    - `Reference`
-        - A reference to another type with associated generics.
-        - This is basically what `NamedReference` used to be and it exported as `TypeName<{generics}>`.
 
-I also took this opportunity to simplify some stuff:
-    - `specta::datatype::inline(types, |types| <T as Type>::definition(...))` can be used now on a field to inline it.
-        - Allowed removing `Field.inline`.
-    - Dropped `Field.type_overriden` in favor of using `Attributes`.
-    - Dropped `Field.flatten` in favor of making Specta Serde smarter.
+- Make every type other than primitives return a `NamedDataType`.
+  - Eg. `std::string::String` will end up in `Types`. It is marked `#[specta(inline)]` effectively on the container so you don't get `export String = ...;` in JS.
+  - This has the superpower that it allows exporters to detect types and change their behaviour. For example a Rust exporter can now differentiate between a `HashMap` and a `BTreeMap`, where previously it only knew it was a `DataType::Map`.
+- Split up `NamedReference` into an enum with 3 variants
+  - `Inline`
+    - It tells the language exporter that the `NamedReference` should be inlined.
+    - This is what `std::string::String` uses for example, or anywhere your using `#[specta(inline)]`.
+    - It is as if it doesn't exist in the language output but the exporter could match on the `NamedDataType` to change it's behaviour.
+  - `Recursive`
+    - This is emitted when a recursive inline is reached.
+    - This is just a marker than the language exporter should error, it includes a stack of the recursive references for better errors.
+  - `Reference`
+    - A reference to another type with associated generics.
+    - This is basically what `NamedReference` used to be and it exported as `TypeName<{generics}>`.
+
+I also took this opportunity to simplify some stuff: - `specta::datatype::inline(types, |types| <T as Type>::definition(...))` can be used now on a field to inline it. - Allowed removing `Field.inline`. - Dropped `Field.type_overriden` in favor of using `Attributes`. - Dropped `Field.flatten` in favor of making Specta Serde smarter.
 
 This all leads to a much simpler system, and it also means the job of preventing stack overflows is on Specta's core not the language exporters which is really nice for reducing bugs.
 
@@ -1741,9 +1858,9 @@ I did previously call this nuanced types but that's not really true anymore.
 
 The original nuanced types feature confused two different Specta features which ended up being quite related so I wanted to clarify the terminology.
 
-Nuanced types has the goal of allowing a language exporter to differentiate which Rust type it's targeting. The primary usecase for this is Specta Rust, as the core `DataType` model expresses `BTreeMap`, `HashMap`, `index_map::IndexMap`, etc all as `DataType::Map`. For a Rust exporter to be good we want to be able to know *which map*.
+Nuanced types has the goal of allowing a language exporter to differentiate which Rust type it's targeting. The primary usecase for this is Specta Rust, as the core `DataType` model expresses `BTreeMap`, `HashMap`, `index_map::IndexMap`, etc all as `DataType::Map`. For a Rust exporter to be good we want to be able to know _which map_.
 
-This was solved by making *everything* bar Rust primitives (`str`, `bool`, `char`, etc.) a Specta `NamedDataType` but just marked as inline so they disappear, and don't end up in the final bindings file.
+This was solved by making _everything_ bar Rust primitives (`str`, `bool`, `char`, etc.) a Specta `NamedDataType` but just marked as inline so they disappear, and don't end up in the final bindings file.
 
 Semantic types aims to make `BigInt`, `Date`, `Uint8Array`, etc. work with Specta. This goes furthur than just Rust types as these have a specific Javascript runtime component. Eg. A `Date` may be serialized to JSON as a `string` so we need to revive using `new Date(dateStrFromJson)`.
 
@@ -1754,7 +1871,7 @@ The solution to this was `specta_typescript::semantic`.
 I did a massive writeup [in a comment for #203](https://github.com/specta-rs/specta/issues/203#issuecomment-4387573925) to outline my conclusion here. But in essence:
 
 | Rust type                           | jiff/chrono   | bytes::Bytes        | url::URL     | u64/i64/higher   |
-|-------------------------------------|---------------|---------------------|--------------|------------------|
+| ----------------------------------- | ------------- | ------------------- | ------------ | ---------------- |
 | JSON type                           | string        | number[]            | string       | **_[1]_**        |
 | JS -> Rust type (serialize phase)   | Date          | Uint8Array          | URL          | bigint \| number |
 | Rust -> JS type (deserialize phase) | Date          | Uint8Array          | URL          | bigint           |
@@ -1762,8 +1879,9 @@ I did a massive writeup [in a comment for #203](https://github.com/specta-rs/spe
 | Rust -> JS runtime code             | `new Date(v)` | `new Uint8Array(v)` | `new URL(v)` | **_[1]_**        |
 
 Special notes:
- - *[1]* - BigInt's are explained later on and are less cut and dry.
- - *[2]* - These types are actually handled by `JSON.stringify` for us so we don't need to do any special code.
+
+- _[1]_ - BigInt's are explained later on and are less cut and dry.
+- _[2]_ - These types are actually handled by `JSON.stringify` for us so we don't need to do any special code.
 
 #### `Date`, `Uint8Array` and `URL`
 
@@ -1772,6 +1890,7 @@ The core observation of these is that the JSON type and Rust serialization is al
 So that's where [`specta_typescript::semantic::Configuration`](https://docs.rs/specta-typescript/latest/specta_typescript/semantic/struct.Configuration.html) comes in.
 
 Internally it defines a set of default "rules" (with the option for the user to provide custom ones) which look similar to the following:
+
 ```rust
 Rule {
     name: "Bytes".into(),
@@ -1785,22 +1904,24 @@ Rule {
 (notice the carry over from the table above)
 
 Using `specta_typescript::semantic::Configuration::default()` we provide the following default rules:
- - [`bytes::Bytes`](https://docs.rs/bytes/latest/bytes/struct.Bytes.html) to become [`Uint8Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)
- - [`bytes::BytesMut`](https://docs.rs/bytes/latest/bytes/struct.BytesMut.html) to become [`Uint8Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)
- - [`url::Url`](https://docs.rs/url/latest/url/struct.Url.html) to become [`Url`](https://developer.mozilla.org/en-US/docs/Web/API/URL/URL)
- - [`chrono::DateTime`](https://docs.rs/chrono/latest/chrono/struct.DateTime.html) to become [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)
- - [`chrono::NaiveDate`](https://docs.rs/chrono/latest/chrono/struct.NaiveDate.html) to become [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)
- - [`jiff::Timestamp`](https://docs.rs/jiff/latest/jiff/struct.Timestamp.html) to become [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)
- - [`jiff::civil::Date`](https://docs.rs/jiff/latest/jiff/civil/struct.Date.html) to become [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)
+
+- [`bytes::Bytes`](https://docs.rs/bytes/latest/bytes/struct.Bytes.html) to become [`Uint8Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)
+- [`bytes::BytesMut`](https://docs.rs/bytes/latest/bytes/struct.BytesMut.html) to become [`Uint8Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)
+- [`url::Url`](https://docs.rs/url/latest/url/struct.Url.html) to become [`Url`](https://developer.mozilla.org/en-US/docs/Web/API/URL/URL)
+- [`chrono::DateTime`](https://docs.rs/chrono/latest/chrono/struct.DateTime.html) to become [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)
+- [`chrono::NaiveDate`](https://docs.rs/chrono/latest/chrono/struct.NaiveDate.html) to become [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)
+- [`jiff::Timestamp`](https://docs.rs/jiff/latest/jiff/struct.Timestamp.html) to become [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)
+- [`jiff::civil::Date`](https://docs.rs/jiff/latest/jiff/civil/struct.Date.html) to become [`Date`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date)
 
 Then frameworks like Tauri Specta can use with the following APIs:
- - `semantic::Configuration::apply_types(types: &mut Types)`
-    - For applying types changes to the type map.
- - `semantic::Configuration::apply_*(types: &Types, dt: &DataType, js_ident: &str,) -> Option<(Option<DataType>, String)>`.
-    - Takes in a `DataType`, and `js_ident` (for example `v`), then it will apply the rules returning an updated `DataType` if required and a runtime string.
-    - The runtime string can be used like `outputFromRust.then((v) => {js_runtime_str})`.
-    - This generates something like `outputFromRust.then((v) => { date_field: new Date(v) })`. It also handles nesting, arrays, etc.
-    - You can use `apply_serialize` or `apply_deserialize` depending on the direction as the runtime needs to be different.
+
+- `semantic::Configuration::apply_types(types: &mut Types)`
+  - For applying types changes to the type map.
+- `semantic::Configuration::apply_*(types: &Types, dt: &DataType, js_ident: &str,) -> Option<(Option<DataType>, String)>`.
+  - Takes in a `DataType`, and `js_ident` (for example `v`), then it will apply the rules returning an updated `DataType` if required and a runtime string.
+  - The runtime string can be used like `outputFromRust.then((v) => {js_runtime_str})`.
+  - This generates something like `outputFromRust.then((v) => { date_field: new Date(v) })`. It also handles nesting, arrays, etc.
+  - You can use `apply_serialize` or `apply_deserialize` depending on the direction as the runtime needs to be different.
 
 This all comes together to allow these types to work. I have implemented this into Tauri Specta in [#219](https://github.com/specta-rs/tauri-specta/pull/219) and TauRPC in [#22](https://github.com/fltsci/TauRPC/pull/22).
 
@@ -1809,10 +1930,11 @@ I have some concerns about this approach with [rspc](https://github.com/specta-r
 #### BigInt and special-float support in Tauri
 
 BigInt's have a different constraint, there JSON representation is lossly. Mainly:
- - When `JSON.parse` is run large integers are truncated.
- - `NaN`, `Infinity` and `-Infinity` all become `null`
 
- So at it's core, doing `commandResult.then((v) => BigInt(v))` will still result in truncation if `v` is a `number`. So you need a way of serializing these correctly in Rust.
+- When `JSON.parse` is run large integers are truncated.
+- `NaN`, `Infinity` and `-Infinity` all become `null`
+
+So at it's core, doing `commandResult.then((v) => BigInt(v))` will still result in truncation if `v` is a `number`. So you need a way of serializing these correctly in Rust.
 
 ##### Jsone
 
@@ -1876,26 +1998,28 @@ fn main() {
 ```
 
 Main things to note:
- - large numbers become `{"$$jsone$remap$$": "{number}" }` in JSON
-   - Stringifying preserves it through `JSON.parse`.
-   - The JS runtime will do `BigInt({number})` automatically so you effectively get `number | bigint` for all fields.
- - float special cases become `{"$$jsone$remap$$": {constant} }` where constant is:
-   - `1` for `NaN`
-   - `2` for `Infinity`
-   - `3` for `-Infinity`
+
+- large numbers become `{"$$jsone$remap$$": "{number}" }` in JSON
+  - Stringifying preserves it through `JSON.parse`.
+  - The JS runtime will do `BigInt({number})` automatically so you effectively get `number | bigint` for all fields.
+- float special cases become `{"$$jsone$remap$$": {constant} }` where constant is:
+  - `1` for `NaN`
+  - `2` for `Infinity`
+  - `3` for `-Infinity`
 
 This requires both the Rust wrapper on serialization and deserialization and a small utility in JS to run within the `reviver`/`replacer` param for `JSON.parse`/`JSON.stringify` (although it can be used later).
 
 This makes the transport layer lossless. Now we need the Specta integration, this is done using `specta_typescript::semantic`.
 
 This is built in so in practice it's as easy as:
- - `semantic::Configuration::enable_loseless_bigints`
-    - This will make all large numbers (`u64`/`i64` and bigger) become `bigint` in types.
-    - Wrap the runtime in `(v) => BigInt(v)` so it's consistent with the datatype.
-       - With Jsone for example this layer this would be in practice `(v: number | bigint) => BigInt(v)`.
- - `semantic::Configuration::enable_loseless_bigints`
-     - This remaps the type of floats like `f32` and `f64` from `number | null` to `number`.
-     - If `NaN`, `Infinity` and `-Infinity` are handled properly they will be preserved and hence `null` won't occur.
+
+- `semantic::Configuration::enable_loseless_bigints`
+  - This will make all large numbers (`u64`/`i64` and bigger) become `bigint` in types.
+  - Wrap the runtime in `(v) => BigInt(v)` so it's consistent with the datatype.
+    - With Jsone for example this layer this would be in practice `(v: number | bigint) => BigInt(v)`.
+- `semantic::Configuration::enable_loseless_bigints`
+  - This remaps the type of floats like `f32` and `f64` from `number | null` to `number`.
+  - If `NaN`, `Infinity` and `-Infinity` are handled properly they will be preserved and hence `null` won't occur.
 
 ##### Jsone and Tauri?
 
@@ -1926,29 +2050,32 @@ So tldr: we live with bad decisions until we have a solution and then I will mar
 ### TauRPC
 
 On [#22](https://github.com/fltsci/TauRPC/pull/22) I have implemented:
- - Typesafe error handling
- - Support for phased and semantic types
- - Upgraded to Specta's latest work
+
+- Typesafe error handling
+- Support for phased and semantic types
+- Upgraded to Specta's latest work
 
 I would checkout the main example as it shows all of this work in practice.
 
 In conclusion:
- - If you use an attribute which makes serialize and deserialize types differ like `#[serde(skip_serialize_if = ...)]` we will generate `Type_Serialize` and `Type_Deserialize` with the narrowed type for each phase and then use them. We ensure for command, event and channel arguments and results we pick the correct phased type too.
- - If you use `chrono::DateTime`/`jiff::Timestamp`/`bytes::Bytes`/`url::Url` (and maybe more in the future) you will get a workable JS type (`Date`, `Uint8Array` or `URL`).
-    - You could expand this to your own classes, if you want to convert a Rust struct into a full JS class (for example, could be useful for a `Path` class w/ helpers for platform-agnostic path handling or something like that).
+
+- If you use an attribute which makes serialize and deserialize types differ like `#[serde(skip_serialize_if = ...)]` we will generate `Type_Serialize` and `Type_Deserialize` with the narrowed type for each phase and then use them. We ensure for command, event and channel arguments and results we pick the correct phased type too.
+- If you use `chrono::DateTime`/`jiff::Timestamp`/`bytes::Bytes`/`url::Url` (and maybe more in the future) you will get a workable JS type (`Date`, `Uint8Array` or `URL`).
+  - You could expand this to your own classes, if you want to convert a Rust struct into a full JS class (for example, could be useful for a `Path` class w/ helpers for platform-agnostic path handling or something like that).
 
 ### Specta Typescript improvements
 
 This work was done against main but working on resolving issue [#475](https://github.com/specta-rs/specta/issues/475).
 
 Changes:
+
 - Finish porting remaining logic from `legacy.rs` to `primitives.rs`.
 - Simplify exporting logic and cleanup the code
 - Overhaul error handling.
-    - You used to get `Error in type ""` where the type name was missing.
-    - Render the recursive inline cycle but showing all the types involved so it's easier to understand.
-    - Allow getting the `NamedDataType` an error occurred in back out.
-    - Restructure error enum to include some errors we didn't handle well before.
+  - You used to get `Error in type ""` where the type name was missing.
+  - Render the recursive inline cycle but showing all the types involved so it's easier to understand.
+  - Allow getting the `NamedDataType` an error occurred in back out.
+  - Restructure error enum to include some errors we didn't handle well before.
 
 Tracked by issues [#475](https://github.com/specta-rs/specta/issues/475).
 
@@ -1959,9 +2086,10 @@ I have resolved all remaining TODO's in `specta`, `specta-macros`, `specta-types
 ### v2 release plan
 
 I am going to do the final v2 release in a few weeks time (right now slated for the 13th of June). I know a delay is really annoying but I want to do it because:
- - I want to let the dust settle on these changes to ensure I haven't missed anything major.
- - I want to give people time to try it out and catch + resolve bugs before the launch.
- - I want to test it on a large Tauri codebase of my next employer. I will also try and upgrade some open source ones like [Cap](https://cap.so).
+
+- I want to let the dust settle on these changes to ensure I haven't missed anything major.
+- I want to give people time to try it out and catch + resolve bugs before the launch.
+- I want to test it on a large Tauri codebase of my next employer. I will also try and upgrade some open source ones like [Cap](https://cap.so).
 
 ## Conclusions
 
@@ -1970,12 +2098,13 @@ This marks the end of contract! I am so incredibly thankful to Flight Science fo
 Given how much of a monumental effort this has been I don't think Specta v2 would have happened anytime soon if it were up to me working on it in my spare time. I have been dreaming of Specta v2 finally happening for literally years at this point and now it's happening which is so amazing!!!
 
 TLDR:
- - Improve tests and codebase quality
- - Cleanup and make a very solid minimal core API. Improve Typescript exporter code, fix bugs and improve the default formatting of generated bindings.
- - Finish the incomplete work on decoupling Serde from Specta's core.
- - Support for all Serde attributes, including narrowing types for serialize vs deserialize phase.
- - Support for converting Rust types into JS types like `Date`, `Uint8Array`, `URL` and more.
- - Support for Typescript branded types for typesafe identifiers
- - Apply all upgrades to the Flight Science TauRPC, ready to be used internally!
+
+- Improve tests and codebase quality
+- Cleanup and make a very solid minimal core API. Improve Typescript exporter code, fix bugs and improve the default formatting of generated bindings.
+- Finish the incomplete work on decoupling Serde from Specta's core.
+- Support for all Serde attributes, including narrowing types for serialize vs deserialize phase.
+- Support for converting Rust types into JS types like `Date`, `Uint8Array`, `URL` and more.
+- Support for Typescript branded types for typesafe identifiers
+- Apply all upgrades to the Flight Science TauRPC, ready to be used internally!
 
 I can't express how thankful I am! I am always going to be around so feel free to reach out if you have any questions or need help with anything!
