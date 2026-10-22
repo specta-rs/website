@@ -2,26 +2,14 @@
 title: Quickstart
 ---
 
-{/*
-import { Interpolate, IfFramework } from "@/components/Switchers";
-import vscodeIntegrationImg from "@/images/vscode-integration.png";
-import Image from "next/image";
-*/}
-
-# Quickstart
-
-## CLI
-
-Coming soon...
-
-{/* // TODO: Add create rspc-app support here */}
-
-## Manual setup
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
 Get rspc up and running in your own project.
 
-{/*
 <Steps>
+
+<Step>
 
 ### Create new project (optional)
 
@@ -30,8 +18,12 @@ If you haven't got a Rust project already setup, create a new one using the foll
 ```bash
 cargo new <project-name>
 cd <project-name>
-cargo add tokio --features full # rpsc requires an async runtime
+cargo add tokio --features full # rspc requires an async runtime
 ```
+
+</Step>
+
+<Step>
 
 ### Install rspc
 
@@ -41,7 +33,11 @@ cargo add tokio --features full # rpsc requires an async runtime
 cargo add rspc specta
 ```
 
-This command will not exist if your running a Rust version earlier than `1.62.0`, please upgrade your Rust version if this is the case.
+This command will not exist if you're running a Rust version earlier than `1.62.0`, please upgrade your Rust version if this is the case.
+
+</Step>
+
+<Step>
 
 ### Create a router
 
@@ -58,7 +54,6 @@ fn router() -> Router<()> {
         .procedure("version", R.query(|ctx, _: ()| env!("CARGO_PKG_VERSION")))
         .compat()
 }
-
 
 #[tokio::main]
 async fn main() {
@@ -79,26 +74,31 @@ mod tests {
 }
 ```
 
+</Step>
+
+<Step>
+
 ### Exposing your router
 
-Now that you have a router your probably wondering how you access it from your frontend. This is done through an rspc integration. I would recommend starting with [Axum](https://github.com/tokio-rs/axum), by following [this](/integrations/axum).
+Now that you have a router you're probably wondering how you access it from your frontend. This is done through an rspc integration. I would recommend starting with [Axum](https://github.com/tokio-rs/axum), by following [this](/docs/rspc/0.3.0/alpha/server/basics).
+
+</Step>
+
+<Step>
 
 ### Usage on the frontend
 
 Install the frontend package using the following command:
 
-<Interpolate>
+<Tabs items={['React', 'Solid']}>
+<Tab value="React">
 
-```bash
-pnpm install @rspc/client @rspc/react
+```npm
+npm install @rspc/client @rspc/react
 ```
 
-</Interpolate>
-
-<IfFramework framework="react">
-
 ```tsx copy filename="src/MyComponent.tsx"
-// TODO: Finish example -> show imports
+import { rspc } from "./rspc";
 
 function SomeComponent() {
   const version = rspc.useQuery(["version"]);
@@ -111,12 +111,15 @@ function SomeComponent() {
 }
 ```
 
-</IfFramework>
+</Tab>
+<Tab value="Solid">
 
-<IfFramework framework="solid">
+```npm
+npm install @rspc/client @rspc/solid
+```
 
 ```tsx copy filename="src/MyComponent.tsx"
-// TODO: Finish example -> show imports
+import { rspc } from "./rspc";
 
 function SomeComponent() {
   const version = rspc.useQuery(() => ["version"]);
@@ -129,15 +132,17 @@ function SomeComponent() {
 }
 ```
 
-</IfFramework>
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step>
 
 ### (Optional) Setup your editor
 
 If you are using [Visual Studio Code](https://code.visualstudio.com) you can optionally install the [rspc extension](https://marketplace.visualstudio.com/items?itemName=oscartbeaumont.rspc-vscode) for useful code shortcuts.
 
-<br />
-
-<Image src={vscodeIntegrationImg} alt="rspc VSCode integration" />
+</Step>
 
 </Steps>
-*/}
