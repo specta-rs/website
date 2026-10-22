@@ -1,4 +1,4 @@
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -51,15 +51,22 @@ const sections = {
 };
 
 /**
- * MDX treats `<`, `>` and `{}` as markup, and a line starting with `#` or `-`
- * as structure. Documentation comments are prose, so neutralise both while
- * leaving inline code and links usable.
+ * MDX treats `<`, `>` and `{}` as markup, and a line starting with `#` as
+ * structure. Documentation comments are prose, so neutralise both — but never
+ * inside inline code, where entities are rendered literally.
  */
 export function escapeMdx(text) {
   return String(text ?? "")
     .replace(/\r\n?/g, "\n")
-    .replace(/[{}<>]/g, (character) => `&#${character.charCodeAt(0)};`)
-    .replace(/^(\s*)(#{1,6})(\s)/gm, "$1\\$2$3")
+    .split(/(`+[^`]*`+)/g)
+    .map((part) =>
+      part.startsWith("`")
+        ? part
+        : part
+            .replace(/[{}<>]/g, (character) => `&#${character.charCodeAt(0)};`)
+            .replace(/^(\s*)(#{1,6})(\s)/gm, "$1\\$2$3"),
+    )
+    .join("")
     .trim();
 }
 
@@ -109,17 +116,34 @@ const signatureClassName =
 /** Longest signature we render on a page; the source link carries the rest. */
 const maxSignatureLength = 1000;
 
+/**
+ * Trim a long declaration at a line boundary. A single-line declaration is kept
+ * whole however long it is: it costs one line, and truncating it would delete
+ * the only copy of that release's signature.
+ */
+export function truncateSignature(signature) {
+  if (signature.length <= maxSignatureLength) return signature;
+  const lines = signature.split("\n");
+  if (lines.length === 1) return signature;
+  const kept = [];
+  let length = 0;
+  for (const line of lines) {
+    if (length + line.length > maxSignatureLength) break;
+    kept.push(line);
+    length += line.length + 1;
+  }
+  if (kept.length === 0) kept.push(lines[0]);
+  return `${kept.join("\n")}\n// … truncated, see the source link`;
+}
+
 function symbolSummary(symbol, artifact) {
-  // Generated bindings repeat the release provenance on every symbol, which the
-  // page already states once.
-  const boilerplate = artifact.description
-    ? `${artifact.description.split("\n\n")[0]}`
-    : "";
-  return escapeMdx(
-    boilerplate && symbol.description.startsWith(boilerplate)
-      ? symbol.description.slice(boilerplate.length).trim()
-      : symbol.description,
-  );
+  let summary = symbol.description ?? "";
+  // Generated bindings repeat a per-symbol provenance sentence that the page
+  // already states once, in the release's own wording.
+  if (artifact.sourceCommit) {
+    summary = summary.replace(/^Representative generated output[^.]*\.\s*/, "");
+  }
+  return escapeMdx(summary);
 }
 
 function entry(symbol, language, artifact) {
@@ -130,10 +154,9 @@ function entry(symbol, language, artifact) {
     lines.push(`### \`${symbol.name}\``, "");
   }
   // JSON.stringify keeps braces, backticks and template literals intact.
-  let signature = symbol.signature?.trim();
-  if (signature && signature.length > maxSignatureLength) {
-    signature = `${signature.slice(0, maxSignatureLength).split("\n").slice(0, -1).join("\n")}\n// … truncated, see the source link`;
-  }
+  const signature = symbol.signature?.trim()
+    ? truncateSignature(symbol.signature.trim())
+    : undefined;
   if (signature) {
     lines.push(
       signature.includes("\n") || signature.includes("`")
@@ -221,8 +244,14 @@ async function main() {
     catalogs.push(...catalog.packages);
   }
 
-  // Regenerate from scratch so a removed release cannot linger.
-  for (const project of new Set(catalogs.map((pkg) => pkg.project))) {
+  // Regenerate from scratch so a removed release, package or whole project
+  // cannot linger. Every project directory on disk is cleared, not just the
+  // ones the current catalogs mention.
+  const projects = new Set(catalogs.map((pkg) => pkg.project));
+  for (const directory of await readdir(contentDir, { withFileTypes: true })) {
+    if (directory.isDirectory()) projects.add(directory.name);
+  }
+  for (const project of projects) {
     for (const folder of Object.values(languageFolder)) {
       await rm(path.join(contentDir, project, folder), {
         recursive: true,

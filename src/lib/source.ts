@@ -64,12 +64,37 @@ export function getPageImage(page: InferPageType<typeof source>) {
   };
 }
 
+// Generated reference pages keep their signatures in a lightweight `<pre>` so a
+// crate page does not ship hundreds of highlighted code blocks. That element is
+// an implementation detail, so the Markdown endpoints turn it back into a fence
+// and drop the version switcher, which is navigation rather than content.
+const generatedPre = /^<pre className="[^"]*">\{(.*)\}<\/pre>$/gm;
+
+function tidyGeneratedMarkdown(text: string, language: string) {
+  return text
+    .replace(/^<ReferenceHeader [^>]*\/>\n\n?/m, "")
+    .replace(generatedPre, (_match, json: string) => {
+      const code = JSON.parse(json) as string;
+      const runs = code.match(/`+/g) ?? [];
+      const ticks = "`".repeat(
+        Math.max(3, ...runs.map((run) => run.length + 1)),
+      );
+      return `${ticks}${language}\n${code}\n${ticks}`;
+    });
+}
+
 export async function getLLMText(page: InferPageType<typeof source>) {
   const processed = await page.data.getText("processed");
+  const body = page.data.generated
+    ? tidyGeneratedMarkdown(
+        processed,
+        page.slugs.includes("rust-api") ? "rust" : "ts",
+      )
+    : processed;
 
   return `# ${page.data.longTitle || page.data.title}
 
-${processed}`;
+${body}`;
 }
 
 /**

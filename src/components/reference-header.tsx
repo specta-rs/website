@@ -14,6 +14,13 @@ function packageUrl(pkg: ReferencePackage, version: string) {
   return version === pkg.homeVersion ? base : `${base}/${version}`;
 }
 
+/** Where a release's own documentation or source lives. */
+function sourceLabel(url: string) {
+  if (url.includes("docs.rs")) return "docs.rs";
+  if (url.includes("github.com")) return "Source";
+  return "npm";
+}
+
 /**
  * Version switcher and provenance for a generated reference page. Rendered by
  * `scripts/reference/pages.mjs`, so the package and version are the only inputs.
@@ -50,26 +57,31 @@ export function ReferenceHeader({
             </span>
           </summary>
           <div className="absolute z-20 mt-1 max-h-80 w-56 overflow-y-auto rounded-lg border bg-fd-popover p-1 shadow-lg">
-            {pkg.versions.map((release) => (
-              <a
-                key={release.version}
-                href={
-                  release.data ? packageUrl(pkg, release.version) : release.url
-                }
-                aria-current={release.version === version ? "page" : undefined}
-                title={release.unavailable}
-                className={`block rounded-md px-2.5 py-1.5 font-mono text-xs ${
-                  release.version === version
-                    ? "bg-fd-accent font-semibold text-fd-accent-foreground"
-                    : "hover:bg-fd-accent"
-                } ${release.data ? "" : "text-fd-muted-foreground"}`}
-              >
-                {release.version}
-                {release.version === pkg.homeVersion ? " (default)" : ""}
-                {release.yanked ? " (yanked)" : ""}
-                {release.data ? "" : " ↗"}
-              </a>
-            ))}
+            {pkg.versions.map((release) => {
+              // The page version is always on this site; other releases only
+              // when their declarations could be extracted.
+              const onSite =
+                release.data || release.version === pkg.homeVersion;
+              return (
+                <a
+                  key={release.version}
+                  href={onSite ? packageUrl(pkg, release.version) : release.url}
+                  aria-current={
+                    release.version === version ? "page" : undefined
+                  }
+                  title={release.unavailable}
+                  className={`block rounded-md px-2.5 py-1.5 font-mono text-xs ${
+                    release.version === version
+                      ? "bg-fd-accent font-semibold text-fd-accent-foreground"
+                      : "hover:bg-fd-accent"
+                  } ${onSite ? "" : "text-fd-muted-foreground"}`}
+                >
+                  {release.version}
+                  {release.yanked ? " (yanked)" : ""}
+                  {onSite ? "" : " ↗"}
+                </a>
+              );
+            })}
           </div>
         </details>
 
@@ -79,7 +91,7 @@ export function ReferenceHeader({
           rel="noreferrer noopener"
           className="inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 font-medium transition-colors hover:bg-fd-accent"
         >
-          {isRust ? "docs.rs" : generated ? "Release source" : "npm"}
+          {sourceLabel(current.url)}
           <ArrowUpRight className="size-3.5" />
         </a>
       </div>

@@ -8,6 +8,7 @@ import {
   homeVersion,
   pageUrl,
   renderPackagePage,
+  truncateSignature,
 } from "./pages.mjs";
 
 const root = path.resolve(import.meta.dirname, "../..");
@@ -49,6 +50,59 @@ test("a release without data still selects the newest documented version", () =>
   };
   assert.equal(homeVersion(pkg), "0.8.0");
   assert.equal(homeVersion(rustPackage), "1.0.0");
+});
+
+test("escaping leaves inline code spans alone", () => {
+  assert.equal(
+    escapeMdx("Use `createSolidQueryHooks<Procedures>()` here."),
+    "Use `createSolidQueryHooks<Procedures>()` here.",
+  );
+  assert.equal(
+    escapeMdx("Braces { and code `a < b` stay apart."),
+    "Braces &#123; and code `a < b` stay apart.",
+  );
+});
+
+test("long declarations are trimmed at a line boundary, never emptied", () => {
+  assert.equal(truncateSignature("fn short() {}"), "fn short() {}");
+  const single = `fn long(${"a".repeat(1200)}) -> void`;
+  assert.equal(truncateSignature(single), single);
+  const multi = Array.from(
+    { length: 40 },
+    (_, i) => `  fn member_${i}(${"x".repeat(40)}) -> Result;`,
+  ).join("\n");
+  const trimmed = truncateSignature(multi);
+  assert.match(trimmed, /^ {2}fn member_0\(/);
+  assert.match(trimmed, /\n\/\/ … truncated, see the source link$/);
+  assert.ok(trimmed.length < multi.length);
+});
+
+test("generated binding provenance is stated once per page, not per symbol", () => {
+  const artifact = {
+    sourceCommit: "a".repeat(40),
+    description:
+      "Representative generated output, not a fixed package API. Fixtures here.",
+    symbols: [
+      {
+        name: "commands.hello",
+        kind: "function",
+        description:
+          "Representative generated output from Tauri Specta 2.0.0-rc.26, source commit " +
+          "a".repeat(40) +
+          ". Greets the caller.",
+        signature: 'hello: () => invoke<string>("hello")',
+      },
+    ],
+  };
+  const page = renderPackagePage({
+    pkg: { ...rustPackage, language: "typescript", project: "tauri-specta" },
+    version: "1.0.0",
+    artifact,
+  });
+  assert.match(page, /Greets the caller\./);
+  assert.ok(
+    !page.includes("Representative generated output from Tauri Specta"),
+  );
 });
 
 test("signatures render as lightweight code, not highlighted blocks", () => {
