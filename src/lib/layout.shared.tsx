@@ -1,4 +1,5 @@
 import type { BaseLayoutProps, LinkItemType } from "fumadocs-ui/layouts/shared";
+import { Heart } from "lucide-react";
 import { SpectaLogoWithRightClickForBrand } from "@/components/LogoWithRightClickForBrand";
 import { DiscordLogo } from "@/components/logos";
 
@@ -10,6 +11,13 @@ const baseLinks: LinkItemType[] = [
     ),
     text: "Discord",
     url: "https://discord.com/invite/JgqH8b4ycw",
+    secondary: true,
+  },
+  {
+    type: "icon",
+    icon: <Heart className="size-4" />,
+    text: "Sponsor",
+    url: "https://github.com/sponsors/oscartbeaumont",
     secondary: true,
   },
 ];
