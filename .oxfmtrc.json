@@ -21,7 +21,6 @@
     "src/pages.gen.ts",
     "pnpm-lock.yaml",
     "content/docs/rspc/*/integrations/axum.mdx",
-    "content/docs/*/rust-api",
     "content/docs/*/typescript-api"
   ]
 }

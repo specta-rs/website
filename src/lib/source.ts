@@ -70,7 +70,7 @@ export function getPageImage(page: InferPageType<typeof source>) {
 // and drop the version switcher, which is navigation rather than content.
 const generatedPre = /^<pre className="[^"]*">\{(.*)\}<\/pre>$/gm;
 
-function tidyGeneratedMarkdown(text: string, language: string) {
+function tidyGeneratedMarkdown(text: string) {
   return text
     .replace(/^<ReferenceHeader [^>]*\/>\n\n?/m, "")
     .replace(generatedPre, (_match, json: string) => {
@@ -79,17 +79,14 @@ function tidyGeneratedMarkdown(text: string, language: string) {
       const ticks = "`".repeat(
         Math.max(3, ...runs.map((run) => run.length + 1)),
       );
-      return `${ticks}${language}\n${code}\n${ticks}`;
+      return `${ticks}ts\n${code}\n${ticks}`;
     });
 }
 
 export async function getLLMText(page: InferPageType<typeof source>) {
   const processed = await page.data.getText("processed");
   const body = page.data.generated
-    ? tidyGeneratedMarkdown(
-        processed,
-        page.slugs.includes("rust-api") ? "rust" : "ts",
-      )
+    ? tidyGeneratedMarkdown(processed)
     : processed;
 
   return `# ${page.data.longTitle || page.data.title}

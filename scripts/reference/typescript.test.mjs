@@ -234,23 +234,6 @@ test("real release artifacts retain previously omitted packages, nested docs and
   ).signature;
   assert.match(clientArgs, /Data transformer/);
   assert.match(clientArgs, /https:\/\/trpc.io\/docs\/data-transformers/);
-  const tauri = await getArtifact("ts-tauri-specta", "2.0.0-rc.26");
-  const plainError = tauri.symbols.find((symbol) =>
-    symbol.name.endsWith(":commands.plainError"),
-  ).signature;
-  assert.match(plainError, /async function typedError<T, E>/);
-  assert.match(plainError, /status: "ok"/);
-  assert.match(plainError, /status: "error"/);
-  const event = tauri.symbols.find((symbol) =>
-    symbol.name.endsWith(":events.emptyEvent"),
-  ).signature;
-  assert.match(event, /type EventEmit<T>/);
-  assert.match(event, /type EventEmitTo<T>/);
-  assert.ok(
-    !tauri.symbols.some((symbol) =>
-      /:(typedError|EventEmit|EventEmitTo)$/.test(symbol.name),
-    ),
-  );
 });
 
 test("does not fall back to private declaration files behind an exports map", () => {
@@ -362,9 +345,10 @@ test("committed release catalog and every artifact satisfy the UI contract", asy
   const catalog = JSON.parse(
     await readFile(new URL("../../reference/typescript.json", import.meta.url)),
   );
-  assert.ok(catalog.packages.length >= 9);
+  assert.ok(catalog.packages.length >= 11);
   for (const pkg of catalog.packages) {
     assert.ok(pkg.id.startsWith("ts-"));
+    assert.equal(pkg.project, "rspc");
     assert.equal(pkg.language, "typescript");
     assert.ok(
       pkg.versions.some((version) => version.version === pkg.defaultVersion),
@@ -392,12 +376,6 @@ test("committed release catalog and every artifact satisfy the UI contract", asy
         assert.equal(symbol.url, undefined);
         assert.ok(!names.has(symbol.name), `duplicate symbol: ${symbol.name}`);
         names.add(symbol.name);
-      }
-      if (pkg.project === "tauri-specta") {
-        assert.equal(artifact.sourceVersion, version.version);
-        assert.match(artifact.sourceCommit, /^[a-f0-9]{40}$/);
-        assert.ok(artifact.fixtures.length > 0);
-        assert.match(artifact.description, /Representative generated output/);
       }
     }
   }

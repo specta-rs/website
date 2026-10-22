@@ -35,5 +35,4 @@ next-env.d.ts
 .reference-cache/
 
 # generated API reference pages (see scripts/reference/pages.mjs)
-content/docs/*/rust-api/
 content/docs/*/typescript-api/

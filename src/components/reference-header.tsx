@@ -4,21 +4,14 @@ import type { ReferencePackage } from "@/lib/reference";
 
 const packages = catalog.packages as ReferencePackage[];
 
-const languageFolder = {
-  rust: "rust-api",
-  typescript: "typescript-api",
-} as const;
-
 function packageUrl(pkg: ReferencePackage, version: string) {
-  const base = `/docs/${pkg.project}/${languageFolder[pkg.language]}/${pkg.id}`;
+  const base = `/docs/${pkg.project}/typescript-api/${pkg.id}`;
   return version === pkg.homeVersion ? base : `${base}/${version}`;
 }
 
-/** Where a release's own documentation or source lives. */
+/** Where a release's own source lives. */
 function sourceLabel(url: string) {
-  if (url.includes("docs.rs")) return "docs.rs";
-  if (url.includes("github.com")) return "Source";
-  return "npm";
+  return url.includes("github.com") ? "Source" : "npm";
 }
 
 /**
@@ -36,9 +29,7 @@ export function ReferenceHeader({
   if (!pkg) return null;
   const current = pkg.versions.find((item) => item.version === version);
   if (!current) return null;
-  const isRust = pkg.language === "rust";
   const unpublished = version.startsWith("unreleased-");
-  const generated = pkg.project === "tauri-specta";
 
   return (
     <div className="not-prose my-6 flex flex-col gap-3 text-sm">
@@ -97,14 +88,9 @@ export function ReferenceHeader({
       </div>
 
       <p className="text-fd-muted-foreground">
-        {isRust
-          ? "Generated from the docs.rs rustdoc build for this exact release, so signatures are previews rather than full declarations."
-          : "Generated from the published type declarations for this exact release."}
+        Generated from the published type declarations for this exact release.
         {unpublished
           ? " This release is unpublished: the snapshot is pinned to a source commit and is not an npm version."
-          : ""}
-        {generated
-          ? " These are representative generated bindings, so names and signatures depend on the Rust application they came from."
           : ""}
       </p>
     </div>

@@ -23,24 +23,21 @@ pnpm lint
 
 ## API reference
 
-Each project has a **Rust API** and/or **TypeScript API** section in the sidebar,
-with one page per crate or package. Every page documents one exact release and
-carries a version switcher: Rust symbols link to their page on docs.rs, TypeScript
-symbols show the published signature. Tauri Specta shows representative generated
-bindings from that release's source commit, not an application-independent command
-API; unpublished packages use explicitly labelled, commit-pinned snapshots.
+`rspc`'s TypeScript packages have a **TypeScript API** section in the sidebar, with
+one page per `@rspc/*` package. Every page documents one exact release and carries a
+version switcher; symbols show the published signature and link to their source.
 
 Symbols are ordinary documentation pages, so they appear in site search,
 `llms.txt` and the Markdown endpoints alongside the handwritten guides. Only the
-current release of each package is listed in the sidebar and indexed; older
-releases are reachable from the version switcher and are excluded from search so
-one symbol cannot match dozens of times.
+release each page documents is listed in the sidebar and indexed; older releases are
+reachable from the version switcher and are excluded from search so one symbol cannot
+match dozens of times.
 
-The machine-readable snapshots live in `reference/` and the generated pages and
-bundled catalog are written from them by `scripts/reference/pages.mjs`, which runs
-before `dev`, `build`, `typecheck` and `postinstall`. Generated pages are not
-committed. Normal development, CI and Cloudflare builds therefore need no registry
-or docs.rs access.
+The machine-readable snapshots live in `reference/typescript.json` and
+`reference/typescript/`, and the generated pages and bundled catalog are written from
+them by `scripts/reference/pages.mjs`, which runs before `dev`, `build`, `typecheck`
+and `postinstall`. Generated pages are not committed. Normal development, CI and
+Cloudflare builds therefore need no registry access.
 
 Refresh the data with Node 22.18+ and `tar` installed:
 
@@ -51,12 +48,11 @@ pnpm format
 ```
 
 Review and commit the changed snapshots with the code. Registry discovery lists
-historical releases even when they have no extractable documentation. Those
-versions show an explanation and link to their original source instead of
-silently substituting another release. Downloaded inputs are cached locally;
-refreshing mutable registry metadata discovers new releases. The generators use
-an isolated TypeScript 5 compiler API because the website's TypeScript 7 package
-does not expose that API.
+historical releases even when they have no extractable documentation. Those versions
+show an explanation and link to their original source instead of silently substituting
+another release. Downloaded inputs are cached locally; refreshing mutable registry
+metadata discovers new releases. The generator uses an isolated TypeScript 5 compiler
+API because the website's TypeScript 7 package does not expose that API.
 
 ## Sponsors
 

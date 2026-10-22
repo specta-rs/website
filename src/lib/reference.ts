@@ -9,8 +9,8 @@ export interface ReferenceVersion {
 export interface ReferencePackage {
   id: string;
   name: string;
-  project: "specta" | "rspc" | "tauri-specta";
-  language: "rust" | "typescript";
+  /** Project whose sidebar holds this package's reference. */
+  project: string;
   defaultVersion: string;
   /** Version documented at the package's own URL. */
   homeVersion: string;

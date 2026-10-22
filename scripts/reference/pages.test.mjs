@@ -13,15 +13,20 @@ import {
 
 const root = path.resolve(import.meta.dirname, "../..");
 
-const rustPackage = {
-  id: "rust-example",
-  name: "example",
-  project: "specta",
-  language: "rust",
+const examplePackage = {
+  id: "ts-example",
+  name: "@rspc/example",
+  project: "rspc",
   defaultVersion: "1.0.0",
   versions: [
-    { version: "1.0.0", url: "https://docs.rs/example/1.0.0/example/" },
-    { version: "0.9.0", url: "https://docs.rs/example/0.9.0/example/" },
+    {
+      version: "1.0.0",
+      url: "https://www.npmjs.com/package/@rspc/example/v/1.0.0",
+    },
+    {
+      version: "0.9.0",
+      url: "https://www.npmjs.com/package/@rspc/example/v/0.9.0",
+    },
   ],
 };
 
@@ -35,23 +40,6 @@ test("MDX escaping neutralises markup without losing prose", () => {
   assert.equal(escapeMdx(undefined), "");
 });
 
-test("a release without data still selects the newest documented version", () => {
-  const pkg = {
-    ...rustPackage,
-    defaultVersion: "0.9.0",
-    versions: [
-      { version: "0.9.0", url: "https://docs.rs/example/0.9.0/example/" },
-      {
-        version: "0.8.0",
-        url: "https://docs.rs/example/0.8.0/example/",
-        data: "reference/rust/rust-example/0.8.0.json",
-      },
-    ],
-  };
-  assert.equal(homeVersion(pkg), "0.8.0");
-  assert.equal(homeVersion(rustPackage), "1.0.0");
-});
-
 test("escaping leaves inline code spans alone", () => {
   assert.equal(
     escapeMdx("Use `createSolidQueryHooks<Procedures>()` here."),
@@ -63,69 +51,49 @@ test("escaping leaves inline code spans alone", () => {
   );
 });
 
+test("a release without data still selects the newest documented version", () => {
+  const pkg = {
+    ...examplePackage,
+    defaultVersion: "0.9.0",
+    versions: [
+      {
+        version: "0.9.0",
+        url: "https://www.npmjs.com/package/@rspc/example/v/0.9.0",
+      },
+      {
+        version: "0.8.0",
+        url: "https://www.npmjs.com/package/@rspc/example/v/0.8.0",
+        data: "reference/typescript/ts-example/0.8.0.json",
+      },
+    ],
+  };
+  assert.equal(homeVersion(pkg), "0.8.0");
+  assert.equal(homeVersion(examplePackage), "1.0.0");
+});
+
 test("long declarations are trimmed at a line boundary, never emptied", () => {
-  assert.equal(truncateSignature("fn short() {}"), "fn short() {}");
-  const single = `fn long(${"a".repeat(1200)}) -> void`;
+  assert.equal(truncateSignature("type A = string;"), "type A = string;");
+  const single = `type Long = ${"a".repeat(1200)};`;
   assert.equal(truncateSignature(single), single);
   const multi = Array.from(
     { length: 40 },
-    (_, i) => `  fn member_${i}(${"x".repeat(40)}) -> Result;`,
+    (_, i) => `  member_${i}(${"x".repeat(40)}): Result;`,
   ).join("\n");
   const trimmed = truncateSignature(multi);
-  assert.match(trimmed, /^ {2}fn member_0\(/);
+  assert.match(trimmed, /^ {2}member_0\(/);
   assert.match(trimmed, /\n\/\/ … truncated, see the source link$/);
   assert.ok(trimmed.length < multi.length);
 });
 
-test("generated binding provenance is stated once per page, not per symbol", () => {
-  const commit = "a".repeat(40);
-  const artifact = {
-    sourceVersion: "2.0.0-rc.26",
-    sourceCommit: commit,
-    description:
-      "Representative generated output, not a fixed package API. Fixtures here.",
-    symbols: [
-      {
-        name: "commands.hello",
-        kind: "function",
-        description: `Representative generated output from Tauri Specta 2.0.0-rc.26, source commit ${commit}. Greets the caller.`,
-        signature: 'hello: () => invoke<string>("hello")',
-      },
-      {
-        name: "commands.silent",
-        kind: "function",
-        description: `Representative generated output from Tauri Specta 2.0.0-rc.26, source commit ${commit}.`,
-        signature: 'silent: () => invoke<void>("silent")',
-      },
-    ],
-  };
-  const page = renderPackagePage({
-    pkg: { ...rustPackage, language: "typescript", project: "tauri-specta" },
-    version: "1.0.0",
-    artifact,
-  });
-  // What remains must be exactly the symbol's own documentation: cutting the
-  // sentence at the first period would leave "0.0-rc.26, source commit …".
-  assert.match(page, /\nGreets the caller\.\n/);
-  assert.ok(!page.includes("source commit"), "provenance repeated per symbol");
-  assert.ok(!page.includes("0.0-rc.26"), "version fragment left behind");
-  assert.ok(!page.includes("Representative generated output from Tauri"));
-  // A symbol with nothing else to say keeps no dangling fragment.
-  assert.match(
-    page,
-    /### `commands\.silent`\n\n`silent: \(\) => invoke<void>\("silent"\)`\n\n$/,
-  );
-});
-
-test("an unpublished snapshot's provenance is stripped the same way", () => {
+test("an unpublished snapshot's provenance is stated once per page", () => {
   const commit = "b".repeat(40);
   const page = renderPackagePage({
-    pkg: { ...rustPackage, language: "typescript", project: "rspc" },
+    pkg: examplePackage,
     version: "1.0.0",
     artifact: {
       published: false,
       sourceCommit: commit,
-      description: "Unreleased source snapshot.",
+      description: `Unreleased source snapshot of packages/tanstack-query at commit ${commit}; not a published npm version. The directory is documented as @rspc/tanstack-query.`,
       symbols: [
         {
           name: "createHooks",
@@ -133,34 +101,28 @@ test("an unpublished snapshot's provenance is stripped the same way", () => {
           description: `Unreleased source snapshot of packages/tanstack-query at commit ${commit}; not a published npm version. The directory is documented as @rspc/tanstack-query. Wraps the query client.`,
           signature: "declare function createHooks(): Hooks;",
         },
-      ],
-    },
-  });
-  assert.ok(!page.includes("not a published npm version."));
-  assert.match(page, /Wraps the query client\./);
-});
-
-test("signatures render as lightweight code, not highlighted blocks", () => {
-  const single = renderPackagePage({
-    pkg: rustPackage,
-    version: "1.0.0",
-    artifact: {
-      symbols: [
         {
-          name: "collect",
-          kind: "fn",
-          description: "",
-          signature: "pub fn collect() -> Types",
-          url: "https://docs.rs/example/1.0.0/example/fn.collect.html",
+          name: "silent",
+          kind: "function",
+          description: `Unreleased source snapshot of packages/tanstack-query at commit ${commit}; not a published npm version.`,
+          signature: "declare function silent(): void;",
         },
       ],
     },
   });
-  // Inline code keeps hundreds of symbols on one page affordable.
-  assert.match(single, /\n`pub fn collect\(\) -> Types`\n/);
-  assert.ok(!single.includes("```"));
-  const multiline = renderPackagePage({
-    pkg: { ...rustPackage, language: "typescript" },
+  // The page states the snapshot once; symbols keep only their own docs, with
+  // no dangling fragment left behind.
+  assert.equal(page.split("not a published npm version.").length - 1, 1);
+  assert.match(page, /Wraps the query client\./);
+  assert.match(
+    page,
+    /### `silent`\n\n`declare function silent\(\): void;`\n\n$/,
+  );
+});
+
+test("signatures render as lightweight code, not highlighted blocks", () => {
+  const single = renderPackagePage({
+    pkg: examplePackage,
     version: "1.0.0",
     artifact: {
       symbols: [
@@ -168,7 +130,24 @@ test("signatures render as lightweight code, not highlighted blocks", () => {
           name: "createClient",
           kind: "function",
           description: "",
-          signature: "type A = `x${string}`;\nfunction f(): void;",
+          signature: "declare function createClient(): Client;",
+        },
+      ],
+    },
+  });
+  // Inline code keeps hundreds of symbols on one page affordable.
+  assert.match(single, /\n`declare function createClient\(\): Client;`\n/);
+  assert.ok(!single.includes("```"));
+  const multiline = renderPackagePage({
+    pkg: examplePackage,
+    version: "1.0.0",
+    artifact: {
+      symbols: [
+        {
+          name: "Client",
+          kind: "class",
+          description: "",
+          signature: "type A = `x${string}`;\ndeclare class Client {}",
         },
       ],
     },
@@ -177,119 +156,116 @@ test("signatures render as lightweight code, not highlighted blocks", () => {
   // pulling in a highlighted block.
   assert.match(
     multiline,
-    /<pre className="[^"]*">\{"type A = `x\$\{string\}`;\\nfunction f\(\): void;"\}<\/pre>/,
+    /<pre className="[^"]*">\{"type A = `x\$\{string\}`;\\ndeclare class Client \{\}"\}<\/pre>/,
   );
 });
 
 test("symbols are grouped into documented sections and ordered", () => {
-  const groups = groupSymbols(
-    [
-      { name: "b::Thing", kind: "struct" },
-      { name: "b::other", kind: "fn" },
-      { name: "b::odd", kind: "mystery" },
-    ],
-    "rust",
-  );
+  const groups = groupSymbols([
+    { name: "b.Thing", kind: "class" },
+    { name: "b.other", kind: "function" },
+    { name: "b.odd", kind: "mystery" },
+  ]);
   assert.deepEqual(
     groups.map((group) => group.title),
-    ["Structs", "Functions", "Other"],
+    ["Classes", "Functions", "Other"],
   );
   assert.deepEqual(
     groups[2].symbols.map((symbol) => symbol.name),
-    ["b::odd"],
+    ["b.odd"],
   );
 });
 
-test("the default version owns the package URL", () => {
+test("the documented version owns the package URL", () => {
   assert.equal(
-    pageUrl(rustPackage, "1.0.0"),
-    "/docs/specta/rust-api/rust-example",
+    pageUrl(examplePackage, "1.0.0"),
+    "/docs/rspc/typescript-api/ts-example",
   );
   assert.equal(
-    pageUrl(rustPackage, "0.9.0"),
-    "/docs/specta/rust-api/rust-example/0.9.0",
+    pageUrl(examplePackage, "0.9.0"),
+    "/docs/rspc/typescript-api/ts-example/0.9.0",
   );
 });
 
-test("a package page carries its version switcher, sections and anchors", () => {
+test("a package page carries its version switcher, sections and source links", () => {
   const page = renderPackagePage({
-    pkg: rustPackage,
+    pkg: examplePackage,
     version: "0.9.0",
     artifact: {
       symbols: [
         {
-          name: "collect",
-          kind: "fn",
-          description: "Collects {types}.",
-          signature: "pub fn collect() -> Types",
-          url: "https://docs.rs/example/0.9.0/example/fn.collect.html",
+          name: "createClient",
+          kind: "function",
+          description: "Creates a {typed} client.",
+          signature: "declare function createClient(): Client;",
+          sourceUrl: "https://www.npmjs.com/package/@rspc/example/v/0.9.0",
         },
         {
-          name: "Thing",
-          kind: "struct",
-          description: "A thing.",
-          url: "https://docs.rs/example/0.9.0/example/struct.Thing.html",
+          name: "Client",
+          kind: "interface",
+          description: "A client.",
+          signature: "interface Client {}",
+          sourceUrl: "https://www.npmjs.com/package/@rspc/example/v/0.9.0",
         },
       ],
     },
   });
-  assert.match(page, /^---\ntitle: "example"/);
+  assert.match(page, /^---\ntitle: "@rspc\/example"/);
   assert.match(page, /\ngenerated: true\nhidden: true\n/);
   assert.match(
     page,
-    /<ReferenceHeader packageId="rust-example" version="0\.9\.0" \/>/,
+    /<ReferenceHeader packageId="ts-example" version="0\.9\.0" \/>/,
   );
-  assert.match(page, /## Structs\n/);
+  assert.match(page, /## Interfaces\n/);
   assert.match(page, /## Functions\n/);
+  assert.match(page, /\n### `createClient`\n/);
+  assert.match(page, /Creates a &#123;typed&#125; client\./);
+  assert.match(page, /\[View source ↗\]\(https:\/\/www\.npmjs\.com/);
   assert.match(
     page,
-    /### \[`collect`\]\(https:\/\/docs\.rs\/example\/0\.9\.0\/example\/fn\.collect\.html\)/,
-  );
-  assert.match(page, /\n`pub fn collect\(\) -> Types`\n/);
-  assert.match(page, /Collects &#123;types&#125;\./);
-  assert.match(
-    page,
-    /\[documented version\]\(\/docs\/specta\/rust-api\/rust-example\)/,
+    /\[documented version\]\(\/docs\/rspc\/typescript-api\/ts-example\)/,
   );
 });
 
 test("a package without extractable documentation still gets an explaining page", () => {
   const page = renderPackagePage({
     pkg: {
-      ...rustPackage,
+      ...examplePackage,
       defaultVersion: "0.9.0",
       versions: [
         {
           version: "0.9.0",
-          url: "https://docs.rs/example/0.9.0/example/",
-          unavailable:
-            "docs.rs could not build documentation for this release.",
+          url: "https://www.npmjs.com/package/@rspc/example/v/0.9.0",
+          unavailable: "The published npm archive has no declaration file.",
         },
       ],
     },
     version: "0.9.0",
     artifact: undefined,
   });
-  assert.match(page, /No API documentation could be extracted for example\./);
-  assert.match(page, /docs\.rs could not build documentation/);
+  assert.match(
+    page,
+    /No API documentation could be extracted for @rspc\/example\./,
+  );
+  assert.match(page, /no declaration file/);
   assert.match(page, /\ngenerated: true\n---\n/);
   assert.match(
     page,
-    /<ReferenceHeader packageId="rust-example" version="0\.9\.0" \/>/,
+    /<ReferenceHeader packageId="ts-example" version="0\.9\.0" \/>/,
   );
 });
 
-test("the default version page is not hidden", () => {
+test("the documented version page is not hidden", () => {
   const page = renderPackagePage({
-    pkg: rustPackage,
+    pkg: examplePackage,
     version: "1.0.0",
     artifact: {
       symbols: [
         {
-          name: "collect",
-          kind: "fn",
+          name: "createClient",
+          kind: "function",
           description: "",
-          url: "https://docs.rs/example/1.0.0/example/fn.collect.html",
+          signature: "declare function createClient(): Client;",
         },
       ],
     },
@@ -300,51 +276,54 @@ test("the default version page is not hidden", () => {
 
 const read = async (relative) => readFile(path.join(root, relative), "utf8");
 
-test("generated pages land in the docs tree with only the default listed", async () => {
-  const specta = await read(
-    "content/docs/specta/rust-api/rust-specta/index.mdx",
+test("generated pages sit under rspc's sidebar with only the documented version listed", async () => {
+  const client = await read(
+    "content/docs/rspc/typescript-api/ts-rspc-client/index.mdx",
   );
-  assert.match(specta, /^---\ntitle: "specta"/);
-  assert.match(specta, /<ReferenceHeader packageId="rust-specta"/);
-  const meta = JSON.parse(await read("content/docs/specta/rust-api/meta.json"));
-  assert.equal(meta.title, "Rust API");
-  assert.ok(meta.pages.includes("rust-specta"));
+  assert.match(client, /^---\ntitle: "@rspc\/client"/);
+  assert.match(client, /\n### `createClient`\n/);
+  const meta = JSON.parse(
+    await read("content/docs/rspc/typescript-api/meta.json"),
+  );
+  assert.equal(meta.title, "TypeScript API");
+  assert.ok(meta.pages.includes("ts-rspc-client"));
   const scoped = JSON.parse(
-    await read("content/docs/specta/rust-api/rust-specta/meta.json"),
+    await read("content/docs/rspc/typescript-api/ts-rspc-client/meta.json"),
   );
   assert.deepEqual(scoped, {
-    title: "specta",
+    title: "@rspc/client",
     collapsible: false,
     pages: [],
   });
   const older = await read(
-    "content/docs/specta/rust-api/rust-specta/2.0.0-rc.26.mdx",
+    "content/docs/rspc/typescript-api/ts-rspc-client/0.2.4.mdx",
   );
   assert.match(older, /\nhidden: true\n/);
   assert.match(
     older,
-    /<ReferenceHeader packageId="rust-specta" version="2\.0\.0-rc\.26"/,
+    /<ReferenceHeader packageId="ts-rspc-client" version="0\.2\.4"/,
   );
-  const typescript = await read(
-    "content/docs/rspc/typescript-api/ts-rspc-client/index.mdx",
-  );
-  assert.match(typescript, /^---\ntitle: "@rspc\/client"/);
-  assert.match(typescript, /\n### `createClient`\n/);
-  const bindings = await read(
-    "content/docs/tauri-specta/typescript-api/ts-tauri-specta/index.mdx",
-  );
-  assert.match(bindings, /^---\ntitle: "Generated bindings"/);
-  assert.match(bindings, /\n### `[^`]*commands\.plainError`\n/);
+  // Dropped work must not leave pages or sidebar entries behind.
+  for (const gone of [
+    "content/docs/specta/rust-api",
+    "content/docs/rspc/rust-api",
+    "content/docs/tauri-specta/rust-api",
+    "content/docs/tauri-specta/typescript-api",
+  ]) {
+    await assert.rejects(read(`${gone}/meta.json`), /ENOENT/);
+  }
   // Every package in the catalog has a page and a place in the sidebar.
   const bundled = JSON.parse(await read("src/lib/reference-catalog.json"));
+  const sidebar = JSON.parse(
+    await read("content/docs/rspc/typescript-api/meta.json"),
+  );
+  assert.deepEqual(
+    [...sidebar.pages].toSorted(),
+    bundled.packages.map((pkg) => pkg.id).toSorted(),
+  );
   for (const pkg of bundled.packages) {
-    const folder = `content/docs/${pkg.project}/${
-      pkg.language === "rust" ? "rust-api" : "typescript-api"
-    }`;
-    const sidebar = JSON.parse(await read(`${folder}/meta.json`));
-    assert.ok(sidebar.pages.includes(pkg.id), `${pkg.id} missing from sidebar`);
     assert.match(
-      await read(`${folder}/${pkg.id}/index.mdx`),
+      await read(`content/docs/rspc/typescript-api/${pkg.id}/index.mdx`),
       new RegExp(`version="${pkg.homeVersion.replace(/\./g, "\\.")}"`),
     );
   }

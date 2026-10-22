@@ -11,44 +11,26 @@ const root = path.resolve(import.meta.dirname, "../..");
 const contentDir = path.join(root, "content/docs");
 const catalogFile = path.join(root, "src/lib/reference-catalog.json");
 
-/** Directory name a language's reference lives in, relative to a project. */
-export const languageFolder = {
-  rust: "rust-api",
-  typescript: "typescript-api",
-};
+/** Directory a project's TypeScript reference lives in. */
+export const referenceFolder = "typescript-api";
 
-const sections = {
-  rust: [
-    ["mod", "Modules"],
-    ["macro", "Macros"],
-    ["derive", "Derive macros"],
-    ["attr", "Attribute macros"],
-    ["struct", "Structs"],
-    ["enum", "Enums"],
-    ["trait", "Traits"],
-    ["fn", "Functions"],
-    ["method", "Methods"],
-    ["tymethod", "Trait methods"],
-    ["associatedconstant", "Associated constants"],
-    ["associatedtype", "Associated types"],
-    ["constant", "Constants"],
-    ["static", "Statics"],
-    ["type", "Type aliases"],
-    ["structfield", "Struct fields"],
-    ["variant", "Enum variants"],
-  ],
-  typescript: [
-    ["namespace", "Namespaces"],
-    ["class", "Classes"],
-    ["interface", "Interfaces"],
-    ["type", "Type aliases"],
-    ["function", "Functions"],
-    ["variable", "Variables"],
-    ["enum", "Enums"],
-    ["property", "Properties"],
-    ["export", "Re-exports"],
-  ],
-};
+// `rust-api` was the earlier Rust reference; it is cleared so a checkout that
+// still has it does not keep serving pages that are no longer generated.
+const clearedFolders = [referenceFolder, "rust-api"];
+
+// Sections a package page lists, in reading order. A kind outside this list
+// still appears, under "Other".
+const sections = [
+  ["namespace", "Namespaces"],
+  ["class", "Classes"],
+  ["interface", "Interfaces"],
+  ["type", "Type aliases"],
+  ["function", "Functions"],
+  ["variable", "Variables"],
+  ["enum", "Enums"],
+  ["property", "Properties"],
+  ["export", "Re-exports"],
+];
 
 /**
  * MDX treats `<`, `>` and `{}` as markup, and a line starting with `#` as
@@ -70,11 +52,10 @@ export function escapeMdx(text) {
     .trim();
 }
 
-/** Group symbols by kind, ordered by the language's conventional listing. */
-export function groupSymbols(symbols, language) {
-  const order = sections[language];
-  const known = new Map(order);
-  const buckets = new Map(order.map(([, title]) => [title, []]));
+/** Group symbols by kind, in the reading order the sections list defines. */
+export function groupSymbols(symbols) {
+  const known = new Map(sections);
+  const buckets = new Map(sections.map(([, title]) => [title, []]));
   for (const symbol of symbols) {
     const title = known.get(symbol.kind) ?? "Other";
     if (!buckets.has(title)) buckets.set(title, []);
@@ -102,13 +83,12 @@ export function homeVersion(pkg) {
 
 /** Page URL for a package, version-aware: the home version owns the folder. */
 export function pageUrl(pkg, version, home = homeVersion(pkg)) {
-  const base = `/docs/${pkg.project}/${languageFolder[pkg.language]}/${pkg.id}`;
+  const base = `/docs/${pkg.project}/${referenceFolder}/${pkg.id}`;
   return version === home ? base : `${base}/${version}`;
 }
 
 // Signatures here are previews, and a highlighted code block plus its copy
-// button costs kilobytes each: a crate with hundreds of symbols would ship a
-// megabyte of chrome. Inline code, and a plain <pre> for multi-line
+// button costs kilobytes each. Inline code, and a plain <pre> for multi-line
 // declarations, keeps a whole package inside the browser's budget.
 const signatureClassName =
   "not-prose my-3 overflow-x-auto rounded-lg border bg-fd-secondary/50 p-3 text-xs leading-relaxed";
@@ -138,30 +118,19 @@ export function truncateSignature(signature) {
 
 function symbolSummary(symbol, artifact) {
   let summary = symbol.description ?? "";
-  // A generated-binding snapshot repeats per-symbol provenance that the page
-  // already states once. Cut at the release's own marker rather than guessing
-  // the sentence's shape: version strings contain periods.
-  const markers = [
-    artifact.sourceCommit
-      ? `, source commit ${artifact.sourceCommit}.`
-      : undefined,
-    artifact.published === false ? "; not a published npm version." : undefined,
-  ].filter((marker) => marker !== undefined);
-  for (const marker of markers) {
-    const index = summary.indexOf(marker);
-    if (index !== -1 && index < 200)
-      summary = summary.slice(index + marker.length).trim();
-  }
+  // An unpublished snapshot repeats per-symbol provenance that the page already
+  // states once. Cut at the release's own marker rather than guessing the
+  // sentence's shape: version strings contain periods.
+  const marker =
+    artifact.published === false ? "; not a published npm version." : undefined;
+  const index = marker ? summary.indexOf(marker) : -1;
+  if (marker && index !== -1 && index < 200)
+    summary = summary.slice(index + marker.length).trim();
   return escapeMdx(summary);
 }
 
-function entry(symbol, language, artifact) {
-  const lines = [];
-  if (language === "rust") {
-    lines.push(`### [\`${symbol.name}\`](${symbol.url})`, "");
-  } else {
-    lines.push(`### \`${symbol.name}\``, "");
-  }
+function entry(symbol, artifact) {
+  const lines = [`### \`${symbol.name}\``, ""];
   // JSON.stringify keeps braces, backticks and template literals intact.
   const signature = symbol.signature?.trim()
     ? truncateSignature(symbol.signature.trim())
@@ -176,43 +145,26 @@ function entry(symbol, language, artifact) {
   }
   const summary = symbolSummary(symbol, artifact);
   if (summary) lines.push(summary, "");
-  if (language === "typescript" && symbol.sourceUrl) {
-    lines.push(`[View source ↗](${symbol.sourceUrl})`, "");
-  }
+  if (symbol.sourceUrl) lines.push(`[View source ↗](${symbol.sourceUrl})`, "");
   return lines.join("\n");
 }
 
-function description(symbols, language, artifact) {
-  const shown = groupSymbols(symbols, language);
-  return shown
+function body(symbols, artifact) {
+  return groupSymbols(symbols)
     .map((section) => {
-      const body = section.symbols
-        .map((symbol) => entry(symbol, language, artifact))
+      const entries = section.symbols
+        .map((symbol) => entry(symbol, artifact))
         .join("\n");
-      return `## ${section.title}\n\n${body}`;
+      return `## ${section.title}\n\n${entries}`;
     })
     .join("\n");
 }
 
-/**
- * Sidebar and page label. The project name is already in the breadcrumb, so the
- * generated bindings page does not need to repeat it.
- */
-export function displayName(pkg) {
-  return pkg.project === "tauri-specta" && pkg.language === "typescript"
-    ? "Generated bindings"
-    : pkg.name;
-}
-
 export function renderPackagePage({ pkg, version, artifact }) {
   const release = pkg.versions.find((item) => item.version === version);
-  const language = pkg.language;
   const home = homeVersion(pkg);
-  const title = displayName(pkg);
   const intro = artifact
-    ? language === "rust"
-      ? `API reference for the [\`${pkg.name}\`](${release.url}) crate at version \`${version}\`.`
-      : `Public exports of \`${pkg.name}\` at version \`${version}\`.`
+    ? `Public exports of \`${pkg.name}\` at version \`${version}\`.`
     : `No API documentation could be extracted for ${pkg.name}. ${
         release.unavailable ?? ""
       } The source link above points at this exact release.`.trim();
@@ -225,43 +177,35 @@ export function renderPackagePage({ pkg, version, artifact }) {
   }
   if (artifact?.description) notes.push(escapeMdx(artifact.description));
   return `---
-title: ${JSON.stringify(title)}
+title: ${JSON.stringify(pkg.name)}
 description: ${JSON.stringify(
-    `${language === "rust" ? "Rust" : "TypeScript"} API reference for ${title}, version ${version}.`,
+    `TypeScript API reference for ${pkg.name}, version ${version}.`,
   )}
 generated: true${hidden ? "\nhidden: true" : ""}
 ---
 
 <ReferenceHeader packageId=${JSON.stringify(pkg.id)} version=${JSON.stringify(version)} />
 
-${[
-  intro,
-  ...notes,
-  ...(artifact ? [description(artifact.symbols, language, artifact)] : []),
-]
+${[intro, ...notes, ...(artifact ? [body(artifact.symbols, artifact)] : [])]
   .filter((block) => block.trim())
   .join("\n\n")}
 `;
 }
 
 async function main() {
-  const catalogs = [];
-  for (const ecosystem of ["rust", "typescript"]) {
-    const catalog = JSON.parse(
-      await readFile(path.join(root, `reference/${ecosystem}.json`), "utf8"),
-    );
-    catalogs.push(...catalog.packages);
-  }
+  const { packages } = JSON.parse(
+    await readFile(path.join(root, "reference/typescript.json"), "utf8"),
+  );
 
   // Regenerate from scratch so a removed release, package or whole project
   // cannot linger. Every project directory on disk is cleared, not just the
-  // ones the current catalogs mention.
-  const projects = new Set(catalogs.map((pkg) => pkg.project));
+  // ones the current catalog mentions.
+  const projects = new Set(packages.map((pkg) => pkg.project));
   for (const directory of await readdir(contentDir, { withFileTypes: true })) {
     if (directory.isDirectory()) projects.add(directory.name);
   }
   for (const project of projects) {
-    for (const folder of Object.values(languageFolder)) {
+    for (const folder of clearedFolders) {
       await rm(path.join(contentDir, project, folder), {
         recursive: true,
         force: true,
@@ -270,13 +214,8 @@ async function main() {
   }
 
   let pages = 0;
-  for (const pkg of catalogs) {
-    const folder = path.join(
-      contentDir,
-      pkg.project,
-      languageFolder[pkg.language],
-      pkg.id,
-    );
+  for (const pkg of packages) {
+    const folder = path.join(contentDir, pkg.project, referenceFolder, pkg.id);
     const home = homeVersion(pkg);
     const documented = pkg.versions.filter((release) => release.data);
     // A package with no extractable declarations still gets a page, so the
@@ -303,34 +242,25 @@ async function main() {
     await writeFile(
       path.join(folder, "meta.json"),
       `${JSON.stringify(
-        { title: displayName(pkg), collapsible: false, pages: [] },
+        { title: pkg.name, collapsible: false, pages: [] },
         null,
         2,
       )}\n`,
     );
   }
 
-  for (const project of new Set(catalogs.map((pkg) => pkg.project))) {
-    for (const language of ["rust", "typescript"]) {
-      const packages = catalogs.filter(
-        (pkg) => pkg.project === project && pkg.language === language,
-      );
-      if (!packages.length) continue;
-      await mkdir(path.join(contentDir, project, languageFolder[language]), {
-        recursive: true,
-      });
-      await writeFile(
-        path.join(contentDir, project, languageFolder[language], "meta.json"),
-        `${JSON.stringify(
-          {
-            title: language === "rust" ? "Rust API" : "TypeScript API",
-            pages: packages.map((pkg) => pkg.id),
-          },
-          null,
-          2,
-        )}\n`,
-      );
-    }
+  for (const project of new Set(packages.map((pkg) => pkg.project))) {
+    const listed = packages.filter((pkg) => pkg.project === project);
+    const folder = path.join(contentDir, project, referenceFolder);
+    await mkdir(folder, { recursive: true });
+    await writeFile(
+      path.join(folder, "meta.json"),
+      `${JSON.stringify(
+        { title: "TypeScript API", pages: listed.map((pkg) => pkg.id) },
+        null,
+        2,
+      )}\n`,
+    );
   }
 
   // Catalog for the version switcher. Symbol data stays in `reference/`, and
@@ -339,7 +269,7 @@ async function main() {
     catalogFile,
     `${JSON.stringify(
       {
-        packages: catalogs.map((pkg) => ({
+        packages: packages.map((pkg) => ({
           ...pkg,
           homeVersion: homeVersion(pkg),
         })),
@@ -350,7 +280,7 @@ async function main() {
   );
 
   console.log(
-    `Generated ${pages} reference pages for ${catalogs.length} packages`,
+    `Generated ${pages} reference pages for ${packages.length} packages`,
   );
 }
 

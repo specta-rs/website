@@ -92,16 +92,6 @@ async function artifact(pkg, version, files, entries, sourceUrl, extra = {}) {
         .filter(Boolean)
         .join("\n\n");
   }
-  if (pkg.project === "tauri-specta") {
-    for (const symbol of symbols) {
-      symbol.description = [
-        `Representative generated output from Tauri Specta ${version}, source commit ${extra.sourceCommit}. Names and types are fixture-specific, not a fixed library API.`,
-        symbol.description,
-      ]
-        .filter(Boolean)
-        .join("\n\n");
-    }
-  }
   if (!symbols.length)
     throw new Error("No public declarations found in this published archive.");
   const data = `reference/typescript/${pkg.id}/${version}.json`;
@@ -220,68 +210,6 @@ for (const snapshot of sourceSnapshots) {
     `${pkg.name}: pinned ${version} (${manifest.name} source manifest)`,
   );
 }
-const crate = await json("https://crates.io/api/v1/crates/tauri-specta", true);
-const pkg = {
-  id: "ts-tauri-specta",
-  name: "Tauri Specta generated bindings",
-  project: "tauri-specta",
-  language: "typescript",
-  defaultVersion: crate.versions[0].num,
-  versions: [],
-};
-for (const release of crate.versions) {
-  const version = release.num;
-  const url = `https://docs.rs/crate/tauri-specta/${version}/source/`;
-  try {
-    const dir = await archive(
-      `https://static.crates.io/crates/tauri-specta/tauri-specta-${version}.crate`,
-    );
-    const vcs = JSON.parse(
-      await readFile(path.join(dir, ".cargo_vcs_info.json"), "utf8"),
-    );
-    const commit = vcs.git.sha1;
-    const repo = await archive(
-      `https://codeload.github.com/specta-rs/tauri-specta/tar.gz/${commit}`,
-    );
-    const files = await filesIn(repo);
-    const fixtures = Object.keys(files).filter((file) =>
-      /^tests\/snapshots\/.+\.ts$/.test(file),
-    );
-    if (!fixtures.length)
-      fixtures.push(
-        ...Object.keys(files).filter((file) =>
-          /^examples\/.+\/bindings[^/]*\.ts$/.test(file),
-        ),
-      );
-    if (!fixtures.length)
-      throw new Error(
-        "No released generated TypeScript fixture is available in the exact release source.",
-      );
-    const entries = Object.fromEntries(
-      fixtures.map((file) => [`./${file.replace(/\.ts$/, "")}`, file]),
-    );
-    const sourceUrl = `https://github.com/specta-rs/tauri-specta/tree/${commit}`;
-    const data = await artifact(pkg, version, files, entries, sourceUrl, {
-      description:
-        "Representative generated output, not a fixed package API. Command, event, type and constant names come from release test fixtures or example Rust applications. Available helpers depend on builder configuration. Signatures below preserve actual generated source, including implementation bodies when no declaration file is published." +
-        (fixtures.some((file) => /mock/i.test(file))
-          ? " Mock fixtures are included."
-          : " This exact release has no committed mock-output fixture; unreleased main-branch mock APIs are not attributed to it."),
-      sourceVersion: version,
-      sourceCommit: commit,
-      sourceUrl,
-      fixtures,
-    });
-    pkg.versions.push({ version, url: sourceUrl, data });
-  } catch (error) {
-    if (error instanceof DownloadFailure) throw error;
-    pkg.versions.push({ version, url, unavailable: error.message });
-  }
-}
-console.log(
-  `${pkg.name}: ${pkg.versions.filter((v) => v.data).length}/${pkg.versions.length}`,
-);
-packages.push(pkg);
 await writeFile(
   path.join(root, "reference/typescript.json"),
   JSON.stringify({ packages }, null, 2) + "\n",

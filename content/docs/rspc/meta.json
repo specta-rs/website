@@ -7,7 +7,6 @@
     "index",
     "1.0.0-rc.x",
     "0.3.0",
-    "rust-api",
     "typescript-api",
     "[Github][GitHub](https://github.com/specta-rs/rspc)",
     "[docsRsLogo][docs.rs](https://docs.rs/rspc)"
