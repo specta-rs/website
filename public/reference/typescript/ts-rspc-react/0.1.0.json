@@ -1,0 +1,36 @@
+{
+  "symbols": [
+    {
+      "name": "BaseOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface BaseOptions<TProcedures extends ProceduresDef> {\n    rspc?: {\n        client?: Client<TProcedures>;\n    };\n}",
+      "url": "/docs/reference?package=ts-rspc-react&version=0.1.0#symbol-BaseOptions",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/react/v/0.1.0"
+    },
+    {
+      "name": "Context",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface Context<TProcedures extends ProceduresDef> {\n    client: Client<TProcedures>;\n    queryClient: QueryClient;\n}",
+      "url": "/docs/reference?package=ts-rspc-react&version=0.1.0#symbol-Context",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/react/v/0.1.0"
+    },
+    {
+      "name": "createReactQueryHooks",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function createReactQueryHooks<TProceduresLike extends ProceduresLike>(): {\n    _rspc_def: inferProcedures<TProceduresLike>;\n    Provider: ({ children, client, queryClient, }: {\n        children?: ReactElement<any, string | react.JSXElementConstructor<any>> | undefined;\n        client: Client<inferProcedures<TProceduresLike>>;\n        queryClient: QueryClient;\n    }) => JSX.Element;\n    useContext: () => Context<inferProcedures<TProceduresLike>>;\n    useQuery: <K extends inferProcedures<TProceduresLike>[\"queries\"][\"key\"] & string, TQueryFnData = inferQueryResult<inferProcedures<TProceduresLike>, K>, TData = inferQueryResult<inferProcedures<TProceduresLike>, K>>(keyAndInput: [\n        key: K,\n        ...input: _inferProcedureHandlerInput<inferProcedures<TProceduresLike>, \"queries\", K>\n    ], opts?: (Omit<UseQueryOptions<TQueryFnData, RSPCError, TData, [\n        K,\n        inferQueryInput<inferProcedures<TProceduresLike>, K>\n    ]>, \"queryKey\" | \"queryFn\"> & BaseOptions<inferProcedures<TProceduresLike>>) | undefined) => UseQueryResult<TData, RSPCError>;\n    useMutation: <K_1 extends inferProcedures<TProceduresLike>[\"mutations\"][\"key\"] & string, TContext = unknown>(key: K_1 | [\n        K_1\n    ], opts?: (UseMutationOptions<inferMutationResult<inferProcedures<TProceduresLike>, K_1>, RSPCError, inferMutationInput<inferProcedures<TProceduresLike>, K_1> extends never ? undefined : inferMutationInput<inferProcedures<TProceduresLike>, K_1>, TContext> & BaseOptions<inferProcedures<TProceduresLike>>) | undefined) => UseMutationResult<inferMutationResult<inferProcedures<TProceduresLike>, K_1>, RSPCError, inferMutationInput<inferProcedures<TProceduresLike>, K_1> extends never ? undefined : inferMutationInput<inferProcedures<TProceduresLike>, K_1>, TContext>;\n    useSubscription: <K_2 extends inferProcedures<TProceduresLike>[\"subscriptions\"][\"key\"] & string, TData_1 = inferSubscriptionResult<inferProcedures<TProceduresLike>, K_2>>(keyAndInput: [\n        key: K_2,\n        ...input: _inferProcedureHandlerInput<inferProcedures<TProceduresLike>, \"subscriptions\", K_2>\n    ], opts: SubscriptionOptions<TData_1> & BaseOptions<inferProcedures<TProceduresLike>>) => void;\n};",
+      "url": "/docs/reference?package=ts-rspc-react&version=0.1.0#symbol-createReactQueryHooks",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/react/v/0.1.0"
+    },
+    {
+      "name": "SubscriptionOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface SubscriptionOptions<TOutput> {\n    enabled?: boolean;\n    onStarted?: () => void;\n    onData: (data: TOutput) => void;\n    onError?: (err: RSPCError) => void;\n}",
+      "url": "/docs/reference?package=ts-rspc-react&version=0.1.0#symbol-SubscriptionOptions",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/react/v/0.1.0"
+    }
+  ]
+}

@@ -1,0 +1,523 @@
+{
+  "symbols": [
+    {
+      "name": "Any",
+      "kind": "struct",
+      "description": "Cast a Rust type to a Typescript any type.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Any.html"
+    },
+    {
+      "name": "BigIntExportBehavior",
+      "kind": "enum",
+      "description": "Allows you to configure how Specta's Typescript exporter will deal with BigInt types (i64, i128 etc).",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.BigIntExportBehavior.html"
+    },
+    {
+      "name": "BigIntExportBehavior::BigInt",
+      "kind": "variant",
+      "description": "Export BigInt as a Typescript BigInt.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.BigIntExportBehavior.html#variant.BigInt"
+    },
+    {
+      "name": "BigIntExportBehavior::Fail",
+      "kind": "variant",
+      "description": "Abort the export with an error.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.BigIntExportBehavior.html#variant.Fail"
+    },
+    {
+      "name": "BigIntExportBehavior::Number",
+      "kind": "variant",
+      "description": "Export BigInt as a Typescript number.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.BigIntExportBehavior.html#variant.Number"
+    },
+    {
+      "name": "BigIntExportBehavior::String",
+      "kind": "variant",
+      "description": "Export BigInt as a Typescript string",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.BigIntExportBehavior.html#variant.String"
+    },
+    {
+      "name": "branded",
+      "kind": "macro",
+      "description": "Create a branded tuple struct type that exports to TypeScript with a custom name.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/macro.branded.html"
+    },
+    {
+      "name": "Branded",
+      "kind": "struct",
+      "description": "Runtime payload for a TypeScript branded type.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Branded.html"
+    },
+    {
+      "name": "Branded::brand",
+      "kind": "method",
+      "description": "Get the brand label.",
+      "signature": "fn brand(self: &Self) -> &Cow<'static, str>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Branded.html#method.brand"
+    },
+    {
+      "name": "Branded::new",
+      "kind": "method",
+      "description": "Construct a branded type from a brand label and inner type.",
+      "signature": "fn new(brand: impl Into<Cow<'static, str>>, ty: DataType) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Branded.html#method.new"
+    },
+    {
+      "name": "Branded::ty",
+      "kind": "method",
+      "description": "Get the inner data type.",
+      "signature": "fn ty(self: &Self) -> &DataType",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Branded.html#method.ty"
+    },
+    {
+      "name": "BrandedTypeExporter",
+      "kind": "struct",
+      "description": "Reference to Typescript language exporter for branded type callbacks.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.BrandedTypeExporter.html"
+    },
+    {
+      "name": "BrandedTypeExporter::inline",
+      "kind": "method",
+      "description": "primitives::inline",
+      "signature": "fn inline(self: &Self, dt: &DataType) -> Result<String, Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.BrandedTypeExporter.html#method.inline"
+    },
+    {
+      "name": "BrandedTypeExporter::reference",
+      "kind": "method",
+      "description": "primitives::reference",
+      "signature": "fn reference(self: &Self, r: &Reference) -> Result<String, Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.BrandedTypeExporter.html#method.reference"
+    },
+    {
+      "name": "BrandedTypeExporter::types",
+      "kind": "structfield",
+      "description": "Collected types currently being exported.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.BrandedTypeExporter.html#structfield.types"
+    },
+    {
+      "name": "collect_references",
+      "kind": "fn",
+      "description": "This function collects all Typescript references which are created within the given closure.",
+      "signature": "fn collect_references<R>(func: impl FnOnce) -> (R, std::collections::HashSet<specta::datatype::NamedReference>)",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/fn.collect_references.html"
+    },
+    {
+      "name": "define",
+      "kind": "fn",
+      "description": "Define a custom Typescript string which can be used as a DataType::Reference.",
+      "signature": "fn define(raw: impl Into<std::borrow::Cow<'static, str>>) -> specta::datatype::Reference",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/fn.define.html"
+    },
+    {
+      "name": "Error",
+      "kind": "struct",
+      "description": "The error type for the TypeScript exporter.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Error.html"
+    },
+    {
+      "name": "Error::framework",
+      "kind": "method",
+      "description": "Construct an error for framework-specific logic.",
+      "signature": "fn framework(message: impl Into<Cow<'static, str>>, source: impl Into<Box<dyn std::error::Error + Send + Sync>>) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Error.html#method.framework"
+    },
+    {
+      "name": "Exporter",
+      "kind": "struct",
+      "description": "Typescript language exporter.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html"
+    },
+    {
+      "name": "Exporter::bigint",
+      "kind": "method",
+      "description": "Configure the BigInt handling behaviour",
+      "signature": "fn bigint(self: Self, bigint: BigIntExportBehavior) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#method.bigint"
+    },
+    {
+      "name": "Exporter::bigint",
+      "kind": "structfield",
+      "description": "Strategy for exporting Rust bigint-compatible primitives.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#structfield.bigint"
+    },
+    {
+      "name": "Exporter::branded_type_impl",
+      "kind": "method",
+      "description": "Configure how specta_typescript::branded! types are rendered with exporter context.",
+      "signature": "fn branded_type_impl(self: Self, builder: impl Fn + Send + Sync + 'static) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#method.branded_type_impl"
+    },
+    {
+      "name": "Exporter::export",
+      "kind": "method",
+      "description": "Export the files into a single string.",
+      "signature": "fn export(self: &Self, types: &TypeCollection) -> Result<String, Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#method.export"
+    },
+    {
+      "name": "Exporter::export_to",
+      "kind": "method",
+      "description": "Export the types to a specific file/folder.",
+      "signature": "fn export_to(self: &Self, path: impl AsRef<Path>, types: &TypeCollection) -> Result<(), Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#method.export_to"
+    },
+    {
+      "name": "Exporter::framework_prelude",
+      "kind": "method",
+      "description": "Provide a prelude which is added to the start of all exported files.",
+      "signature": "fn framework_prelude(self: Self, prelude: impl Into<Cow<'static, str>>) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#method.framework_prelude"
+    },
+    {
+      "name": "Exporter::framework_runtime",
+      "kind": "method",
+      "description": "Add some custom Typescript or Javascript code that is exported as part of the bindings. It's appending to the types file for single-file layouts or put in a root index.{ts/js} for multi-file.",
+      "signature": "fn framework_runtime(self: Self, builder: impl Fn + Send + Sync + 'static) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#method.framework_runtime"
+    },
+    {
+      "name": "Exporter::header",
+      "kind": "method",
+      "description": "Configure a header for the file.",
+      "signature": "fn header(self: Self, header: impl Into<Cow<'static, str>>) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#method.header"
+    },
+    {
+      "name": "Exporter::header",
+      "kind": "structfield",
+      "description": "Custom header prepended to exported files.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#structfield.header"
+    },
+    {
+      "name": "Exporter::layout",
+      "kind": "method",
+      "description": "Configure the bindings layout",
+      "signature": "fn layout(self: Self, layout: Layout) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#method.layout"
+    },
+    {
+      "name": "Exporter::layout",
+      "kind": "structfield",
+      "description": "Output layout mode for generated TypeScript.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#structfield.layout"
+    },
+    {
+      "name": "Exporter::serde",
+      "kind": "structfield",
+      "description": "Optional Serde compatibility processing mode.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#structfield.serde"
+    },
+    {
+      "name": "Exporter::with_serde",
+      "kind": "method",
+      "description": "Configure the exporter to use specta-serde with the specified mode",
+      "signature": "fn with_serde(self: Self, mode: SerdeMode) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#method.with_serde"
+    },
+    {
+      "name": "Exporter::with_serde_deserialize",
+      "kind": "method",
+      "description": "Configure the exporter to export the types for #derive(serde::Deserialize)",
+      "signature": "fn with_serde_deserialize(self: Self) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#method.with_serde_deserialize"
+    },
+    {
+      "name": "Exporter::with_serde_serialize",
+      "kind": "method",
+      "description": "Configure the exporter to export the types for #derive(serde::Serialize)",
+      "signature": "fn with_serde_serialize(self: Self) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Exporter.html#method.with_serde_serialize"
+    },
+    {
+      "name": "FrameworkExporter",
+      "kind": "struct",
+      "description": "Reference to Typescript language exporter for framework",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.FrameworkExporter.html"
+    },
+    {
+      "name": "FrameworkExporter::export",
+      "kind": "method",
+      "description": "primitives::export",
+      "signature": "fn export<'a>(self: &Self, ndts: impl Iterator, indent: &'a str) -> Result<String, Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.FrameworkExporter.html#method.export"
+    },
+    {
+      "name": "FrameworkExporter::inline",
+      "kind": "method",
+      "description": "primitives::inline",
+      "signature": "fn inline(self: &Self, dt: &DataType) -> Result<String, Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.FrameworkExporter.html#method.inline"
+    },
+    {
+      "name": "FrameworkExporter::reference",
+      "kind": "method",
+      "description": "primitives::reference",
+      "signature": "fn reference(self: &Self, r: &Reference) -> Result<String, Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.FrameworkExporter.html#method.reference"
+    },
+    {
+      "name": "FrameworkExporter::render_types",
+      "kind": "method",
+      "description": "Render the types within the TypeCollection.",
+      "signature": "fn render_types(self: &mut Self) -> Result<Cow<'static, str>, Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.FrameworkExporter.html#method.render_types"
+    },
+    {
+      "name": "FrameworkExporter::types",
+      "kind": "structfield",
+      "description": "Collected types currently being exported.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.FrameworkExporter.html#structfield.types"
+    },
+    {
+      "name": "JSDoc",
+      "kind": "struct",
+      "description": "JSDoc language exporter.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.JSDoc.html"
+    },
+    {
+      "name": "JSDoc::bigint",
+      "kind": "method",
+      "description": "Configure the BigInt handling behaviour",
+      "signature": "fn bigint(self: Self, bigint: BigIntExportBehavior) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.JSDoc.html#method.bigint"
+    },
+    {
+      "name": "JSDoc::branded_type_impl",
+      "kind": "method",
+      "description": "Configure how specta_typescript::branded! types are rendered.",
+      "signature": "fn branded_type_impl(self: Self, builder: impl Fn + Send + Sync + 'static) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.JSDoc.html#method.branded_type_impl"
+    },
+    {
+      "name": "JSDoc::export",
+      "kind": "method",
+      "description": "Export the files into a single string.",
+      "signature": "fn export(self: &Self, types: &TypeCollection) -> Result<String, Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.JSDoc.html#method.export"
+    },
+    {
+      "name": "JSDoc::export_to",
+      "kind": "method",
+      "description": "Export the types to a specific file/folder.",
+      "signature": "fn export_to(self: &Self, path: impl AsRef<Path>, types: &TypeCollection) -> Result<(), Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.JSDoc.html#method.export_to"
+    },
+    {
+      "name": "JSDoc::header",
+      "kind": "method",
+      "description": "Configure a header for the file.",
+      "signature": "fn header(self: Self, header: impl Into<Cow<'static, str>>) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.JSDoc.html#method.header"
+    },
+    {
+      "name": "JSDoc::layout",
+      "kind": "method",
+      "description": "Configure the layout of the generated file",
+      "signature": "fn layout(self: Self, layout: Layout) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.JSDoc.html#method.layout"
+    },
+    {
+      "name": "JSDoc::new",
+      "kind": "method",
+      "description": "Construct a new JSDoc exporter with the default options configured.",
+      "signature": "fn new() -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.JSDoc.html#method.new"
+    },
+    {
+      "name": "JSDoc::with_serde",
+      "kind": "method",
+      "description": "Configure the exporter to use specta-serde with the specified mode",
+      "signature": "fn with_serde(self: Self, mode: SerdeMode) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.JSDoc.html#method.with_serde"
+    },
+    {
+      "name": "JSDoc::with_serde_deserialize",
+      "kind": "method",
+      "description": "Configure the exporter to export the types for #derive(serde::Deserialize)",
+      "signature": "fn with_serde_deserialize(self: Self) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.JSDoc.html#method.with_serde_deserialize"
+    },
+    {
+      "name": "JSDoc::with_serde_serialize",
+      "kind": "method",
+      "description": "Configure the exporter to export the types for #derive(serde::Serialize)",
+      "signature": "fn with_serde_serialize(self: Self) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.JSDoc.html#method.with_serde_serialize"
+    },
+    {
+      "name": "Layout",
+      "kind": "enum",
+      "description": "Allows configuring the format of the final types file",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.Layout.html"
+    },
+    {
+      "name": "Layout::Files",
+      "kind": "variant",
+      "description": "Produce a dedicated file for each Rust module",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.Layout.html#variant.Files"
+    },
+    {
+      "name": "Layout::FlatFile",
+      "kind": "variant",
+      "description": "Flatten all of the types into a single file of types. This mode doesn't support having multiple types with the same name.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.Layout.html#variant.FlatFile"
+    },
+    {
+      "name": "Layout::ModulePrefixedName",
+      "kind": "variant",
+      "description": "Include the full module path in the types name but keep a flat structure.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.Layout.html#variant.ModulePrefixedName"
+    },
+    {
+      "name": "Layout::Namespaces",
+      "kind": "variant",
+      "description": "Produce a Typescript namespace for each Rust module",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.Layout.html#variant.Namespaces"
+    },
+    {
+      "name": "Never",
+      "kind": "struct",
+      "description": "Cast a Rust type to a Typescript never type.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Never.html"
+    },
+    {
+      "name": "primitives",
+      "kind": "mod",
+      "description": "Primitives provide building blocks for Specta-based libraries.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/primitives/index.html"
+    },
+    {
+      "name": "primitives::export",
+      "kind": "fn",
+      "description": "Generate a group of export Type = ... Typescript string for a specific NamedDataType.",
+      "signature": "fn export<'a>(exporter: &dyn AsRef<crate::Exporter>, types: &specta::TypeCollection, ndts: impl Iterator, indent: &str) -> Result<String, crate::Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/primitives/fn.export.html"
+    },
+    {
+      "name": "primitives::inline",
+      "kind": "fn",
+      "description": "Generate an inlined Typescript string for a specific DataType.",
+      "signature": "fn inline(exporter: &dyn AsRef<crate::Exporter>, types: &specta::TypeCollection, dt: &specta::datatype::DataType) -> Result<String, crate::Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/primitives/fn.inline.html"
+    },
+    {
+      "name": "primitives::reference",
+      "kind": "fn",
+      "description": "Generate an Typescript string to refer to a specific DataType.",
+      "signature": "fn reference(exporter: &dyn AsRef<crate::Exporter>, types: &specta::TypeCollection, r: &specta::datatype::Reference) -> Result<String, crate::Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/primitives/fn.reference.html"
+    },
+    {
+      "name": "SerdeMode",
+      "kind": "enum",
+      "description": "Specifies whether to apply serde transformations for serialization or deserialization",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.SerdeMode.html",
+      "signature": "pub enum SerdeMode { Serialize, Deserialize, Both, }"
+    },
+    {
+      "name": "SerdeMode::Both",
+      "kind": "variant",
+      "description": "Apply transformations for both serialization and deserialization",
+      "signature": "Both",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.SerdeMode.html#variant.Both"
+    },
+    {
+      "name": "SerdeMode::Deserialize",
+      "kind": "variant",
+      "description": "Apply transformations for deserialization (JSON/etc -> Rust)",
+      "signature": "Deserialize",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.SerdeMode.html#variant.Deserialize"
+    },
+    {
+      "name": "SerdeMode::Serialize",
+      "kind": "variant",
+      "description": "Apply transformations for serialization (Rust -> JSON/etc)",
+      "signature": "Serialize",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/enum.SerdeMode.html#variant.Serialize"
+    },
+    {
+      "name": "Typescript",
+      "kind": "struct",
+      "description": "JSDoc language exporter.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Typescript.html"
+    },
+    {
+      "name": "Typescript::bigint",
+      "kind": "method",
+      "description": "Configure the BigInt handling behaviour",
+      "signature": "fn bigint(self: Self, bigint: BigIntExportBehavior) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Typescript.html#method.bigint"
+    },
+    {
+      "name": "Typescript::branded_type_impl",
+      "kind": "method",
+      "description": "Configure how specta_typescript::branded! types are rendered.",
+      "signature": "fn branded_type_impl(self: Self, builder: impl Fn + Send + Sync + 'static) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Typescript.html#method.branded_type_impl"
+    },
+    {
+      "name": "Typescript::export",
+      "kind": "method",
+      "description": "Export the files into a single string.",
+      "signature": "fn export(self: &Self, types: &TypeCollection) -> Result<String, Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Typescript.html#method.export"
+    },
+    {
+      "name": "Typescript::export_to",
+      "kind": "method",
+      "description": "Export the types to a specific file/folder.",
+      "signature": "fn export_to(self: &Self, path: impl AsRef<Path>, types: &TypeCollection) -> Result<(), Error>",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Typescript.html#method.export_to"
+    },
+    {
+      "name": "Typescript::header",
+      "kind": "method",
+      "description": "Configure a header for the file.",
+      "signature": "fn header(self: Self, header: impl Into<Cow<'static, str>>) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Typescript.html#method.header"
+    },
+    {
+      "name": "Typescript::layout",
+      "kind": "method",
+      "description": "Configure the layout of the generated file",
+      "signature": "fn layout(self: Self, layout: Layout) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Typescript.html#method.layout"
+    },
+    {
+      "name": "Typescript::new",
+      "kind": "method",
+      "description": "Construct a new JSDoc exporter with the default options configured.",
+      "signature": "fn new() -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Typescript.html#method.new"
+    },
+    {
+      "name": "Typescript::with_serde",
+      "kind": "method",
+      "description": "Configure the exporter to use specta-serde with the specified mode",
+      "signature": "fn with_serde(self: Self, mode: SerdeMode) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Typescript.html#method.with_serde"
+    },
+    {
+      "name": "Typescript::with_serde_deserialize",
+      "kind": "method",
+      "description": "Configure the exporter to export the types for #derive(serde::Deserialize)",
+      "signature": "fn with_serde_deserialize(self: Self) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Typescript.html#method.with_serde_deserialize"
+    },
+    {
+      "name": "Typescript::with_serde_serialize",
+      "kind": "method",
+      "description": "Configure the exporter to export the types for #derive(serde::Serialize)",
+      "signature": "fn with_serde_serialize(self: Self) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Typescript.html#method.with_serde_serialize"
+    },
+    {
+      "name": "Unknown",
+      "kind": "struct",
+      "description": "Cast a Rust type to a Typescript unknown type.",
+      "url": "https://docs.rs/specta-typescript/0.0.10/specta_typescript/struct.Unknown.html"
+    }
+  ],
+  "source": "rustdoc-json"
+}

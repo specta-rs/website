@@ -1,0 +1,51 @@
+{
+  "symbols": [
+    {
+      "name": "FixedArray",
+      "kind": "struct",
+      "description": "Declares a fixed-length array type for Specta exporters.",
+      "url": "https://docs.rs/specta-util/0.0.12/specta_util/struct.FixedArray.html"
+    },
+    {
+      "name": "Remapper",
+      "kind": "struct",
+      "description": "Recursively replaces DataTypes within a DataType structure from a set of remap rules.",
+      "url": "https://docs.rs/specta-util/0.0.12/specta_util/struct.Remapper.html"
+    },
+    {
+      "name": "Remapper::new",
+      "kind": "method",
+      "description": "Creates a remapper with no rules.",
+      "signature": "fn new() -> Self",
+      "url": "https://docs.rs/specta-util/0.0.12/specta_util/struct.Remapper.html#method.new"
+    },
+    {
+      "name": "Remapper::remap_dt",
+      "kind": "method",
+      "description": "Applies the remap operation to a datatype, returning the remapped datatype.",
+      "signature": "fn remap_dt(self: &Self, dt: DataType) -> DataType",
+      "url": "https://docs.rs/specta-util/0.0.12/specta_util/struct.Remapper.html#method.remap_dt"
+    },
+    {
+      "name": "Remapper::remap_types",
+      "kind": "method",
+      "description": "Applies the remap operation to every datatype in a Types collection, returning the remapped collection.",
+      "signature": "fn remap_types(self: &Self, types: Types) -> Types",
+      "url": "https://docs.rs/specta-util/0.0.12/specta_util/struct.Remapper.html#method.remap_types"
+    },
+    {
+      "name": "Remapper::rule",
+      "kind": "method",
+      "description": "Registers a rule that replaces exact matches of from with to.",
+      "signature": "fn rule(self: Self, from: DataType, to: DataType) -> Self",
+      "url": "https://docs.rs/specta-util/0.0.12/specta_util/struct.Remapper.html#method.rule"
+    },
+    {
+      "name": "selection",
+      "kind": "macro",
+      "description": "Specta compatible selection of struct fields.",
+      "url": "https://docs.rs/specta-util/0.0.12/specta_util/macro.selection.html"
+    }
+  ],
+  "source": "rustdoc-json"
+}

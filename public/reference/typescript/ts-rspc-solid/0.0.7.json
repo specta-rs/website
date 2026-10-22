@@ -1,0 +1,20 @@
+{
+  "symbols": [
+    {
+      "name": "createSolidQueryHooks",
+      "kind": "function",
+      "description": "",
+      "signature": "export declare function createSolidQueryHooks<Operations extends Procedures>(): {\n    _rspc_def: Operations;\n    Provider: (props: {\n        children?: any;\n        client: Client<Operations>;\n        queryClient: QueryClient;\n    }) => import(\"solid-js\").JSX.Element;\n    ctx: import(\"solid-js\").Context<Context<Operations>>;\n    ReactQueryContext: import(\"solid-js\").Context<QueryClient>;\n    createQuery: <K extends Operations[\"queries\"][\"key\"][0]>(key: inferProcedureKey<Operations, \"queries\", K>, options?: Omit<QueryObserverOptions<inferQueryResult<Operations, K>, RSPCError, inferQueryResult<Operations, K>, inferQueryResult<Operations, K>, import(\"@tanstack/query-core\").QueryKey>, \"queryFn\" | \"queryKey\" | \"initialData\"> & {\n        initialData?: () => undefined;\n    } & {\n        rspc?: {\n            client?: Client<Operations>;\n        };\n    }) => QueryObserverResult<inferQueryResult<Operations, K>, RSPCError>;\n    createMutation: <K_1 extends Operations[\"mutations\"][\"key\"][0]>(key: K_1, options?: Omit<MutationObserverOptions<inferMutationResult<Operations, K_1>, RSPCError, inferMutationInput<Operations, K_1>, unknown>, \"_defaulted\" | \"variables\" | \"mutationFn\" | \"mutationKey\"> & {\n        initialData?: () => undefined;\n    } & {\n        rspc?: {\n            client?: Client<Operations>;\n        };\n    }) => Override<MutationObserverResult<inferMutationResult<Operations, K_1>, RSPCError, inferMutationInput<Operations, K_1>, unknown>, {\n        mutate: CreateMutateFunction<inferMutationResult<Operations, K_1>, RSPCError, inferMutationInput<Operations, K_1>, unknown>;\n    }> & {\n        mutateAsync: CreateMutateAsyncFunction<inferMutationResult<Operations, K_1>, RSPCError, inferMutationInput<Operations, K_1>, unknown>;\n    };\n};\n\n// Referenced local context (not public exports):\ninterface Context<T extends Procedures> {\n    client: Client<T>;\n    queryClient: QueryClient;\n}\n\ndeclare type Override<A, B> = {\n    [K in keyof A]: K extends keyof B ? B[K] : A[K];\n};\n\ndeclare type CreateMutateFunction<TData = unknown, TError = unknown, TVariables = void, TContext = unknown> = (...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>) => void;\n\ndeclare type CreateMutateAsyncFunction<TData = unknown, TError = unknown, TVariables = void, TContext = unknown> = MutateFunction<TData, TError, TVariables, TContext>;",
+      "url": "/docs/reference?package=ts-rspc-solid&version=0.0.7#symbol-createSolidQueryHooks",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.7"
+    },
+    {
+      "name": "QueryClient",
+      "kind": "export",
+      "description": "",
+      "signature": "QueryClient",
+      "url": "/docs/reference?package=ts-rspc-solid&version=0.0.7#symbol-QueryClient",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.7"
+    }
+  ]
+}

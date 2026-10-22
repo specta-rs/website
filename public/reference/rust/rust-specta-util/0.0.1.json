@@ -1,0 +1,75 @@
+{
+  "symbols": [
+    {
+      "name": "Any",
+      "kind": "struct",
+      "description": "Easily convert a non-Specta type into a Specta compatible type. This will be typed as any in Typescript.",
+      "url": "https://docs.rs/specta-util/0.0.1/specta_util/struct.Any.html",
+      "signature": "pub struct Any<T = ()>(/* private fields */);"
+    },
+    {
+      "name": "export",
+      "kind": "fn",
+      "description": "Get the global type store containing all registered types.",
+      "url": "https://docs.rs/specta-util/0.0.1/specta_util/fn.export.html",
+      "signature": "pub fn export() -> TypeCollection"
+    },
+    {
+      "name": "selection",
+      "kind": "macro",
+      "description": "Specta compatible selection of struct fields.",
+      "url": "https://docs.rs/specta-util/0.0.1/specta_util/macro.selection.html",
+      "signature": "macro_rules! selection { ( $s:expr, { $($n:ident),+ $(,)? } ) => { ... }; ( $s:expr, [{ $($n:ident),+ $(,)? }] ) => { ... }; }"
+    },
+    {
+      "name": "TypeCollection",
+      "kind": "struct",
+      "description": "Define a set of types which can be exported together",
+      "url": "https://docs.rs/specta-util/0.0.1/specta_util/struct.TypeCollection.html",
+      "signature": "pub struct TypeCollection { /* private fields */ }"
+    },
+    {
+      "name": "TypeCollection::collect",
+      "kind": "method",
+      "description": "Export all the types in the collection into the given type map.",
+      "signature": "pub fn collect(&self, type_map: &mut TypeMap)",
+      "url": "https://docs.rs/specta-util/0.0.1/specta_util/struct.TypeCollection.html#method.collect"
+    },
+    {
+      "name": "TypeCollection::export",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "pub fn export<L: Language>(&self, language: L) -> Result<String, L::Error>",
+      "url": "https://docs.rs/specta-util/0.0.1/specta_util/struct.TypeCollection.html#method.export"
+    },
+    {
+      "name": "TypeCollection::export_to",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "pub fn export_to<L: Language>( &self, language: L, path: impl AsRef<Path>, ) -> Result<(), L::Error>",
+      "url": "https://docs.rs/specta-util/0.0.1/specta_util/struct.TypeCollection.html#method.export_to"
+    },
+    {
+      "name": "TypeCollection::extend",
+      "kind": "method",
+      "description": "Join another type collection into this one.",
+      "signature": "pub fn extend(&mut self, collection: impl Borrow<TypeCollection>) -> &mut Self",
+      "url": "https://docs.rs/specta-util/0.0.1/specta_util/struct.TypeCollection.html#method.extend"
+    },
+    {
+      "name": "TypeCollection::register",
+      "kind": "method",
+      "description": "Register a type with the collection.",
+      "signature": "pub fn register<T: NamedType>(&mut self) -> &mut Self",
+      "url": "https://docs.rs/specta-util/0.0.1/specta_util/struct.TypeCollection.html#method.register"
+    },
+    {
+      "name": "Unknown",
+      "kind": "struct",
+      "description": "Easily convert a non-Specta type into a Specta compatible type. This will be typed as unknown in Typescript.",
+      "url": "https://docs.rs/specta-util/0.0.1/specta_util/struct.Unknown.html",
+      "signature": "pub struct Unknown<T = ()>(/* private fields */);"
+    }
+  ],
+  "source": "rustdoc-html"
+}

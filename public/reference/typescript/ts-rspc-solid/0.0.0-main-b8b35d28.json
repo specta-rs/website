@@ -1,0 +1,52 @@
+{
+  "symbols": [
+    {
+      "name": "BaseOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "export interface BaseOptions<TProcedures extends ProceduresDef> {\n    rspc?: {\n        client?: Client<TProcedures>;\n    };\n}",
+      "url": "/docs/reference?package=ts-rspc-solid&version=0.0.0-main-b8b35d28#symbol-BaseOptions",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-b8b35d28"
+    },
+    {
+      "name": "Context",
+      "kind": "interface",
+      "description": "",
+      "signature": "export interface Context<TProcedures extends ProceduresDef> {\n    client: Client<TProcedures>;\n    queryClient: QueryClient;\n}",
+      "url": "/docs/reference?package=ts-rspc-solid&version=0.0.0-main-b8b35d28#symbol-Context",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-b8b35d28"
+    },
+    {
+      "name": "createReactQueryHooks",
+      "kind": "function",
+      "description": "",
+      "signature": "export declare function createReactQueryHooks<P extends ProceduresDef>(client: AlphaClient<P>, opts?: HooksOpts<P>): {\n    _rspc_def: P;\n    Provider: (props: {\n        children?: Solid.JSX.Element;\n        client: AlphaClient<P>;\n        queryClient: QueryClient;\n    }) => Solid.JSX.Element;\n    useContext: () => Context<P>;\n    createQuery: <K extends P[\"queries\"][\"key\"] & string, TQueryFnData = inferQueryResult<P, K>, TData = inferQueryResult<P, K>>(keyAndInput: () => [\n        key: K,\n        ...input: _inferProcedureHandlerInput<P, \"queries\", K>\n    ], opts?: Omit<CreateQueryOptions<TQueryFnData, AlphaRSPCError, TData, () => [\n        K,\n        inferQueryInput<P, K>\n    ]>, \"queryFn\" | \"queryKey\"> & BaseOptions<P>) => CreateQueryResult<TData, RSPCError>;\n    createMutation: <K_1 extends P[\"mutations\"][\"key\"] & string, TContext = unknown>(key: K_1 | [\n        K_1\n    ], opts?: CreateMutationOptions<inferMutationResult<P, K_1>, AlphaRSPCError, inferMutationInput<P, K_1> extends never ? undefined : inferMutationInput<P, K_1>, TContext> & BaseOptions<P>) => CreateMutationResult<inferMutationResult<P, K_1>, AlphaRSPCError, inferMutationInput<P, K_1> extends never ? undefined : inferMutationInput<P, K_1>, TContext>;\n    createSubscription: <K_2 extends P[\"subscriptions\"][\"key\"] & string, TData_1 = inferSubscriptionResult<P, K_2>>(keyAndInput: () => [\n        key: K_2,\n        ...input: _inferProcedureHandlerInput<P, \"subscriptions\", K_2>\n    ], opts: SubscriptionOptions<TData_1> & BaseOptions<P>) => void;\n};",
+      "url": "/docs/reference?package=ts-rspc-solid&version=0.0.0-main-b8b35d28#symbol-createReactQueryHooks",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-b8b35d28"
+    },
+    {
+      "name": "HooksOpts",
+      "kind": "type",
+      "description": "",
+      "signature": "export type HooksOpts<P extends ProceduresDef> = {\n    context: Solid.Context<Context<P>>;\n};",
+      "url": "/docs/reference?package=ts-rspc-solid&version=0.0.0-main-b8b35d28#symbol-HooksOpts",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-b8b35d28"
+    },
+    {
+      "name": "KeyAndInput",
+      "kind": "type",
+      "description": "",
+      "signature": "export type KeyAndInput = [\n    string\n] | [\n    string,\n    any\n];",
+      "url": "/docs/reference?package=ts-rspc-solid&version=0.0.0-main-b8b35d28#symbol-KeyAndInput",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-b8b35d28"
+    },
+    {
+      "name": "SubscriptionOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "export interface SubscriptionOptions<TOutput> {\n    enabled?: boolean;\n    onStarted?: () => void;\n    onData: (data: TOutput) => void;\n    onError?: (err: RSPCError) => void;\n}",
+      "url": "/docs/reference?package=ts-rspc-solid&version=0.0.0-main-b8b35d28#symbol-SubscriptionOptions",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-b8b35d28"
+    }
+  ]
+}

@@ -1,0 +1,1623 @@
+{
+  "symbols": [
+    {
+      "name": "collect",
+      "kind": "fn",
+      "description": "Get the global type store containing all automatically collected types.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/fn.collect.html",
+      "signature": "pub fn collect() -> Types"
+    },
+    {
+      "name": "datatype",
+      "kind": "mod",
+      "description": "Types related to working with DataType. Exposed for advanced users.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/index.html"
+    },
+    {
+      "name": "datatype::Attributes",
+      "kind": "struct",
+      "description": "A named map of type-erased metadata attached to datatype nodes.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Attributes.html"
+    },
+    {
+      "name": "datatype::Attributes::contains_key",
+      "kind": "method",
+      "description": "Returns true if an attribute entry is present for key.",
+      "signature": "fn contains_key(self: &Self, key: &str) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Attributes.html#method.contains_key"
+    },
+    {
+      "name": "datatype::Attributes::extend",
+      "kind": "method",
+      "description": "Extends self with entries from other.",
+      "signature": "fn extend(self: &mut Self, other: Self)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Attributes.html#method.extend"
+    },
+    {
+      "name": "datatype::Attributes::get_named",
+      "kind": "method",
+      "description": "Returns the raw type-erased value for a named attribute.",
+      "signature": "fn get_named(self: &Self, key: &str) -> Option<&dyn Any>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Attributes.html#method.get_named"
+    },
+    {
+      "name": "datatype::Attributes::get_named_as",
+      "kind": "method",
+      "description": "Returns a typed reference to the named attribute value.",
+      "signature": "fn get_named_as<T>(self: &Self, key: &str) -> Option<&T>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Attributes.html#method.get_named_as"
+    },
+    {
+      "name": "datatype::Attributes::insert",
+      "kind": "method",
+      "description": "Inserts or replaces an attribute value.",
+      "signature": "fn insert<T>(self: &mut Self, key: impl Into<Cow<'static, str>>, value: T)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Attributes.html#method.insert"
+    },
+    {
+      "name": "datatype::Attributes::is_empty",
+      "kind": "method",
+      "description": "Returns true when the collection has no entries.",
+      "signature": "fn is_empty(self: &Self) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Attributes.html#method.is_empty"
+    },
+    {
+      "name": "datatype::Attributes::len",
+      "kind": "method",
+      "description": "Returns the number of stored attribute entries.",
+      "signature": "fn len(self: &Self) -> usize",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Attributes.html#method.len"
+    },
+    {
+      "name": "datatype::DataType",
+      "kind": "enum",
+      "description": "Runtime type-erased representation of a Rust type.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.DataType.html"
+    },
+    {
+      "name": "datatype::DataType::Enum",
+      "kind": "variant",
+      "description": "An enum type.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.DataType.html#variant.Enum"
+    },
+    {
+      "name": "datatype::DataType::List",
+      "kind": "variant",
+      "description": "A sequential collection type.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.DataType.html#variant.List"
+    },
+    {
+      "name": "datatype::DataType::Map",
+      "kind": "variant",
+      "description": "A map/dictionary type.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.DataType.html#variant.Map"
+    },
+    {
+      "name": "datatype::DataType::Nullable",
+      "kind": "variant",
+      "description": "A nullable wrapper around another type.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.DataType.html#variant.Nullable"
+    },
+    {
+      "name": "datatype::DataType::Primitive",
+      "kind": "variant",
+      "description": "A primitive scalar type like integers, floats, booleans, chars, or strings.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.DataType.html#variant.Primitive"
+    },
+    {
+      "name": "datatype::DataType::Reference",
+      "kind": "variant",
+      "description": "A reference to another named or opaque type.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.DataType.html#variant.Reference"
+    },
+    {
+      "name": "datatype::DataType::Struct",
+      "kind": "variant",
+      "description": "A struct type with named, unnamed, or unit fields.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.DataType.html#variant.Struct"
+    },
+    {
+      "name": "datatype::DataType::Tuple",
+      "kind": "variant",
+      "description": "A tuple type.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.DataType.html#variant.Tuple"
+    },
+    {
+      "name": "datatype::Deprecated",
+      "kind": "struct",
+      "description": "Runtime representation of Rust's #deprecated metadata.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Deprecated.html"
+    },
+    {
+      "name": "datatype::Deprecated::new",
+      "kind": "method",
+      "description": "Construct deprecation metadata without details.",
+      "signature": "const fn new() -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Deprecated.html#method.new"
+    },
+    {
+      "name": "datatype::Deprecated::note",
+      "kind": "method",
+      "description": "Optional deprecation note/message.",
+      "signature": "fn note(self: &Self) -> Option<&Cow<'static, str>>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Deprecated.html#method.note"
+    },
+    {
+      "name": "datatype::Deprecated::note_mut",
+      "kind": "method",
+      "description": "Mutable optional deprecation note/message.",
+      "signature": "fn note_mut(self: &mut Self) -> Option<&mut Cow<'static, str>>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Deprecated.html#method.note_mut"
+    },
+    {
+      "name": "datatype::Deprecated::set_note",
+      "kind": "method",
+      "description": "Set the optional deprecation note/message.",
+      "signature": "fn set_note(self: &mut Self, note: Option<Cow<'static, str>>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Deprecated.html#method.set_note"
+    },
+    {
+      "name": "datatype::Deprecated::set_since",
+      "kind": "method",
+      "description": "Set the optional version string from since = \"...\".",
+      "signature": "fn set_since(self: &mut Self, since: Option<Cow<'static, str>>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Deprecated.html#method.set_since"
+    },
+    {
+      "name": "datatype::Deprecated::since",
+      "kind": "method",
+      "description": "Optional version string from since = \"...\".",
+      "signature": "fn since(self: &Self) -> Option<&Cow<'static, str>>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Deprecated.html#method.since"
+    },
+    {
+      "name": "datatype::Deprecated::since_mut",
+      "kind": "method",
+      "description": "Mutable optional version string from since = \"...\".",
+      "signature": "fn since_mut(self: &mut Self) -> Option<&mut Cow<'static, str>>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Deprecated.html#method.since_mut"
+    },
+    {
+      "name": "datatype::Deprecated::with_note",
+      "kind": "method",
+      "description": "Construct deprecation metadata with a note/message.",
+      "signature": "fn with_note(note: Cow<'static, str>) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Deprecated.html#method.with_note"
+    },
+    {
+      "name": "datatype::Deprecated::with_since_note",
+      "kind": "method",
+      "description": "Construct deprecation metadata with a note/message and an optional since version.",
+      "signature": "fn with_since_note(since: Option<Cow<'static, str>>, note: Cow<'static, str>) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Deprecated.html#method.with_since_note"
+    },
+    {
+      "name": "datatype::Enum",
+      "kind": "struct",
+      "description": "represents a Rust enum.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Enum.html"
+    },
+    {
+      "name": "datatype::Enum::attributes",
+      "kind": "method",
+      "description": "Get an immutable reference to the enum's attributes.",
+      "signature": "fn attributes(self: &Self) -> &Attributes",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Enum.html#method.attributes"
+    },
+    {
+      "name": "datatype::Enum::attributes_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the enum's attributes.",
+      "signature": "fn attributes_mut(self: &mut Self) -> &mut Attributes",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Enum.html#method.attributes_mut"
+    },
+    {
+      "name": "datatype::Enum::is_string_enum",
+      "kind": "method",
+      "description": "Check if this enum should be serialized as a string enum. This is true when all variants are unit variants (no fields).",
+      "signature": "fn is_string_enum(self: &Self) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Enum.html#method.is_string_enum"
+    },
+    {
+      "name": "datatype::Enum::new",
+      "kind": "method",
+      "description": "Construct a new empty enum.",
+      "signature": "fn new() -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Enum.html#method.new"
+    },
+    {
+      "name": "datatype::Enum::variants",
+      "kind": "method",
+      "description": "Get an immutable reference to the enum's variants.",
+      "signature": "fn variants(self: &Self) -> &[(Cow<'static, str>, Variant)]",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Enum.html#method.variants"
+    },
+    {
+      "name": "datatype::Enum::variants_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the enum's variants.",
+      "signature": "fn variants_mut(self: &mut Self) -> &mut Vec<(Cow<'static, str>, Variant)>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Enum.html#method.variants_mut"
+    },
+    {
+      "name": "datatype::Field",
+      "kind": "struct",
+      "description": "Field metadata for a struct field or enum variant field.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html"
+    },
+    {
+      "name": "datatype::Field::attributes",
+      "kind": "method",
+      "description": "Get an immutable reference to the runtime attributes for this field.",
+      "signature": "fn attributes(self: &Self) -> &Attributes",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.attributes"
+    },
+    {
+      "name": "datatype::Field::attributes_mut",
+      "kind": "method",
+      "description": "Mutable reference to the runtime attributes for this field.",
+      "signature": "fn attributes_mut(self: &mut Self) -> &mut Attributes",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.attributes_mut"
+    },
+    {
+      "name": "datatype::Field::deprecated",
+      "kind": "method",
+      "description": "Has the Rust deprecated attribute been applied to this field?",
+      "signature": "fn deprecated(self: &Self) -> Option<&Deprecated>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.deprecated"
+    },
+    {
+      "name": "datatype::Field::deprecated_mut",
+      "kind": "method",
+      "description": "Has the Rust deprecated attribute been applied to this field?",
+      "signature": "fn deprecated_mut(self: &mut Self) -> Option<&mut Deprecated>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.deprecated_mut"
+    },
+    {
+      "name": "datatype::Field::docs",
+      "kind": "method",
+      "description": "Get an immutable reference to the documentation attribute for this field.",
+      "signature": "fn docs(self: &Self) -> &Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.docs"
+    },
+    {
+      "name": "datatype::Field::docs_mut",
+      "kind": "method",
+      "description": "Mutable reference to the documentation attribute for this field.",
+      "signature": "fn docs_mut(self: &mut Self) -> &mut Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.docs_mut"
+    },
+    {
+      "name": "datatype::Field::flatten",
+      "kind": "method",
+      "description": "Has the Serde flatten attribute been applied to this field?",
+      "signature": "fn flatten(self: &Self) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.flatten"
+    },
+    {
+      "name": "datatype::Field::inline",
+      "kind": "method",
+      "description": "Has the Serde inline attribute been applied to this field?",
+      "signature": "fn inline(self: &Self) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.inline"
+    },
+    {
+      "name": "datatype::Field::new",
+      "kind": "method",
+      "description": "Construct a new field with the given type.",
+      "signature": "fn new(ty: DataType) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.new"
+    },
+    {
+      "name": "datatype::Field::optional",
+      "kind": "method",
+      "description": "Has the Serde or Specta optional attribute been applied to this field?",
+      "signature": "fn optional(self: &Self) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.optional"
+    },
+    {
+      "name": "datatype::Field::set_attributes",
+      "kind": "method",
+      "description": "Set the runtime attributes for this field.",
+      "signature": "fn set_attributes(self: &mut Self, attrs: Attributes)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.set_attributes"
+    },
+    {
+      "name": "datatype::Field::set_deprecated",
+      "kind": "method",
+      "description": "Set the deprecated attribute for this field.",
+      "signature": "fn set_deprecated(self: &mut Self, deprecated: Option<Deprecated>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.set_deprecated"
+    },
+    {
+      "name": "datatype::Field::set_docs",
+      "kind": "method",
+      "description": "Set the documentation attribute for this field.",
+      "signature": "fn set_docs(self: &mut Self, docs: Cow<'static, str>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.set_docs"
+    },
+    {
+      "name": "datatype::Field::set_flatten",
+      "kind": "method",
+      "description": "Set the flatten attribute for this field.",
+      "signature": "fn set_flatten(self: &mut Self, flatten: bool)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.set_flatten"
+    },
+    {
+      "name": "datatype::Field::set_inline",
+      "kind": "method",
+      "description": "Set the inline attribute for this field.",
+      "signature": "fn set_inline(self: &mut Self, inline: bool)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.set_inline"
+    },
+    {
+      "name": "datatype::Field::set_optional",
+      "kind": "method",
+      "description": "Set the optional attribute for this field.",
+      "signature": "fn set_optional(self: &mut Self, optional: bool)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.set_optional"
+    },
+    {
+      "name": "datatype::Field::set_ty",
+      "kind": "method",
+      "description": "Set the type of this field.",
+      "signature": "fn set_ty(self: &mut Self, ty: DataType)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.set_ty"
+    },
+    {
+      "name": "datatype::Field::set_type_overridden",
+      "kind": "method",
+      "description": "Set whether a Specta type override attribute was applied to this field.",
+      "signature": "fn set_type_overridden(self: &mut Self, type_overridden: bool)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.set_type_overridden"
+    },
+    {
+      "name": "datatype::Field::ty",
+      "kind": "method",
+      "description": "Get an immutable reference to the type of this field.",
+      "signature": "fn ty(self: &Self) -> Option<&DataType>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.ty"
+    },
+    {
+      "name": "datatype::Field::ty_mut",
+      "kind": "method",
+      "description": "Mutable reference to the type of this field.",
+      "signature": "fn ty_mut(self: &mut Self) -> Option<&mut DataType>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.ty_mut"
+    },
+    {
+      "name": "datatype::Field::type_overridden",
+      "kind": "method",
+      "description": "Has the Specta type override attribute been applied to this field?",
+      "signature": "fn type_overridden(self: &Self) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Field.html#method.type_overridden"
+    },
+    {
+      "name": "datatype::Fields",
+      "kind": "enum",
+      "description": "Data stored within an enum variant or struct.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Fields.html"
+    },
+    {
+      "name": "datatype::Fields::Named",
+      "kind": "variant",
+      "description": "Struct with named fields.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Fields.html#variant.Named"
+    },
+    {
+      "name": "datatype::Fields::Unit",
+      "kind": "variant",
+      "description": "Unit struct.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Fields.html#variant.Unit"
+    },
+    {
+      "name": "datatype::Fields::Unnamed",
+      "kind": "variant",
+      "description": "Struct with unnamed fields.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Fields.html#variant.Unnamed"
+    },
+    {
+      "name": "datatype::Function",
+      "kind": "struct",
+      "description": "Contains type information about a function annotated with the #specta attribute. Returned by the fn_datatype! macro.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html"
+    },
+    {
+      "name": "datatype::Function::args",
+      "kind": "method",
+      "description": "Get the arguments of the function.",
+      "signature": "fn args(self: &Self) -> &[(Cow<'static, str>, DataType)]",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.args"
+    },
+    {
+      "name": "datatype::Function::args_mut",
+      "kind": "method",
+      "description": "Get the arguments of the function as mutable references.",
+      "signature": "fn args_mut(self: &mut Self) -> &mut Vec<(Cow<'static, str>, DataType)>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.args_mut"
+    },
+    {
+      "name": "datatype::Function::asyncness",
+      "kind": "method",
+      "description": "Is this function defined with the async keyword?",
+      "signature": "fn asyncness(self: &Self) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.asyncness"
+    },
+    {
+      "name": "datatype::Function::deprecated",
+      "kind": "method",
+      "description": "Get the deprecated status of the function.",
+      "signature": "fn deprecated(self: &Self) -> Option<&Deprecated>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.deprecated"
+    },
+    {
+      "name": "datatype::Function::deprecated_mut",
+      "kind": "method",
+      "description": "Get the deprecated status of the function as mutable reference.",
+      "signature": "fn deprecated_mut(self: &mut Self) -> Option<&mut Deprecated>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.deprecated_mut"
+    },
+    {
+      "name": "datatype::Function::docs",
+      "kind": "method",
+      "description": "Get the documentation of the function.",
+      "signature": "fn docs(self: &Self) -> &Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.docs"
+    },
+    {
+      "name": "datatype::Function::docs_mut",
+      "kind": "method",
+      "description": "Get the documentation of the function as mutable reference.",
+      "signature": "fn docs_mut(self: &mut Self) -> &mut Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.docs_mut"
+    },
+    {
+      "name": "datatype::Function::name",
+      "kind": "method",
+      "description": "Get the name of the function.",
+      "signature": "fn name(self: &Self) -> &Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.name"
+    },
+    {
+      "name": "datatype::Function::name_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the name of the function.",
+      "signature": "fn name_mut(self: &mut Self) -> &mut Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.name_mut"
+    },
+    {
+      "name": "datatype::Function::result",
+      "kind": "method",
+      "description": "Get the result of the function.",
+      "signature": "fn result(self: &Self) -> Option<&DataType>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.result"
+    },
+    {
+      "name": "datatype::Function::result_mut",
+      "kind": "method",
+      "description": "Get the result of the function as mutable reference.",
+      "signature": "fn result_mut(self: &mut Self) -> Option<&mut DataType>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.result_mut"
+    },
+    {
+      "name": "datatype::Function::set_asyncness",
+      "kind": "method",
+      "description": "Set the async status of the function.",
+      "signature": "fn set_asyncness(self: &mut Self, asyncness: bool)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.set_asyncness"
+    },
+    {
+      "name": "datatype::Function::set_deprecated",
+      "kind": "method",
+      "description": "Set the deprecated status of the function.",
+      "signature": "fn set_deprecated(self: &mut Self, deprecated: Deprecated)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.set_deprecated"
+    },
+    {
+      "name": "datatype::Function::set_docs",
+      "kind": "method",
+      "description": "Set the documentation of the function.",
+      "signature": "fn set_docs(self: &mut Self, docs: Cow<'static, str>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.set_docs"
+    },
+    {
+      "name": "datatype::Function::set_name",
+      "kind": "method",
+      "description": "Set the name of the function.",
+      "signature": "fn set_name(self: &mut Self, name: Cow<'static, str>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.set_name"
+    },
+    {
+      "name": "datatype::Function::set_result",
+      "kind": "method",
+      "description": "Set the result of the function.",
+      "signature": "fn set_result(self: &mut Self, result: DataType)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Function.html#method.set_result"
+    },
+    {
+      "name": "datatype::GenericReference",
+      "kind": "struct",
+      "description": "Reference to a generic parameter a parent NamedDataType. This is resolved to a concrete type by the language exporter.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.GenericReference.html"
+    },
+    {
+      "name": "datatype::GenericReference::eq",
+      "kind": "method",
+      "description": "Compare two GenericReferences for equality. If this returns true they are both a reference to the same generic type.",
+      "signature": "fn eq<T>(self: &Self) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.GenericReference.html#method.eq"
+    },
+    {
+      "name": "datatype::GenericReference::new",
+      "kind": "method",
+      "description": "Build a new GenericReference for a generic type parameter marker. T should be a unique type which identifies the generic (Eg. pub struct GenericT;) and must be registered on the parent NamedDataType.",
+      "signature": "const fn new<T>() -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.GenericReference.html#method.new"
+    },
+    {
+      "name": "datatype::List",
+      "kind": "struct",
+      "description": "List of items. This will be a Vec or similar types.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.List.html"
+    },
+    {
+      "name": "datatype::List::length",
+      "kind": "method",
+      "description": "Get the length of the list.",
+      "signature": "fn length(self: &Self) -> Option<usize>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.List.html#method.length"
+    },
+    {
+      "name": "datatype::List::new",
+      "kind": "method",
+      "description": "Create a new list of a given type.",
+      "signature": "fn new(ty: DataType) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.List.html#method.new"
+    },
+    {
+      "name": "datatype::List::set_length",
+      "kind": "method",
+      "description": "Set the length of the list.",
+      "signature": "fn set_length(self: &mut Self, length: Option<usize>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.List.html#method.set_length"
+    },
+    {
+      "name": "datatype::List::set_ty",
+      "kind": "method",
+      "description": "Set the type of the elements in the list.",
+      "signature": "fn set_ty(self: &mut Self, ty: DataType)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.List.html#method.set_ty"
+    },
+    {
+      "name": "datatype::List::set_unique",
+      "kind": "method",
+      "description": "Set whether each element is unique.",
+      "signature": "fn set_unique(self: &mut Self, unique: bool)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.List.html#method.set_unique"
+    },
+    {
+      "name": "datatype::List::ty",
+      "kind": "method",
+      "description": "Get an immutable reference to the type of the elements in the list.",
+      "signature": "fn ty(self: &Self) -> &DataType",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.List.html#method.ty"
+    },
+    {
+      "name": "datatype::List::ty_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the type of the elements in the list.",
+      "signature": "fn ty_mut(self: &mut Self) -> &mut DataType",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.List.html#method.ty_mut"
+    },
+    {
+      "name": "datatype::List::unique",
+      "kind": "method",
+      "description": "Are each elements unique? Eg. HashSet or BTreeSet",
+      "signature": "fn unique(self: &Self) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.List.html#method.unique"
+    },
+    {
+      "name": "datatype::Map",
+      "kind": "struct",
+      "description": "Map of items. This will be a HashMap or similar types.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Map.html"
+    },
+    {
+      "name": "datatype::Map::key_ty",
+      "kind": "method",
+      "description": "The type of the map keys.",
+      "signature": "fn key_ty(self: &Self) -> &DataType",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Map.html#method.key_ty"
+    },
+    {
+      "name": "datatype::Map::key_ty_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the type of the map keys.",
+      "signature": "fn key_ty_mut(self: &mut Self) -> &mut DataType",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Map.html#method.key_ty_mut"
+    },
+    {
+      "name": "datatype::Map::new",
+      "kind": "method",
+      "description": "Create a new map with the given key and value types.",
+      "signature": "fn new(key_ty: DataType, value_ty: DataType) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Map.html#method.new"
+    },
+    {
+      "name": "datatype::Map::set_key_ty",
+      "kind": "method",
+      "description": "Set the type of the map keys.",
+      "signature": "fn set_key_ty(self: &mut Self, key_ty: DataType)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Map.html#method.set_key_ty"
+    },
+    {
+      "name": "datatype::Map::set_value_ty",
+      "kind": "method",
+      "description": "Set the type of the map values.",
+      "signature": "fn set_value_ty(self: &mut Self, value_ty: DataType)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Map.html#method.set_value_ty"
+    },
+    {
+      "name": "datatype::Map::value_ty",
+      "kind": "method",
+      "description": "The type of the map values.",
+      "signature": "fn value_ty(self: &Self) -> &DataType",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Map.html#method.value_ty"
+    },
+    {
+      "name": "datatype::Map::value_ty_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the type of the map values.",
+      "signature": "fn value_ty_mut(self: &mut Self) -> &mut DataType",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Map.html#method.value_ty_mut"
+    },
+    {
+      "name": "datatype::NamedDataType",
+      "kind": "struct",
+      "description": "Named type represents any type with it's own unique name and identity.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html"
+    },
+    {
+      "name": "datatype::NamedDataType::deprecated",
+      "kind": "method",
+      "description": "The Rust deprecated comment if the type is deprecated.",
+      "signature": "fn deprecated(self: &Self) -> Option<&Deprecated>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.deprecated"
+    },
+    {
+      "name": "datatype::NamedDataType::deprecated_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the Rust deprecated comment if the type is deprecated.",
+      "signature": "fn deprecated_mut(self: &mut Self) -> Option<&mut Deprecated>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.deprecated_mut"
+    },
+    {
+      "name": "datatype::NamedDataType::docs",
+      "kind": "method",
+      "description": "Rust documentation comments on the type",
+      "signature": "fn docs(self: &Self) -> &Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.docs"
+    },
+    {
+      "name": "datatype::NamedDataType::docs_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the Rust documentation comments on the type",
+      "signature": "fn docs_mut(self: &mut Self) -> &mut Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.docs_mut"
+    },
+    {
+      "name": "datatype::NamedDataType::generics",
+      "kind": "method",
+      "description": "The generics that are defined on this type",
+      "signature": "fn generics(self: &Self) -> &[(GenericReference, Cow<'static, str>)]",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.generics"
+    },
+    {
+      "name": "datatype::NamedDataType::generics_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the generics that are defined on this type",
+      "signature": "fn generics_mut(self: &mut Self) -> &mut Cow<'static, [(GenericReference, Cow<'static, str>)]>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.generics_mut"
+    },
+    {
+      "name": "datatype::NamedDataType::location",
+      "kind": "method",
+      "description": "The code location where this type is implemented",
+      "signature": "fn location(self: &Self) -> Location<'static>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.location"
+    },
+    {
+      "name": "datatype::NamedDataType::module_path",
+      "kind": "method",
+      "description": "The Rust path of the module where this type is defined",
+      "signature": "fn module_path(self: &Self) -> &Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.module_path"
+    },
+    {
+      "name": "datatype::NamedDataType::module_path_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the Rust path of the module where this type is defined",
+      "signature": "fn module_path_mut(self: &mut Self) -> &mut Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.module_path_mut"
+    },
+    {
+      "name": "datatype::NamedDataType::name",
+      "kind": "method",
+      "description": "The name of the type",
+      "signature": "fn name(self: &Self) -> &Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.name"
+    },
+    {
+      "name": "datatype::NamedDataType::name_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the name of the type",
+      "signature": "fn name_mut(self: &mut Self) -> &mut Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.name_mut"
+    },
+    {
+      "name": "datatype::NamedDataType::new",
+      "kind": "method",
+      "description": "Construct a new named datatype.",
+      "signature": "fn new(name: impl Into<Cow<'static, str>>, generics: Vec<(GenericReference, Cow<'static, str>)>, dt: DataType) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.new"
+    },
+    {
+      "name": "datatype::NamedDataType::new_inline",
+      "kind": "method",
+      "description": "Construct a new inlined named datatype.",
+      "signature": "fn new_inline(name: impl Into<Cow<'static, str>>, generics: Vec<(GenericReference, Cow<'static, str>)>, dt: DataType) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.new_inline"
+    },
+    {
+      "name": "datatype::NamedDataType::reference",
+      "kind": "method",
+      "description": "Construct a Reference to a NamedDataType. This can be included in a DataType::Reference within another type.",
+      "signature": "fn reference(self: &Self, generics: Vec<(GenericReference, DataType)>) -> Reference",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.reference"
+    },
+    {
+      "name": "datatype::NamedDataType::register",
+      "kind": "method",
+      "description": "Register the type into a Types.",
+      "signature": "fn register(self: &Self, types: &mut Types)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.register"
+    },
+    {
+      "name": "datatype::NamedDataType::requires_reference",
+      "kind": "method",
+      "description": "Check whether a type requires a reference to be generated.",
+      "signature": "fn requires_reference(self: &Self, _types: &Types) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.requires_reference"
+    },
+    {
+      "name": "datatype::NamedDataType::set_deprecated",
+      "kind": "method",
+      "description": "Set the Rust deprecated comment if the type is deprecated.",
+      "signature": "fn set_deprecated(self: &mut Self, deprecated: Option<Deprecated>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.set_deprecated"
+    },
+    {
+      "name": "datatype::NamedDataType::set_docs",
+      "kind": "method",
+      "description": "Set the Rust documentation comments on the type",
+      "signature": "fn set_docs(self: &mut Self, docs: Cow<'static, str>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.set_docs"
+    },
+    {
+      "name": "datatype::NamedDataType::set_location",
+      "kind": "method",
+      "description": "Set the code location where this type is implemented",
+      "signature": "fn set_location(self: &mut Self, location: Location<'static>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.set_location"
+    },
+    {
+      "name": "datatype::NamedDataType::set_module_path",
+      "kind": "method",
+      "description": "Set the Rust path of the module where this type is defined",
+      "signature": "fn set_module_path(self: &mut Self, module_path: Cow<'static, str>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.set_module_path"
+    },
+    {
+      "name": "datatype::NamedDataType::set_name",
+      "kind": "method",
+      "description": "Set the name of the type",
+      "signature": "fn set_name(self: &mut Self, name: Cow<'static, str>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.set_name"
+    },
+    {
+      "name": "datatype::NamedDataType::set_ty",
+      "kind": "method",
+      "description": "Set the inner DataType",
+      "signature": "fn set_ty(self: &mut Self, ty: DataType)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.set_ty"
+    },
+    {
+      "name": "datatype::NamedDataType::ty",
+      "kind": "method",
+      "description": "Get the inner DataType",
+      "signature": "fn ty(self: &Self) -> &DataType",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.ty"
+    },
+    {
+      "name": "datatype::NamedDataType::ty_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the inner DataType",
+      "signature": "fn ty_mut(self: &mut Self) -> &mut DataType",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedDataType.html#method.ty_mut"
+    },
+    {
+      "name": "datatype::NamedFields",
+      "kind": "struct",
+      "description": "The fields of an named enum variant or a struct.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedFields.html"
+    },
+    {
+      "name": "datatype::NamedFields::fields",
+      "kind": "method",
+      "description": "Get an immutable reference to the fields.",
+      "signature": "fn fields(self: &Self) -> &[(Cow<'static, str>, Field)]",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedFields.html#method.fields"
+    },
+    {
+      "name": "datatype::NamedFields::fields_mut",
+      "kind": "method",
+      "description": "Mutable reference to the fields.",
+      "signature": "fn fields_mut(self: &mut Self) -> &mut Vec<(Cow<'static, str>, Field)>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedFields.html#method.fields_mut"
+    },
+    {
+      "name": "datatype::NamedReference",
+      "kind": "struct",
+      "description": "Reference to a NamedDataType.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedReference.html"
+    },
+    {
+      "name": "datatype::NamedReference::generics",
+      "kind": "method",
+      "description": "Get the generic parameters set on this reference which will be filled in by the NamedDataType.",
+      "signature": "fn generics(self: &Self) -> &[(GenericReference, DataType)]",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedReference.html#method.generics"
+    },
+    {
+      "name": "datatype::NamedReference::generics_mut",
+      "kind": "method",
+      "description": "Get the generic parameters set on this reference as mutable references.",
+      "signature": "fn generics_mut(self: &mut Self) -> &mut Vec<(GenericReference, DataType)>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedReference.html#method.generics_mut"
+    },
+    {
+      "name": "datatype::NamedReference::get",
+      "kind": "method",
+      "description": "Get a reference to a NamedDataType from a Types.",
+      "signature": "fn get<'a>(self: &Self, types: &'a Types) -> Option<&'a NamedDataType>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedReference.html#method.get"
+    },
+    {
+      "name": "datatype::NamedReference::inline",
+      "kind": "method",
+      "description": "Get whether this reference should be inlined",
+      "signature": "fn inline(self: &Self) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.NamedReference.html#method.inline"
+    },
+    {
+      "name": "datatype::OpaqueReference",
+      "kind": "struct",
+      "description": "Reference to a type not understood by Specta's core.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.OpaqueReference.html"
+    },
+    {
+      "name": "datatype::OpaqueReference::downcast_ref",
+      "kind": "method",
+      "description": "Attempt to downcast the opaque state to T.",
+      "signature": "fn downcast_ref<T>(self: &Self) -> Option<&T>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.OpaqueReference.html#method.downcast_ref"
+    },
+    {
+      "name": "datatype::OpaqueReference::type_id",
+      "kind": "method",
+      "description": "Get the TypeId of the stored opaque state.",
+      "signature": "fn type_id(self: &Self) -> TypeId",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.OpaqueReference.html#method.type_id"
+    },
+    {
+      "name": "datatype::OpaqueReference::type_name",
+      "kind": "method",
+      "description": "Get the Rust type name of the stored opaque state.",
+      "signature": "fn type_name(self: &Self) -> &'static str",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.OpaqueReference.html#method.type_name"
+    },
+    {
+      "name": "datatype::Primitive",
+      "kind": "enum",
+      "description": "Rust built-in primitive type.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html"
+    },
+    {
+      "name": "datatype::Primitive::bool",
+      "kind": "variant",
+      "description": "bool primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.bool"
+    },
+    {
+      "name": "datatype::Primitive::char",
+      "kind": "variant",
+      "description": "char primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.char"
+    },
+    {
+      "name": "datatype::Primitive::f128",
+      "kind": "variant",
+      "description": "f128 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.f128"
+    },
+    {
+      "name": "datatype::Primitive::f16",
+      "kind": "variant",
+      "description": "f16 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.f16"
+    },
+    {
+      "name": "datatype::Primitive::f32",
+      "kind": "variant",
+      "description": "f32 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.f32"
+    },
+    {
+      "name": "datatype::Primitive::f64",
+      "kind": "variant",
+      "description": "f64 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.f64"
+    },
+    {
+      "name": "datatype::Primitive::i128",
+      "kind": "variant",
+      "description": "i128 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.i128"
+    },
+    {
+      "name": "datatype::Primitive::i16",
+      "kind": "variant",
+      "description": "i16 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.i16"
+    },
+    {
+      "name": "datatype::Primitive::i32",
+      "kind": "variant",
+      "description": "i32 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.i32"
+    },
+    {
+      "name": "datatype::Primitive::i64",
+      "kind": "variant",
+      "description": "i64 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.i64"
+    },
+    {
+      "name": "datatype::Primitive::i8",
+      "kind": "variant",
+      "description": "i8 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.i8"
+    },
+    {
+      "name": "datatype::Primitive::isize",
+      "kind": "variant",
+      "description": "isize primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.isize"
+    },
+    {
+      "name": "datatype::Primitive::str",
+      "kind": "variant",
+      "description": "str primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.str"
+    },
+    {
+      "name": "datatype::Primitive::u128",
+      "kind": "variant",
+      "description": "u128 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.u128"
+    },
+    {
+      "name": "datatype::Primitive::u16",
+      "kind": "variant",
+      "description": "u16 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.u16"
+    },
+    {
+      "name": "datatype::Primitive::u32",
+      "kind": "variant",
+      "description": "u32 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.u32"
+    },
+    {
+      "name": "datatype::Primitive::u64",
+      "kind": "variant",
+      "description": "u64 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.u64"
+    },
+    {
+      "name": "datatype::Primitive::u8",
+      "kind": "variant",
+      "description": "u8 primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.u8"
+    },
+    {
+      "name": "datatype::Primitive::usize",
+      "kind": "variant",
+      "description": "usize primitive.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Primitive.html#variant.usize"
+    },
+    {
+      "name": "datatype::Reference",
+      "kind": "enum",
+      "description": "Reference to another type.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Reference.html"
+    },
+    {
+      "name": "datatype::Reference::Generic",
+      "kind": "variant",
+      "description": "Reference to a generic type parameter.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Reference.html#variant.Generic"
+    },
+    {
+      "name": "datatype::Reference::inline",
+      "kind": "method",
+      "description": "Convert an existing Reference into an inlined one.",
+      "signature": "fn inline(self: Self) -> Reference",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Reference.html#method.inline"
+    },
+    {
+      "name": "datatype::Reference::Named",
+      "kind": "variant",
+      "description": "Reference to a named type collected in a Types.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Reference.html#variant.Named"
+    },
+    {
+      "name": "datatype::Reference::opaque",
+      "kind": "method",
+      "description": "Construct a new reference to an opaque type.",
+      "signature": "fn opaque<T>(state: T) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Reference.html#method.opaque"
+    },
+    {
+      "name": "datatype::Reference::Opaque",
+      "kind": "variant",
+      "description": "Reference to an opaque exporter-specific type.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Reference.html#variant.Opaque"
+    },
+    {
+      "name": "datatype::Reference::ty_eq",
+      "kind": "method",
+      "description": "Compare if two references point to the same type.",
+      "signature": "fn ty_eq(self: &Self, other: &Reference) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/enum.Reference.html#method.ty_eq"
+    },
+    {
+      "name": "datatype::Struct",
+      "kind": "struct",
+      "description": "represents a Rust struct.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Struct.html"
+    },
+    {
+      "name": "datatype::Struct::attributes",
+      "kind": "method",
+      "description": "Get a immutable reference to the attributes of the struct.",
+      "signature": "fn attributes(self: &Self) -> &Attributes",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Struct.html#method.attributes"
+    },
+    {
+      "name": "datatype::Struct::attributes_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the attributes of the struct.",
+      "signature": "fn attributes_mut(self: &mut Self) -> &mut Attributes",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Struct.html#method.attributes_mut"
+    },
+    {
+      "name": "datatype::Struct::fields",
+      "kind": "method",
+      "description": "Get a immutable reference to the fields of the struct.",
+      "signature": "fn fields(self: &Self) -> &Fields",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Struct.html#method.fields"
+    },
+    {
+      "name": "datatype::Struct::fields_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the fields of the struct.",
+      "signature": "fn fields_mut(self: &mut Self) -> &mut Fields",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Struct.html#method.fields_mut"
+    },
+    {
+      "name": "datatype::Struct::named",
+      "kind": "method",
+      "description": "Construct a named struct.",
+      "signature": "fn named() -> StructBuilder<NamedFields>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Struct.html#method.named"
+    },
+    {
+      "name": "datatype::Struct::set_fields",
+      "kind": "method",
+      "description": "Set the fields of the struct.",
+      "signature": "fn set_fields(self: &mut Self, fields: Fields)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Struct.html#method.set_fields"
+    },
+    {
+      "name": "datatype::Struct::unit",
+      "kind": "method",
+      "description": "Construct a new unit struct.",
+      "signature": "fn unit() -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Struct.html#method.unit"
+    },
+    {
+      "name": "datatype::Struct::unnamed",
+      "kind": "method",
+      "description": "Construct an unnamed struct.",
+      "signature": "fn unnamed() -> StructBuilder<UnnamedFields>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Struct.html#method.unnamed"
+    },
+    {
+      "name": "datatype::StructBuilder",
+      "kind": "struct",
+      "description": "Builder for constructing DataType::Struct values.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.StructBuilder.html"
+    },
+    {
+      "name": "datatype::StructBuilder::build",
+      "kind": "method",
+      "description": "Finalize this builder into a DataType.",
+      "signature": "fn build(self: Self) -> DataType",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.StructBuilder.html#method.build"
+    },
+    {
+      "name": "datatype::StructBuilder::field",
+      "kind": "method",
+      "description": "Add a named field.",
+      "signature": "fn field(self: Self, name: impl Into<Cow<'static, str>>, field: Field) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.StructBuilder.html#method.field"
+    },
+    {
+      "name": "datatype::StructBuilder::field_mut",
+      "kind": "method",
+      "description": "Add a named field in-place.",
+      "signature": "fn field_mut(self: &mut Self, name: impl Into<Cow<'static, str>>, field: Field)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.StructBuilder.html#method.field_mut"
+    },
+    {
+      "name": "datatype::Tuple",
+      "kind": "struct",
+      "description": "Represents a Rust tuple type.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Tuple.html"
+    },
+    {
+      "name": "datatype::Tuple::elements",
+      "kind": "method",
+      "description": "Get the elements of the tuple.",
+      "signature": "fn elements(self: &Self) -> &[DataType]",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Tuple.html#method.elements"
+    },
+    {
+      "name": "datatype::Tuple::elements_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the elements of the tuple.",
+      "signature": "fn elements_mut(self: &mut Self) -> &mut Vec<DataType>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Tuple.html#method.elements_mut"
+    },
+    {
+      "name": "datatype::Tuple::new",
+      "kind": "method",
+      "description": "Create a new tuple with the given elements.",
+      "signature": "fn new(elements: Vec<DataType>) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Tuple.html#method.new"
+    },
+    {
+      "name": "datatype::UnnamedFields",
+      "kind": "struct",
+      "description": "The fields of an unnamed enum variant.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.UnnamedFields.html"
+    },
+    {
+      "name": "datatype::UnnamedFields::fields",
+      "kind": "method",
+      "description": "Get an immutable reference to the fields of this unnamed enum variant.",
+      "signature": "fn fields(self: &Self) -> &[Field]",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.UnnamedFields.html#method.fields"
+    },
+    {
+      "name": "datatype::UnnamedFields::fields_mut",
+      "kind": "method",
+      "description": "Mutable reference to the fields of this unnamed enum variant.",
+      "signature": "fn fields_mut(self: &mut Self) -> &mut Vec<Field>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.UnnamedFields.html#method.fields_mut"
+    },
+    {
+      "name": "datatype::Variant",
+      "kind": "struct",
+      "description": "represents a variant of an enum.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html"
+    },
+    {
+      "name": "datatype::Variant::attributes",
+      "kind": "method",
+      "description": "Get an immutable reference to the runtime attributes for this variant.",
+      "signature": "fn attributes(self: &Self) -> &Attributes",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.attributes"
+    },
+    {
+      "name": "datatype::Variant::attributes_mut",
+      "kind": "method",
+      "description": "Mutable reference to the runtime attributes for this variant.",
+      "signature": "fn attributes_mut(self: &mut Self) -> &mut Attributes",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.attributes_mut"
+    },
+    {
+      "name": "datatype::Variant::deprecated",
+      "kind": "method",
+      "description": "Get an immutable reference to the deprecated attribute for the field.",
+      "signature": "fn deprecated(self: &Self) -> Option<&Deprecated>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.deprecated"
+    },
+    {
+      "name": "datatype::Variant::deprecated_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the deprecated attribute for the field.",
+      "signature": "fn deprecated_mut(self: &mut Self) -> Option<&mut Deprecated>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.deprecated_mut"
+    },
+    {
+      "name": "datatype::Variant::docs",
+      "kind": "method",
+      "description": "Get an immutable reference to the documentation comments for the field.",
+      "signature": "fn docs(self: &Self) -> &Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.docs"
+    },
+    {
+      "name": "datatype::Variant::docs_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the documentation comments for the variant.",
+      "signature": "fn docs_mut(self: &mut Self) -> &mut Cow<'static, str>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.docs_mut"
+    },
+    {
+      "name": "datatype::Variant::fields",
+      "kind": "method",
+      "description": "Get an immutable reference to the fields of the variant.",
+      "signature": "fn fields(self: &Self) -> &Fields",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.fields"
+    },
+    {
+      "name": "datatype::Variant::fields_mut",
+      "kind": "method",
+      "description": "Get a mutable reference to the fields of the variant.",
+      "signature": "fn fields_mut(self: &mut Self) -> &mut Fields",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.fields_mut"
+    },
+    {
+      "name": "datatype::Variant::named",
+      "kind": "method",
+      "description": "Construct a new struct enum variant with named fields.",
+      "signature": "fn named() -> VariantBuilder<NamedFields>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.named"
+    },
+    {
+      "name": "datatype::Variant::set_deprecated",
+      "kind": "method",
+      "description": "Set the deprecated attribute for the field.",
+      "signature": "fn set_deprecated(self: &mut Self, deprecated: Option<Deprecated>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.set_deprecated"
+    },
+    {
+      "name": "datatype::Variant::set_docs",
+      "kind": "method",
+      "description": "Set the documentation comments for the field.",
+      "signature": "fn set_docs(self: &mut Self, docs: Cow<'static, str>)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.set_docs"
+    },
+    {
+      "name": "datatype::Variant::set_skip",
+      "kind": "method",
+      "description": "Set the skip attribute for the variant.",
+      "signature": "fn set_skip(self: &mut Self, skip: bool)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.set_skip"
+    },
+    {
+      "name": "datatype::Variant::set_type_overridden",
+      "kind": "method",
+      "description": "Set whether a Specta type override attribute was applied to this variant.",
+      "signature": "fn set_type_overridden(self: &mut Self, type_overridden: bool)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.set_type_overridden"
+    },
+    {
+      "name": "datatype::Variant::skip",
+      "kind": "method",
+      "description": "Has the Serde or Specta skip attribute been applied to this variant?",
+      "signature": "fn skip(self: &Self) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.skip"
+    },
+    {
+      "name": "datatype::Variant::type_overridden",
+      "kind": "method",
+      "description": "Has the Specta type override attribute been applied to this variant?",
+      "signature": "fn type_overridden(self: &Self) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.type_overridden"
+    },
+    {
+      "name": "datatype::Variant::unit",
+      "kind": "method",
+      "description": "Construct a new unit enum variant.",
+      "signature": "fn unit() -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.unit"
+    },
+    {
+      "name": "datatype::Variant::unnamed",
+      "kind": "method",
+      "description": "Construct a new tuple enum variant without unnamed fields.",
+      "signature": "fn unnamed() -> VariantBuilder<UnnamedFields>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.Variant.html#method.unnamed"
+    },
+    {
+      "name": "datatype::VariantBuilder",
+      "kind": "struct",
+      "description": "Builder for constructing Variant values.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.VariantBuilder.html"
+    },
+    {
+      "name": "datatype::VariantBuilder::attributes",
+      "kind": "method",
+      "description": "Set runtime attributes on the variant.",
+      "signature": "fn attributes(self: Self, attributes: Attributes) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.VariantBuilder.html#method.attributes"
+    },
+    {
+      "name": "datatype::VariantBuilder::attributes_mut",
+      "kind": "method",
+      "description": "Set runtime attributes on the variant in-place.",
+      "signature": "fn attributes_mut(self: &mut Self, attributes: Attributes)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.VariantBuilder.html#method.attributes_mut"
+    },
+    {
+      "name": "datatype::VariantBuilder::build",
+      "kind": "method",
+      "description": "Finalize unnamed variant builder into Variant.",
+      "signature": "fn build(self: Self) -> Variant",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.VariantBuilder.html#method.build"
+    },
+    {
+      "name": "datatype::VariantBuilder::deprecated",
+      "kind": "method",
+      "description": "Set deprecation metadata for the variant.",
+      "signature": "fn deprecated(self: Self, reason: Deprecated) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.VariantBuilder.html#method.deprecated"
+    },
+    {
+      "name": "datatype::VariantBuilder::docs",
+      "kind": "method",
+      "description": "Set documentation for the variant.",
+      "signature": "fn docs(self: Self, docs: Cow<'static, str>) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.VariantBuilder.html#method.docs"
+    },
+    {
+      "name": "datatype::VariantBuilder::field",
+      "kind": "method",
+      "description": "Add an unnamed field to the variant.",
+      "signature": "fn field(self: Self, field: Field) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.VariantBuilder.html#method.field"
+    },
+    {
+      "name": "datatype::VariantBuilder::field_mut",
+      "kind": "method",
+      "description": "Add an unnamed field to the variant and return the updated builder.",
+      "signature": "fn field_mut(self: Self, field: Field) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.VariantBuilder.html#method.field_mut"
+    },
+    {
+      "name": "datatype::VariantBuilder::skip",
+      "kind": "method",
+      "description": "Mark the variant as skipped.",
+      "signature": "fn skip(self: Self) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.VariantBuilder.html#method.skip"
+    },
+    {
+      "name": "datatype::VariantBuilder::type_overridden",
+      "kind": "method",
+      "description": "Set whether the variant has a Specta type override.",
+      "signature": "fn type_overridden(self: Self, type_overridden: bool) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.VariantBuilder.html#method.type_overridden"
+    },
+    {
+      "name": "datatype::VariantBuilder::type_overridden_mut",
+      "kind": "method",
+      "description": "Set whether the variant has a Specta type override in-place.",
+      "signature": "fn type_overridden_mut(self: &mut Self, type_overridden: bool)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/datatype/struct.VariantBuilder.html#method.type_overridden_mut"
+    },
+    {
+      "name": "function",
+      "kind": "mod",
+      "description": "Support for exporting Rust function.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/function/index.html"
+    },
+    {
+      "name": "function::collect_functions",
+      "kind": "macro",
+      "description": "Collects function types into a Vec, and all downstream types into a Types instance.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/function/macro.collect_functions.html",
+      "signature": "macro_rules! collect_functions { ($(,)?) => { ... }; ($($b:tt $(:: $($p:ident)? $(<$($g:path),*>)? )* ),* $(,)?) => { ... }; }"
+    },
+    {
+      "name": "function::fn_datatype",
+      "kind": "macro",
+      "description": "Returns a Function for a given function that has been annotated with the #[specta] attribute.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/function/macro.fn_datatype.html",
+      "signature": "macro_rules! fn_datatype { ($($json:tt)*) => { ... }; }"
+    },
+    {
+      "name": "function::FunctionArg",
+      "kind": "trait",
+      "description": "Implemented by types that can be used as an argument in a function annotated with specta.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/function/trait.FunctionArg.html"
+    },
+    {
+      "name": "function::FunctionArg::to_datatype",
+      "kind": "tymethod",
+      "description": "Gets the type of an argument as a DataType.",
+      "signature": "fn to_datatype(types: &mut Types) -> Option<DataType>",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/function/trait.FunctionArg.html#tymethod.to_datatype"
+    },
+    {
+      "name": "function::FunctionResult",
+      "kind": "trait",
+      "description": "Implemented by types that can be returned from a function annotated with specta.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/function/trait.FunctionResult.html"
+    },
+    {
+      "name": "function::FunctionResult::to_datatype",
+      "kind": "tymethod",
+      "description": "Gets the function return type as a DataType.",
+      "signature": "fn to_datatype(types: &mut Types) -> DataType",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/function/trait.FunctionResult.html#tymethod.to_datatype"
+    },
+    {
+      "name": "ResolvedTypes",
+      "kind": "struct",
+      "description": "A wrapper around Types indicating the type graph has already been transformed for a specific export format.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.ResolvedTypes.html"
+    },
+    {
+      "name": "ResolvedTypes::as_types",
+      "kind": "method",
+      "description": "Borrow the underlying Types collection.",
+      "signature": "fn as_types(self: &Self) -> &Types",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.ResolvedTypes.html#method.as_types"
+    },
+    {
+      "name": "ResolvedTypes::from_resolved_types",
+      "kind": "method",
+      "description": "Wrap already-resolved Types as ResolvedTypes.",
+      "signature": "fn from_resolved_types(types: Types) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.ResolvedTypes.html#method.from_resolved_types"
+    },
+    {
+      "name": "ResolvedTypes::into_sorted_iter",
+      "kind": "method",
+      "description": "Sort the collection into a consistent order and return an iterator.",
+      "signature": "fn into_sorted_iter(self: &Self) -> impl ExactSizeIterator",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.ResolvedTypes.html#method.into_sorted_iter"
+    },
+    {
+      "name": "ResolvedTypes::into_types",
+      "kind": "method",
+      "description": "Consume ResolvedTypes and return the underlying Types.",
+      "signature": "fn into_types(self: Self) -> Types",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.ResolvedTypes.html#method.into_types"
+    },
+    {
+      "name": "ResolvedTypes::into_unsorted_iter",
+      "kind": "method",
+      "description": "Return the unsorted iterator over the collection.",
+      "signature": "fn into_unsorted_iter(self: &Self) -> impl ExactSizeIterator",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.ResolvedTypes.html#method.into_unsorted_iter"
+    },
+    {
+      "name": "ResolvedTypes::iter_mut",
+      "kind": "method",
+      "description": "Return an mutable iterator over the type collection. Note: The order returned is unsorted.",
+      "signature": "fn iter_mut<F>(self: &mut Self, f: F)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.ResolvedTypes.html#method.iter_mut"
+    },
+    {
+      "name": "specta",
+      "kind": "attr",
+      "description": "Prepares a function to have its types extracted using specta::function::fn_datatype!",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/attr.specta.html",
+      "signature": "#[specta]"
+    },
+    {
+      "name": "Type",
+      "kind": "derive",
+      "description": "Implements specta::Type for a given struct or enum.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/derive.Type.html",
+      "signature": "#[derive(Type)] { // Attributes available to this derive: #[specta] }"
+    },
+    {
+      "name": "Type",
+      "kind": "trait",
+      "description": "Provides runtime type information that can be fed into a language exporter to generate a type definition for another language. Avoid implementing this trait yourself where possible and use the Type macro instead.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/trait.Type.html"
+    },
+    {
+      "name": "Type::definition",
+      "kind": "tymethod",
+      "description": "returns a DataType that represents the type. This will also register this and any dependent types into the Types.",
+      "signature": "fn definition(types: &mut Types) -> DataType",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/trait.Type.html#tymethod.definition"
+    },
+    {
+      "name": "Types",
+      "kind": "struct",
+      "description": "Define a set of types which can be exported together.",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.Types.html"
+    },
+    {
+      "name": "Types::extend",
+      "kind": "method",
+      "description": "Merge types from another collection into this one.",
+      "signature": "fn extend(self: &mut Self, other: &Self)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.Types.html#method.extend"
+    },
+    {
+      "name": "Types::into_sorted_iter",
+      "kind": "method",
+      "description": "Sort the collection into a consistent order and return an iterator.",
+      "signature": "fn into_sorted_iter(self: &Self) -> impl ExactSizeIterator",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.Types.html#method.into_sorted_iter"
+    },
+    {
+      "name": "Types::into_unsorted_iter",
+      "kind": "method",
+      "description": "Return the unsorted iterator over the collection.",
+      "signature": "fn into_unsorted_iter(self: &Self) -> impl ExactSizeIterator",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.Types.html#method.into_unsorted_iter"
+    },
+    {
+      "name": "Types::is_empty",
+      "kind": "method",
+      "description": "Check if the collection is empty.",
+      "signature": "fn is_empty(self: &Self) -> bool",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.Types.html#method.is_empty"
+    },
+    {
+      "name": "Types::iter_mut",
+      "kind": "method",
+      "description": "Return an mutable iterator over the type collection. Note: The order returned is unsorted.",
+      "signature": "fn iter_mut<F>(self: &mut Self, f: F)",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.Types.html#method.iter_mut"
+    },
+    {
+      "name": "Types::len",
+      "kind": "method",
+      "description": "Get the length of the collection.",
+      "signature": "fn len(self: &Self) -> usize",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.Types.html#method.len"
+    },
+    {
+      "name": "Types::map",
+      "kind": "method",
+      "description": "Map over the collection, transforming each NamedDataType with the given closure. This preserves the ArcId keys, ensuring that References remain valid.",
+      "signature": "fn map<F>(self: Self, f: F) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.Types.html#method.map"
+    },
+    {
+      "name": "Types::register",
+      "kind": "method",
+      "description": "Register a Type with the collection.",
+      "signature": "fn register<T>(self: Self) -> Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.Types.html#method.register"
+    },
+    {
+      "name": "Types::register_mut",
+      "kind": "method",
+      "description": "Register a Type with the collection.",
+      "signature": "fn register_mut<T>(self: &mut Self) -> &mut Self",
+      "url": "https://docs.rs/specta/2.0.0-rc.24/specta/struct.Types.html#method.register_mut"
+    }
+  ],
+  "source": "rustdoc-json"
+}

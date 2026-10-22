@@ -1,0 +1,11 @@
+{
+  "symbols": [
+    {
+      "name": "Type",
+      "kind": "derive",
+      "description": "Implements Type for a given struct or enum.",
+      "url": "https://docs.rs/specta-macros/2.0.0-rc.23/specta_macros/derive.Type.html"
+    }
+  ],
+  "source": "rustdoc-json"
+}

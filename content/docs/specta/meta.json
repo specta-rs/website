@@ -8,6 +8,7 @@
     "languages",
     "framework",
     "core",
+    "[BookOpen][API reference](/docs/reference?project=specta)",
     "[Github][GitHub](https://github.com/specta-rs/specta)",
     "[docsRsLogo][docs.rs](https://docs.rs/specta)"
   ]

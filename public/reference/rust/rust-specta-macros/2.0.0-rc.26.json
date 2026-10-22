@@ -1,0 +1,17 @@
+{
+  "symbols": [
+    {
+      "name": "parse_type_from_lit",
+      "kind": "macro",
+      "description": "Parses a string literal into a Rust type token stream.",
+      "url": "https://docs.rs/specta-macros/2.0.0-rc.26/specta_macros/macro.parse_type_from_lit.html"
+    },
+    {
+      "name": "Type",
+      "kind": "derive",
+      "description": "Implements specta::Type for a given struct or enum.",
+      "url": "https://docs.rs/specta-macros/2.0.0-rc.26/specta_macros/derive.Type.html"
+    }
+  ],
+  "source": "rustdoc-json"
+}

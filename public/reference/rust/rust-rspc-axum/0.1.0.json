@@ -1,0 +1,26 @@
+{
+  "symbols": [
+    {
+      "name": "endpoint",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/rspc-axum/0.1.0/rspc_axum/fn.endpoint.html",
+      "signature": "pub fn endpoint<TCtx, TCtxFnMarker, TCtxFn, S>( router: Arc<Router<TCtx>>, ctx_fn: TCtxFn ) -> Router<S>where S: Clone + Send + Sync + 'static, TCtx: Send + Sync + 'static, TCtxFnMarker: Send + Sync + 'static, TCtxFn: TCtxFunc<TCtx, TCtxFnMarker>,"
+    },
+    {
+      "name": "handle_http",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/rspc-axum/0.1.0/rspc_axum/fn.handle_http.html",
+      "signature": "pub async fn handle_http<TCtx, TCtxFn, TCtxFnMarker>( ctx_fn: TCtxFn, kind: ProcedureKind, req: Request, router: &Arc<Router<TCtx>> ) -> impl IntoResponsewhere TCtx: Send + Sync + 'static, TCtxFn: TCtxFunc<TCtx, TCtxFnMarker>,"
+    },
+    {
+      "name": "handle_websocket",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/rspc-axum/0.1.0/rspc_axum/fn.handle_websocket.html",
+      "signature": "pub async fn handle_websocket<TCtx, TCtxFn, TCtxFnMarker>( ctx_fn: TCtxFn, socket: WebSocket, parts: Parts, router: Arc<Router<TCtx>> )where TCtx: Send + Sync + 'static, TCtxFn: TCtxFunc<TCtx, TCtxFnMarker>,"
+    }
+  ],
+  "source": "rustdoc-html"
+}

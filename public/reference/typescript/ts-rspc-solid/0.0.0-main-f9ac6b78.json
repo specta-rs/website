@@ -1,0 +1,28 @@
+{
+  "symbols": [
+    {
+      "name": "BaseOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "export interface BaseOptions<TProcedures extends ProceduresDef> {\n    rspc?: {\n        client?: Client<TProcedures>;\n    };\n}",
+      "url": "/docs/reference?package=ts-rspc-solid&version=0.0.0-main-f9ac6b78#symbol-BaseOptions",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-f9ac6b78"
+    },
+    {
+      "name": "createSolidQueryHooks",
+      "kind": "function",
+      "description": "",
+      "signature": "export declare function createSolidQueryHooks<TProceduresLike extends ProceduresDef>(): any;",
+      "url": "/docs/reference?package=ts-rspc-solid&version=0.0.0-main-f9ac6b78#symbol-createSolidQueryHooks",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-f9ac6b78"
+    },
+    {
+      "name": "SubscriptionOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "export interface SubscriptionOptions<TOutput> {\n    enabled?: boolean;\n    onStarted?: () => void;\n    onData: (data: TOutput) => void;\n    onError?: (err: RSPCError) => void;\n}",
+      "url": "/docs/reference?package=ts-rspc-solid&version=0.0.0-main-f9ac6b78#symbol-SubscriptionOptions",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/solid/v/0.0.0-main-f9ac6b78"
+    }
+  ]
+}

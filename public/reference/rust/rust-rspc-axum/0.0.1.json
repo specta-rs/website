@@ -1,0 +1,12 @@
+{
+  "symbols": [
+    {
+      "name": "endpoint",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/rspc-axum/0.0.1/rspc_axum/fn.endpoint.html",
+      "signature": "pub fn endpoint<S>(endpoint: Endpoint<impl HttpEndpoint>) -> Router<S>where S: Clone + Send + Sync + 'static,"
+    }
+  ],
+  "source": "rustdoc-html"
+}

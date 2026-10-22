@@ -1,0 +1,132 @@
+{
+  "symbols": [
+    {
+      "name": "Client",
+      "kind": "class",
+      "description": "",
+      "signature": "declare class Client<T extends OperationsDef> {\n    private transport;\n    private subscriptionMap;\n    constructor(args: ClientArgs);\n    query<K extends T[\"queries\"][\"key\"]>(key: K): Promise<Extract<T[\"queries\"], {\n        key: K;\n    }>[\"result\"]>;\n    mutation<K extends T[\"mutations\"][\"key\"][0]>(key: [\n        K,\n        Extract<T[\"mutations\"], {\n            key: [\n                K,\n                any\n            ];\n        }>[\"key\"][1]\n    ]): Promise<Extract<T[\"mutations\"], {\n        key: K;\n    }>[\"result\"]>;\n    addSubscription<K extends T[\"subscriptions\"][\"key\"][0]>(key: Extract<T[\"subscriptions\"][\"key\"], {\n        key: [\n            K,\n            any\n        ];\n    }>[1] extends undefined ? [\n        K\n    ] : [\n        K,\n        Extract<T[\"subscriptions\"][\"key\"], {\n            key: [\n                K,\n                any\n            ];\n        }>[1]\n    ], options: {\n        onNext(msg: Extract<T[\"subscriptions\"], {\n            key: [\n                K,\n                any\n            ];\n        }>[\"result\"]): any;\n        onError?(err: never): any;\n    }): () => void;\n}",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-Client",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "ClientArgs",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface ClientArgs {\n    transport: Transport;\n    transformer?: ClientTransformer;\n}",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-ClientArgs",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "ClientTransformer",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface ClientTransformer {\n    serialize(type: OperationType, key: OperationKey): OperationKey;\n    deserialize(type: OperationType, key: OperationKey, data: any): any;\n}",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-ClientTransformer",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "createClient",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function createClient<T extends OperationsDef>(args: ClientArgs): Client<T>;",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-createClient",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "createReactQueryHooks",
+      "kind": "function",
+      "description": "",
+      "signature": "declare function createReactQueryHooks<T extends OperationsDef>(): {\n    Provider: ({ children, client, queryClient, }: {\n        children: ReactElement;\n        client: Client<T>;\n        queryClient: QueryClient;\n    }) => JSX.Element;\n    useContext: () => Context<T>;\n    useQuery: <K extends T[\"queries\"][\"key\"][0]>(key: Extract<T[\"queries\"], {\n        key: [\n            K\n        ] | [\n            K,\n            any\n        ];\n    }>[\"key\"], options?: UseQueryOptions<Extract<T[\"queries\"], {\n        key: [\n            K\n        ] | [\n            K,\n            any\n        ];\n    }>[\"result\"], RSPCError, Extract<T[\"queries\"], {\n        key: [\n            K\n        ] | [\n            K,\n            any\n        ];\n    }>[\"result\"], _tanstack_react_query.QueryKey>) => UseQueryResult<Extract<T[\"queries\"], {\n        key: [\n            K\n        ] | [\n            K,\n            any\n        ];\n    }>[\"result\"], RSPCError>;\n    useMutation: <K_1 extends T[\"mutations\"][\"key\"]>(key: K_1[0], options?: UseMutationOptions<Extract<T[\"mutations\"], {\n        key: K_1;\n    }>[\"result\"], RSPCError, K_1[1], unknown>) => UseMutationResult<Extract<T[\"mutations\"], {\n        key: K_1;\n    }>[\"result\"], RSPCError, K_1[1], unknown>;\n    useSubscription: <K_2 extends T[\"subscriptions\"][\"key\"][0]>(key: Extract<T[\"subscriptions\"], {\n        key: [\n            K_2\n        ] | [\n            K_2,\n            any\n        ];\n    }>[\"key\"][1] extends undefined ? [\n        K_2\n    ] : [\n        K_2,\n        Extract<T[\"subscriptions\"], {\n            key: [\n                K_2\n            ] | [\n                K_2,\n                any\n            ];\n        }>[\"key\"][1]\n    ], options?: {\n        onNext(msg: Extract<T[\"subscriptions\"], {\n            key: [\n                K_2\n            ] | [\n                K_2,\n                any\n            ];\n        }>[\"result\"]): any;\n        onError?(err: RSPCError): any;\n    }) => void;\n};\n\n// Referenced local context (not public exports):\ninterface Context<T extends OperationsDef> {\n    client: Client<T>;\n    queryClient: QueryClient;\n}",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-createReactQueryHooks",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "Demo",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type Demo<Operations extends OperationsDef, Type extends keyof OperationsDef, K> = Extract<Operations[Type], {\n    key: [\n        K\n    ] | [\n        K,\n        any\n    ];\n}>;",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-Demo",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "FetchTransport",
+      "kind": "class",
+      "description": "",
+      "signature": "declare class FetchTransport implements Transport {\n    private url;\n    transformer?: ClientTransformer;\n    clientSubscriptionCallback?: (id: string, key: string, value: any) => void;\n    constructor(url: string);\n    doRequest(operation: OperationType, key: OperationKey): Promise<any>;\n}",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-FetchTransport",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "OperationKey",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type OperationKey = [\n    string\n] | [\n    string, /* args */\n    any\n];",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-OperationKey",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "OperationKeyArgs",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type OperationKeyArgs<Operations extends OperationsDef, Type extends keyof OperationsDef, K extends Operations[Type][\"key\"][0]> = Extract<Operations[Type], {\n    key: [\n        K\n    ] | [\n        K,\n        any\n    ];\n}>[\"key\"][1] extends undefined ? [\n    K\n] : [\n    K,\n    Extract<Operations[Type], {\n        key: [\n            K,\n            any\n        ];\n    }>[\"key\"][1]\n];",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-OperationKeyArgs",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "OperationKeyResult",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type OperationKeyResult<Operations extends OperationsDef, Type extends keyof OperationsDef, K extends Operations[Type][\"key\"][0]> = Extract<Operations[Type], {\n    key: [\n        K\n    ] | [\n        K,\n        any\n    ];\n}>[\"key\"][1] extends undefined ? [\n    K\n] : [\n    K,\n    Extract<Operations[Type], {\n        key: [\n            K,\n            any\n        ];\n    }>[\"key\"][1]\n];",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-OperationKeyResult",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "OperationsDef",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type OperationsDef = {\n    queries: {\n        key: OperationKey;\n        result: any;\n    };\n    mutations: {\n        key: OperationKey;\n        result: any;\n    };\n    subscriptions: {\n        key: OperationKey;\n        result: any;\n    };\n};",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-OperationsDef",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "OperationType",
+      "kind": "type",
+      "description": "",
+      "signature": "declare type OperationType = \"query\" | \"mutation\" | \"subscriptionAdd\" | \"subscriptionRemove\";",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-OperationType",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "RSPCError",
+      "kind": "class",
+      "description": "",
+      "signature": "declare class RSPCError {\n    code: number;\n    message: string;\n    constructor(code: number, message: string);\n}",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-RSPCError",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "TauriTransport",
+      "kind": "class",
+      "description": "",
+      "signature": "declare class TauriTransport implements Transport {\n    private requestMap;\n    private listener?;\n    transformer?: ClientTransformer;\n    clientSubscriptionCallback?: (id: string, key: string, value: any) => void;\n    constructor();\n    doRequest(operation: OperationType, key: OperationKey): Promise<any>;\n}",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-TauriTransport",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "Transport",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface Transport {\n    transformer?: ClientTransformer;\n    clientSubscriptionCallback?: (id: string, key: string, value: any) => void;\n    doRequest(operation: OperationType, key: OperationKey): Promise<any>;\n}",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-Transport",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    },
+    {
+      "name": "WebsocketTransport",
+      "kind": "class",
+      "description": "",
+      "signature": "declare class WebsocketTransport implements Transport {\n    private url;\n    private ws;\n    private requestMap;\n    transformer?: ClientTransformer;\n    clientSubscriptionCallback?: (id: string, key: string, value: any) => void;\n    constructor(url: string);\n    attachEventListeners(): void;\n    reconnect(timeoutIndex?: number): Promise<void>;\n    doRequest(operation: OperationType, key: OperationKey): Promise<any>;\n}",
+      "url": "/docs/reference?package=ts-rspc-client&version=0.0.4#symbol-WebsocketTransport",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/client/v/0.0.4"
+    }
+  ]
+}

@@ -1,0 +1,244 @@
+{
+  "symbols": [
+    {
+      "name": "Any",
+      "kind": "struct",
+      "description": "Cast a Rust type to z.any().",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Any.html"
+    },
+    {
+      "name": "BigIntExportBehavior",
+      "kind": "enum",
+      "description": "Allows configuring how Specta's Zod exporter will deal with BigInt types (i64, i128 etc).",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/enum.BigIntExportBehavior.html"
+    },
+    {
+      "name": "BigIntExportBehavior::BigInt",
+      "kind": "variant",
+      "description": "Export BigInt as a Zod bigint schema.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/enum.BigIntExportBehavior.html#variant.BigInt"
+    },
+    {
+      "name": "BigIntExportBehavior::Fail",
+      "kind": "variant",
+      "description": "Abort export on BigInt usage.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/enum.BigIntExportBehavior.html#variant.Fail"
+    },
+    {
+      "name": "BigIntExportBehavior::Number",
+      "kind": "variant",
+      "description": "Export BigInt as a Zod number schema.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/enum.BigIntExportBehavior.html#variant.Number"
+    },
+    {
+      "name": "BigIntExportBehavior::String",
+      "kind": "variant",
+      "description": "Export BigInt as a Zod string schema.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/enum.BigIntExportBehavior.html#variant.String"
+    },
+    {
+      "name": "define",
+      "kind": "fn",
+      "description": "Define a custom Zod expression which can be used as a DataType::Reference.",
+      "signature": "fn define(raw: impl Into<std::borrow::Cow<'static, str>>) -> specta::datatype::Reference",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/fn.define.html"
+    },
+    {
+      "name": "Error",
+      "kind": "struct",
+      "description": "The error type for the Zod exporter.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Error.html"
+    },
+    {
+      "name": "Error::framework",
+      "kind": "method",
+      "description": "Construct an error for framework-specific logic.",
+      "signature": "fn framework(message: impl Into<Cow<'static, str>>, source: impl Into<Box<dyn std::error::Error + Send + Sync>>) -> Self",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Error.html#method.framework"
+    },
+    {
+      "name": "FrameworkExporter",
+      "kind": "struct",
+      "description": "Reference to the Zod exporter for framework callbacks.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.FrameworkExporter.html"
+    },
+    {
+      "name": "FrameworkExporter::export",
+      "kind": "method",
+      "description": "primitives::export",
+      "signature": "fn export<'a>(self: &Self, ndts: impl Iterator, indent: &'a str) -> Result<String, Error>",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.FrameworkExporter.html#method.export"
+    },
+    {
+      "name": "FrameworkExporter::inline",
+      "kind": "method",
+      "description": "primitives::inline",
+      "signature": "fn inline(self: &Self, dt: &DataType) -> Result<String, Error>",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.FrameworkExporter.html#method.inline"
+    },
+    {
+      "name": "FrameworkExporter::reference",
+      "kind": "method",
+      "description": "primitives::reference",
+      "signature": "fn reference(self: &Self, r: &Reference) -> Result<String, Error>",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.FrameworkExporter.html#method.reference"
+    },
+    {
+      "name": "FrameworkExporter::render_types",
+      "kind": "method",
+      "description": "Render the types within Types.",
+      "signature": "fn render_types(self: &mut Self) -> Result<Cow<'static, str>, Error>",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.FrameworkExporter.html#method.render_types"
+    },
+    {
+      "name": "FrameworkExporter::types",
+      "kind": "structfield",
+      "description": "Collected types currently being exported.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.FrameworkExporter.html#structfield.types"
+    },
+    {
+      "name": "Layout",
+      "kind": "enum",
+      "description": "Allows configuring the format of generated output.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/enum.Layout.html"
+    },
+    {
+      "name": "Layout::Files",
+      "kind": "variant",
+      "description": "Emit one file per Rust module path.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/enum.Layout.html#variant.Files"
+    },
+    {
+      "name": "Layout::FlatFile",
+      "kind": "variant",
+      "description": "Flatten all types into one file with unmodified names.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/enum.Layout.html#variant.FlatFile"
+    },
+    {
+      "name": "Layout::ModulePrefixedName",
+      "kind": "variant",
+      "description": "Flatten into one file with module prefixes added to each type name.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/enum.Layout.html#variant.ModulePrefixedName"
+    },
+    {
+      "name": "Never",
+      "kind": "struct",
+      "description": "Cast a Rust type to z.never().",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Never.html"
+    },
+    {
+      "name": "primitives",
+      "kind": "mod",
+      "description": "Primitives provide building blocks for Specta-based libraries.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/primitives/index.html"
+    },
+    {
+      "name": "primitives::export",
+      "kind": "fn",
+      "description": "Generate a group of export const XSchema = ... declarations for named types.",
+      "signature": "fn export<'a>(exporter: &dyn AsRef<crate::Zod>, types: &specta::Types, ndts: impl Iterator, indent: &str) -> Result<String, crate::Error>",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/primitives/fn.export.html"
+    },
+    {
+      "name": "primitives::inline",
+      "kind": "fn",
+      "description": "Generate an inline Zod expression for a DataType.",
+      "signature": "fn inline(exporter: &dyn AsRef<crate::Zod>, types: &specta::Types, dt: &specta::datatype::DataType) -> Result<String, crate::Error>",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/primitives/fn.inline.html"
+    },
+    {
+      "name": "primitives::reference",
+      "kind": "fn",
+      "description": "Generate a Zod expression for a Reference.",
+      "signature": "fn reference(exporter: &dyn AsRef<crate::Zod>, types: &specta::Types, r: &specta::datatype::Reference) -> Result<String, crate::Error>",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/primitives/fn.reference.html"
+    },
+    {
+      "name": "Unknown",
+      "kind": "struct",
+      "description": "Cast a Rust type to z.unknown().",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Unknown.html"
+    },
+    {
+      "name": "Zod",
+      "kind": "struct",
+      "description": "Zod language exporter.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Zod.html"
+    },
+    {
+      "name": "Zod::bigint",
+      "kind": "method",
+      "description": "Configure BigInt handling behaviour.",
+      "signature": "fn bigint(self: Self, bigint: BigIntExportBehavior) -> Self",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Zod.html#method.bigint"
+    },
+    {
+      "name": "Zod::bigint",
+      "kind": "structfield",
+      "description": "Strategy for exporting Rust bigint-compatible primitives.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Zod.html#structfield.bigint"
+    },
+    {
+      "name": "Zod::export",
+      "kind": "method",
+      "description": "Export files into a single string.",
+      "signature": "fn export(self: &Self, types: &Types, format: impl Format) -> Result<String, Error>",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Zod.html#method.export"
+    },
+    {
+      "name": "Zod::export_to",
+      "kind": "method",
+      "description": "Export the types to a specific file/folder.",
+      "signature": "fn export_to(self: &Self, path: impl AsRef<Path>, types: &Types, format: impl Format) -> Result<(), Error>",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Zod.html#method.export_to"
+    },
+    {
+      "name": "Zod::framework_prelude",
+      "kind": "method",
+      "description": "Provide a prelude which is added to the start of all exported files.",
+      "signature": "fn framework_prelude(self: Self, prelude: impl Into<Cow<'static, str>>) -> Self",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Zod.html#method.framework_prelude"
+    },
+    {
+      "name": "Zod::framework_runtime",
+      "kind": "method",
+      "description": "Add runtime code exported as part of the bindings.",
+      "signature": "fn framework_runtime(self: Self, builder: impl Fn + Send + Sync + 'static) -> Self",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Zod.html#method.framework_runtime"
+    },
+    {
+      "name": "Zod::header",
+      "kind": "method",
+      "description": "Configure a header for the file.",
+      "signature": "fn header(self: Self, header: impl Into<Cow<'static, str>>) -> Self",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Zod.html#method.header"
+    },
+    {
+      "name": "Zod::header",
+      "kind": "structfield",
+      "description": "Custom header prepended to exported files.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Zod.html#structfield.header"
+    },
+    {
+      "name": "Zod::layout",
+      "kind": "method",
+      "description": "Configure bindings layout.",
+      "signature": "fn layout(self: Self, layout: Layout) -> Self",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Zod.html#method.layout"
+    },
+    {
+      "name": "Zod::layout",
+      "kind": "structfield",
+      "description": "Output layout mode for generated Zod TypeScript.",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Zod.html#structfield.layout"
+    },
+    {
+      "name": "Zod::new",
+      "kind": "method",
+      "description": "Construct a new exporter with default options configured.",
+      "signature": "fn new() -> Self",
+      "url": "https://docs.rs/specta-zod/0.0.3/specta_zod/struct.Zod.html#method.new"
+    }
+  ],
+  "source": "rustdoc-json"
+}

@@ -1,0 +1,162 @@
+{
+  "symbols": [
+    {
+      "name": "apply",
+      "kind": "fn",
+      "description": "Apply Serde attributes to a TypeCollection in-place.",
+      "signature": "fn apply(types: &mut specta::TypeCollection, mode: SerdeMode) -> Result<(), Error>",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/fn.apply.html"
+    },
+    {
+      "name": "apply_serde_transformations",
+      "kind": "fn",
+      "description": "Apply serde transformations to a DataType for the specified mode",
+      "signature": "fn apply_serde_transformations(datatype: &specta::datatype::DataType, mode: SerdeMode) -> Result<specta::datatype::DataType, crate::Error>",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/fn.apply_serde_transformations.html"
+    },
+    {
+      "name": "apply_to_dt",
+      "kind": "fn",
+      "description": "Apply Serde attributes to a single DataType.",
+      "signature": "fn apply_to_dt(dt: specta::datatype::DataType, mode: SerdeMode) -> Result<specta::datatype::DataType, Error>",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/fn.apply_to_dt.html"
+    },
+    {
+      "name": "EnumRepr",
+      "kind": "enum",
+      "description": "Serde representation of an enum. Refer to the Serde documentation for more information.",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.EnumRepr.html"
+    },
+    {
+      "name": "EnumRepr::Adjacent",
+      "kind": "variant",
+      "description": "Adjacently tagged enum representation.",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.EnumRepr.html#variant.Adjacent"
+    },
+    {
+      "name": "EnumRepr::Adjacent::content",
+      "kind": "structfield",
+      "description": "Field name used to hold the variant content.",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.EnumRepr.html#variant.Adjacent.field.content"
+    },
+    {
+      "name": "EnumRepr::Adjacent::tag",
+      "kind": "structfield",
+      "description": "Field name used as the tag discriminator.",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.EnumRepr.html#variant.Adjacent.field.tag"
+    },
+    {
+      "name": "EnumRepr::External",
+      "kind": "variant",
+      "description": "Externally tagged enum representation.",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.EnumRepr.html#variant.External"
+    },
+    {
+      "name": "EnumRepr::Internal",
+      "kind": "variant",
+      "description": "Internally tagged enum representation.",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.EnumRepr.html#variant.Internal"
+    },
+    {
+      "name": "EnumRepr::Internal::tag",
+      "kind": "structfield",
+      "description": "Field name used as the tag discriminator.",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.EnumRepr.html#variant.Internal.field.tag"
+    },
+    {
+      "name": "EnumRepr::is_string",
+      "kind": "method",
+      "description": "Check if this is a string enum representation",
+      "signature": "fn is_string(self: &Self) -> bool",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.EnumRepr.html#method.is_string"
+    },
+    {
+      "name": "EnumRepr::rename_all",
+      "kind": "method",
+      "description": "Get the rename_all inflection for string enums",
+      "signature": "fn rename_all(self: &Self) -> Option<&str>",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.EnumRepr.html#method.rename_all"
+    },
+    {
+      "name": "EnumRepr::String",
+      "kind": "variant",
+      "description": "String enum representation for unit-only enums with serde rename_all",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.EnumRepr.html#variant.String"
+    },
+    {
+      "name": "EnumRepr::String::rename_all",
+      "kind": "structfield",
+      "description": "Optional rename strategy applied to variant names.",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.EnumRepr.html#variant.String.field.rename_all"
+    },
+    {
+      "name": "EnumRepr::Untagged",
+      "kind": "variant",
+      "description": "Untagged enum representation.",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.EnumRepr.html#variant.Untagged"
+    },
+    {
+      "name": "Error",
+      "kind": "enum",
+      "description": "Detected a type which Serde is unable to export.",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.Error.html"
+    },
+    {
+      "name": "Error::InvalidInternallyTaggedEnum",
+      "kind": "variant",
+      "description": "Internally tagged enum layout is invalid for the encountered enum shape.",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.Error.html#variant.InvalidInternallyTaggedEnum"
+    },
+    {
+      "name": "Error::InvalidMapKey",
+      "kind": "variant",
+      "description": "A map key uses a type that cannot be represented as a Serde map key.",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.Error.html#variant.InvalidMapKey"
+    },
+    {
+      "name": "Error::InvalidUsageOfSkip",
+      "kind": "variant",
+      "description": "#specta(skip) was used in a way that prevents valid serialization.",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.Error.html#variant.InvalidUsageOfSkip"
+    },
+    {
+      "name": "get_enum_repr",
+      "kind": "fn",
+      "description": "Get the enum representation from serde attributes",
+      "signature": "fn get_enum_repr(attributes: &[specta::datatype::RuntimeAttribute]) -> EnumRepr",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/fn.get_enum_repr.html"
+    },
+    {
+      "name": "is_field_flattened",
+      "kind": "fn",
+      "description": "Check if a field has the #serde(flatten) attribute",
+      "signature": "fn is_field_flattened(field: &specta::datatype::Field) -> bool",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/fn.is_field_flattened.html"
+    },
+    {
+      "name": "SerdeMode",
+      "kind": "enum",
+      "description": "Specifies whether to apply serde transformations for serialization or deserialization",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.SerdeMode.html"
+    },
+    {
+      "name": "SerdeMode::Both",
+      "kind": "variant",
+      "description": "Apply transformations for both serialization and deserialization",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.SerdeMode.html#variant.Both"
+    },
+    {
+      "name": "SerdeMode::Deserialize",
+      "kind": "variant",
+      "description": "Apply transformations for deserialization (JSON/etc -> Rust)",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.SerdeMode.html#variant.Deserialize"
+    },
+    {
+      "name": "SerdeMode::Serialize",
+      "kind": "variant",
+      "description": "Apply transformations for serialization (Rust -> JSON/etc)",
+      "url": "https://docs.rs/specta-serde/0.0.10/specta_serde/enum.SerdeMode.html#variant.Serialize"
+    }
+  ],
+  "source": "rustdoc-json"
+}

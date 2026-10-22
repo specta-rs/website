@@ -1,0 +1,20 @@
+{
+  "symbols": [
+    {
+      "name": "Normalized",
+      "kind": "type",
+      "description": "is responsible for normalizing the Typescript type before the type is exposed back to the user.\n@internal ",
+      "signature": "/**\n * is responsible for normalizing the Typescript type before the type is exposed back to the user.\n *\n * @internal\n */\ntype Normalized<T extends ProcedureDef> = T extends any ? {\n    key: T[\"key\"];\n    result: OmitRecursively<T[\"result\"], \"$id\" | \"$type\">;\n    input: T[\"input\"];\n} : never;\n\n// Referenced local context (not public exports):\ntype OmitRecursively<T extends any, K extends PropertyKey> = Omit<{\n    [P in keyof T]: OmitDistributive<T[P], K>;\n}, K>;\n\ntype OmitDistributive<T, K extends PropertyKey> = T extends any ? T extends object ? Id<OmitRecursively<T, K>> : T : never;\n\ntype Id<T> = {} & {\n    [P in keyof T]: T[P];\n};",
+      "url": "/docs/reference?package=ts-rspc-normi&version=0.0.0-main-32fe3d8a#symbol-Normalized",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/normi/v/0.0.0-main-32fe3d8a"
+    },
+    {
+      "name": "NormiOptions",
+      "kind": "interface",
+      "description": "",
+      "signature": "interface NormiOptions {\n    contextSharing?: boolean;\n}",
+      "url": "/docs/reference?package=ts-rspc-normi&version=0.0.0-main-32fe3d8a#symbol-NormiOptions",
+      "sourceUrl": "https://www.npmjs.com/package/@rspc/normi/v/0.0.0-main-32fe3d8a"
+    }
+  ]
+}

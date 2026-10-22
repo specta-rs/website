@@ -1,0 +1,23 @@
+{
+  "symbols": [
+    {
+      "name": "DataTypeFrom",
+      "kind": "derive",
+      "description": "",
+      "url": "https://docs.rs/specta-macros/0.0.6/specta_macros/derive.DataTypeFrom.html"
+    },
+    {
+      "name": "specta",
+      "kind": "attr",
+      "description": "",
+      "url": "https://docs.rs/specta-macros/0.0.6/specta_macros/attr.specta.html"
+    },
+    {
+      "name": "Type",
+      "kind": "derive",
+      "description": "",
+      "url": "https://docs.rs/specta-macros/0.0.6/specta_macros/derive.Type.html"
+    }
+  ],
+  "source": "rustdoc-html"
+}

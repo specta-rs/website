@@ -1,0 +1,395 @@
+{
+  "symbols": [
+    {
+      "name": "DeserializeError",
+      "kind": "struct",
+      "description": "TODO",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.DeserializeError.html"
+    },
+    {
+      "name": "DeserializeError::custom",
+      "kind": "method",
+      "description": "",
+      "signature": "fn custom<T>(err: T) -> Self",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.DeserializeError.html#method.custom"
+    },
+    {
+      "name": "DowncastError",
+      "kind": "struct",
+      "description": "TODO",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.DowncastError.html"
+    },
+    {
+      "name": "DynInput",
+      "kind": "struct",
+      "description": "TODO",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.DynInput.html"
+    },
+    {
+      "name": "DynInput::deserialize",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn deserialize<T>(self: Self) -> Result<T, ProcedureError>",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.DynInput.html#method.deserialize"
+    },
+    {
+      "name": "DynInput::new_value",
+      "kind": "method",
+      "description": "",
+      "signature": "fn new_value<T>(value: &'a mut T) -> Self",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.DynInput.html#method.new_value"
+    },
+    {
+      "name": "DynInput::value",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn value<T>(self: &mut Self) -> Result<&mut T, ProcedureError>",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.DynInput.html#method.value"
+    },
+    {
+      "name": "DynOutput",
+      "kind": "struct",
+      "description": "TODO",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.DynOutput.html"
+    },
+    {
+      "name": "DynOutput::as_serialize",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn as_serialize(self: Self) -> Option<impl Serialize + Send + Sync + 'a>",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.DynOutput.html#method.as_serialize"
+    },
+    {
+      "name": "DynOutput::as_value",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn as_value<T>(self: Self) -> Option<T>",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.DynOutput.html#method.as_value"
+    },
+    {
+      "name": "DynOutput::new_serialize",
+      "kind": "method",
+      "description": "",
+      "signature": "fn new_serialize<T>(value: &'a mut T) -> Self",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.DynOutput.html#method.new_serialize"
+    },
+    {
+      "name": "flush",
+      "kind": "fn",
+      "description": "TODO",
+      "signature": "async fn flush()",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/fn.flush.html"
+    },
+    {
+      "name": "Procedure",
+      "kind": "struct",
+      "description": "a single type-erased operation that the server can execute.",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.Procedure.html"
+    },
+    {
+      "name": "Procedure::exec",
+      "kind": "method",
+      "description": "",
+      "signature": "fn exec(self: &Self, ctx: TCtx, input: DynInput<'_, '_>) -> ProcedureStream",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.Procedure.html#method.exec"
+    },
+    {
+      "name": "Procedure::exec_with_deserializer",
+      "kind": "method",
+      "description": "",
+      "signature": "fn exec_with_deserializer<'de, D>(self: &Self, ctx: TCtx, input: D) -> ProcedureStream",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.Procedure.html#method.exec_with_deserializer"
+    },
+    {
+      "name": "Procedure::new",
+      "kind": "method",
+      "description": "",
+      "signature": "fn new<F>(handler: F) -> Self",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.Procedure.html#method.new"
+    },
+    {
+      "name": "ProcedureError",
+      "kind": "enum",
+      "description": "TODO",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/enum.ProcedureError.html"
+    },
+    {
+      "name": "ProcedureError::Deserialize",
+      "kind": "variant",
+      "description": "Attempted to deserialize a value but failed.",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/enum.ProcedureError.html#variant.Deserialize"
+    },
+    {
+      "name": "ProcedureError::Downcast",
+      "kind": "variant",
+      "description": "Attempting to downcast a value failed.",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/enum.ProcedureError.html#variant.Downcast"
+    },
+    {
+      "name": "ProcedureError::message",
+      "kind": "method",
+      "description": "",
+      "signature": "fn message(self: &Self) -> Cow<'static, str>",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/enum.ProcedureError.html#method.message"
+    },
+    {
+      "name": "ProcedureError::NotFound",
+      "kind": "variant",
+      "description": "Failed to find a procedure with the given name.",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/enum.ProcedureError.html#variant.NotFound"
+    },
+    {
+      "name": "ProcedureError::Resolver",
+      "kind": "variant",
+      "description": "An error occurred while running the procedure.",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/enum.ProcedureError.html#variant.Resolver"
+    },
+    {
+      "name": "ProcedureError::Unwind",
+      "kind": "variant",
+      "description": "The procedure unexpectedly unwinded. This happens when you panic inside a procedure.",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/enum.ProcedureError.html#variant.Unwind"
+    },
+    {
+      "name": "ProcedureError::variant",
+      "kind": "method",
+      "description": "",
+      "signature": "fn variant(self: &Self) -> &'static str",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/enum.ProcedureError.html#method.variant"
+    },
+    {
+      "name": "Procedures",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.Procedures.html"
+    },
+    {
+      "name": "Procedures::new",
+      "kind": "method",
+      "description": "",
+      "signature": "fn new(procedures: HashMap<Cow<'static, str>, Procedure<TCtx>>, state: Arc<State>) -> Self",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.Procedures.html#method.new"
+    },
+    {
+      "name": "Procedures::state",
+      "kind": "method",
+      "description": "",
+      "signature": "fn state(self: &Self) -> &Arc<State>",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.Procedures.html#method.state"
+    },
+    {
+      "name": "ProcedureStream",
+      "kind": "struct",
+      "description": "TODO",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html"
+    },
+    {
+      "name": "ProcedureStream::flushable",
+      "kind": "method",
+      "description": "Will return true if the stream is ready to start streaming data.",
+      "signature": "fn flushable(self: &Self) -> bool",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.flushable"
+    },
+    {
+      "name": "ProcedureStream::from_future",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn from_future<T, F>(f: F) -> Self",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.from_future"
+    },
+    {
+      "name": "ProcedureStream::from_future_stream",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn from_future_stream<T, F, S>(f: F) -> Self",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.from_future_stream"
+    },
+    {
+      "name": "ProcedureStream::from_future_stream_value",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn from_future_stream_value<T, F, S>(f: F) -> Self",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.from_future_stream_value"
+    },
+    {
+      "name": "ProcedureStream::from_future_value",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn from_future_value<T, F>(f: F) -> Self",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.from_future_value"
+    },
+    {
+      "name": "ProcedureStream::from_stream",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn from_stream<T, S>(s: S) -> Self",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.from_stream"
+    },
+    {
+      "name": "ProcedureStream::from_stream_value",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn from_stream_value<T, S>(s: S) -> Self",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.from_stream_value"
+    },
+    {
+      "name": "ProcedureStream::map",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn map<F, T>(self: Self, map: F) -> ProcedureStreamMap<F, T>",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.map"
+    },
+    {
+      "name": "ProcedureStream::next",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "async fn next(self: &mut Self) -> Option<Result<DynOutput<'_>, ProcedureError>>",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.next"
+    },
+    {
+      "name": "ProcedureStream::poll_next",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn poll_next(self: &mut Self, cx: &mut Context<'_>) -> Poll<Option<Result<DynOutput<'_>, ProcedureError>>>",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.poll_next"
+    },
+    {
+      "name": "ProcedureStream::require_manual_stream",
+      "kind": "method",
+      "description": "By setting this the stream will delay returning any data until instructed by the caller (via Self::stream).",
+      "signature": "fn require_manual_stream(self: Self) -> Self",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.require_manual_stream"
+    },
+    {
+      "name": "ProcedureStream::resolved",
+      "kind": "method",
+      "description": "Will return true if the future has resolved.",
+      "signature": "fn resolved(self: &Self) -> bool",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.resolved"
+    },
+    {
+      "name": "ProcedureStream::size_hint",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn size_hint(self: &Self) -> (usize, Option<usize>)",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.size_hint"
+    },
+    {
+      "name": "ProcedureStream::stream",
+      "kind": "method",
+      "description": "Start streaming data. Refer to Self::require_manual_stream for more information.",
+      "signature": "fn stream(self: &mut Self)",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStream.html#method.stream"
+    },
+    {
+      "name": "ProcedureStreamMap",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStreamMap.html"
+    },
+    {
+      "name": "ProcedureStreamMap::flushable",
+      "kind": "method",
+      "description": "Will return true if the stream is ready to start streaming data.",
+      "signature": "fn flushable(self: &Self) -> bool",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStreamMap.html#method.flushable"
+    },
+    {
+      "name": "ProcedureStreamMap::resolved",
+      "kind": "method",
+      "description": "Will return true if the future has resolved.",
+      "signature": "fn resolved(self: &Self) -> bool",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStreamMap.html#method.resolved"
+    },
+    {
+      "name": "ProcedureStreamMap::stream",
+      "kind": "method",
+      "description": "Start streaming data. Refer to Self::require_manual_stream for more information.",
+      "signature": "fn stream(self: &mut Self)",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ProcedureStreamMap.html#method.stream"
+    },
+    {
+      "name": "ResolverError",
+      "kind": "struct",
+      "description": "TODO",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ResolverError.html"
+    },
+    {
+      "name": "ResolverError::error",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn error(self: &Self) -> Option<&dyn error::Error + Send>",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ResolverError.html#method.error"
+    },
+    {
+      "name": "ResolverError::new",
+      "kind": "method",
+      "description": "",
+      "signature": "fn new<T, E>(value: T, source: Option<E>) -> Self",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ResolverError.html#method.new"
+    },
+    {
+      "name": "ResolverError::value",
+      "kind": "method",
+      "description": "TODO",
+      "signature": "fn value(self: &Self) -> impl Serialize + '_",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.ResolverError.html#method.value"
+    },
+    {
+      "name": "State",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.State.html"
+    },
+    {
+      "name": "State::contains_key",
+      "kind": "method",
+      "description": "",
+      "signature": "fn contains_key<T>(self: &Self) -> bool",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.State.html#method.contains_key"
+    },
+    {
+      "name": "State::get",
+      "kind": "method",
+      "description": "",
+      "signature": "fn get<T>(self: &Self) -> Option<&T>",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.State.html#method.get"
+    },
+    {
+      "name": "State::get_mut",
+      "kind": "method",
+      "description": "",
+      "signature": "fn get_mut<T>(self: &Self) -> Option<&T>",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.State.html#method.get_mut"
+    },
+    {
+      "name": "State::get_mut_or_init",
+      "kind": "method",
+      "description": "",
+      "signature": "fn get_mut_or_init<T>(self: &mut Self, init: impl FnOnce) -> &mut T",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.State.html#method.get_mut_or_init"
+    },
+    {
+      "name": "State::get_or_init",
+      "kind": "method",
+      "description": "",
+      "signature": "fn get_or_init<T>(self: &mut Self, init: impl FnOnce) -> &T",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.State.html#method.get_or_init"
+    },
+    {
+      "name": "State::insert",
+      "kind": "method",
+      "description": "",
+      "signature": "fn insert<T>(self: &mut Self, t: T)",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.State.html#method.insert"
+    },
+    {
+      "name": "State::remove",
+      "kind": "method",
+      "description": "",
+      "signature": "fn remove<T>(self: &mut Self) -> Option<T>",
+      "url": "https://docs.rs/rspc-procedure/0.0.1/rspc_procedure/struct.State.html#method.remove"
+    }
+  ],
+  "source": "rustdoc-json"
+}

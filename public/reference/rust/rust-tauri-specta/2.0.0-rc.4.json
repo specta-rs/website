@@ -1,0 +1,493 @@
+{
+  "symbols": [
+    {
+      "name": "collect_commands",
+      "kind": "macro",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/macro.collect_commands.html",
+      "signature": "collect_commands!() { /* proc-macro */ }"
+    },
+    {
+      "name": "collect_events",
+      "kind": "macro",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/macro.collect_events.html",
+      "signature": "macro_rules! collect_events { ($($event:ident),+) => { ... }; }"
+    },
+    {
+      "name": "CollectCommandsTuple",
+      "kind": "type",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/type.CollectCommandsTuple.html",
+      "signature": "pub type CollectCommandsTuple<TInvokeHandler> = (CollectFunctionsResult, TInvokeHandler);"
+    },
+    {
+      "name": "Commands",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.Commands.html",
+      "signature": "pub struct Commands<TRuntime, TInvokeHandler>(/* private fields */);"
+    },
+    {
+      "name": "CommandsTypeState",
+      "kind": "trait",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.CommandsTypeState.html",
+      "signature": "pub trait CommandsTypeState: 'static { type Runtime: Runtime; type InvokeHandler: Fn(Invoke<Self::Runtime>) + Send + Sync + 'static; // Required methods fn split(self) -> CollectCommandsTuple<Self::InvokeHandler>; fn macro_data(&self) -> &CollectFunctionsResult; }"
+    },
+    {
+      "name": "CommandsTypeState::InvokeHandler",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type InvokeHandler: Fn(Invoke<Self::Runtime>) + Send + Sync + 'static",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.CommandsTypeState.html#associatedtype.InvokeHandler"
+    },
+    {
+      "name": "CommandsTypeState::InvokeHandler",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type InvokeHandler = fn(_: Invoke<TRuntime>)",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.CommandsTypeState.html#associatedtype.InvokeHandler-1"
+    },
+    {
+      "name": "CommandsTypeState::InvokeHandler",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type InvokeHandler = TInvokeHandler",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.CommandsTypeState.html#associatedtype.InvokeHandler-2"
+    },
+    {
+      "name": "CommandsTypeState::macro_data",
+      "kind": "tymethod",
+      "description": "",
+      "signature": "fn macro_data(&self) -> &CollectFunctionsResult",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.CommandsTypeState.html#tymethod.macro_data"
+    },
+    {
+      "name": "CommandsTypeState::Runtime",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type Runtime: Runtime",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.CommandsTypeState.html#associatedtype.Runtime"
+    },
+    {
+      "name": "CommandsTypeState::Runtime",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type Runtime = TRuntime",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.CommandsTypeState.html#associatedtype.Runtime-1"
+    },
+    {
+      "name": "CommandsTypeState::Runtime",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type Runtime = TRuntime",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.CommandsTypeState.html#associatedtype.Runtime-2"
+    },
+    {
+      "name": "CommandsTypeState::split",
+      "kind": "tymethod",
+      "description": "",
+      "signature": "fn split(self) -> CollectCommandsTuple<Self::InvokeHandler>",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.CommandsTypeState.html#tymethod.split"
+    },
+    {
+      "name": "Event",
+      "kind": "derive",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/derive.Event.html",
+      "signature": "#[derive(Event)] { // Attributes available to this derive: #[tauri_specta] }"
+    },
+    {
+      "name": "Event",
+      "kind": "trait",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.Event.html",
+      "signature": "pub trait Event: NamedType { const NAME: &'static str; // Provided methods fn emit_all<R: Runtime>(self, handle: &impl Manager<R>) -> Result<()> where Self: Serialize + Clone { ... } fn emit_to<R: Runtime>( self, handle: &impl Manager<R>, label: &str ) -> Result<()> where Self: Serialize + Clone { ... } fn trigger_global<R: Runtime>(self, handle: &impl Manager<R>) where Self: Serialize + Sized { ... } fn listen_global<F, R: Runtime>( handle: &impl Manager<R>, handler: F ) -> EventHandler where F: Fn(TypedEvent<Self>) + Send + 'static, Self: DeserializeOwned { ... } fn once_global<F, R: Runtime>( handle: &impl Manager<R>, handler: F ) -> EventHandler where F: FnOnce(TypedEvent<Self>) + Send + 'static, Self: DeserializeOwned { ... } fn emit(self, window: &Window<impl Runtime>) -> Result<()> where Self: Serialize + Clone { ... } fn trigger(self, window: &Window<impl Runtime>) where Self: Serialize + Sized { ... } fn emit_and_trigger(self, window: &Window<impl Runtime>) -> Result<()> where Self: Serialize + Clone { ... } fn listen<F>(window: &Window<impl Runtime>, handler: F) -> EventHandler where F: Fn(TypedEvent<Self>) + Send + 'static, Self: DeserializeOwned { ... } fn once<F>(window: &Window<impl Runtime>, handler: F) -> EventHandler where F: FnOnce(TypedEvent<Self>) + Send + 'static, Self: DeserializeOwned { ... } }"
+    },
+    {
+      "name": "Event::emit",
+      "kind": "method",
+      "description": "",
+      "signature": "fn emit(self, window: &Window<impl Runtime>) -> Result<()>where Self: Serialize + Clone,",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.Event.html#method.emit"
+    },
+    {
+      "name": "Event::emit_all",
+      "kind": "method",
+      "description": "",
+      "signature": "fn emit_all<R: Runtime>(self, handle: &impl Manager<R>) -> Result<()>where Self: Serialize + Clone,",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.Event.html#method.emit_all"
+    },
+    {
+      "name": "Event::emit_and_trigger",
+      "kind": "method",
+      "description": "",
+      "signature": "fn emit_and_trigger(self, window: &Window<impl Runtime>) -> Result<()>where Self: Serialize + Clone,",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.Event.html#method.emit_and_trigger"
+    },
+    {
+      "name": "Event::emit_to",
+      "kind": "method",
+      "description": "",
+      "signature": "fn emit_to<R: Runtime>( self, handle: &impl Manager<R>, label: &str ) -> Result<()>where Self: Serialize + Clone,",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.Event.html#method.emit_to"
+    },
+    {
+      "name": "Event::listen",
+      "kind": "method",
+      "description": "",
+      "signature": "fn listen<F>(window: &Window<impl Runtime>, handler: F) -> EventHandlerwhere F: Fn(TypedEvent<Self>) + Send + 'static, Self: DeserializeOwned,",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.Event.html#method.listen"
+    },
+    {
+      "name": "Event::listen_global",
+      "kind": "method",
+      "description": "",
+      "signature": "fn listen_global<F, R: Runtime>( handle: &impl Manager<R>, handler: F ) -> EventHandlerwhere F: Fn(TypedEvent<Self>) + Send + 'static, Self: DeserializeOwned,",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.Event.html#method.listen_global"
+    },
+    {
+      "name": "Event::NAME",
+      "kind": "associatedconstant",
+      "description": "",
+      "signature": "const NAME: &'static str",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.Event.html#associatedconstant.NAME"
+    },
+    {
+      "name": "Event::once",
+      "kind": "method",
+      "description": "",
+      "signature": "fn once<F>(window: &Window<impl Runtime>, handler: F) -> EventHandlerwhere F: FnOnce(TypedEvent<Self>) + Send + 'static, Self: DeserializeOwned,",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.Event.html#method.once"
+    },
+    {
+      "name": "Event::once_global",
+      "kind": "method",
+      "description": "",
+      "signature": "fn once_global<F, R: Runtime>( handle: &impl Manager<R>, handler: F ) -> EventHandlerwhere F: FnOnce(TypedEvent<Self>) + Send + 'static, Self: DeserializeOwned,",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.Event.html#method.once_global"
+    },
+    {
+      "name": "Event::trigger",
+      "kind": "method",
+      "description": "",
+      "signature": "fn trigger(self, window: &Window<impl Runtime>)where Self: Serialize + Sized,",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.Event.html#method.trigger"
+    },
+    {
+      "name": "Event::trigger_global",
+      "kind": "method",
+      "description": "",
+      "signature": "fn trigger_global<R: Runtime>(self, handle: &impl Manager<R>)where Self: Serialize + Sized,",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.Event.html#method.trigger_global"
+    },
+    {
+      "name": "EventCollection",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.EventCollection.html",
+      "signature": "pub struct EventCollection(/* private fields */);"
+    },
+    {
+      "name": "EventCollection::register",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn register<E: Event>(&mut self)",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.EventCollection.html#method.register"
+    },
+    {
+      "name": "EventDataType",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.EventDataType.html",
+      "signature": "pub struct EventDataType { pub name: &'static str, pub typ: DataType, }"
+    },
+    {
+      "name": "EventRegistryMeta",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.EventRegistryMeta.html",
+      "signature": "pub struct EventRegistryMeta { /* private fields */ }"
+    },
+    {
+      "name": "Events",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.Events.html",
+      "signature": "pub struct Events(/* private fields */);"
+    },
+    {
+      "name": "EventsTypeState",
+      "kind": "trait",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.EventsTypeState.html",
+      "signature": "pub trait EventsTypeState: 'static { // Required method fn get(self) -> (EventCollection, Vec<EventDataType>, TypeMap); }"
+    },
+    {
+      "name": "EventsTypeState::get",
+      "kind": "tymethod",
+      "description": "",
+      "signature": "fn get(self) -> (EventCollection, Vec<EventDataType>, TypeMap)",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.EventsTypeState.html#tymethod.get"
+    },
+    {
+      "name": "ExportConfig",
+      "kind": "struct",
+      "description": "The configuration for the generator",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.ExportConfig.html",
+      "signature": "pub struct ExportConfig<TConfig> { /* private fields */ }"
+    },
+    {
+      "name": "ExportConfig::new",
+      "kind": "method",
+      "description": "Creates a new [ExportConfiguration] from a [specta::ts::ExportConfiguration]",
+      "signature": "pub fn new(config: TConfig) -> Self",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.ExportConfig.html#method.new"
+    },
+    {
+      "name": "ExportLanguage",
+      "kind": "trait",
+      "description": "A set of functions that produce language-specific code",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.ExportLanguage.html",
+      "signature": "pub trait ExportLanguage: 'static { type Config: Default + Clone; type Error: Debug + Error + From<Error>; // Required methods fn run_format(path: PathBuf, cfg: &ExportConfig<Self::Config>); fn render_events( events: &[EventDataType], type_map: &TypeMap, cfg: &ExportConfig<Self::Config> ) -> Result<String, Self::Error>; fn render_commands( commands: &[FunctionDataType], type_map: &TypeMap, cfg: &ExportConfig<Self::Config> ) -> Result<String, Self::Error>; fn render( commands: &[FunctionDataType], events: &[EventDataType], type_map: &TypeMap, cfg: &ExportConfig<Self::Config> ) -> Result<String, Self::Error>; }"
+    },
+    {
+      "name": "ExportLanguage::Config",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type Config: Default + Clone",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.ExportLanguage.html#associatedtype.Config"
+    },
+    {
+      "name": "ExportLanguage::Config",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type Config = ExportConfig",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.ExportLanguage.html#associatedtype.Config-1"
+    },
+    {
+      "name": "ExportLanguage::Config",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type Config = ExportConfig",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.ExportLanguage.html#associatedtype.Config-2"
+    },
+    {
+      "name": "ExportLanguage::Error",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type Error: Debug + Error + From<Error>",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.ExportLanguage.html#associatedtype.Error"
+    },
+    {
+      "name": "ExportLanguage::Error",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type Error = ExportError",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.ExportLanguage.html#associatedtype.Error-1"
+    },
+    {
+      "name": "ExportLanguage::Error",
+      "kind": "associatedtype",
+      "description": "",
+      "signature": "type Error = ExportError",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.ExportLanguage.html#associatedtype.Error-2"
+    },
+    {
+      "name": "ExportLanguage::render",
+      "kind": "tymethod",
+      "description": "Renders the output of [globals], [render_functions] and all dependant types into a TypeScript string.",
+      "signature": "fn render( commands: &[FunctionDataType], events: &[EventDataType], type_map: &TypeMap, cfg: &ExportConfig<Self::Config> ) -> Result<String, Self::Error>",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.ExportLanguage.html#tymethod.render"
+    },
+    {
+      "name": "ExportLanguage::render_commands",
+      "kind": "tymethod",
+      "description": "Renders a collection of FunctionDataType into a string.",
+      "signature": "fn render_commands( commands: &[FunctionDataType], type_map: &TypeMap, cfg: &ExportConfig<Self::Config> ) -> Result<String, Self::Error>",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.ExportLanguage.html#tymethod.render_commands"
+    },
+    {
+      "name": "ExportLanguage::render_events",
+      "kind": "tymethod",
+      "description": "",
+      "signature": "fn render_events( events: &[EventDataType], type_map: &TypeMap, cfg: &ExportConfig<Self::Config> ) -> Result<String, Self::Error>",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.ExportLanguage.html#tymethod.render_events"
+    },
+    {
+      "name": "ExportLanguage::run_format",
+      "kind": "tymethod",
+      "description": "",
+      "signature": "fn run_format(path: PathBuf, cfg: &ExportConfig<Self::Config>)",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/trait.ExportLanguage.html#tymethod.run_format"
+    },
+    {
+      "name": "js",
+      "kind": "mod",
+      "description": "The exporter for Javascript.",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/js/index.html"
+    },
+    {
+      "name": "js::builder",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/js/fn.builder.html",
+      "signature": "pub fn builder<TRuntime: Runtime>( ) -> PluginBuilder<Language, NoCommands<TRuntime>, NoEvents>"
+    },
+    {
+      "name": "js::ExportConfig",
+      "kind": "type",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/js/type.ExportConfig.html",
+      "signature": "pub type ExportConfig = ExportConfig<ExportConfig>;"
+    },
+    {
+      "name": "js::GLOBALS",
+      "kind": "constant",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/js/constant.GLOBALS.html",
+      "signature": "pub const GLOBALS: &str = \"import { invoke as TAURI_INVOKE } from \\\"@tauri-apps/api\\\";\\nimport * as TAURI_API_EVENT from \\\"@tauri-apps/api/event\\\";\\n\\n/** @typedef {typeof import(\\\"@tauri-apps/api/window\\\").WebviewWindowHandle} __WebviewWindowHandle__ */\\n\\n/**\\n * @template T\\n * @typedef {{\\n * listen: (\\n *\\t cb: TAURI_API_EVENT.EventCallback<T>\\n *\\t ) => ReturnType<typeof TAURI_API_EVENT.listen<T>>;\\n *\\t once: (\\n *\\t cb: TAURI_API_EVENT.EventCallback<T>\\n *\\t ) => ReturnType<typeof TAURI_API_EVENT.once<T>>;\\n *\\t emit: T extends null\\n *\\t ? (payload?: T) => ReturnType<typeof TAURI_API_EVENT.emit>\\n * : (payload: T) => ReturnType<typeof TAURI_API_EVENT.emit>;\\n *\\t}} __EventObj__<T>\\n */\\n\\n/**\\n * @template T,E\\n * @typedef { { status: \\\"ok\\\", data: T } | { status: \\\"error\\\", error: E } } __Result__\\n */\\n\\n/**\\n * @template {Record<string, any>} T\\n * @param {Record<keyof T, string>} mappings\\n * @returns {{\\n * \\t [K in keyof T]: __EventObj__<T[K]> & {\\n *\\t (handle: __WebviewWindowHandle__): __EventObj__<T[K]>;\\n * };\\n * }}\\n */\\nfunction __makeEvents__(mappings) {\\n return new Proxy(\\n {},\\n {\\n get: (_, event) => {\\n const name = mappings[event];\\n\\n new Proxy(() => {}, {\\n apply: (_, __, [window]) => ({\\n listen: (arg) => window.listen(name, arg),\\n once: (arg) => window.once(name, arg),\\n emit: (arg) => window.emit(name, arg),\\n }),\\n get: (_, command) => {\\n switch (command) {\\n case \\\"listen\\\":\\n return (arg) => TAURI_API_EVENT.listen(name, arg);\\n case \\\"once\\\":\\n return (arg) => TAURI_API_EVENT.once(name, arg);\\n case \\\"emit\\\":\\n return (arg) => TAURI_API_EVENT.emit(name, arg);\\n }\\n },\\n });\\n },\\n }\\n );\\n}\\n\";"
+    },
+    {
+      "name": "js::Language",
+      "kind": "struct",
+      "description": "Implements ExportLanguage for JS exporting",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/js/struct.Language.html",
+      "signature": "pub struct Language;"
+    },
+    {
+      "name": "NoCommands",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.NoCommands.html",
+      "signature": "pub struct NoCommands<TRuntime>(/* private fields */);"
+    },
+    {
+      "name": "NoEvents",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.NoEvents.html",
+      "signature": "pub struct NoEvents;"
+    },
+    {
+      "name": "PluginBuilder",
+      "kind": "struct",
+      "description": "General exporter, takes a generic for the specific language that is being exported to.",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.PluginBuilder.html",
+      "signature": "pub struct PluginBuilder<TLang: ExportLanguage, TCommands, TEvents> { /* private fields */ }"
+    },
+    {
+      "name": "PluginBuilder::commands",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn commands<TInvokeHandler: Fn(Invoke<TRuntime>) + Send + Sync + 'static>( self, commands: CollectCommandsTuple<TInvokeHandler> ) -> PluginBuilder<TLang, Commands<TRuntime, TInvokeHandler>, TEvents>",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.PluginBuilder.html#method.commands"
+    },
+    {
+      "name": "PluginBuilder::config",
+      "kind": "method",
+      "description": "Allows for specifying a custom ExportConfiguration.",
+      "signature": "pub fn config(self, config: TLang::Config) -> Self",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.PluginBuilder.html#method.config"
+    },
+    {
+      "name": "PluginBuilder::events",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn events( self, events: (EventCollection, Vec<EventDataType>, TypeMap) ) -> PluginBuilder<TLang, TCommands, Events>",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.PluginBuilder.html#method.events"
+    },
+    {
+      "name": "PluginBuilder::export",
+      "kind": "method",
+      "description": "Exports the output of [internal::render] for a collection of FunctionDataType into a TypeScript file.",
+      "signature": "pub fn export(self) -> Result<(), TLang::Error>",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.PluginBuilder.html#method.export"
+    },
+    {
+      "name": "PluginBuilder::export_for_plugin",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn export_for_plugin( self, plugin_name: &'static str ) -> Result<(), TLang::Error>",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.PluginBuilder.html#method.export_for_plugin"
+    },
+    {
+      "name": "PluginBuilder::header",
+      "kind": "method",
+      "description": "Allows for specifying a custom header to",
+      "signature": "pub fn header(self, header: &'static str) -> Self",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.PluginBuilder.html#method.header"
+    },
+    {
+      "name": "PluginBuilder::into_plugin",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn into_plugin(self) -> TauriPlugin<TCommands::Runtime>",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.PluginBuilder.html#method.into_plugin"
+    },
+    {
+      "name": "PluginBuilder::into_plugin_utils",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn into_plugin_utils<TManager>( self, plugin_name: &'static str ) -> PluginUtils<TCommands, TManager, impl FnOnce(&TManager)>where TManager: Manager<TCommands::Runtime>,",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.PluginBuilder.html#method.into_plugin_utils"
+    },
+    {
+      "name": "PluginBuilder::path",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn path(self, path: impl AsRef<Path>) -> Self",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.PluginBuilder.html#method.path"
+    },
+    {
+      "name": "PluginUtils",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.PluginUtils.html",
+      "signature": "pub struct PluginUtils<TCommands, TManager, TSetup>where TCommands: CommandsTypeState, TManager: Manager<TCommands::Runtime>, TSetup: FnOnce(&TManager),{ pub invoke_handler: TCommands::InvokeHandler, pub setup: TSetup, /* private fields */ }"
+    },
+    {
+      "name": "ts",
+      "kind": "mod",
+      "description": "The exporter for TypeScript.",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/ts/index.html"
+    },
+    {
+      "name": "ts::builder",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/ts/fn.builder.html",
+      "signature": "pub fn builder<TRuntime: Runtime>( ) -> PluginBuilder<Language, NoCommands<TRuntime>, NoEvents>"
+    },
+    {
+      "name": "ts::ExportConfig",
+      "kind": "type",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/ts/type.ExportConfig.html",
+      "signature": "pub type ExportConfig = ExportConfig<ExportConfig>;"
+    },
+    {
+      "name": "ts::GLOBALS",
+      "kind": "constant",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/ts/constant.GLOBALS.html",
+      "signature": "pub const GLOBALS: &str = \"import { invoke as TAURI_INVOKE } from \\\"@tauri-apps/api\\\";\\nimport * as TAURI_API_EVENT from \\\"@tauri-apps/api/event\\\";\\nimport { type WebviewWindowHandle as __WebviewWindowHandle__ } from \\\"@tauri-apps/api/window\\\";\\n\\ntype __EventObj__<T> = {\\n listen: (\\n cb: TAURI_API_EVENT.EventCallback<T>\\n ) => ReturnType<typeof TAURI_API_EVENT.listen<T>>;\\n once: (\\n cb: TAURI_API_EVENT.EventCallback<T>\\n ) => ReturnType<typeof TAURI_API_EVENT.once<T>>;\\n emit: T extends null\\n ? (payload?: T) => ReturnType<typeof TAURI_API_EVENT.emit>\\n : (payload: T) => ReturnType<typeof TAURI_API_EVENT.emit>;\\n};\\n\\ntype __Result__<T, E> =\\n | { status: \\\"ok\\\"; data: T }\\n | { status: \\\"error\\\"; error: E };\\n\\nfunction __makeEvents__<T extends Record<string, any>>(\\n mappings: Record<keyof T, string>\\n) {\\n return new Proxy(\\n {} as unknown as {\\n [K in keyof T]: __EventObj__<T[K]> & {\\n (handle: __WebviewWindowHandle__): __EventObj__<T[K]>;\\n };\\n },\\n {\\n get: (_, event) => {\\n const name = mappings[event as keyof T];\\n\\n return new Proxy((() => {}) as any, {\\n apply: (_, __, [window]: [__WebviewWindowHandle__]) => ({\\n listen: (arg: any) => window.listen(name, arg),\\n once: (arg: any) => window.once(name, arg),\\n emit: (arg: any) => window.emit(name, arg),\\n }),\\n get: (_, command: keyof __EventObj__<any>) => {\\n switch (command) {\\n case \\\"listen\\\":\\n return (arg: any) => TAURI_API_EVENT.listen(name, arg);\\n case \\\"once\\\":\\n return (arg: any) => TAURI_API_EVENT.once(name, arg);\\n case \\\"emit\\\":\\n return (arg: any) => TAURI_API_EVENT.emit(name, arg);\\n }\\n },\\n });\\n },\\n }\\n );\\n}\\n\";"
+    },
+    {
+      "name": "ts::Language",
+      "kind": "struct",
+      "description": "Implements ExportLanguage for TypeScript exporting",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/ts/struct.Language.html",
+      "signature": "pub struct Language;"
+    },
+    {
+      "name": "TypedEvent",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/2.0.0-rc.4/tauri_specta/struct.TypedEvent.html",
+      "signature": "pub struct TypedEvent<T: Event> { pub id: EventHandler, pub payload: T, }"
+    }
+  ],
+  "source": "rustdoc-html"
+}

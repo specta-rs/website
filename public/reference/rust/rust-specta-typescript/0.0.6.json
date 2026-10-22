@@ -1,0 +1,373 @@
+{
+  "symbols": [
+    {
+      "name": "BigIntExportBehavior",
+      "kind": "enum",
+      "description": "Allows you to configure how Specta’s Typescript exporter will deal with BigInt types (i64, i128 etc).",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.BigIntExportBehavior.html",
+      "signature": "pub enum BigIntExportBehavior { String, Number, BigInt, Fail, // some variants omitted }"
+    },
+    {
+      "name": "BigIntExportBehavior::BigInt",
+      "kind": "variant",
+      "description": "Export BigInt as a Typescript BigInt.",
+      "signature": "BigInt",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.BigIntExportBehavior.html#variant.BigInt"
+    },
+    {
+      "name": "BigIntExportBehavior::Fail",
+      "kind": "variant",
+      "description": "Abort the export with an error.",
+      "signature": "Fail",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.BigIntExportBehavior.html#variant.Fail"
+    },
+    {
+      "name": "BigIntExportBehavior::Number",
+      "kind": "variant",
+      "description": "Export BigInt as a Typescript number.",
+      "signature": "Number",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.BigIntExportBehavior.html#variant.Number"
+    },
+    {
+      "name": "BigIntExportBehavior::String",
+      "kind": "variant",
+      "description": "Export BigInt as a Typescript string",
+      "signature": "String",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.BigIntExportBehavior.html#variant.String"
+    },
+    {
+      "name": "CommentFormatterArgs",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/struct.CommentFormatterArgs.html",
+      "signature": "#[non_exhaustive]pub struct CommentFormatterArgs<'a> { pub docs: &'a Cow<'static, str>, pub deprecated: Option<&'a DeprecatedType>, }"
+    },
+    {
+      "name": "CommentFormatterFn",
+      "kind": "type",
+      "description": "The signature for a function responsible for exporting Typescript comments.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/type.CommentFormatterFn.html",
+      "signature": "pub type CommentFormatterFn = fn(_: CommentFormatterArgs<'_>) -> String;"
+    },
+    {
+      "name": "comments",
+      "kind": "mod",
+      "description": "",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/comments/index.html"
+    },
+    {
+      "name": "comments::js_doc",
+      "kind": "fn",
+      "description": "Converts Typescript comments into JSDoc comments.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/comments/fn.js_doc.html",
+      "signature": "pub fn js_doc(arg: CommentFormatterArgs<'_>) -> String"
+    },
+    {
+      "name": "datatype",
+      "kind": "fn",
+      "description": "Convert a DataType to a TypeScript string",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/fn.datatype.html",
+      "signature": "pub fn datatype( conf: &Typescript, typ: &FunctionResultVariant, type_map: &TypeMap, ) -> Result<String>"
+    },
+    {
+      "name": "export",
+      "kind": "fn",
+      "description": "Convert a type which implements Type to a TypeScript string with an export.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/fn.export.html",
+      "signature": "pub fn export<T: NamedType>(conf: &Typescript) -> Result<String>"
+    },
+    {
+      "name": "export_named_datatype",
+      "kind": "fn",
+      "description": "Convert a DataType to a TypeScript string",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/fn.export_named_datatype.html",
+      "signature": "pub fn export_named_datatype( conf: &Typescript, typ: &NamedDataType, type_map: &TypeMap, ) -> Result<String>"
+    },
+    {
+      "name": "export_ref",
+      "kind": "fn",
+      "description": "Convert a type which implements Type to a TypeScript string with an export.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/fn.export_ref.html",
+      "signature": "pub fn export_ref<T: NamedType>(_: &T, conf: &Typescript) -> Result<String>"
+    },
+    {
+      "name": "ExportError",
+      "kind": "enum",
+      "description": "The error type for the TypeScript exporter.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.ExportError.html",
+      "signature": "#[non_exhaustive]pub enum ExportError { BigIntForbidden(ExportPath), Serde(SerdeError), ForbiddenName(NamedLocation, ExportPath, &'static str), InvalidName(NamedLocation, ExportPath, String), InvalidTagging(ExportPath), InvalidTaggedVariantContainingTupleStruct(ExportPath), DuplicateTypeName(Cow<'static, str>, ImplLocation, ImplLocation), Io(Error), Fmt(Error), Other(ExportPath, String), }"
+    },
+    {
+      "name": "ExportError::BigIntForbidden",
+      "kind": "variant",
+      "description": "",
+      "signature": "BigIntForbidden(ExportPath)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.ExportError.html#variant.BigIntForbidden"
+    },
+    {
+      "name": "ExportError::DuplicateTypeName",
+      "kind": "variant",
+      "description": "",
+      "signature": "DuplicateTypeName(Cow<'static, str>, ImplLocation, ImplLocation)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.ExportError.html#variant.DuplicateTypeName"
+    },
+    {
+      "name": "ExportError::Fmt",
+      "kind": "variant",
+      "description": "",
+      "signature": "Fmt(Error)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.ExportError.html#variant.Fmt"
+    },
+    {
+      "name": "ExportError::ForbiddenName",
+      "kind": "variant",
+      "description": "",
+      "signature": "ForbiddenName(NamedLocation, ExportPath, &'static str)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.ExportError.html#variant.ForbiddenName"
+    },
+    {
+      "name": "ExportError::InvalidName",
+      "kind": "variant",
+      "description": "",
+      "signature": "InvalidName(NamedLocation, ExportPath, String)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.ExportError.html#variant.InvalidName"
+    },
+    {
+      "name": "ExportError::InvalidTaggedVariantContainingTupleStruct",
+      "kind": "variant",
+      "description": "",
+      "signature": "InvalidTaggedVariantContainingTupleStruct(ExportPath)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.ExportError.html#variant.InvalidTaggedVariantContainingTupleStruct"
+    },
+    {
+      "name": "ExportError::InvalidTagging",
+      "kind": "variant",
+      "description": "",
+      "signature": "InvalidTagging(ExportPath)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.ExportError.html#variant.InvalidTagging"
+    },
+    {
+      "name": "ExportError::Io",
+      "kind": "variant",
+      "description": "",
+      "signature": "Io(Error)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.ExportError.html#variant.Io"
+    },
+    {
+      "name": "ExportError::Other",
+      "kind": "variant",
+      "description": "",
+      "signature": "Other(ExportPath, String)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.ExportError.html#variant.Other"
+    },
+    {
+      "name": "ExportError::Serde",
+      "kind": "variant",
+      "description": "",
+      "signature": "Serde(SerdeError)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.ExportError.html#variant.Serde"
+    },
+    {
+      "name": "ExportPath",
+      "kind": "struct",
+      "description": "Represents the path of an error in the export tree. This is designed to be opaque, meaning it’s internal format and Display impl are subject to change at will.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/struct.ExportPath.html",
+      "signature": "pub struct ExportPath(/* private fields */);"
+    },
+    {
+      "name": "formatter",
+      "kind": "mod",
+      "description": "",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/formatter/index.html"
+    },
+    {
+      "name": "formatter::biome",
+      "kind": "fn",
+      "description": "Format the specified file using Biome.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/formatter/fn.biome.html",
+      "signature": "pub fn biome(file: &Path) -> Result<()>"
+    },
+    {
+      "name": "formatter::eslint",
+      "kind": "fn",
+      "description": "Format the specified file using ESLint.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/formatter/fn.eslint.html",
+      "signature": "pub fn eslint(file: &Path) -> Result<()>"
+    },
+    {
+      "name": "formatter::prettier",
+      "kind": "fn",
+      "description": "Format the specified file using Prettier.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/formatter/fn.prettier.html",
+      "signature": "pub fn prettier(file: &Path) -> Result<()>"
+    },
+    {
+      "name": "FormatterFn",
+      "kind": "type",
+      "description": "The signature for a function responsible for formatter a Typescript file.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/type.FormatterFn.html",
+      "signature": "pub type FormatterFn = fn(_: &Path) -> Result<()>;"
+    },
+    {
+      "name": "inline",
+      "kind": "fn",
+      "description": "Convert a type which implements Type to a TypeScript string.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/fn.inline.html",
+      "signature": "pub fn inline<T: Type>(conf: &Typescript) -> Result<String>"
+    },
+    {
+      "name": "inline_ref",
+      "kind": "fn",
+      "description": "Convert a type which implements Type to a TypeScript string.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/fn.inline_ref.html",
+      "signature": "pub fn inline_ref<T: Type>(_: &T, conf: &Typescript) -> Result<String>"
+    },
+    {
+      "name": "js_doc",
+      "kind": "mod",
+      "description": "",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/js_doc/index.html"
+    },
+    {
+      "name": "js_doc::Builder",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/js_doc/struct.Builder.html",
+      "signature": "pub struct Builder { /* private fields */ }"
+    },
+    {
+      "name": "js_doc::Builder::build",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn build(self) -> String",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/js_doc/struct.Builder.html#method.build"
+    },
+    {
+      "name": "js_doc::Builder::push",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn push(&mut self, line: &str)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/js_doc/struct.Builder.html#method.push"
+    },
+    {
+      "name": "js_doc::Builder::push_deprecated",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn push_deprecated(&mut self, typ: &DeprecatedType)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/js_doc/struct.Builder.html#method.push_deprecated"
+    },
+    {
+      "name": "js_doc::Builder::push_generic",
+      "kind": "method",
+      "description": "",
+      "signature": "pub fn push_generic(&mut self, generic: &GenericType)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/js_doc/struct.Builder.html#method.push_generic"
+    },
+    {
+      "name": "js_doc::typedef_named_datatype",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/js_doc/fn.typedef_named_datatype.html",
+      "signature": "pub fn typedef_named_datatype( cfg: &Typescript, typ: &NamedDataType, type_map: &TypeMap, ) -> Result<String>"
+    },
+    {
+      "name": "NamedLocation",
+      "kind": "enum",
+      "description": "Describes where an error occurred.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.NamedLocation.html",
+      "signature": "pub enum NamedLocation { Type, Field, Variant, }"
+    },
+    {
+      "name": "NamedLocation::Field",
+      "kind": "variant",
+      "description": "",
+      "signature": "Field",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.NamedLocation.html#variant.Field"
+    },
+    {
+      "name": "NamedLocation::Type",
+      "kind": "variant",
+      "description": "",
+      "signature": "Type",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.NamedLocation.html#variant.Type"
+    },
+    {
+      "name": "NamedLocation::Variant",
+      "kind": "variant",
+      "description": "",
+      "signature": "Variant",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/enum.NamedLocation.html#variant.Variant"
+    },
+    {
+      "name": "Result",
+      "kind": "type",
+      "description": "",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/type.Result.html",
+      "signature": "pub type Result<T> = Result<T, ExportError>;"
+    },
+    {
+      "name": "Result::Err",
+      "kind": "variant",
+      "description": "Contains the error value",
+      "signature": "Err(ExportError)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/type.Result.html#variant.Err"
+    },
+    {
+      "name": "Result::Ok",
+      "kind": "variant",
+      "description": "Contains the success value",
+      "signature": "Ok(T)",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/type.Result.html#variant.Ok"
+    },
+    {
+      "name": "Typescript",
+      "kind": "struct",
+      "description": "Typescript language exporter.",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/struct.Typescript.html",
+      "signature": "#[non_exhaustive]pub struct Typescript { pub header: Cow<'static, str>, pub remove_default_header: bool, pub bigint: BigIntExportBehavior, pub comment_exporter: Option<CommentFormatterFn>, pub formatter: Option<FormatterFn>, }"
+    },
+    {
+      "name": "Typescript::bigint",
+      "kind": "method",
+      "description": "Configure the BigInt handling behaviour",
+      "signature": "pub fn bigint(self, bigint: BigIntExportBehavior) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/struct.Typescript.html#method.bigint"
+    },
+    {
+      "name": "Typescript::comment_style",
+      "kind": "method",
+      "description": "Configure a function which is responsible for styling the comments to be exported",
+      "signature": "pub fn comment_style(self, exporter: CommentFormatterFn) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/struct.Typescript.html#method.comment_style"
+    },
+    {
+      "name": "Typescript::formatter",
+      "kind": "method",
+      "description": "Configure a function which is responsible for formatting the result file or files",
+      "signature": "pub fn formatter(self, formatter: FormatterFn) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/struct.Typescript.html#method.formatter"
+    },
+    {
+      "name": "Typescript::header",
+      "kind": "method",
+      "description": "Configure a header for the file.",
+      "signature": "pub fn header(self, header: impl Into<Cow<'static, str>>) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/struct.Typescript.html#method.header"
+    },
+    {
+      "name": "Typescript::new",
+      "kind": "method",
+      "description": "Construct a new Typescript exporter with the default options configured.",
+      "signature": "pub fn new() -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/struct.Typescript.html#method.new"
+    },
+    {
+      "name": "Typescript::remove_default_header",
+      "kind": "method",
+      "description": "Removes the default Specta header from the output.",
+      "signature": "pub fn remove_default_header(self) -> Self",
+      "url": "https://docs.rs/specta-typescript/0.0.6/specta_typescript/struct.Typescript.html#method.remove_default_header"
+    }
+  ],
+  "source": "rustdoc-html"
+}

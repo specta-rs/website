@@ -30,3 +30,6 @@ next-env.d.ts
 
 # local CDP before/after captures
 .captures
+
+# downloaded release documentation used by reference:sync
+.reference-cache/

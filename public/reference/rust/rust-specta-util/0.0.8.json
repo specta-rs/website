@@ -1,0 +1,26 @@
+{
+  "symbols": [
+    {
+      "name": "Any",
+      "kind": "struct",
+      "description": "Easily convert a non-Specta type into a Specta compatible type. This will be typed as any in Typescript.",
+      "url": "https://docs.rs/specta-util/0.0.8/specta_util/struct.Any.html",
+      "signature": "pub struct Any<T = ()>(/* private fields */);"
+    },
+    {
+      "name": "selection",
+      "kind": "macro",
+      "description": "Specta compatible selection of struct fields.",
+      "url": "https://docs.rs/specta-util/0.0.8/specta_util/macro.selection.html",
+      "signature": "macro_rules! selection { ( $s:expr, { $($n:ident),+ $(,)? } ) => { ... }; ( $s:expr, [{ $($n:ident),+ $(,)? }] ) => { ... }; }"
+    },
+    {
+      "name": "Unknown",
+      "kind": "struct",
+      "description": "Easily convert a non-Specta type into a Specta compatible type. This will be typed as unknown in Typescript.",
+      "url": "https://docs.rs/specta-util/0.0.8/specta_util/struct.Unknown.html",
+      "signature": "pub struct Unknown<T = ()>(/* private fields */);"
+    }
+  ],
+  "source": "rustdoc-html"
+}

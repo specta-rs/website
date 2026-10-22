@@ -1,0 +1,29 @@
+{
+  "symbols": [
+    {
+      "name": "collate_types",
+      "kind": "macro",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/0.0.2/tauri_specta/macro.collate_types.html"
+    },
+    {
+      "name": "Commands",
+      "kind": "struct",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/0.0.2/tauri_specta/struct.Commands.html"
+    },
+    {
+      "name": "export_to_openapi",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/0.0.2/tauri_specta/fn.export_to_openapi.html"
+    },
+    {
+      "name": "export_to_ts",
+      "kind": "fn",
+      "description": "",
+      "url": "https://docs.rs/tauri-specta/0.0.2/tauri_specta/fn.export_to_ts.html"
+    }
+  ],
+  "source": "rustdoc-html"
+}
