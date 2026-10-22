@@ -156,3 +156,12 @@ html,
     opacity: 1;
   }
 }
+
+/*
+ * Fumadocs' project switcher (`RootToggle`) renders each project icon inside a
+ * fixed square (`size-5`). The Tauri Specta logo is a wide 2.19:1 lockup, so
+ * let the wrapper size to the image instead of squashing it into a square.
+ */
+.shrink-0.size-9:has(> div > img) {
+  width: auto;
+}

@@ -15,11 +15,17 @@ export const source = loader({
 
     let result: [string, string, string];
     if (icon === "spectaLogo") {
-      result = ["/assets/specta.png", "Specta", "w-[24px]"];
+      result = ["/assets/specta.png", "Specta", "h-5 w-[30px] max-w-none"];
     } else if (icon === "rspcLogo") {
-      result = ["/assets/rspc.png", "rspc", "w-[16px]"];
+      result = ["/assets/rspc.png", "rspc", "h-5 w-[20px] max-w-none"];
     } else if (icon === "tauriSpectaLogo") {
-      result = ["/assets/tauri-specta.png", "Tauri Specta", "w-[35px]"];
+      // The Tauri Specta logo is a 2.19:1 lockup, so it needs the extra width
+      // to stay legible next to the square-ish project logos.
+      result = [
+        "/assets/tauri-specta.png",
+        "Tauri Specta",
+        "h-5 w-[44px] max-w-none",
+      ];
     } else if (icon === "docsRsLogo") {
       return createElement(CratesIoLogo);
     } else if (icon === "npmLogo") {
@@ -30,13 +36,13 @@ export const source = loader({
       return createElement(icons[icon as keyof typeof icons]);
     } else throw new Error(`Requested unknown icon: ${icon}`);
 
-    const [src, alt, widthClass] = result;
+    const [src, alt, className] = result;
     return createElement("img", {
       src,
       alt,
       width: 24,
       height: 24,
-      className: `h-4 ${widthClass}`,
+      className,
     });
   },
 });

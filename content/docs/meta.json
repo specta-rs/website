@@ -1,12 +1,3 @@
 {
-  "pages": [
-    "index",
-    "consulting",
-    "bruh",
-    "---Frameworks---",
-    "specta",
-    "tauri-specta",
-    "rspc",
-    "cli"
-  ]
+  "pages": ["index", "---Frameworks---", "specta", "tauri-specta", "rspc"]
 }

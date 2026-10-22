@@ -7,12 +7,12 @@ export default async function handler(
   request: Request,
   { params }: ApiContext<"/_api/ph_ebbd7f/[...slug]">,
 ) {
-  const originalUrl = new URL(request.url);
   const slug = params.slug.join("/");
   // // Determine target hostname based on static or dynamic ingestion
-  const hostname = params.slug[0] === "static"
-    ? "us-assets.i.posthog.com" // change us to eu for EU Cloud
-    : "us.i.posthog.com"; // change us to eu for EU Cloud
+  const hostname =
+    params.slug[0] === "static"
+      ? "us-assets.i.posthog.com" // change us to eu for EU Cloud
+      : "us.i.posthog.com"; // change us to eu for EU Cloud
 
   // Build external URL
   const url = new URL(request.url);

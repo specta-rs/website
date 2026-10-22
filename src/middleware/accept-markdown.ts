@@ -31,6 +31,9 @@ export default function acceptMarkdown(): MiddlewareHandler {
         );
         const headers = new Headers(response.headers);
         headers.set("Vary", "Accept");
+        // Cloudflare infers `text/mdx` from the generated `.mdx` asset name.
+        // The negotiated response is markdown, so label it as such.
+        headers.set("Content-Type", "text/markdown; charset=utf-8");
         return new Response(response.body, {
           status: response.status,
           statusText: response.statusText,

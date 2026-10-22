@@ -8,3 +8,12 @@
 /assets/*
   cache-control: public, max-age=31556952, immutable
   content-security-policy: default-src 'none';
+
+# The generated markdown assets are named `*.mdx`, which Cloudflare serves as
+# `text/mdx`. Label them as markdown; the Worker does the same for the
+# negotiated `/docs/<page>.mdx` responses.
+/docs/*/llms.mdx
+  content-type: text/markdown; charset=utf-8
+
+/docs/llms.mdx
+  content-type: text/markdown; charset=utf-8
