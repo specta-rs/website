@@ -8,51 +8,73 @@ const { rewrite: rewriteLLM } = rewritePath(
 
 type AssetsBinding = { fetch: typeof fetch };
 
+/**
+ * Waku prerenders two kinds of file under `/docs`: the markdown route
+ * (`llms.mdx`) and the OpenGraph image (`og.png`). Neither has a runtime
+ * function in the Worker, so a request that reaches the Waku router throws
+ * `defineRouter: no runtime function found for api ...; rebuild required` and
+ * returns 500. Cloudflare normally serves them from the asset worker (the
+ * `run_worker_first` negative rules), but serve them here too so a routing
+ * change cannot break them.
+ *
+ * Markdown negotiation (`Accept: text/markdown`, or the `.mdx` suffix) also
+ * resolves to the `llms.mdx` asset.
+ */
 export default function acceptMarkdown(): MiddlewareHandler {
   return async (c, next) => {
-    // A generated markdown asset requested directly. Cloudflare normally serves
-    // these from the asset worker, but a request that reaches the Worker must
-    // not fall through to the Waku router: the prerendered route has no runtime
-    // function, so the router throws
-    // `defineRouter: no runtime function found for api ...; rebuild required`.
-    if (c.req.path.endsWith("/llms.mdx")) {
-      if (getAssets(c)) return serveMarkdownAsset(c, c.req.path);
+    const path = c.req.path;
+
+    // A generated file requested directly.
+    if (isGeneratedFile(path)) {
+      const assets = getAssets(c);
+      if (assets) return serveAsset(c, assets, path, path.endsWith(".mdx"));
       await next();
       return;
     }
 
-    const endsWithMdx = c.req.path.endsWith(".mdx");
+    const endsWithMdx = path.endsWith(".mdx");
     if (
-      c.req.path.startsWith("/docs") &&
+      path.startsWith("/docs") &&
       (isMarkdownPreferred(c.req.raw) || endsWithMdx)
     ) {
-      const result = rewriteLLM(
-        endsWithMdx ? stripSuffix(c.req.path, ".mdx") : c.req.path,
-      );
+      const result = rewriteLLM(endsWithMdx ? stripSuffix(path, ".mdx") : path);
 
-      if (result) return serveMarkdownAsset(c, result);
+      // `ASSETS` only exists on Cloudflare; the Node dev server resolves the
+      // rewritten URL through its own routes.
+      if (result) {
+        return serveAsset(c, getAssets(c) ?? { fetch }, result, true);
+      }
     }
 
     await next();
   };
 }
 
+const isGeneratedFile = (path: string) =>
+  path.startsWith("/docs") &&
+  (path.endsWith("/llms.mdx") || path.endsWith("/og.png"));
+
 function getAssets(c: Context): AssetsBinding | undefined {
   return (c.env as { ASSETS?: AssetsBinding }).ASSETS;
 }
 
-async function serveMarkdownAsset(c: Context, pathname: string) {
+async function serveAsset(
+  c: Context,
+  assets: AssetsBinding,
+  pathname: string,
+  markdown: boolean,
+) {
   const url = new URL(c.req.url);
   url.pathname = pathname;
-
-  const assets = getAssets(c) ?? { fetch };
   const response = await assets.fetch(new Request(url.toString(), c.req.raw));
 
   const headers = new Headers(response.headers);
   headers.set("Vary", "Accept");
-  // Cloudflare infers `text/mdx` from the generated `.mdx` asset name. The
-  // negotiated response is markdown, so label it as such.
-  headers.set("Content-Type", "text/markdown; charset=utf-8");
+  if (markdown) {
+    // Cloudflare infers `text/mdx` from the generated `.mdx` asset name. The
+    // response is markdown, so label it as such.
+    headers.set("Content-Type", "text/markdown; charset=utf-8");
+  }
 
   return new Response(response.body, {
     status: response.status,
