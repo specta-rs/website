@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "jsx-a11y", "typescript", "unicorn", "oxc"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "rules": {
+    // The project uses the automatic JSX runtime, so `React` is not required
+    // to be in scope.
+    "react/react-in-jsx-scope": "off",
+    // Inline SVG icons use `role="img"` with a `<title>`; that is the intended
+    // accessible pattern, so this rule does not apply.
+    "jsx-a11y/prefer-tag-over-role": "off"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true
+  },
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    "build",
+    ".source",
+    ".wrangler",
+    "src/cloudflare-env.d.ts",
+    "src/pages.gen.ts"
+  ]
+}

@@ -9,7 +9,10 @@ import { readFile, readdir, writeFile } from "node:fs/promises";
 // `Accept: text/markdown`. The generated static files (`og.png`, `llms.mdx`)
 // are negative rules, so Cloudflare serves them straight from the Asset Worker
 // instead of the Waku router (which has no handler for them and would 500).
-const wranglerConfigPath = new URL("../dist/server/wrangler.json", import.meta.url);
+const wranglerConfigPath = new URL(
+  "../dist/server/wrangler.json",
+  import.meta.url,
+);
 
 const runWorkerFirst = [
   "/docs",
@@ -28,10 +31,13 @@ try {
   // Every non-HTML file generated under /docs must be excluded from the Worker
   // above; otherwise the Waku router has no handler for it and returns 500.
   // Fail the build if a new asset type appears so it gets a negative rule.
-  const entries = await readdir(new URL("../dist/public/docs", import.meta.url), {
-    recursive: true,
-    withFileTypes: true,
-  });
+  const entries = await readdir(
+    new URL("../dist/public/docs", import.meta.url),
+    {
+      recursive: true,
+      withFileTypes: true,
+    },
+  );
   const unhandled = entries
     .filter(
       (entry) =>

@@ -1,7 +1,8 @@
 "use client";
 
 export const SpectaLogoWithRightClickForBrand = () => (
-  // biome-ignore lint/a11y/noStaticElementInteractions: this is hidden
+  // Right-click is the only interaction; the element is not meant to be a
+  // focusable control.
   <div
     className="inline-flex items-center gap-2.5 "
     onContextMenu={(e) => {
