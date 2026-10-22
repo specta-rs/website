@@ -1,5 +1,24 @@
 ---
 title: Internal
+description: How the experimental workspace separates routing, execution, and transports.
 ---
 
--- TOOD: Crate structure
+These pages describe the experimental [source snapshot](https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d). Internal APIs are not stable extension contracts.
+
+## Crate structure
+
+- `rspc` defines routers, typed procedure builders, middleware, and binding export.
+- `rspc-procedure` holds erased executable procedures, dynamic input and output values, streams, errors, and shared state.
+- `rspc-axum` turns HTTP and WebSocket messages into procedure calls.
+- `tauri-plugin-rspc` executes procedures over Tauri IPC.
+- `rspc-legacy` bridges older APIs and binding shapes.
+- The cache, invalidation, OpenAPI, tracing, and Zer crates contain optional extensions with different levels of completeness.
+- `packages/client` contains the tuple client and an experimental next client. The query packages adapt client calls to frontend caching libraries.
+
+## Build and request flow
+
+Router construction collects typed procedures. Building the router creates executable handlers and a separate type collection. An exporter uses the type collection to generate bindings.
+
+At request time, the adapter creates context, resolves a procedure path, and supplies dynamic input. The procedure converts input to its typed resolver argument, runs middleware and the resolver, then yields output through a `ProcedureStream`. The adapter serializes that output for its protocol.
+
+See [advanced internals](/docs/rspc/1.0.0-rc.x/internal/advanced) for custom adapter responsibilities.

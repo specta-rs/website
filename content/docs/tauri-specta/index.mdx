@@ -4,4 +4,181 @@ longTitle: Tauri Specta
 description: Completely typesafe Tauri commands
 ---
 
-TODO
+Tauri Specta generates TypeScript or JavaScript bindings for Tauri v2 commands and events. The bindings include the argument and return types from your Rust code.
+
+## Install
+
+Run these commands in your Tauri Rust crate, usually `src-tauri`:
+
+```bash
+cargo add specta@=2.0.0-rc.27 --features derive,function
+cargo add specta-typescript@0.0.14
+cargo add tauri-specta@=2.0.0-rc.27 --features derive,typescript
+cargo add serde --features derive
+```
+
+These versions use Specta v2 release candidates. Keep the `=` pins on `specta` and `tauri-specta`. Do not mix examples from older release candidates with this setup.
+
+The `derive` feature on Tauri Specta enables the `Event` derive macro. You can leave it out if you only use commands.
+
+## Register commands
+
+Add `#[specta::specta]` below `#[tauri::command]`, then collect the commands in a builder.
+
+```rust copy filename="src-tauri/src/lib.rs"
+use specta_typescript::Typescript;
+use tauri_specta::{collect_commands, Builder};
+
+#[tauri::command]
+#[specta::specta]
+fn greet(name: String) -> String {
+    format!("Hello, {name}!")
+}
+
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
+pub fn run() {
+    let builder = Builder::new()
+        .commands(collect_commands![greet]);
+
+    #[cfg(debug_assertions)]
+    builder
+        .export(Typescript::default(), "../src/bindings.ts")
+        .expect("failed to export bindings");
+
+    tauri::Builder::default()
+        .invoke_handler(builder.invoke_handler())
+        .setup(move |app| {
+            builder.mount_events(app);
+            Ok(())
+        })
+        .run(tauri::generate_context!())
+        .expect("error while running application");
+}
+```
+
+Keep your existing Tauri plugins and setup code when adding this to an application. Use `builder.invoke_handler()` instead of a separate `tauri::generate_handler!` for these commands. Calling `.commands(...)` again replaces the previous command list.
+
+The export path is relative to the process's working directory. The path above assumes the app starts from `src-tauri`. Run a debug build to generate the file before checking the frontend.
+
+## Call commands
+
+```typescript copy filename="src/main.ts"
+import { commands } from "./bindings";
+
+const message = await commands.greet("Ada");
+console.log(message);
+```
+
+The generated functions call Tauri's IPC API. They do not bypass Tauri permissions or validate arbitrary frontend values before sending them.
+
+## Share custom types
+
+Derive `specta::Type` on custom command arguments and return values. Derive the Serde traits needed by Tauri too:
+
+```rust copy
+#[derive(serde::Serialize, specta::Type)]
+#[serde(rename_all = "camelCase")]
+struct User {
+    display_name: String,
+}
+
+#[tauri::command]
+#[specta::specta]
+fn current_user() -> User {
+    User { display_name: "Ada".into() }
+}
+```
+
+Register `current_user` in `collect_commands!`. Referenced types are collected automatically. Use `.typ::<MyType>()` on the builder for a type that is not referenced by a command or event.
+
+Tauri Specta uses Serde-aware input and output phases by default. A type with different serialization and deserialization rules can produce separate aliases. Import the generated types rather than assuming the two shapes are identical.
+
+## Handle errors
+
+By default, an `Err` returned by a command rejects the promise. For `Result<T, E>`, the function returns `Promise<T>`. TypeScript does not type a promise's rejection value.
+
+Use a result object when you want to inspect errors as values:
+
+```rust
+let builder = Builder::new()
+    .commands(collect_commands![greet])
+    .error_handling(tauri_specta::ErrorHandlingMode::Result);
+```
+
+For commands that return `Result<T, E>`, this mode generates `{ status: "ok"; data: T } | { status: "error"; error: E }`. It rethrows JavaScript `Error` instances. Framework failures can still reach the IPC boundary, so do not treat every rejection as your application error.
+
+`ResultUnknown` uses the same result shape but types errors as `unknown` and does not rethrow. `DataError` uses `{ data: T; error: null } | { data: null; error: E }`. See [ErrorHandlingMode](https://docs.rs/tauri-specta/latest/tauri_specta/enum.ErrorHandlingMode.html) for the full behavior.
+
+## Events
+
+Derive `Event` on each event payload and register it with the same builder:
+
+```rust copy
+use tauri_specta::{collect_events, Event};
+
+#[derive(Clone, serde::Serialize, serde::Deserialize, specta::Type, Event)]
+struct DownloadProgress {
+    percent: u32,
+}
+
+let builder = Builder::<tauri::Wry>::new()
+    .events(collect_events![DownloadProgress]);
+```
+
+Add `.events(...)` to the command builder from the setup example. Do not create a second builder in the application. Call `builder.mount_events(app)` in Tauri's setup callback before using the typed Rust event methods.
+
+With the `tauri_specta::Event` trait in scope, emit an event from Rust:
+
+```rust
+DownloadProgress { percent: 50 }.emit(app)?;
+```
+
+Listen in the frontend:
+
+```typescript copy
+import { events } from "./bindings";
+
+const unlisten = await events.downloadProgress.listen((event) => {
+  console.log(event.payload.percent);
+});
+
+// Call when the component or listener is no longer needed.
+unlisten();
+```
+
+## Channels
+
+Use `tauri::ipc::Channel<T>` for values streamed from a command. Channels must be direct command arguments or return values, not fields inside structs or event payloads.
+
+```rust
+#[tauri::command]
+#[specta::specta]
+fn download(on_progress: tauri::ipc::Channel<u32>) {
+    let _ = on_progress.send(100);
+}
+```
+
+```typescript
+import { Channel } from "@tauri-apps/api/core";
+import { commands } from "./bindings";
+
+const progress = new Channel<number>();
+progress.onmessage = (percent) => console.log(percent);
+await commands.download(progress);
+```
+
+Register `download` with the builder before exporting these bindings.
+
+## JavaScript output
+
+Enable Tauri Specta's `javascript` feature, then replace `Typescript::default()` with `specta_typescript::JSDoc::default()` and use a `.js` output path. The generated JavaScript includes JSDoc type annotations.
+
+## Troubleshooting
+
+- **Command missing from bindings:** check both attributes and the `collect_commands!` list, then rerun the exporter.
+- **Command does not run:** check that Tauri uses the builder's invoke handler and that the command is allowed by your app's permissions.
+- **Event does not work:** register the event and mount events during setup.
+- **`Type` is not implemented:** derive it on your payload or enable the relevant [Specta feature](/docs/specta/core#third-party-types).
+- **Bindings differ after an update:** keep release candidate versions pinned and regenerate before building the frontend.
+
+See the [API reference](https://docs.rs/tauri-specta) and [example applications](https://github.com/specta-rs/tauri-specta/tree/main/examples) for more configuration options.

@@ -1,13 +1,36 @@
 ---
 title: Migrations
+description: Separate the released API from the experimental rewrite.
 ---
 
-You should upgrade each version of rspc in order and ensure you don't run into any issues at each step.
+rspc is no longer maintained. There is no supported upgrade path to a finished 1.0 release. The `1.0.0-rc.x` documentation URL is retained for the experimental rewrite; it does not identify the API in the repository's older `v1.0.0-rc` tags.
 
-# 0.4.0
+## Before changing versions
 
-TODO: Write this out
+1. Record the exact versions of rspc, its adapter, Specta, and the frontend packages.
+2. Add a test that builds your router.
+3. Test a query, mutation, error response, and subscription through the actual transport.
+4. Regenerate bindings and type-check the frontend.
 
-# 0.5.0
+## From 0.3.0 to the procedure API
 
-TODO: Plan this out
+The [quickstart](/docs/rspc/1.0.0-rc.x/quickstart) pins the source revision used by these examples. The main changes are:
+
+| 0.3.0 API                                          | Experimental procedure API                                                |
+| -------------------------------------------------- | ------------------------------------------------------------------------- |
+| `Router::new().query(name, ...)`                   | `Router::new().procedure(name, Procedure::builder::<Error>().query(...))` |
+| Router-level middleware                            | Procedure-builder `.with(...)`                                            |
+| Concrete `rspc::Error`                             | An application type implementing the `rspc::Error` trait                  |
+| `.merge("prefix.", router)`                        | `.nest("prefix", router)` or unprefixed `.merge(router)`                  |
+| `.build()` returns a router                        | `.build()` returns `Result<(Procedures, Types), _>`                       |
+| `Config::export_ts_bindings` or router `export_ts` | `rspc::Typescript::export_to(path, &types)`                               |
+
+Migrate one router module at a time. Keep authentication on a shared procedure builder so every protected procedure opts into it. Recheck public error values because the error model and transport envelopes differ.
+
+## Frontend and transport compatibility
+
+The experimental exporter emits a nested `Procedures` definition. With the default `legacy` feature, it also emits `ProceduresLegacy` for the tuple client. Use the type expected by your chosen client.
+
+Do not switch a Tauri server plugin without checking the [channel and event protocol difference](/docs/rspc/1.0.0-rc.x/integrations/tauri#client-compatibility). Do not assume the Rust client or unfinished middleware became production-ready as part of this rewrite.
+
+There is no documented 0.5.0 migration to apply. Upgrade only to an actual release or a pinned source revision whose behavior you have tested.

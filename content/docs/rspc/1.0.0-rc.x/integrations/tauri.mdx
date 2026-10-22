@@ -1,44 +1,49 @@
 ---
 title: Tauri
+description: Mount the experimental Tauri IPC adapter and check protocol compatibility.
 ---
 
-rspc has a built-in integration with [Tauri](https://tauri.app/) so that you can expose your API to your frontend code using Tauri's IPC.
+The rewrite includes a Tauri v2 adapter named `tauri-plugin-rspc`. It accepts built procedures and creates context from a Tauri window.
 
-### Enable feature
+## Rust setup
 
-For the integration to work you must enable the `tauri` feature of rspc. Ensure the rspc line in your `Cargo.toml` file looks like the following:
+Use the same Git revision as the core crate in the [quickstart](/docs/rspc/1.0.0-rc.x/quickstart):
 
-```toml /rspc_tauri = "0.0.0"/ copy filename="Cargo.toml"
-[dependencies]
-rspc = "0.0.0"
-rspc-tauri = "0.0.0"
+```toml filename="src-tauri/Cargo.toml"
+[dependencies.tauri-plugin-rspc]
+git = "https://github.com/specta-rs/rspc"
+rev = "30402a42a6a523e0a76d23f3b7ce80903386a98d"
 ```
 
-Read more about Rust features [here](https://doc.rust-lang.org/cargo/reference/features.html#dependency-features)
+In your existing Tauri application:
 
-### Usage
-
-Then expose your router using the Tauri plugin.
-
-```rs copy filename="src/main.rs"
-let router = <Router>::new().build();
+```rust
+let (procedures, types) = router().build().expect("invalid router");
+rspc::Typescript::default()
+    .export_to("../src/bindings.ts", &types)
+    .expect("failed to export bindings");
 
 tauri::Builder::default()
-    .plugin(rspc_tauri::plugin(router.arced(), |app_handle| ()))
+    .plugin(tauri_plugin_rspc::init(procedures, |_window| ()))
+    .run(tauri::generate_context!())
+    .expect("error while running application");
 ```
 
-### Usage on frontend
+This assumes `router()` returns `Router<()>`. Return your own context from the window callback if the router needs application state.
 
-```ts copy filename="index.ts"
-import { createClient } from "@rspc/client";
-import { TauriTransport } from "@rspc/tauri";
-import type { Procedures } from "./ts/bindings"; // These were the bindings exported from your Rust code!
+## Client compatibility
 
-const client = createClient<Procedures>({
-  transport: new TauriTransport(),
-});
+<Callout type="warn">
+  The Rust adapter in this revision uses Tauri channels. The repository's older
+  `@rspc/tauri` `TauriTransport` uses events named `plugin:rspc:transport` and
+  `plugin:rspc:transport:resp`. Those are different protocols. The old transport
+  is not a drop-in client for this adapter.
+</Callout>
 
-client.query(["version"]).then((data) => console.log(data));
-```
+When maintaining an existing app, keep the server plugin and frontend transport from the same protocol generation. Check a real request and a subscription before changing either dependency. TypeScript bindings alone cannot detect a transport mismatch.
 
-You can use the `client` by itself or integrate with the [Tanstack Query](/docs/rspc/1.0.0-rc.x/client/tanstack-query) hooks.
+The [Tauri example](https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d/examples/tauri) and [adapter source](https://github.com/specta-rs/rspc/blob/30402a42a6a523e0a76d23f3b7ce80903386a98d/integrations/tauri/src/lib.rs) show the experimental implementation.
+
+## New applications
+
+For typed Tauri commands and events without maintaining an rspc transport, use [Tauri Specta](/docs/tauri-specta). It integrates with Tauri's command and event APIs directly. It is not an automatic migration for an rspc router.

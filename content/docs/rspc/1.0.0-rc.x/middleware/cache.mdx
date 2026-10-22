@@ -2,4 +2,27 @@
 title: Cache
 ---
 
-# TODO
+`rspc-cache` is a server-side caching prototype. It is separate from TanStack Query's frontend cache.
+
+<Callout type="warn">
+  Do not use this prototype to cache production data. In the checked
+  implementation, every request uses the same hard-coded cache key. Different
+  procedures, inputs, and users can collide. A collision can return the wrong
+  value or panic on a type mismatch.
+</Callout>
+
+## How the prototype works
+
+The [implementation](https://github.com/specta-rs/rspc/blob/30402a42a6a523e0a76d23f3b7ce80903386a98d/crates/cache/src/lib.rs) provides:
+
+- `CacheState::builder(Memory::new()).mount()` to install a store through router setup.
+- `cache()` to wrap a procedure.
+- `cache_ttl(seconds)` to set a time to live while the resolver runs.
+
+Only successful results with a TTL are stored. The middleware requires cloneable inputs and results. It expects cache state to be mounted and can panic if that state is missing.
+
+## Cache in an application
+
+Until cache keys and isolation are implemented, put caching in application code. Include every value that affects a response in the key, including the user or tenant where needed. Define expiration and invalidation rules, and do not cache authorization decisions indefinitely.
+
+For client-side caching and refetching, use [TanStack Query](/docs/rspc/1.0.0-rc.x/client/tanstack-query).

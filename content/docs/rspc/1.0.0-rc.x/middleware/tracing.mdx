@@ -2,4 +2,24 @@
 title: Tracing
 ---
 
-# TODO
+`rspc-tracing` wraps a procedure with a tracing span and logs its elapsed time, input, and result. It uses Rust's `tracing` ecosystem.
+
+## Attach the middleware
+
+Add `rspc-tracing` from the same Git revision as the core crate, then attach it to a procedure builder:
+
+```rust
+let procedure = rspc::Procedure::builder::<ApiError>()
+    .with(rspc_tracing::tracing())
+    .query(|_: (), _: ()| async { Ok("hello") });
+```
+
+`ApiError` is the error type from the [procedure guide](/docs/rspc/1.0.0-rc.x/server/procedure). Initialize a tracing subscriber in your application to display or collect the events. The middleware does not install one.
+
+The input and error types must implement `Debug`. Outputs must implement the crate's `Traceable` trait; ordinary debug values and supported streams have implementations.
+
+## Data and implementation limits
+
+Inputs and results are logged with debug formatting. Do not attach this middleware to procedures that contain passwords, access tokens, or private data unless you have reviewed the resulting logs. A custom middleware can log only safe fields.
+
+The [prototype](https://github.com/specta-rs/rspc/blob/30402a42a6a523e0a76d23f3b7ce80903386a98d/crates/tracing/src/lib.rs) reads procedure names from metadata, but the core rewrite still supplies a placeholder name. Do not rely on it for accurate per-procedure metrics. It does not capture transport serialization failures or provide Prometheus metrics.

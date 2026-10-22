@@ -1,124 +1,150 @@
 ---
 title: Quickstart
+description: Run the experimental procedure API with Axum and a TypeScript client.
 ---
 
-import { Step, Steps } from "fumadocs-ui/components/steps";
-import { Tab, Tabs } from "fumadocs-ui/components/tabs";
-import { Pre, CodeBlock } from "fumadocs-ui/components/codeblock";
-import { Accordion, Accordions } from "fumadocs-ui/components/accordion";
+<Callout type="warn">
+  rspc is no longer maintained. This guide describes the procedure-based rewrite
+  in the [source
+  snapshot](https://github.com/specta-rs/rspc/tree/30402a42a6a523e0a76d23f3b7ce80903386a98d),
+  not the older `v1.0.0-rc` tags. Use a fixed revision for this API. Do not
+  install the latest Specta alongside it.
+</Callout>
 
-To get started with rspc you can use the quickstart guide below.
-
-<Steps>
-
-<Step>
-
-### Initialise Rust project
-
-If you haven't got a Rust project already setup, create a new one using the following command.
-
-{/* TODO: Add `&&` when copying bash commands */}
+## Create a project
 
 ```bash
-cargo new <project-name>
-cd <project-name>
-cargo add tokio --features full # rpsc requires an async runtime
+cargo new rspc-example
+cd rspc-example
+cargo add tokio --features macros,rt-multi-thread,net
+cargo add axum@0.8
+cargo add serde --features derive
+cargo add specta@=2.0.0-rc.22 --features derive
 ```
 
-</Step>
+Add the core and adapter from the same revision:
 
-<Step>
+```toml filename="Cargo.toml"
+[dependencies.rspc]
+git = "https://github.com/specta-rs/rspc"
+rev = "30402a42a6a523e0a76d23f3b7ce80903386a98d"
+features = ["typescript"]
 
-### Install rspc
-
-`rspc` is distributed through a Rust crate hosted on [crates.io](https://crates.io/crates/rspc). Add it to your project using the following command:
-
-```bash
-cargo add rspc specta
+[dependencies.rspc-axum]
+git = "https://github.com/specta-rs/rspc"
+rev = "30402a42a6a523e0a76d23f3b7ce80903386a98d"
 ```
 
-This command will not exist if your running a Rust version earlier than `1.62.0`, please upgrade your Rust version if this is the case.
+Keep the default `legacy` feature enabled. It exports the `ProceduresLegacy` type used by the tuple-based JavaScript client below.
 
-</Step>
+## Define and expose a router
 
-<Step>
+```rust copy filename="src/main.rs"
+use rspc::{Procedure, Router};
+use serde::Serialize;
+use specta::Type;
 
-### Create a router
+#[derive(Debug, Serialize, Type)]
+enum ApiError {
+    InvalidName,
+}
 
-{/* TODO: Boilerplate for typesafe errors and middleware */}
-
-Go into `src/main.rs` and add the following code:
-
-```rs copy filename="src/main.rs"
-use rspc::Router;
+impl rspc::Error for ApiError {
+    fn into_procedure_error(self) -> rspc::ProcedureError {
+        rspc::ResolverError::new(self, None::<std::io::Error>).into()
+    }
+}
 
 fn router() -> Router<()> {
-    <Router>::new()
-        .query("version", |t| t(|ctx, input: ()| env!("CARGO_PKG_VERSION")))
-        .build()
+    Router::new()
+        .procedure("version", {
+            Procedure::builder::<ApiError>()
+                .query(|_: (), _: ()| async { Ok(env!("CARGO_PKG_VERSION")) })
+        })
+        .procedure("greet", {
+            Procedure::builder::<ApiError>()
+                .mutation(|_: (), name: String| async move {
+                    if name.trim().is_empty() {
+                        return Err(ApiError::InvalidName);
+                    }
+                    Ok(format!("Hello, {name}!"))
+                })
+        })
 }
 
 #[tokio::main]
 async fn main() {
-    let router = router();
+    let (procedures, types) = router().build().expect("invalid router");
 
-    // TODO: Mount an integration to expose your API
+    rspc::Typescript::default()
+        .export_to("./bindings.ts", &types)
+        .expect("failed to export bindings");
+
+    let app = axum::Router::new()
+        .nest("/rspc", rspc_axum::endpoint(procedures, || ()));
+
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:4000")
+        .await
+        .expect("failed to bind server");
+    axum::serve(listener, app).await.expect("server failed");
 }
 
 #[cfg(test)]
 mod tests {
-    // It is highly recommended to unit test your rspc router by creating it
-    // This will ensure it doesn't have any issues and also export updated Typescript types.
-
     #[test]
-    fn test_rspc_router() {
-        super::router();
+    fn router_builds() {
+        super::router().build().expect("invalid router");
     }
 }
 ```
 
-</Step>
+Run `cargo run`. The server writes `bindings.ts` and listens on port 4000. A query reads data. A mutation performs an action that may change data.
 
-<Step>
+## Call it from TypeScript
 
-### Exposing your router
+```bash
+npm install @rspc/client@0.3.1
+```
 
-Now that you have a router your probably wondering how you access it from your frontend. This is done through an rspc integration. I would recommend starting with [Axum](https://github.com/tokio-rs/axum), by following [this](/docs/rspc/1.0.0-rc.x/integrations/axum).
+Copy or export `bindings.ts` into your frontend source directory:
 
-{/* TODO: Include install commands for this too */}
+```typescript copy filename="src/api.ts"
+import { createClient, FetchTransport } from "@rspc/client";
+import type { ProceduresLegacy } from "./bindings";
 
-<Tabs groupId="integration" items={["Axum", "Tauri"]} persist>
-  <Tab value="Axum">TODO</Tab>
-  <Tab value="Tauri">TODO</Tab>
-</Tabs>
+export const client = createClient<ProceduresLegacy>({
+  transport: new FetchTransport("/rspc"),
+});
 
-</Step>
+console.log(await client.query(["version", null]));
+console.log(await client.mutation(["greet", "Ada"]));
+```
 
-<Step>
+This example uses a same-origin `/rspc` endpoint. Configure your frontend development server to proxy that path to `http://127.0.0.1:4000`. For cross-origin requests, configure CORS on the server and use its full URL instead.
 
-### Usage on the frontend
+This rewrite exports Rust's `()` input as `null`. Pass `null` as the second tuple item for those procedures. The released 0.3.0 exporter uses `never` instead, so its no-input calls have a different tuple shape.
 
-Refer to the [Vanilla](/docs/rspc/1.0.0-rc.x/client/vanilla), [React](/docs/rspc/1.0.0-rc.x/client/react) or [Solid](/docs/rspc/1.0.0-rc.x/client/solid) documentation for how to use the rspc client in your frontend.
+## Add a custom payload
 
-<Tabs groupId="client" items={["Vanilla", "React", "Solid", "Rust"]} persist>
-  <Tab value="Vanilla">TODO</Tab>
-  <Tab value="React">TODO</Tab>
-  <Tab value="Solid">TODO</Tab>
-  <Tab value="Rust">TODO</Tab>
-</Tabs>
+Inputs need `Deserialize` and `Type`. Outputs need `Serialize` and `Type`:
 
-</Step>
+```rust
+#[derive(serde::Deserialize, Type)]
+struct GreetingInput {
+    name: String,
+}
 
-<Step>
+#[derive(Serialize, Type)]
+struct Greeting {
+    message: String,
+}
+```
 
-### Adding a procedure
+Use these types in a resolver, attach it with `.procedure(...)`, and regenerate bindings. See [Procedures](/docs/rspc/1.0.0-rc.x/server/procedure) for errors, context, streams, and shared middleware.
 
-TODO: Explaining adding procedure and using `derive(Type)`
+## Other integrations
 
-</Step>
-
-</Steps>
-
-## TODO
-
-- Using `specta::selection`/`specta::json`
+- [Axum](/docs/rspc/1.0.0-rc.x/integrations/axum) covers request context and WebSockets.
+- [Tauri](/docs/rspc/1.0.0-rc.x/integrations/tauri) explains the IPC adapter and client compatibility.
+- [TanStack Query](/docs/rspc/1.0.0-rc.x/client/tanstack-query) covers frontend query caching.
+- The [Rust client](/docs/rspc/1.0.0-rc.x/client/rust) is a prototype, not a supported alternative to the TypeScript client.

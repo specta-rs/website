@@ -1,148 +1,24 @@
 ---
 title: Quickstart
+description: Choose a complete guide for the API your application uses.
 ---
 
-import { Step, Steps } from "fumadocs-ui/components/steps";
-import { Tab, Tabs } from "fumadocs-ui/components/tabs";
+This archived alpha quickstart mixed proposed APIs with the released router API. Use a complete, version-specific setup instead:
 
-Get rspc up and running in your own project.
+- For `rspc = "0.3.0"`, follow the [0.3.0 quickstart](/docs/rspc/0.3.0/quickstart). It includes an Axum server, binding export, a router test, and a frontend call.
+- For the experimental `Procedure::builder` rewrite, follow the [next API quickstart](/docs/rspc/1.0.0-rc.x/quickstart). It pins the source revision used by those examples.
 
-<Steps>
+## Check an existing application
 
-<Step>
+Look at the router constructor and dependency lockfile before copying code:
 
-### Create new project (optional)
+| Code in your application               | Guide                      |
+| -------------------------------------- | -------------------------- |
+| `Router::new().query("name", ...)`     | 0.3.0 router API           |
+| `Router::new().procedure("name", ...)` | Experimental procedure API |
 
-If you haven't got a Rust project already setup, create a new one using the following command.
+Do not update Specta independently of rspc. The released API and the rewrite require older Specta release candidates with APIs that differ from the current standalone Specta docs.
 
-```bash
-cargo new <project-name>
-cd <project-name>
-cargo add tokio --features full # rspc requires an async runtime
-```
+## Verify the setup
 
-</Step>
-
-<Step>
-
-### Install rspc
-
-`rspc` is distributed through a Rust crate hosted on [crates.io](https://crates.io/crates/rspc). Add it to your project using the following command:
-
-```bash
-cargo add rspc specta
-```
-
-This command will not exist if you're running a Rust version earlier than `1.62.0`, please upgrade your Rust version if this is the case.
-
-</Step>
-
-<Step>
-
-### Create a router
-
-Go into `src/main.rs` and add the following code:
-
-```rs copy filename="src/main.rs"
-use rspc::{Rspc, Router};
-
-const R: Rspc<()> = Rspc::new();
-
-fn router() -> Router<()> {
-    R.router()
-        // TODO: Set ts export path using config
-        .procedure("version", R.query(|ctx, _: ()| env!("CARGO_PKG_VERSION")))
-        .compat()
-}
-
-#[tokio::main]
-async fn main() {
-    let router = router();
-
-    // TODO: Mount an integration to expose your API
-}
-
-#[cfg(test)]
-mod tests {
-    // It is highly recommended to unit test your rspc router by creating it
-    // This will ensure it doesn't have any issues and also export updated Typescript types.
-
-    #[test]
-    fn test_rspc_router() {
-        super::router();
-    }
-}
-```
-
-</Step>
-
-<Step>
-
-### Exposing your router
-
-Now that you have a router you're probably wondering how you access it from your frontend. This is done through an rspc integration. I would recommend starting with [Axum](https://github.com/tokio-rs/axum), by following [this](/docs/rspc/0.3.0/alpha/server/basics).
-
-</Step>
-
-<Step>
-
-### Usage on the frontend
-
-Install the frontend package using the following command:
-
-<Tabs items={['React', 'Solid']}>
-<Tab value="React">
-
-```npm
-npm install @rspc/client @rspc/react
-```
-
-```tsx copy filename="src/MyComponent.tsx"
-import { rspc } from "./rspc";
-
-function SomeComponent() {
-  const version = rspc.useQuery(["version"]);
-
-  return (
-    <>
-      <p>{version.data}</p>
-    </>
-  );
-}
-```
-
-</Tab>
-<Tab value="Solid">
-
-```npm
-npm install @rspc/client @rspc/solid
-```
-
-```tsx copy filename="src/MyComponent.tsx"
-import { rspc } from "./rspc";
-
-function SomeComponent() {
-  const version = rspc.useQuery(() => ["version"]);
-
-  return (
-    <>
-      <p>{version.data}</p>
-    </>
-  );
-}
-```
-
-</Tab>
-</Tabs>
-
-</Step>
-
-<Step>
-
-### (Optional) Setup your editor
-
-If you are using [Visual Studio Code](https://code.visualstudio.com) you can optionally install the [rspc extension](https://marketplace.visualstudio.com/items?itemName=oscartbeaumont.rspc-vscode) for useful code shortcuts.
-
-</Step>
-
-</Steps>
+Build the router in a test, generate bindings before frontend type checking, and run one request through the real adapter. A successful Rust build does not prove that a frontend transport speaks the adapter's protocol.

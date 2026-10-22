@@ -4,4 +4,19 @@ longTitle: rspc
 description: A framework for building typesafe web backends in Rust
 ---
 
-TODO
+rspc defines Rust API procedures and generates types for a TypeScript client. A router groups procedures, middleware handles shared behavior, and an integration exposes the router over HTTP or Tauri IPC.
+
+<Callout type="warn">
+  rspc is no longer maintained. See the [maintenance
+  announcement](https://github.com/specta-rs/rspc/discussions/351). These docs
+  remain available for existing applications.
+</Callout>
+
+## Choose your API version
+
+- [0.3.0](/docs/rspc/0.3.0) documents the released `Router::query` and `Router::mutation` API.
+- [Next API](/docs/rspc/1.0.0-rc.x) documents the experimental procedure-based rewrite. The section retains its original `1.0.0-rc.x` URL. It is not a promise of a maintained 1.0 release.
+
+Do not mix the two APIs. They differ in router construction, middleware, error handling, and binding export. Keep Rust adapters and frontend packages compatible with your chosen version.
+
+For a new Tauri application, see [Tauri Specta](/docs/tauri-specta). For shared data types without an RPC framework, use [Specta](/docs/specta) directly.

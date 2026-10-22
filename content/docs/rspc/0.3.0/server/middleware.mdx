@@ -9,7 +9,7 @@ title: Middleware
 
 rspc allows adding middleware to your router which can intercept the request and response for procedures defined after it on the router. Middleware can also modify the context type which is passed to future procedures which is super powerful.
 
-The middleware APIs are still fairly new. Better documentation will come in the future once they are more stable.
+This page describes the 0.3.0 router-level middleware API. It is different from the procedure-level middleware in the experimental rewrite.
 
 ## Context switching
 
@@ -34,7 +34,7 @@ fn main() {
 
 ## Route metadata
 
-Feature coming soon. Tracking in issue [#21](https://github.com/oscartbeaumont/rspc/issues/21).
+The public 0.3.0 API does not provide the planned route-metadata feature from [issue #21](https://github.com/specta-rs/rspc/issues/21). Do not depend on internal request structures as a stable metadata API. Put policy in separate routers or middleware helpers when you need to group protected procedures.
 
 ## Examples
 

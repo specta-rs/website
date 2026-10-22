@@ -4,10 +4,69 @@ longTitle: Specta
 description: Export your Rust types to any language
 ---
 
-TODO
+Specta exports Rust types to other languages. Derive `Type` on your structs and enums, collect the types you want to share, then pass them to an exporter.
+
+Specta generates type definitions. It does not serialize values or send requests. Use Serde for serialization and a framework integration for typed API calls.
 
 # Getting started
 
-TODO
+## Install
 
-TODO: Somewhere discuss runtime exporting vs unit test vs build script vs etc.
+These guides use Specta v2. Pin the release candidate so a dependency update does not change the API.
+
+```bash
+cargo add specta@=2.0.0-rc.27 --features derive
+cargo add specta-serde@0.0.14 specta-typescript@0.0.14
+```
+
+## Export your first type
+
+```rust copy filename="src/main.rs"
+use specta::{Type, Types};
+use specta_typescript::Typescript;
+
+#[derive(Type)]
+pub struct User {
+    pub id: u32,
+    pub name: String,
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let types = Types::default().register::<User>();
+
+    Typescript::default().export_to(
+        "./bindings.ts",
+        &types,
+        specta_serde::Format,
+    )?;
+
+    Ok(())
+}
+```
+
+Run `cargo run` to write `bindings.ts`:
+
+```typescript
+export type User = { id: number; name: string };
+```
+
+Register the types your application exposes. Specta also collects their referenced types, so you do not need to list every nested type.
+
+For data sent through Serde, derive `Serialize` or `Deserialize` as needed. `specta_serde::Format` applies Serde attributes to the exported shape. See [Core](/docs/specta/core#serde-support) for details.
+
+## When to export
+
+The exporter runs as Rust code. Choose a place where you can call it and handle errors:
+
+- **A test:** export with `cargo test`. This keeps generation separate from application startup.
+- **A small binary or example:** run generation as an explicit development or CI step.
+- **Application startup:** export in debug builds with `#[cfg(debug_assertions)]`. This works well for desktop applications.
+- **A build script:** use this only when the types are available to the build script, for example from a separate crate. `build.rs` cannot import the application crate it is about to compile.
+
+Generate bindings before checking or building the frontend. If you commit generated files, regenerate them in CI and check for a diff. Do not edit generated bindings by hand.
+
+## Next steps
+
+- [Language exporters](/docs/specta/languages): TypeScript, JavaScript, Swift, and other targets.
+- [Core](/docs/specta/core): type registration, Serde attributes, and type overrides.
+- [Frameworks](/docs/specta/framework): typed commands and APIs.

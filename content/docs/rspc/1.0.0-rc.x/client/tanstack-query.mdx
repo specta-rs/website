@@ -1,10 +1,40 @@
 ---
-title: Tanstack Query
+title: TanStack Query
 ---
 
-Coming soon...
+TanStack Query manages frontend caching, loading state, retries, and refetching. rspc's tuple client supplies the typed request function.
 
-For now you can checkout the old integrations:
+The rewrite's `createTanstackQueryProxy` is unfinished. Do not expect it to generate working query-option helpers. Use an existing framework adapter or pass the client call to TanStack Query yourself.
+
+## Use a query function
+
+For React Query v5:
+
+```tsx
+import { useQuery } from "@tanstack/react-query";
+import { client } from "./api";
+
+function Version() {
+  const version = useQuery({
+    queryKey: ["version"],
+    queryFn: () => client.query(["version", null]),
+  });
+
+  if (version.isPending) return <p>Loading...</p>;
+  if (version.isError) return <p>Could not load version.</p>;
+  return <p>{version.data}</p>;
+}
+```
+
+Install `@tanstack/react-query` and wrap the application in its `QueryClientProvider`. `client` is the typed client from the [quickstart](/docs/rspc/1.0.0-rc.x/quickstart#call-it-from-typescript). Use stable keys that include every input affecting a query's result.
+
+## Invalidate after a mutation
+
+After a successful write, call `queryClient.invalidateQueries` with the affected query key. See [invalidation](/docs/rspc/1.0.0-rc.x/middleware/invalidation). This is client-side caching, not the experimental server cache.
+
+## Framework adapters
+
+The older adapters offer typed hooks. Match the adapter's peer dependencies and client version rather than combining unrelated major versions:
 
 - [React](./react)
 - [Solid](./solid)

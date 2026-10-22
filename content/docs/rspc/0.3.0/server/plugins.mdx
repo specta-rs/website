@@ -1,11 +1,14 @@
 ---
 title: Plugins
+description: Extension options for rspc 0.3.0.
 ---
 
-Coming soon...
+rspc 0.3.0 does not include a finished plugin system for OpenAPI, an API playground, or authentication. Earlier plans for those features are not installation instructions.
 
-WIP Plugins:
+## Extend an application
 
-- OpenAPI - [issue #29](https://github.com/oscartbeaumont/rspc/issues/29)
-- Playground - [issue #23](https://github.com/oscartbeaumont/rspc/issues/23)
-- Authentication library
+- Use [middleware](/docs/rspc/0.3.0/server/middleware) for authentication checks, context changes, and shared resolver behavior.
+- Use [router merging](/docs/rspc/0.3.0/server/router#merging-routers) to group procedures by feature.
+- Use your web framework for ordinary HTTP routes, response headers, and authentication endpoints.
+
+The experimental rewrite contains separate extension crates, but they are not drop-in plugins for 0.3.0. Do not install them into a 0.3.0 application without porting and testing the integration.

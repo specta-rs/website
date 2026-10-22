@@ -1,74 +1,81 @@
 ---
 title: Axum
+description: Expose procedures over HTTP and WebSockets.
 ---
 
-rspc has a built-in integration with [Axum](https://github.com/tokio-rs/axum) so that you can expose your API over HTTP.
+The experimental Axum adapter mounts built procedures in an Axum router. Use the dependencies from the [quickstart](/docs/rspc/1.0.0-rc.x/quickstart), which pairs this adapter with Axum 0.8.
 
-### Enable feature
+## Mount an endpoint
 
-You must install the [`rspc_axum`](https://docs.rs/rspc-axum/latest/rspc_axum/) crate to use Axum with rspc.
-
-```toml /rspc_axum = { version = "0.0.0", features = ["ws"] }/ copy filename="Cargo.toml"
-[dependencies]
-rspc = "0.0.0"
-rspc_axum = { version = "0.0.0", features = ["ws"] }
-axum = "0.7.0"
-```
-
-### Usage
-
-```rs copy filename="src/main.rs"
-let router = rspc::Router::<()>::new()
-    .query("version", |_, _: ()| "1.0.0")
-    .build()
-    .arced();
+```rust
+let (procedures, types) = router().build().expect("invalid router");
+rspc::Typescript::default().export_to("./bindings.ts", &types)?;
 
 let app = axum::Router::new()
-    .route("/", get(|| async { "Hello 'rspc'!" }))
-    .nest("/rspc", rspc_axum::endpoint(router, || ()))
-    .layer(cors);
-
-let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-axum::serve(listener, app).await.unwrap();
+    .nest("/rspc", rspc_axum::endpoint(procedures, || ()));
 ```
 
-{/* TODO: Bring this back */}
-{/* ### Extracting Context from Request
+The context callback above returns `()`. The [quickstart](/docs/rspc/1.0.0-rc.x/quickstart#define-and-expose-a-router) includes binding a listener and serving the router.
 
-**Warning: The Axum extractor API is probally going to be removed in a future release. If you are using this API, I would appreciate a message in the Discord about your usecase so I can ensure the replacement API can do everything you need.**
+## Extract request context
 
-**Warning: Current we only support a single extractor. This is a temporary limitation so open a GitHub Issue if you need more.**
+The adapter accepts context callbacks with Axum request-parts extractors. For example, read headers from `Parts`:
 
-You may want to use <a href="https://docs.rs/axum/latest/axum/index.html#extractors" target="_blank">Axum extractors</a> to get data from the request such as cookies and put them on the request context. The `axum_handler` function takes a closure that can take up to 16 valid Axum extractors as arguments and then returns the [request context](/docs/rspc/1.0.0-rc.x/server/concepts#request-context) (of type `TCtx`).
+```rust
+use axum::http::request::Parts;
 
-```rs copy filename="src/main.rs"
-let router = rspc::Router::<String>::new()
-    .query("currentPath", |ctx, _: ()| ctx)
-    .build()
-    .arced();
+#[derive(Clone)]
+struct Ctx {
+    authorization: Option<String>,
+}
 
-let app = axum::Router::new()
-    .route("/", get(|| async { "Hello 'rspc'!" }))
-    // We use Axum `Path` extractor. The `rspc::Router` has `TCtx` set to `String` so we return the path string as the context.
-    .nest("/rspc", rspc_axum::endpoint(|req: Request| req.uri().path()))
-    .layer(cors);
-``` */}
-
-### Usage on frontend
-
-```ts copy filename="index.ts"
-import { FetchTransport, WebsocketTransport, createClient } from "@rspc/client";
-import type { Procedures } from "./ts/bindings"; // These were the bindings exported from your Rust code!
-
-// For fetch transport
-const client = createClient<Procedures>({
-  transport: new FetchTransport("http://localhost:4000/rspc"),
-});
-
-// For websocket transport - Required for subscriptions
-const client = createClient<Procedures>({
-  transport: new WebsocketTransport("ws://localhost:8080/rspc/ws"),
-});
-
-client.query(["version"]).then((data) => console.log(data));
+let app = axum::Router::new().nest(
+    "/rspc",
+    rspc_axum::endpoint(procedures, |parts: Parts| Ctx {
+        authorization: parts.headers
+            .get("authorization")
+            .and_then(|value| value.to_str().ok())
+            .map(str::to_owned),
+    }),
+);
 ```
+
+Here `procedures` must have been built from a `Router<Ctx>`. Reading a header does not authenticate the caller. Verify the credential before allowing access to protected data.
+
+Only request parts are available to this callback. The adapter consumes the body to decode the procedure input.
+
+## HTTP client
+
+```typescript
+import { createClient, FetchTransport } from "@rspc/client";
+import type { ProceduresLegacy } from "./bindings";
+
+const client = createClient<ProceduresLegacy>({
+  transport: new FetchTransport("/rspc"),
+});
+
+const version = await client.query(["version", null]);
+```
+
+The tuple client uses `ProceduresLegacy` from rspc's exporter. HTTP fetch supports queries and mutations, not subscriptions.
+
+## WebSockets
+
+Enable the adapter's `ws` feature in `Cargo.toml`. The endpoint then accepts upgrades at `/rspc/ws`:
+
+```typescript
+import { createClient, WebsocketTransport } from "@rspc/client";
+import type { ProceduresLegacy } from "./bindings";
+
+const client = createClient<ProceduresLegacy>({
+  transport: new WebsocketTransport("ws://localhost:4000/rspc/ws"),
+});
+```
+
+Use `wss://` when the site is served over HTTPS. Configure your proxy to forward WebSocket upgrades. The callback receives request parts from the original upgrade request, so do not assume its headers change during the connection.
+
+## Deployment
+
+For a browser on another origin, configure CORS in Axum. Credentialed requests need an explicit allowed origin and credentials support; a wildcard origin is not enough. Prefer same-origin deployment when possible.
+
+Set request limits and authentication policy at your server or reverse proxy. This adapter is experimental and should not be treated as a hardened public gateway.

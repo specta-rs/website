@@ -1,114 +1,100 @@
 ---
 title: Vanilla
+description: Call procedures with the tuple client and configure authentication.
 ---
 
-The vanilla client allows you to consume your API on the frontend. This client is the minimal core and it is recommended that you use the [React](/docs/rspc/1.0.0-rc.x/client/react) or [Solid](/docs/rspc/1.0.0-rc.x/client/solid) integration for building application.
+The vanilla client calls queries and mutations without a frontend framework. Use it directly or pass its request functions to [TanStack Query](/docs/rspc/1.0.0-rc.x/client/tanstack-query).
 
-To get started first install the minimal runtime package.
+## Install and export bindings
 
-```npm copy
-npm i @rspc/client
+```bash
+npm install @rspc/client@0.3.1
 ```
 
-Next you need to export the Typescript bindings from your `rspc::Router` by using either [export_ts_bindings](/docs/rspc/1.0.0-rc.x/server/router#exporting-the-typescript-bindings) or [export_ts](/docs/rspc/1.0.0-rc.x/server/router#exporting-the-typescript-bindings).
+Follow the [quickstart](/docs/rspc/1.0.0-rc.x/quickstart) to build the server and export bindings. Keep rspc's default `legacy` feature enabled for this tuple-based client:
 
-```rs /export_ts_bindings/ copy  filename="src/main.rs"
-let router = <rspc::Router>::new()
-  // This will automatically export the bindings to the `./ts` directory when you run build() in a non-release Rust build
-  .config(Config::new().export_ts_bindings("./bindings.rs"))
-  .build();
+```rust
+let (procedures, types) = router().build().expect("invalid router");
+rspc::Typescript::default()
+    .export_to("./bindings.ts", &types)
+    .expect("failed to export bindings");
 ```
 
-Then you can use the `@rspc/client` package to consume your API.
+## Create a client
 
-```ts copy filename="index.ts"
+```typescript copy filename="src/api.ts"
 import { createClient, FetchTransport } from "@rspc/client";
-import type { Procedures } from "./ts/index"; // These were the bindings exported from your Rust code!
+import type { ProceduresLegacy } from "./bindings";
 
-// You must provide the generated types as a generic and create a transport (in this example we are using HTTP Fetch) so that the client knows how to communicate with your API.
-const client = createClient<Procedures>({
-  // Refer to the integration your using for the correct transport.
-  transport: new FetchTransport("http://localhost:4000/rspc"),
+export const client = createClient<ProceduresLegacy>({
+  transport: new FetchTransport("/rspc"),
 });
 
-// Now use the client in your code!
-const version = await client.query(["version"]); // The types will be inferred from your backend.
-const userOne = await client.query(["getUser", 1]);
-const userTwo = await client.mutation(["addUser", { name: "Monty Beaumont" }]);
+const version = await client.query(["version", null]);
+const greeting = await client.mutation(["greet", "Ada"]);
 ```
 
-# Transports
+The tuple starts with a procedure path and includes its input when required. These calls use the procedures from the quickstart. Keep the bindings and server in sync; the TypeScript generic does not check which server is running.
 
-rspc has multiple different transports which can be used. These dictate how the frontend is able to talk with the backend.
+The rewrite exports `()` as `null`, so its no-input procedures need a second tuple item of `null`. Do not copy the shorter tuple from a 0.3.0 example.
 
-## Fetch Transport
+The relative URL assumes a same-origin endpoint. Use a development proxy or the API's full URL with a matching CORS configuration.
 
-<Callout>Fetch transport does not support subscriptions!</Callout>
+## Fetch transport
 
-Transport is built on the standard [Fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) API.
+`FetchTransport` uses the standard fetch API. Queries use GET with JSON in the `input` parameter. Mutations use POST with a JSON body. This transport does not support subscriptions.
 
-<details>
+### Custom fetch implementation
 
-<summary>`GET` or `POST`?</summary>
+Pass a fetch function as the second constructor argument. For cross-origin cookie sessions:
 
-rspc uses:
+```typescript
+const transport = new FetchTransport(
+  "https://api.example.com/rspc",
+  (input, init) => fetch(input, { ...init, credentials: "include" }),
+);
+```
 
-- `GET` requests for queries
-- `POST` requests for mutations
+The server must allow the frontend's explicit origin and credentials. A wildcard origin does not work for credentialed requests. Cookie sessions also need a CSRF policy for state-changing calls.
 
-<Callout type="warn">
-  **Important:** While rspc primarily uses `GET` requests for queries, it may
-  also use `POST` requests for queries in certain scenarios (similar to how
-  GraphQL operates). **Mutations will always use `POST` requests and will never
-  use `GET`.** This behavior is an implementation detail and **isn't
-  guaranteed** to remain the same in the future.
-</Callout>
+### Fetch authentication
 
-</details>
+Add bearer credentials through the custom fetch function:
 
-```ts /FetchTransport/ copy filename="index.ts"
-import { createClient, FetchTransport } from "@rspc/client";
-import type { Procedures } from "./bindings.ts"; // The bindings exported from your Rust code!
-
-const client = createClient<Procedures>({
-  transport: new FetchTransport("http://localhost:4000/rspc"),
+```typescript
+const transport = new FetchTransport("/rspc", (input, init) => {
+  const headers = new Headers(init?.headers);
+  const token = getAccessToken();
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  return fetch(input, { ...init, headers });
 });
 ```
 
-### Custom Fetch implementation
+`getAccessToken` is your application's token lookup function. Read it for each request so refreshed credentials are used. The server must verify the credential and authorize access. Do not log tokens or put a long-lived secret in the URL.
 
-```ts copy filename="index.ts"
-import { createClient, FetchTransport } from "@rspc/client";
-import type { Procedures } from "./bindings.ts"; // The bindings exported from your Rust code!
+## WebSocket transport
 
-const client = createClient<Procedures>({
-  transport: new FetchTransport(
-    "http://localhost:4000/rspc",
-    // Include Cookies for cross-origin requests
-    (input, init) => fetch(input, { ...init, credentials: "include" }),
-  ),
-});
-```
+Use the WebSocket transport when the server and client support the same subscription protocol:
 
-### Fetch Authentication
-
-Guide coming soon...
-
-## Websocket Transport
-
-Transport build on the standard [WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) API. This uses HTTP GET and POST requests under the hood.
-
-```ts /WebsocketTransport/ copy filename="index.ts"
+```typescript
 import { createClient, WebsocketTransport } from "@rspc/client";
-import type { Procedures } from "./bindings.ts"; // The bindings exported from your Rust code!
+import type { ProceduresLegacy } from "./bindings";
 
-const client = createClient<Procedures>({
-  transport: new WebsocketTransport("ws://localhost:8080/rspc/ws"),
+const client = createClient<ProceduresLegacy>({
+  transport: new WebsocketTransport("ws://localhost:4000/rspc/ws"),
 });
 ```
 
-### Websocket Authentication
+Enable the Axum adapter's `ws` feature. Use `wss://` when the site uses HTTPS. After the upgrade, this transport sends WebSocket messages, not HTTP GET or POST requests.
 
-Guide coming soon...
+### WebSocket authentication
 
--- TODO: Discuss Single Flight Mutations
+Browser WebSockets cannot set arbitrary authorization headers. This transport accepts only a URL and has no custom handshake-header callback.
+
+A same-origin cookie session can authenticate the upgrade request. Validate the origin on the server and recheck authorization for protected operations. After login or logout, do not assume an existing connection has new credentials; reconnect or use an application-specific reauthentication flow.
+
+For bearer-token authentication without cookies, use HTTP fetch or implement a transport with a defined authentication exchange. Do not put long-lived tokens in query strings.
+
+## Single-flight mutations
+
+The tuple client makes a separate request for each mutation. The server-driven invalidation prototype is incomplete, so do not expect a mutation to return updated query data automatically. Invalidate or refetch affected frontend queries after the mutation succeeds.

@@ -140,7 +140,7 @@ let router = <Router>::new()
 
 ## Invalidate query
 
-🚧 WIP - [Tracking issue #19](https://github.com/oscartbeaumont/rspc/issues/19)
+Version 0.3.0 does not push cache invalidations to the frontend automatically. After a successful mutation, invalidate the affected keys through your frontend query library. Keep the key and input identical to those used by the query. See [client invalidation](/docs/rspc/0.3.0/alpha/server/advanced#invalidate-a-query).
 
 ## Method chaining
 
@@ -149,16 +149,16 @@ When combining multiple operations, you must ensure you chain the method calls o
 ```rs copy filename="src/main.rs"
 // Chaining method calls
 let router = <Router>::new()
-    .query("version", |t| t(|ctx, input: ()| todo!()))
-    .mutation("createUser", |t| t(|ctx, input: ()| todo!()))
+    .query("version", |t| t(|_: (), _: ()| "0.3.0"))
+    .mutation("echo", |t| t(|_: (), input: String| input))
     .build();
 
 // Shadowing variable
 let router = <Router>::new()
-    .query("version", |t| t(|ctx, input: ()| todo!()))
-    .mutation("createUser", |t| t(|ctx, input: ()| todo!()));
+    .query("version", |t| t(|_: (), _: ()| "0.3.0"))
+    .mutation("echo", |t| t(|_: (), input: String| input));
 let router = router
-    .mutation("deleteUser", |t| t(|ctx, input: ()| todo!()));
+    .mutation("greet", |t| t(|_: (), name: String| format!("Hello, {name}!")));
 let router = router.build();
 ```
 

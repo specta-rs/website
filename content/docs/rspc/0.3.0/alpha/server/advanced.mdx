@@ -1,19 +1,33 @@
 ---
 title: Advanced
+description: Transport and client-extension guidance for archived applications.
 ---
 
-### React Native support
+## React Native
 
-<Callout>Docs coming soon!</Callout>
+The vanilla client needs a working fetch implementation. Pass one as the second argument to `FetchTransport` if your runtime does not provide a compatible global fetch.
 
-### Implementing with a custom server
+Use an API URL reachable from the device. On a physical device, `localhost` refers to the device, not your development computer. Verify TLS and the platform's network policy. The React adapter also needs its matching React Query dependency and provider setup.
 
-<Callout>Docs coming soon!</Callout>
+## Custom servers
 
-### Implementing a link
+Use the [0.3.0 Axum adapter source](https://github.com/specta-rs/rspc/tree/v0.3.0/crates/axum) as a protocol reference. An adapter must create context, decode input, dispatch the correct operation kind, encode the result envelope, and handle errors. Subscriptions also need IDs, cancellation, and connection cleanup.
 
-<Callout>Docs coming soon!</Callout>
+The internal execution API is not a stable interface. Pin the rspc version and test your adapter with the exact client package you deploy.
 
-### Invalidate query
+## Custom transports, not links
 
-🚧 WIP - [Tracking issue #19](https://github.com/oscartbeaumont/rspc/issues/19)
+The tuple client uses a `Transport` with `doRequest(operation, key, input)`. Its subscription support also uses a client callback for incoming events. There is no finished public link-chain API in this client generation.
+
+If you implement a transport, preserve error behavior and subscription cleanup. Do not replace transport code merely to add a header; `FetchTransport` already accepts a custom fetch function.
+
+## Invalidate a query
+
+Use your frontend query library to invalidate cached data after a successful mutation. With TanStack Query v5, the shape is:
+
+```typescript
+await client.mutation(["updateUser", input]);
+await queryClient.invalidateQueries({ queryKey: ["getUser", input.id] });
+```
+
+This assumes those procedures exist. Match the exact key used when reading the data. Invalidation is not pushed automatically by the 0.3.0 server.
