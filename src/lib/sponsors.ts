@@ -26,10 +26,45 @@ const directSponsors: Sponsor[] = [
   },
 ];
 
+// People we thank alongside the GitHub Sponsors who don't show up in that
+// list, or support the project another way.
+const supporters: Sponsor[] = [
+  {
+    name: "John Carmack",
+    url: "https://github.com/johncarmack1984",
+    logo: "https://avatars.githubusercontent.com/u/20649979?s=200&v=4",
+    tier: "github",
+  },
+];
+
 // Shown when the GitHub API is unavailable at build time (no token, rate
-// limit, or an API change). Keep this in sync with the current sponsors on
-// https://github.com/sponsors/oscartbeaumont.
+// limit, or an API change). Keep this in sync with every sponsor, past and
+// present, on https://github.com/sponsors/oscartbeaumont.
 const githubSponsorsFallback: Sponsor[] = [
+  {
+    name: "KATT",
+    url: "https://github.com/KATT",
+    logo: "https://avatars.githubusercontent.com/u/459267?s=200&v=4",
+    tier: "github",
+  },
+  {
+    name: "Cap",
+    url: "https://github.com/CapSoftware",
+    logo: "https://avatars.githubusercontent.com/u/151241629?s=200&v=4",
+    tier: "github",
+  },
+  {
+    name: "Jair Trejo",
+    url: "https://github.com/jairtrejo",
+    logo: "https://avatars.githubusercontent.com/u/210225?s=200&v=4",
+    tier: "github",
+  },
+  {
+    name: "Marcus Buffett",
+    url: "https://github.com/marcusbuffett",
+    logo: "https://avatars.githubusercontent.com/u/1834328?s=200&v=4",
+    tier: "github",
+  },
   {
     name: "Nohac",
     url: "https://github.com/Nohac",
@@ -42,11 +77,46 @@ const githubSponsorsFallback: Sponsor[] = [
     logo: "https://avatars.githubusercontent.com/u/15810260?s=200&v=4",
     tier: "github",
   },
+  {
+    name: "Lev Khoroshansky",
+    url: "https://github.com/TmLev",
+    logo: "https://avatars.githubusercontent.com/u/22966523?s=200&v=4",
+    tier: "github",
+  },
+  {
+    name: "Michaël",
+    url: "https://github.com/michael-dm",
+    logo: "https://avatars.githubusercontent.com/u/26444186?s=200&v=4",
+    tier: "github",
+  },
+  {
+    name: "Jason Wang",
+    url: "https://github.com/jawang94",
+    logo: "https://avatars.githubusercontent.com/u/41667764?s=200&v=4",
+    tier: "github",
+  },
+  {
+    name: "Merlin",
+    url: "https://github.com/merlinaudio",
+    logo: "https://avatars.githubusercontent.com/u/85179170?s=200&v=4",
+    tier: "github",
+  },
+  {
+    name: "lightfinders",
+    url: "https://github.com/lightfinders",
+    logo: "https://avatars.githubusercontent.com/u/99044535?s=200&v=4",
+    tier: "github",
+  },
 ];
 
+// activeOnly: false includes past sponsors, not just current ones.
 const SPONSORS_QUERY = `query ($login: String!) {
   user(login: $login) {
-    sponsorshipsAsMaintainer(first: 100, activeOnly: true) {
+    sponsorshipsAsMaintainer(
+      first: 100
+      activeOnly: false
+      includePrivate: false
+    ) {
       nodes {
         sponsorEntity {
           ... on User { login name avatarUrl url }
@@ -116,10 +186,13 @@ async function fetchGitHubSponsors(): Promise<Sponsor[] | null> {
 
 export async function getSponsors(): Promise<Sponsor[]> {
   const github = (await fetchGitHubSponsors()) ?? githubSponsorsFallback;
-  const direct = new Set(directSponsors.map((sponsor) => sponsor.name));
+  const seen = new Set(directSponsors.map((sponsor) => sponsor.name));
 
-  return [
-    ...directSponsors,
-    ...github.filter((sponsor) => !direct.has(sponsor.name)),
-  ];
+  const shown = [...supporters, ...github].filter((sponsor) => {
+    if (seen.has(sponsor.name)) return false;
+    seen.add(sponsor.name);
+    return true;
+  });
+
+  return [...directSponsors, ...shown];
 }
