@@ -5,6 +5,7 @@ export default async function RootElement({ children }: PropsWithChildren) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta charSet="utf-8" />
         <StaticMeta />
       </head>
       <body className="flex flex-col min-h-screen">{children}</body>
