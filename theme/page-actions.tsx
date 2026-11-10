@@ -13,6 +13,10 @@ import { cn } from "@/lib/utils";
 const buttonClass =
   "inline-flex items-center justify-center gap-2 rounded-md border bg-fd-secondary px-2 py-1.5 text-xs font-medium text-fd-secondary-foreground transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground";
 
+function askUrl(base: string, params: Record<string, string>) {
+  return `${base}?${new URLSearchParams(params)}`;
+}
+
 export function CopyMarkdownButton({ markdownUrl }: { markdownUrl: string }) {
   const [loading, setLoading] = useState(false);
   const [checked, setChecked] = useState(false);
@@ -68,25 +72,25 @@ export function ViewOptions({
         : []),
       {
         title: "Open in Scira AI",
-        href: `https://scira.ai/?${new URLSearchParams({ q: query })}`,
+        href: askUrl("https://scira.ai/", { q: query }),
         icon: <MessageCircle />,
       },
       {
         title: "Open in ChatGPT",
-        href: `https://chatgpt.com/?${new URLSearchParams({
+        href: askUrl("https://chatgpt.com/", {
           hints: "search",
           q: query,
-        })}`,
+        }),
         icon: <MessageCircle />,
       },
       {
         title: "Open in Claude",
-        href: `https://claude.ai/new?${new URLSearchParams({ q: query })}`,
+        href: askUrl("https://claude.ai/new", { q: query }),
         icon: <MessageCircle />,
       },
       {
         title: "Open in T3 Chat",
-        href: `https://t3.chat/new?${new URLSearchParams({ q: query })}`,
+        href: askUrl("https://t3.chat/new", { q: query }),
         icon: <MessageCircle />,
       },
     ];

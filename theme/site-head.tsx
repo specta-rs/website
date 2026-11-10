@@ -10,7 +10,15 @@ export function SiteHead() {
   const { page } = usePage();
   const frontmatter = page.frontmatter as { search?: boolean } | undefined;
   const image = `${canonical}${ogRoute(page.routePath)}`;
+  const [imageWidth, imageHeight] = openGraphImageSize;
   const isDoc = page.pageType === "doc" || page.pageType === "doc-wide";
+  const imageMeta = (prefix: "og:image" | "twitter:image") => [
+    { property: prefix, content: image },
+    { property: `${prefix}:width`, content: String(imageWidth) },
+    { property: `${prefix}:height`, content: String(imageHeight) },
+    { property: `${prefix}:type`, content: "image/png" },
+    { property: `${prefix}:alt`, content: "Oscar Beaumont" },
+  ];
 
   useHead({
     // The old site used bare page titles. Rspress appends the site title to
@@ -19,29 +27,9 @@ export function SiteHead() {
     ...(isDoc && page.title ? { title: page.title } : {}),
     meta: [
       { property: "og:locale", content: "en_US" },
-      { property: "og:image", content: image },
-      {
-        property: "og:image:width",
-        content: String(openGraphImageSize[0]),
-      },
-      {
-        property: "og:image:height",
-        content: String(openGraphImageSize[1]),
-      },
-      { property: "og:image:type", content: "image/png" },
-      { property: "og:image:alt", content: "Oscar Beaumont" },
+      ...imageMeta("og:image"),
       { property: "twitter:card", content: "summary_large_image" },
-      { property: "twitter:image", content: image },
-      {
-        property: "twitter:image:width",
-        content: String(openGraphImageSize[0]),
-      },
-      {
-        property: "twitter:image:height",
-        content: String(openGraphImageSize[1]),
-      },
-      { property: "twitter:image:type", content: "image/png" },
-      { property: "twitter:image:alt", content: "Oscar Beaumont" },
+      ...imageMeta("twitter:image"),
       ...(frontmatter?.search === false
         ? [{ name: "robots", content: "noindex" }]
         : []),

@@ -1,11 +1,6 @@
 import { useFrontmatter } from "@rspress/core/runtime";
 import { getCustomMDXComponent } from "@rspress/core/theme-original";
-import {
-  Children,
-  isValidElement,
-  type ComponentProps,
-  type ReactNode,
-} from "react";
+import { Children, isValidElement, type ComponentProps } from "react";
 
 const DefaultH3 = getCustomMDXComponent().h3;
 
@@ -22,16 +17,13 @@ export function SymbolHeading({ children, ...props }: ComponentProps<"h3">) {
     return <DefaultH3 {...props}>{children}</DefaultH3>;
   }
 
-  const withoutAnchor = Children.toArray(children as ReactNode).filter(
-    (child) =>
-      !(
-        isValidElement(child) &&
-        typeof (child.props as { className?: string }).className === "string" &&
-        (child.props as { className: string }).className.includes(
-          "rp-header-anchor",
-        )
-      ),
-  );
+  const withoutAnchor = Children.toArray(children).filter((child) => {
+    if (!isValidElement(child)) return true;
+    const { className } = child.props as { className?: string };
+    return (
+      typeof className !== "string" || !className.includes("rp-header-anchor")
+    );
+  });
 
   return (
     <h3 {...props} className="mt-6 scroll-mt-24 text-base font-semibold">

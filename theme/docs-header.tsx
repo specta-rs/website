@@ -14,7 +14,9 @@ export function DocsHeader() {
   const { frontmatter } = useFrontmatter();
   const markdownUrl = markdownPath(page.routePath, page.pagePath);
   const deprecated = page.routePath.startsWith("/docs/rspc/0.3.0");
-  const githubUrl = `https://github.com/specta-rs/website/blob/main/content/${page.pagePath}`;
+  const githubUrl = frontmatter.generated
+    ? undefined
+    : `https://github.com/specta-rs/website/blob/main/content/${page.pagePath}`;
 
   return (
     <div className="mb-4">
@@ -32,10 +34,7 @@ export function DocsHeader() {
       <div className="mt-3 flex flex-row items-center justify-between gap-2 border-b pb-6">
         <div className="flex flex-row items-center justify-between gap-x-2">
           <CopyMarkdownButton markdownUrl={markdownUrl} />
-          <ViewOptions
-            markdownUrl={markdownUrl}
-            githubUrl={frontmatter.generated ? undefined : githubUrl}
-          />
+          <ViewOptions markdownUrl={markdownUrl} githubUrl={githubUrl} />
         </div>
       </div>
     </div>

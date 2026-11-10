@@ -7,7 +7,6 @@ import {
   Shield,
   Zap,
 } from "lucide-react";
-import type { CSSProperties, JSX } from "react";
 import { DiscordLogo, GitHubLogo } from "@/components/logos";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -149,22 +148,24 @@ function Features() {
   );
 }
 
-const projects = [
+type Project = {
+  name: string;
+  repo: string;
+  description: string;
+  docsUrl: string;
+  logo: { src: string; alt: string; className?: string };
+  gradient: string;
+  hoverClass: string;
+};
+
+const projects: Project[] = [
   {
     name: "Specta",
     repo: "specta-rs/specta",
     description:
       "Export your Rust types to any language. The foundation for type-safe communication across your stack.",
     docsUrl: "/docs/specta",
-    logo: (
-      <div className="relative h-14 w-14 shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 transition-transform duration-300 group-hover:scale-110">
-        <img
-          src="/assets/specta.svg"
-          alt="Specta logo"
-          className="object-contain"
-        />
-      </div>
-    ),
+    logo: { src: "/assets/specta.svg", alt: "Specta logo" },
     gradient: "from-[#F74C00] via-[#CC3A00]/60 to-[#F49600]/40",
     hoverClass: "hover:border-[#F74C00]/20",
   },
@@ -174,15 +175,7 @@ const projects = [
     description:
       "A blazingly fast and typesafe RPC framework for Rust. Build web APIs with end-to-end type safety.",
     docsUrl: "/docs/rspc",
-    logo: (
-      <div className="relative h-14 w-14 shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 transition-transform duration-300 group-hover:scale-110">
-        <img
-          src="/assets/rspc.svg"
-          alt="rspc logo"
-          className="object-contain"
-        />
-      </div>
-    ),
+    logo: { src: "/assets/rspc.svg", alt: "rspc logo" },
     gradient: "from-[#0092DE] via-[#0092DE]/60 to-[#00A4FA]/40",
     hoverClass: "hover:border-[#0092DE]/20",
   },
@@ -192,15 +185,11 @@ const projects = [
     description:
       "Typesafe Tauri commands with Specta. Build desktop apps with full type safety between Rust and TypeScript.",
     docsUrl: "/docs/tauri-specta",
-    logo: (
-      <div className="relative h-10 w-22 shrink-0 self-center rounded-xl bg-fd-secondary/50 p-2.5 transition-transform duration-300 group-hover:scale-110">
-        <img
-          src="/assets/tauri-specta.png"
-          alt="Tauri Specta logo"
-          className="object-contain"
-        />
-      </div>
-    ),
+    logo: {
+      src: "/assets/tauri-specta.png",
+      alt: "Tauri Specta logo",
+      className: "h-10 w-22 self-center",
+    },
     gradient: "from-[#FFC131] via-[#FFC131]/60 to-[#FFC947]/40",
     hoverClass: "hover:border-[#FFC131]/20",
   },
@@ -223,12 +212,7 @@ function Projects() {
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             {projects.map((project, index) => (
-              <ProjectCard
-                key={project.name}
-                {...project}
-                className="motion-safe:animate-[fadeIn_0.3s_both]"
-                style={{ animationDelay: `${index * 0.2}s` }}
-              />
+              <ProjectCard key={project.name} {...project} index={index} />
             ))}
           </div>
         </div>
@@ -237,86 +221,88 @@ function Projects() {
   );
 }
 
-function ProjectCard(props: {
-  name: string;
-  repo?: string;
-  logo: JSX.Element;
-  description: string;
-  docsUrl?: string;
-  gradient?: string;
-  hoverClass: string;
-  className?: string;
-  style?: CSSProperties;
-}) {
+function ProjectCard({
+  name,
+  repo,
+  logo,
+  description,
+  docsUrl,
+  gradient,
+  hoverClass,
+  index,
+}: Project & { index: number }) {
   return (
     <div
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border bg-fd-card p-8 transition-all duration-300 hover:shadow-2xl",
-        props.hoverClass,
-        props.className,
+        "group relative flex flex-col overflow-hidden rounded-2xl border bg-fd-card p-8 transition-all duration-300 hover:shadow-2xl motion-safe:animate-[fadeIn_0.3s_both]",
+        hoverClass,
       )}
-      style={props.style}
+      style={{ animationDelay: `${index * 0.2}s` }}
     >
       <div
         className={cn(
           "absolute inset-0 bg-linear-to-br opacity-0 transition-opacity duration-300 group-hover:opacity-[0.08]",
-          props.gradient || "from-[#F74C00] to-[#F49600]",
+          gradient,
         )}
       />
 
       <div className="relative z-10 flex h-full flex-col">
-        {props.repo ? (
-          <div className="absolute top-0 right-0">
-            <div className="flex items-center gap-1.5 rounded-full border border-fd-border bg-fd-secondary/50 px-3 py-1.5 text-sm text-fd-muted-foreground backdrop-blur-sm">
-              <span className="text-yellow-500">★</span>
-              <span className="font-medium">{stars[props.repo] ?? "-"}</span>
-            </div>
+        <div className="absolute top-0 right-0">
+          <div className="flex items-center gap-1.5 rounded-full border border-fd-border bg-fd-secondary/50 px-3 py-1.5 text-sm text-fd-muted-foreground backdrop-blur-sm">
+            <span className="text-yellow-500">★</span>
+            <span className="font-medium">{stars[repo] ?? "-"}</span>
           </div>
-        ) : null}
+        </div>
 
         <div className="mb-6 flex items-start gap-4">
-          {props.logo}
+          <ProjectLogo logo={logo} />
 
           <div className="min-w-0 flex-1 pr-20">
             <h3 className="mb-2 text-2xl font-bold transition-colors group-hover:text-fd-primary">
-              {props.name}
+              {name}
             </h3>
           </div>
         </div>
 
         <p className="mb-8 grow leading-relaxed text-fd-muted-foreground">
-          {props.description}
+          {description}
         </p>
 
         <div className="mt-auto flex gap-3">
-          {props.docsUrl && (
-            <a
-              href={props.docsUrl}
-              className={cn(
-                buttonVariants({ variant: "primary" }),
-                "group/btn flex-1 px-4 py-2",
-              )}
-            >
-              <BookOpen className="mr-2 h-4 w-4" />
-              Documentation
-            </a>
-          )}
-          {props.repo && (
-            <a
-              href={`https://github.com/${props.repo}`}
-              target="_blank"
-              rel="noopener"
-              className={cn(
-                buttonVariants({ variant: "outline" }),
-                !props.docsUrl ? "flex-1 px-4 py-2" : "px-4 py-2",
-              )}
-            >
-              <GitHubLogo className="mr-2 h-4 w-4" />
-              GitHub
-            </a>
-          )}
+          <a
+            href={docsUrl}
+            className={cn(
+              buttonVariants({ variant: "primary" }),
+              "group/btn flex-1 px-4 py-2",
+            )}
+          >
+            <BookOpen className="mr-2 h-4 w-4" />
+            Documentation
+          </a>
+          <a
+            href={`https://github.com/${repo}`}
+            target="_blank"
+            rel="noopener"
+            className={cn(buttonVariants({ variant: "outline" }), "px-4 py-2")}
+          >
+            <GitHubLogo className="mr-2 h-4 w-4" />
+            GitHub
+          </a>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ProjectLogo({ logo }: { logo: Project["logo"] }) {
+  return (
+    <div
+      className={cn(
+        "relative h-14 w-14 shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 transition-transform duration-300 group-hover:scale-110",
+        logo.className,
+      )}
+    >
+      <img src={logo.src} alt={logo.alt} className="object-contain" />
     </div>
   );
 }

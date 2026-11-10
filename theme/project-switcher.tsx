@@ -1,6 +1,23 @@
 import { ChevronDown } from "lucide-react";
 import { useLocation } from "@rspress/core/runtime";
+import { cn } from "@/lib/utils";
 import { projects } from "./projects";
+
+function ProjectIcon({
+  project,
+  className,
+}: {
+  project: (typeof projects)[number];
+  className?: string;
+}) {
+  return (
+    <img
+      src={project.icon}
+      alt={`${project.name} logo`}
+      className={cn(project.className, "max-w-none object-contain", className)}
+    />
+  );
+}
 
 /**
  * A small project switcher at the top of the documentation sidebar. The old
@@ -18,11 +35,7 @@ export function ProjectSwitcher() {
     <div className="mb-2 px-3 pt-3">
       <details className="group relative">
         <summary className="flex cursor-pointer list-none items-center gap-2.5 rounded-lg border bg-fd-secondary/50 px-3 py-2 transition-colors hover:bg-fd-accent [&::-webkit-details-marker]:hidden">
-          <img
-            src={current.icon}
-            alt={`${current.name} logo`}
-            className={`${current.className} max-w-none object-contain`}
-          />
+          <ProjectIcon project={current} />
           <span className="min-w-0 flex-1">
             <span className="block truncate text-sm font-semibold">
               {current.name}
@@ -42,11 +55,7 @@ export function ProjectSwitcher() {
                 project.id === current.id ? "bg-fd-accent" : ""
               }`}
             >
-              <img
-                src={project.icon}
-                alt={`${project.name} logo`}
-                className={`${project.className} mt-0.5 max-w-none object-contain`}
-              />
+              <ProjectIcon project={project} className="mt-0.5" />
               <span className="min-w-0">
                 <span className="block text-sm font-medium">
                   {project.name}

@@ -1,15 +1,12 @@
 import { useHead } from "@rspress/core/runtime";
 import { ArrowRight, Home } from "lucide-react";
 
+const description = "The page your looking for doesn't exist";
+
 export function NotFoundLayout() {
   useHead({
     title: "Not Found",
-    meta: [
-      {
-        name: "description",
-        content: "The page your looking for doesn't exist",
-      },
-    ],
+    meta: [{ name: "description", content: description }],
   });
 
   return (
@@ -23,7 +20,7 @@ export function NotFoundLayout() {
           </h1>
 
           <p className="text-lg text-fd-muted-foreground md:text-xl">
-            The page your looking for doesn&apos;t exist
+            {description}
           </p>
 
           <a

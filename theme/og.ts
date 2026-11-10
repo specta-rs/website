@@ -2,6 +2,25 @@ import { createElement as h, type ReactElement } from "react";
 
 const logoSource = "spectaLogo";
 
+const pillars = [
+  {
+    label: "Typesafety",
+    color: "linear-gradient(135deg, #F74C00 0%, #CE422B 100%)",
+  },
+  {
+    label: "Developer experience",
+    color: "linear-gradient(135deg, #F49600 0%, #FFC131 100%)",
+  },
+  {
+    label: "Modern practices",
+    color: "linear-gradient(135deg, #FF6B00 0%, #F74C00 100%)",
+  },
+  {
+    label: "Scale",
+    color: "linear-gradient(135deg, #CE422B 0%, #A03622 100%)",
+  },
+];
+
 /**
  * The social card shown for every documentation page. It is rendered at build
  * time by `scripts/og.ts`, so it uses plain React elements rather than JSX
@@ -95,18 +114,7 @@ export function OpenGraph(props: { title: string; description?: string }) {
           color: "#71717a",
         },
       },
-      ...[
-        "Typesafety",
-        "Developer experience",
-        "Modern practices",
-        "Scale",
-      ].flatMap((label, index) => {
-        const colors = [
-          "linear-gradient(135deg, #F74C00 0%, #CE422B 100%)",
-          "linear-gradient(135deg, #F49600 0%, #FFC131 100%)",
-          "linear-gradient(135deg, #FF6B00 0%, #F74C00 100%)",
-          "linear-gradient(135deg, #CE422B 0%, #A03622 100%)",
-        ];
+      ...pillars.flatMap(({ label, color }, index) => {
         const item: ReactElement[] = [
           h(
             "div",
@@ -118,13 +126,13 @@ export function OpenGraph(props: { title: string; description?: string }) {
                 width: "24px",
                 height: "24px",
                 borderRadius: "6px",
-                background: colors[index],
+                background: color,
               },
             }),
             h("span", null, label),
           ),
         ];
-        if (index < 3) {
+        if (index < pillars.length - 1) {
           item.push(h("span", { style: { color: "#3f3f46" } }, "•"));
         }
         return item;
