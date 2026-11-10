@@ -2,8 +2,10 @@ import {
   Layout as OriginalLayout,
   type LayoutProps,
 } from "@rspress/core/theme-original";
+import { AccessibilityFixes } from "./a11y";
 import { Analytics } from "./analytics";
 import { DocsHeader } from "./docs-header";
+import { DrawerClose } from "./drawer-close";
 import { NotFoundLayout } from "./not-found";
 import { ProjectSwitcher } from "./project-switcher";
 import { SiteHead } from "./site-head";
@@ -14,11 +16,17 @@ export function Layout(props: LayoutProps) {
   return (
     <>
       <Analytics />
+      <AccessibilityFixes />
       <OriginalLayout
         {...props}
         top={<SiteHead />}
         navTitle={<SpectaLogo />}
-        beforeSidebar={<ProjectSwitcher />}
+        beforeSidebar={
+          <>
+            <DrawerClose />
+            <ProjectSwitcher />
+          </>
+        }
         beforeDocContent={<DocsHeader />}
         components={{ h3: SymbolHeading }}
         NotFoundLayout={NotFoundLayout}

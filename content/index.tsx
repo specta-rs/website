@@ -21,8 +21,31 @@ export const frontmatter = {
 const stars = siteData.stars as Record<string, string>;
 const sponsors = siteData.sponsors;
 
+/**
+ * Star counts arrive from three sources: the GitHub API (`2,861`), ungh.cc
+ * (the same), and shields.io, which abbreviates (`2.8k`). A failed lookup
+ * leaves `-` behind. Parse all of them, and treat anything unparseable as zero
+ * so the headline total can never become `NaN`.
+ */
+function starCount(value: unknown): number {
+  if (typeof value !== "string") return 0;
+
+  const match = value
+    .trim()
+    .replaceAll(",", "")
+    .match(/^(\d+(?:\.\d+)?)([km])?$/i);
+  if (!match) return 0;
+
+  const amount = Number(match[1]);
+  if (!Number.isFinite(amount)) return 0;
+
+  const suffix = match[2]?.toLowerCase();
+  const multiplier = suffix === "m" ? 1_000_000 : suffix === "k" ? 1_000 : 1;
+  return Math.round(amount * multiplier);
+}
+
 const totalStars = Object.values(stars)
-  .reduce((total, value) => total + Number(value.replaceAll(",", "")), 0)
+  .reduce((total, value) => total + starCount(value), 0)
   .toLocaleString("en-US");
 
 const primaryButton =
@@ -203,7 +226,7 @@ function Features() {
           index="01"
           label="Philosophy"
           title="Why specta-rs?"
-          description="An ecosystem of Rust crates built for"
+          description="An ecosystem of Rust crates built for typesafety, developer experience and scale."
         />
 
         <div className="sp-cells sm:grid-cols-2">

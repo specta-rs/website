@@ -229,7 +229,17 @@ body:has(.sp-home) .rp-nav {
 .rp-search-button--mobile {
   width: 32px;
   height: 32px;
+  padding: 0;
+  border: 0;
   border-radius: 8px;
+  background: transparent;
+  color: var(--rp-c-text-2);
+  cursor: pointer;
+}
+
+.rp-search-button--mobile:hover {
+  background: var(--rp-c-bg-mute);
+  color: var(--rp-c-text-1);
 }
 
 .rp-social-links {
@@ -296,6 +306,36 @@ body:has(.sp-home) .rp-nav {
   border-radius: 8px;
 }
 
+/* Rspress keeps the menu glyph while the mobile drawer is open. Turn it into a
+ * close affordance so the button's action is obvious. */
+.rp-nav-hamburger {
+  position: relative;
+}
+
+.rp-nav-hamburger--active > svg {
+  opacity: 0;
+}
+
+.rp-nav-hamburger--active::before,
+.rp-nav-hamburger--active::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 1.5px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.rp-nav-hamburger--active::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.rp-nav-hamburger--active::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
 /* Sidebar ---------------------------------------------------------------- */
 
 .rp-doc-layout__sidebar {
@@ -321,10 +361,22 @@ body:has(.sp-home) .rp-nav {
 
 .rp-sidebar-item--active,
 .rp-sidebar-item--active:hover {
+  position: relative;
   color: var(--rp-c-text-1);
   background: var(--sp-accent-soft);
-  box-shadow: inset 2px 0 0 var(--sp-accent);
+  box-shadow: none;
   font-weight: 600;
+}
+
+.rp-sidebar-item--active::after {
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--sp-accent);
 }
 
 .rp-sidebar-item.rp-sidebar-group {
@@ -1346,11 +1398,15 @@ summary.sp-action-button::-webkit-details-marker {
 .rp-doc-layout__container .rp-tabs__label__item {
   margin-right: 0;
   padding: 5px 10px;
+  border: 0;
   border-radius: 7px;
+  background: transparent;
   color: var(--rp-c-text-3);
+  font: inherit;
   font-size: 12px;
   font-weight: 500;
   line-height: 1.2;
+  cursor: pointer;
   transition:
     background-color 0.15s ease,
     color 0.15s ease,
@@ -1776,6 +1832,7 @@ summary.sp-action-button::-webkit-details-marker {
 .rp-doc pre.not-prose {
   margin: 12px 0 0;
   padding: 12px 14px;
+  overflow-x: auto;
   border: 1px solid var(--sp-code-line);
   border-radius: 9px;
   background: var(--sp-code-bg);
@@ -1783,6 +1840,7 @@ summary.sp-action-button::-webkit-details-marker {
   font-family: var(--rp-font-family-mono);
   font-size: 12px;
   line-height: 1.65;
+  scrollbar-width: thin;
   box-shadow: var(--sp-code-shadow);
 }
 
@@ -2087,8 +2145,8 @@ summary.sp-action-button::-webkit-details-marker {
     padding: 8px 11px;
   }
   .rp-doc pre.not-prose {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
+    overflow-x: auto;
+    white-space: pre;
   }
   .rp-doc-layout__container .rp-doc-footer {
     margin-top: 40px;
@@ -2119,5 +2177,232 @@ summary.sp-action-button::-webkit-details-marker {
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
+  }
+}
+
+/* The mobile documentation drawer covers the menu bar, so it carries its own
+ * close control. Hidden on desktop, where the drawer is permanent. */
+.sp-drawer-close {
+  display: none;
+}
+
+@media (width <= 767px) {
+  .sp-drawer-close {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    gap: 5px;
+    margin: 0 0 10px auto;
+    padding: 4px 10px;
+    border: 1px solid var(--sp-line);
+    border-radius: 999px;
+    background: var(--sp-panel);
+    color: var(--rp-c-text-2);
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .sp-drawer-close:hover {
+    border-color: var(--sp-accent-line);
+    color: var(--rp-c-text-1);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Final polish: shared controls, content embeds and reduced motion
+ * ------------------------------------------------------------------------ */
+
+.rp-doc-layout__container .rp-tabs__label__item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Replaced components own their markup, so restore the layout rules that came
+ * with the upstream stylesheets we no longer import. */
+.rp-tabs__content__item--active {
+  display: block;
+}
+
+.rp-tabs__content__item--hidden {
+  display: none;
+}
+
+.rp-tabs__label {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 100%;
+}
+
+.rp-prev-next-page {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rp-prev-next-page__item {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.rp-prev-next-page__item__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rp-prev-next-page__placeholder {
+  flex: 1;
+}
+
+.rp-prev-next-page__prev {
+  align-items: flex-start;
+}
+
+.rp-prev-next-page__next {
+  align-items: flex-end;
+}
+
+.rp-prev-next-page__rotate_180 {
+  transform: rotate(180deg);
+}
+
+.rp-prev-next-page__icon {
+  display: inline-flex;
+}
+
+.rp-search-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.rp-search-button__content {
+  display: flex;
+  align-items: center;
+}
+
+.rp-search-button--mobile {
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (width <= 768px) {
+  .rp-search-button {
+    display: none;
+  }
+
+  .rp-search-button--mobile {
+    display: flex;
+  }
+}
+
+/* Search result highlight: the brand orange is fine as an accent, but white
+ * text on it is only ~2.5:1. Use the tinted surface and keep the text ink. */
+.rp-search-panel__modal .rp-suggest-item--current .rp-suggest-item__link {
+  background-color: var(--sp-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--sp-accent-line);
+}
+
+.rp-search-panel__modal
+  .rp-suggest-item--current
+  :is(
+    .rp-suggest-item__icon,
+    .rp-suggest-item__statement,
+    .rp-suggest-item__title
+  ) {
+  color: var(--rp-c-text-2);
+}
+
+.rp-search-panel__modal .rp-suggest-item--current .rp-suggest-item__mark {
+  color: var(--sp-accent);
+}
+
+.rp-search-panel__modal .rp-search-panel__cancel {
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+}
+
+/* The brand page uses light-on-white cards. Force readable ink when the site
+ * is in dark mode and keep the palette captions legible on both themes. */
+.rp-doc .bg-white {
+  color: #1c1712;
+}
+
+.rp-doc .bg-white .text-blue-600 {
+  color: #1d4ed8;
+}
+
+.rp-doc .text-gray-600 {
+  color: var(--rp-c-text-2);
+}
+
+/* The project cards on the docs index are authored with utility classes. The
+ * content column carries an extra 2rem indent and the row cannot fit at phone
+ * widths, so normalise the indent and stack the description below the title. */
+.rp-doc .mt-6.space-y-4 > div > div:nth-child(2) {
+  padding-left: 0 !important;
+}
+
+@media (width <= 640px) {
+  .rp-doc .mt-6.space-y-4 > div {
+    display: grid;
+    grid-template-areas:
+      "logo title github"
+      "desc desc desc";
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 14px;
+    row-gap: 10px;
+  }
+
+  .rp-doc .mt-6.space-y-4 > div > div:nth-child(1) {
+    grid-area: logo;
+  }
+
+  .rp-doc .mt-6.space-y-4 > div > div:nth-child(1) > div {
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  .rp-doc .mt-6.space-y-4 > div > div:nth-child(2) {
+    display: contents;
+  }
+
+  .rp-doc .mt-6.space-y-4 > div > div:nth-child(2) > h3 {
+    grid-area: title;
+    margin: 0;
+  }
+
+  .rp-doc .mt-6.space-y-4 > div > div:nth-child(2) > p {
+    grid-area: desc;
+    margin-top: 0;
+  }
+
+  .rp-doc .mt-6.space-y-4 > div > div:nth-child(3) {
+    grid-area: github;
+  }
+}
+
+.rp-doc-layout__container .rp-table-scroll-container {
+  scrollbar-width: thin;
+  overscroll-behavior-x: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

@@ -12,6 +12,14 @@ let initialized = false;
 export function Analytics() {
   useEffect(() => {
     if (initialized || process.env.NODE_ENV === "development") return;
+    // Previewing a production build on localhost should not pollute analytics,
+    // and the `/ph_*` proxy only exists on the deployed Worker.
+    if (
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1"
+    ) {
+      return;
+    }
     initialized = true;
 
     void import("posthog-js").then(({ default: posthog }) => {
