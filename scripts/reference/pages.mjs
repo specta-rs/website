@@ -11,6 +11,11 @@ const root = path.resolve(import.meta.dirname, "../..");
 const contentDir = path.join(root, "content/docs");
 const catalogFile = path.join(root, "src/lib/reference-catalog.json");
 
+/** Generated JSON files use the same two-space layout as the source files. */
+async function writeJson(file, value) {
+  await writeFile(file, `${JSON.stringify(value, null, 2)}\n`);
+}
+
 /** Directory a project's TypeScript reference lives in. */
 const referenceFolder = "typescript-api";
 
@@ -200,7 +205,8 @@ async function main() {
   // Regenerate from scratch so a removed release, package or whole project
   // cannot linger. Every project directory on disk is cleared, not just the
   // ones the current catalog mentions.
-  const projects = new Set(packages.map((pkg) => pkg.project));
+  const packageProjects = [...new Set(packages.map((pkg) => pkg.project))];
+  const projects = new Set(packageProjects);
   for (const directory of await readdir(contentDir, { withFileTypes: true })) {
     if (directory.isDirectory()) projects.add(directory.name);
   }
@@ -245,64 +251,48 @@ async function main() {
     // version switcher without filling the sidebar. An empty `_meta.json`
     // keeps the index as the folder's own link instead of a duplicated child
     // entry, and lets the folder label come from the index frontmatter title.
-    await writeFile(
-      path.join(folder, "_meta.json"),
-      `${JSON.stringify([], null, 2)}\n`,
-    );
+    await writeJson(path.join(folder, "_meta.json"), []);
   }
 
-  for (const project of new Set(packages.map((pkg) => pkg.project))) {
+  for (const project of packageProjects) {
     const listed = packages.filter((pkg) => pkg.project === project);
     const folder = path.join(contentDir, project, referenceFolder);
     await mkdir(folder, { recursive: true });
-    await writeFile(
+    await writeJson(
       path.join(folder, "_meta.json"),
-      `${JSON.stringify(
-        listed.map((pkg) => ({
-          type: "dir",
-          name: pkg.id,
-          collapsible: false,
-        })),
-        null,
-        2,
-      )}\n`,
+      listed.map((pkg) => ({
+        type: "dir",
+        name: pkg.id,
+        collapsible: false,
+      })),
     );
   }
 
   // Catalog for the version switcher. Symbol data stays in `reference/`; the
   // page route for each release and the snapshot flag are precomputed here so
   // the UI never has to re-derive routing or sniff version strings.
-  await writeFile(
-    catalogFile,
-    `${JSON.stringify(
-      {
-        packages: packages.map((pkg) => {
-          const home = homeVersion(pkg);
+  await writeJson(catalogFile, {
+    packages: packages.map((pkg) => {
+      const home = homeVersion(pkg);
+      return {
+        ...pkg,
+        homeVersion: home,
+        versions: pkg.versions.map((release) => {
+          // On this site when the release has a generated page: it either
+          // has symbol data, or it is the version the page documents.
+          const onSite = Boolean(release.data || release.version === home);
           return {
-            ...pkg,
-            homeVersion: home,
-            versions: pkg.versions.map((release) => {
-              // On this site when the release has a generated page: it either
-              // has symbol data, or it is the version the page documents.
-              const onSite = Boolean(release.data || release.version === home);
-              return {
-                ...release,
-                onSite,
-                href: onSite
-                  ? pageUrl(pkg, release.version, home)
-                  : release.url,
-                ...(unpublished.has(`${pkg.id}@${release.version}`)
-                  ? { unpublished: true }
-                  : {}),
-              };
-            }),
+            ...release,
+            onSite,
+            href: onSite ? pageUrl(pkg, release.version, home) : release.url,
+            ...(unpublished.has(`${pkg.id}@${release.version}`)
+              ? { unpublished: true }
+              : {}),
           };
         }),
-      },
-      null,
-      2,
-    )}\n`,
-  );
+      };
+    }),
+  });
 
   console.log(
     `Generated ${pages} reference pages for ${packages.length} packages`,
