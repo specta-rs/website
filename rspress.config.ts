@@ -106,6 +106,12 @@ function remarkPrependTitle() {
   };
 }
 
+// Both `pluginLlms` instances below need the same remark pipeline: one emits a
+// Markdown copy of every page, the other builds the filtered llms.txt output.
+const markdownFileOptions = {
+  remarkPlugins: [remarkTidyGeneratedMarkdown, remarkPrependTitle],
+};
+
 function isIndexable(page: PageIndexInfo) {
   return page.frontmatter?.search !== false;
 }
@@ -129,16 +135,15 @@ function createSitePlugin(): RspressPlugin {
       }
     },
     async afterBuild(config) {
-      const outDir = path.isAbsolute(config.outDir ?? "doc_build")
-        ? (config.outDir ?? "doc_build")
-        : path.resolve(config.outDir ?? "doc_build");
-
-      const logo = await readFile(path.resolve("public/assets/specta.png"));
-      const font = await readFile(
-        path.resolve(
-          "node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2",
+      const outDir = path.resolve(config.outDir ?? "doc_build");
+      const [logo, font] = await Promise.all([
+        readFile(path.resolve("public/assets/specta.png")),
+        readFile(
+          path.resolve(
+            "node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2",
+          ),
         ),
-      );
+      ]);
 
       const entries: { loc: string; lastmod?: string }[] = [
         { loc: `${canonical}/` },
@@ -172,10 +177,7 @@ function createSitePlugin(): RspressPlugin {
               images: [{ src: logoSource, data: logo }],
             },
           );
-          const target = path.join(
-            outDir,
-            ogRoute(pageData.routePath).replace(/^\/+/, ""),
-          );
+          const target = path.join(outDir, ogRoute(pageData.routePath));
           await mkdir(path.dirname(target), { recursive: true });
           await writeFile(target, Buffer.from(await image.arrayBuffer()));
         }
@@ -371,18 +373,14 @@ export default defineConfig({
         // Emit a Markdown copy of every page, including drafts and deprecated
         // releases. Those pages are still reachable by URL and by search.
         include: () => true,
-        mdFiles: {
-          remarkPlugins: [remarkTidyGeneratedMarkdown, remarkPrependTitle],
-        },
+        mdFiles: markdownFileOptions,
         llmsTxt: false,
         llmsFullTxt: false,
       },
       {
         // Only the pages we want indexed go into llms.txt / llms-full.txt.
         include: ({ page }) => isLLMsPage(page),
-        mdFiles: {
-          remarkPlugins: [remarkTidyGeneratedMarkdown, remarkPrependTitle],
-        },
+        mdFiles: markdownFileOptions,
         llmsTxt: { name: "llms.txt" },
         llmsFullTxt: { name: "llms-full.txt" },
       },

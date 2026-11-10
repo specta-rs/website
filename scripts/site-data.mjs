@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { writeFile } from "node:fs/promises";
 import path from "node:path";
 import { getGitHubStars } from "../src/lib/getGitHubStars.ts";
 import { getSponsors } from "../src/lib/sponsors.ts";
@@ -16,7 +16,6 @@ const [sponsors, stars] = await Promise.all([
 ]);
 
 const output = path.resolve("theme/site-data.json");
-await mkdir(path.dirname(output), { recursive: true });
 await writeFile(
   output,
   `${JSON.stringify(
