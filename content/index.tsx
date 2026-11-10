@@ -1,14 +1,16 @@
 import {
   ArrowRight,
+  ArrowUpRight,
   BookOpen,
+  Boxes,
   Code2,
   ExternalLink,
   Heart,
   Shield,
+  Star,
   Zap,
 } from "lucide-react";
 import { DiscordLogo, GitHubLogo } from "@/components/logos";
-import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import siteData from "../theme/site-data.json";
 
@@ -19,9 +21,18 @@ export const frontmatter = {
 const stars = siteData.stars as Record<string, string>;
 const sponsors = siteData.sponsors;
 
+const totalStars = Object.values(stars)
+  .reduce((total, value) => total + Number(value.replaceAll(",", "")), 0)
+  .toLocaleString("en-US");
+
+const primaryButton =
+  "inline-flex items-center justify-center gap-2 rounded-full bg-sp-cta px-5 py-2.5 text-[13px] font-semibold text-sp-cta-foreground shadow-[0_10px_30px_-12px_var(--sp-accent-glow)] transition-colors hover:bg-sp-cta-hover";
+const secondaryButton =
+  "inline-flex items-center justify-center gap-2 rounded-full border border-sp-line bg-sp-panel/70 px-5 py-2.5 text-[13px] font-semibold text-fd-foreground transition-colors hover:border-sp-accent-line hover:bg-sp-accent-soft";
+
 export default function HomePage() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="sp-home flex flex-col">
       <Hero />
       <Features />
       <Projects />
@@ -33,72 +44,152 @@ export default function HomePage() {
 
 function Hero() {
   return (
-    <section className="container mx-auto flex-1 px-4 py-16 md:py-24 lg:py-32">
-      <div className="mx-auto max-w-4xl space-y-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
-          Build better web apps with{" "}
-          <span className="bg-linear-to-r from-[#F74C00] to-[#F49600] bg-clip-text text-transparent">
-            Rust
-          </span>
-        </h1>
+    <section className="sp-hero">
+      <div className="sp-hero__content mx-auto grid max-w-[1200px] items-center gap-12 px-6 py-14 md:py-20 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14 lg:py-24">
+        <div className="max-w-[620px]">
+          <p className="sp-eyebrow">Open-source Rust ecosystem</p>
 
-        <p className="mx-auto max-w-2xl text-lg text-fd-muted-foreground md:text-xl">
-          An ecosystem of crates focused on typesafety, developer experience,
-          modern practices which scales to large codebases allowing you to build
-          faster and deploy with confidence.
-        </p>
+          <h1 className="sp-hero__title mt-5">
+            Build better web apps with{" "}
+            <span className="sp-hero__rust">Rust</span>
+          </h1>
 
-        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <a
-            href="/docs"
-            className={cn(
-              buttonVariants({ variant: "primary", size: "sm" }),
-              "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0s_both]",
-            )}
-          >
-            Get started
-            <ArrowRight className="h-4 w-4" />
-          </a>
-          <a
-            href="https://discord.com/invite/JgqH8b4ycw"
-            target="_blank"
-            rel="noopener"
-            className={cn(
-              buttonVariants({ variant: "outline" }),
-              "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0.2s_both]",
-            )}
-          >
-            <DiscordLogo className="h-4 w-4 brightness-0 dark:invert" />
-            Join Discord
-          </a>
+          <p className="mt-6 max-w-[560px] text-[16px] leading-relaxed text-fd-muted-foreground sm:text-[17px]">
+            An ecosystem of crates focused on typesafety, developer experience,
+            modern practices which scales to large codebases allowing you to
+            build faster and deploy with confidence.
+          </p>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <a href="/docs" className={cn(primaryButton, "px-6 py-3 text-sm")}>
+              Get started
+              <ArrowRight className="size-4" />
+            </a>
+            <a
+              href="https://discord.com/invite/JgqH8b4ycw"
+              target="_blank"
+              rel="noopener"
+              className={cn(secondaryButton, "px-6 py-3 text-sm")}
+            >
+              <DiscordLogo className="h-4 w-4 brightness-0 dark:invert" />
+              Join Discord
+            </a>
+          </div>
+
+          <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
+            <div className="sp-hero__stat">
+              <strong>{totalStars}</strong>
+              <span>GitHub stars</span>
+            </div>
+            <div className="sp-hero__stat">
+              <strong>3</strong>
+              <span>open-source projects</span>
+            </div>
+          </div>
         </div>
+
+        <TypeBridge />
       </div>
     </section>
+  );
+}
+
+/**
+ * A small, honest demonstration of the product: the example is the one from
+ * the Specta getting-started guide, with its generated TypeScript output.
+ */
+function TypeBridge() {
+  return (
+    <figure className="sp-code-frame min-w-0">
+      <div className="sp-code-panel">
+        <div className="sp-code-panel__bar">
+          <span className="sp-code-panel__dot" />
+          <span className="sp-code-panel__dot" />
+          <span className="sp-code-panel__dot" />
+          <span className="sp-code-panel__file ml-2 flex-1">src/main.rs</span>
+          <span className="sp-code-panel__badge">Specta</span>
+        </div>
+
+        <pre className="sp-code">
+          <code>
+            <span className="tok-punc">#[</span>
+            <span className="tok-key">derive</span>
+            <span className="tok-punc">(</span>
+            <span className="tok-type">Type</span>
+            <span className="tok-punc">)]</span>
+            {"\n"}
+            <span className="tok-key">pub struct</span>{" "}
+            <span className="tok-fn">User</span>{" "}
+            <span className="tok-punc">{"{"}</span>
+            {"\n  "}
+            <span className="tok-key">pub</span> id
+            <span className="tok-punc">:</span>{" "}
+            <span className="tok-type">u32</span>
+            <span className="tok-punc">,</span>
+            {"\n  "}
+            <span className="tok-key">pub</span> name
+            <span className="tok-punc">:</span>{" "}
+            <span className="tok-type">String</span>
+            <span className="tok-punc">,</span>
+            {"\n"}
+            <span className="tok-punc">{"}"}</span>
+          </code>
+        </pre>
+
+        <div className="sp-code__divider">generated bindings.ts</div>
+
+        <pre className="sp-code">
+          <code>
+            <span className="tok-key">export type</span>{" "}
+            <span className="tok-fn">User</span>{" "}
+            <span className="tok-punc">= {"{"}</span>
+            {"\n  "}id
+            <span className="tok-punc">:</span>{" "}
+            <span className="tok-type">number</span>
+            <span className="tok-punc">;</span>
+            {"\n  "}name
+            <span className="tok-punc">:</span>{" "}
+            <span className="tok-type">string</span>
+            <span className="tok-punc">;</span>
+            {"\n"}
+            <span className="tok-punc">{"}"};</span>
+          </code>
+        </pre>
+
+        <div className="sp-code-panel__foot">
+          <span className="sp-code-panel__chip">TypeScript</span>
+          <span className="sp-code-panel__chip">Swift</span>
+          <span className="sp-code-panel__chip">Go</span>
+          <span className="sp-code-panel__chip">JSDoc</span>
+          <span className="sp-code-panel__chip">OpenAPI</span>
+        </div>
+      </div>
+      <figcaption className="sr-only">
+        A Rust User struct deriving Specta's Type trait, and the equivalent
+        generated TypeScript type.
+      </figcaption>
+    </figure>
   );
 }
 
 const features = [
   {
     icon: Shield,
-    color: "#F74C00",
     title: "Typesafety",
     body: "Types should always be inferred end-to-end, allowing you to move quickly and collaborate while maintaining confidence that your code is correct.",
   },
   {
     icon: Code2,
-    color: "#F49600",
     title: "Developer Experience",
     body: 'Obsessed with simplicity, while maintaining flexibility. We build tools that make doing the "right thing" the "easy thing", freeing you up to focus on the things that matter.',
   },
   {
     icon: Zap,
-    color: "#CE422B",
     title: "Modern Practices",
     body: "Embrace the world of modern JavaScript tooling, enabling you to ship better user experiences than server-driven approaches.",
   },
   {
-    icon: Shield,
-    color: "#8B4513",
+    icon: Boxes,
     title: "Scale",
     body: "Build codebases that scale sanely, both in performance and maintainability. Take advantage of Rust's compile-time checks and tooling to reduce risk when developing large-scale applications.",
   },
@@ -106,42 +197,40 @@ const features = [
 
 function Features() {
   return (
-    <section className="border-t bg-fd-secondary/20">
-      <div className="container mx-auto px-4 py-20 md:py-28 lg:py-32">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="mb-4 text-center text-3xl font-bold md:text-4xl">
-            Why specta-rs?
-          </h2>
-          <p className="mb-16 text-center text-lg text-fd-muted-foreground md:mb-20">
-            An ecosystem of Rust crates built for
-          </p>
+    <section className="sp-section sp-section--soft">
+      <div className="mx-auto max-w-[1200px] px-6 py-20 md:py-28">
+        <SectionIntro
+          index="01"
+          label="Philosophy"
+          title="Why specta-rs?"
+          description="An ecosystem of Rust crates built for"
+        />
 
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <div
-                  key={feature.title}
-                  className="space-y-4 motion-safe:animate-[fadeIn_0.3s_both]"
-                  style={{ animationDelay: `${index * 0.2}s` }}
-                >
-                  <div
-                    className="flex h-14 w-14 items-center justify-center rounded-xl"
-                    style={{ backgroundColor: `${feature.color}1a` }}
-                  >
-                    <Icon
-                      className="h-7 w-7"
-                      style={{ color: feature.color }}
-                    />
-                  </div>
-                  <h3 className="text-xl font-semibold">{feature.title}</h3>
-                  <p className="text-[15px] leading-relaxed text-fd-muted-foreground">
-                    {feature.body}
-                  </p>
+        <div className="sp-cells sm:grid-cols-2">
+          {features.map((feature, index) => {
+            const Icon = feature.icon;
+            return (
+              <article
+                key={feature.title}
+                className="sp-cell p-7 sm:p-8 lg:p-9"
+              >
+                <div className="mb-7 flex items-start justify-between">
+                  <span className="sp-icon-tile">
+                    <Icon className="size-5" strokeWidth={1.7} />
+                  </span>
+                  <span className="font-mono text-[10px] tracking-[0.12em] text-fd-muted-foreground/60">
+                    0{index + 1}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
+                <h3 className="text-[20px] font-semibold tracking-[-0.02em]">
+                  {feature.title}
+                </h3>
+                <p className="mt-2.5 max-w-[42ch] text-[14.5px] leading-relaxed text-fd-muted-foreground">
+                  {feature.body}
+                </p>
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -154,8 +243,7 @@ type Project = {
   description: string;
   docsUrl: string;
   logo: { src: string; alt: string; className?: string };
-  gradient: string;
-  hoverClass: string;
+  accent: string;
 };
 
 const projects: Project[] = [
@@ -166,8 +254,7 @@ const projects: Project[] = [
       "Export your Rust types to any language. The foundation for type-safe communication across your stack.",
     docsUrl: "/docs/specta",
     logo: { src: "/assets/specta.svg", alt: "Specta logo" },
-    gradient: "from-[#F74C00] via-[#CC3A00]/60 to-[#F49600]/40",
-    hoverClass: "hover:border-[#F74C00]/20",
+    accent: "#F4520A",
   },
   {
     name: "rspc",
@@ -175,9 +262,8 @@ const projects: Project[] = [
     description:
       "A blazingly fast and typesafe RPC framework for Rust. Build web APIs with end-to-end type safety.",
     docsUrl: "/docs/rspc",
-    logo: { src: "/assets/rspc.svg", alt: "rspc logo" },
-    gradient: "from-[#0092DE] via-[#0092DE]/60 to-[#00A4FA]/40",
-    hoverClass: "hover:border-[#0092DE]/20",
+    logo: { src: "/assets/rspc.svg", alt: "rspc logo", className: "h-8 w-8" },
+    accent: "#0092DE",
   },
   {
     name: "Tauri Specta",
@@ -188,33 +274,27 @@ const projects: Project[] = [
     logo: {
       src: "/assets/tauri-specta.png",
       alt: "Tauri Specta logo",
-      className: "h-10 w-22 self-center",
+      className: "h-6 w-14",
     },
-    gradient: "from-[#FFC131] via-[#FFC131]/60 to-[#FFC947]/40",
-    hoverClass: "hover:border-[#FFC131]/20",
+    accent: "#D69A00",
   },
 ];
 
 function Projects() {
   return (
-    <section className="border-t bg-fd-secondary/10">
-      <div className="container mx-auto px-4 py-20 md:py-28">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-16 text-center">
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-              Our Projects
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-fd-muted-foreground">
-              A collection of powerful, type-safe tools designed to work
-              seamlessly together
-            </p>
-          </div>
+    <section className="sp-section">
+      <div className="mx-auto max-w-[1200px] px-6 py-20 md:py-28">
+        <SectionIntro
+          index="02"
+          label="Ecosystem"
+          title="Our Projects"
+          description="A collection of powerful, type-safe tools designed to work seamlessly together"
+        />
 
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            {projects.map((project, index) => (
-              <ProjectCard key={project.name} {...project} index={index} />
-            ))}
-          </div>
+        <div className="sp-cells lg:grid-cols-3">
+          {projects.map((project) => (
+            <ProjectCard key={project.name} {...project} />
+          ))}
         </div>
       </div>
     </section>
@@ -227,83 +307,62 @@ function ProjectCard({
   logo,
   description,
   docsUrl,
-  gradient,
-  hoverClass,
-  index,
-}: Project & { index: number }) {
+  accent,
+}: Project) {
   return (
-    <div
-      className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border bg-fd-card p-8 transition-all duration-300 hover:shadow-2xl motion-safe:animate-[fadeIn_0.3s_both]",
-        hoverClass,
-      )}
-      style={{ animationDelay: `${index * 0.2}s` }}
-    >
-      <div
-        className={cn(
-          "absolute inset-0 bg-linear-to-br opacity-0 transition-opacity duration-300 group-hover:opacity-[0.08]",
-          gradient,
-        )}
+    <article className="sp-cell group flex flex-col p-7">
+      <span
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-[2px] opacity-70"
+        style={{ backgroundColor: accent }}
       />
 
-      <div className="relative z-10 flex h-full flex-col">
-        <div className="absolute top-0 right-0">
-          <div className="flex items-center gap-1.5 rounded-full border border-fd-border bg-fd-secondary/50 px-3 py-1.5 text-sm text-fd-muted-foreground backdrop-blur-sm">
-            <span className="text-yellow-500">★</span>
-            <span className="font-medium">{stars[repo] ?? "-"}</span>
-          </div>
-        </div>
+      <div className="mb-7 flex items-start justify-between gap-3">
+        <span
+          className="flex size-14 items-center justify-center rounded-2xl border border-sp-line"
+          style={{ backgroundColor: `${accent}12` }}
+        >
+          <img
+            src={logo.src}
+            alt={logo.alt}
+            className={cn("object-contain", logo.className ?? "h-8 w-12")}
+          />
+        </span>
 
-        <div className="mb-6 flex items-start gap-4">
-          <ProjectLogo logo={logo} />
-
-          <div className="min-w-0 flex-1 pr-20">
-            <h3 className="mb-2 text-2xl font-bold transition-colors group-hover:text-fd-primary">
-              {name}
-            </h3>
-          </div>
-        </div>
-
-        <p className="mb-8 grow leading-relaxed text-fd-muted-foreground">
-          {description}
-        </p>
-
-        <div className="mt-auto flex gap-3">
-          <a
-            href={docsUrl}
-            className={cn(
-              buttonVariants({ variant: "primary" }),
-              "group/btn flex-1 px-4 py-2",
-            )}
-          >
-            <BookOpen className="mr-2 h-4 w-4" />
-            Documentation
-          </a>
-          <a
-            href={`https://github.com/${repo}`}
-            target="_blank"
-            rel="noopener"
-            className={cn(buttonVariants({ variant: "outline" }), "px-4 py-2")}
-          >
-            <GitHubLogo className="mr-2 h-4 w-4" />
-            GitHub
-          </a>
-        </div>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-sp-line bg-sp-panel-strong px-2.5 py-1 font-mono text-[11px] text-fd-muted-foreground">
+          <Star
+            aria-hidden
+            className="size-3 fill-sp-accent text-sp-accent"
+            strokeWidth={0}
+          />
+          <span className="sr-only">GitHub stars: </span>
+          {stars[repo] ?? "-"}
+        </span>
       </div>
-    </div>
-  );
-}
 
-function ProjectLogo({ logo }: { logo: Project["logo"] }) {
-  return (
-    <div
-      className={cn(
-        "relative h-14 w-14 shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 transition-transform duration-300 group-hover:scale-110",
-        logo.className,
-      )}
-    >
-      <img src={logo.src} alt={logo.alt} className="object-contain" />
-    </div>
+      <h3 className="text-[21px] font-semibold tracking-[-0.025em] transition-colors group-hover:text-sp-accent">
+        {name}
+      </h3>
+      <p className="mt-2 grow text-[14.5px] leading-relaxed text-fd-muted-foreground">
+        {description}
+      </p>
+
+      <div className="mt-8 flex flex-wrap gap-2">
+        <a href={docsUrl} className={cn(primaryButton, "px-4")}>
+          <BookOpen className="size-3.5" />
+          Documentation
+        </a>
+        <a
+          href={`https://github.com/${repo}`}
+          target="_blank"
+          rel="noopener"
+          className={cn(secondaryButton, "px-4")}
+        >
+          <GitHubLogo className="size-3.5 dark:invert" />
+          GitHub
+        </a>
+      </div>
+    </article>
   );
 }
 
@@ -312,56 +371,90 @@ function Support() {
   const github = sponsors.filter((sponsor) => sponsor.tier === "github");
 
   return (
-    <section className="border-t bg-fd-secondary/10">
-      <div className="container mx-auto px-4 py-20 md:py-28">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-14 text-center">
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-              Support development
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-fd-muted-foreground">
-              specta-rs is built and maintained by Oscar Beaumont. Sponsorships
-              fund the time that goes into it.
-            </p>
-          </div>
+    <section className="sp-section sp-section--soft">
+      <div className="mx-auto max-w-[1200px] px-6 py-20 md:py-28">
+        <SectionIntro
+          index="03"
+          label="Supporters"
+          title="Support development"
+          description="specta-rs is built and maintained by Oscar Beaumont. Sponsorships fund the time that goes into it."
+        />
 
-          <div className="flex flex-wrap justify-center gap-4">
+        <div className="mx-auto max-w-[960px]">
+          <div className="sp-cells sm:grid-cols-2">
             {direct.map((sponsor) => (
-              <SponsorCard key={sponsor.name} sponsor={sponsor} featured />
+              <a
+                key={sponsor.name}
+                href={sponsor.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sp-cell group flex items-center gap-4 p-5"
+              >
+                <img
+                  src={sponsor.logo}
+                  alt={`${sponsor.name} logo`}
+                  className="size-12 rounded-xl border border-sp-line object-contain"
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[17px] font-semibold tracking-[-0.015em]">
+                    {sponsor.name}
+                  </span>
+                  <span className="mt-0.5 block font-mono text-[10px] tracking-[0.1em] text-fd-muted-foreground uppercase">
+                    Direct sponsor
+                  </span>
+                </span>
+                <ArrowUpRight className="size-4 text-fd-muted-foreground transition-colors group-hover:text-sp-accent" />
+              </a>
             ))}
           </div>
 
           {github.length > 0 ? (
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-              <span className="text-sm text-fd-muted-foreground">
-                With thanks to
-              </span>
-              {github.map((sponsor) => (
-                <SponsorCard key={sponsor.name} sponsor={sponsor} />
-              ))}
+            <div className="sp-panel mt-4 rounded-2xl p-5 md:p-6">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <span className="shrink-0 font-mono text-[10px] font-medium tracking-[0.12em] text-fd-muted-foreground uppercase">
+                  With thanks to
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  {github.map((sponsor) => (
+                    <a
+                      key={sponsor.name}
+                      href={sponsor.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-2 rounded-full border border-sp-line bg-sp-panel-strong/60 py-1.5 pr-3 pl-1.5 transition-colors hover:border-sp-accent-line hover:bg-sp-panel-strong"
+                    >
+                      <img
+                        src={sponsor.logo}
+                        alt={`${sponsor.name} logo`}
+                        className="size-6 rounded-full"
+                      />
+                      <span className="text-[12px] font-medium text-fd-muted-foreground transition-colors group-hover:text-fd-foreground">
+                        {sponsor.name}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
             </div>
           ) : null}
 
-          <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a
               href="https://github.com/sponsors/oscartbeaumont"
               target="_blank"
               rel="noopener"
-              className={cn(
-                buttonVariants({ variant: "primary" }),
-                "gap-2 px-6 py-3 text-base",
-              )}
+              className={cn(primaryButton, "px-6 py-3 text-sm")}
             >
-              <Heart className="h-4 w-4" />
+              <Heart className="size-4" />
               Become a sponsor
             </a>
-            <span className="text-sm text-fd-muted-foreground">
+            <span className="text-[13px] text-fd-muted-foreground">
               or support through{" "}
               <a
                 href="https://paypal.me/oscartbeaumont"
                 target="_blank"
                 rel="noopener"
-                className="underline underline-offset-2 hover:text-fd-foreground"
+                className="font-medium text-fd-foreground underline decoration-sp-accent-line underline-offset-4 transition-colors hover:text-sp-accent"
               >
                 PayPal
               </a>
@@ -373,76 +466,59 @@ function Support() {
   );
 }
 
-function SponsorCard({
-  sponsor,
-  featured = false,
-}: {
-  sponsor: { name: string; url: string; logo: string };
-  featured?: boolean;
-}) {
-  return (
-    <a
-      href={sponsor.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={cn(
-        "group flex items-center gap-3 rounded-xl border bg-fd-card transition-colors hover:border-fd-primary/30",
-        featured ? "px-5 py-4" : "px-3 py-2",
-      )}
-    >
-      <img
-        src={sponsor.logo}
-        alt={`${sponsor.name} logo`}
-        loading="lazy"
-        className={cn(
-          "rounded-lg object-contain",
-          featured ? "size-12" : "size-7",
-        )}
-      />
-      <span className={cn("font-semibold", featured ? "text-lg" : "text-sm")}>
-        {sponsor.name}
-      </span>
-    </a>
-  );
-}
-
 function CTASection() {
   return (
-    <section className="border-t bg-linear-to-br from-[#F74C00]/10 to-[#F49600]/10">
-      <div className="container mx-auto px-4 py-16 md:py-24">
-        <div className="mx-auto max-w-3xl space-y-6 text-center">
-          <h2 className="text-3xl font-bold md:text-4xl">
-            Ready to build better web apps?
-          </h2>
-          <p className="text-lg text-fd-muted-foreground">
-            Join the community and start building with specta-rs today
-          </p>
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <a
-              href="/docs"
-              className={cn(
-                buttonVariants({ variant: "primary" }),
-                "gap-2 px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0s_both]",
-              )}
-            >
-              Documentation
-              <BookOpen className="h-4 w-4" />
-            </a>
-            <a
-              href="https://discord.com/invite/JgqH8b4ycw"
-              target="_blank"
-              rel="noopener"
-              className={cn(
-                buttonVariants({ variant: "outline" }),
-                "gap-2 bg-fd-background px-6 py-3 text-base motion-safe:animate-[fadeIn_0.3s_0.2s_both]",
-              )}
-            >
-              Join Discord
-              <ExternalLink className="h-4 w-4" />
-            </a>
-          </div>
+    <section className="px-6 py-16 md:py-24">
+      <div className="sp-cta mx-auto max-w-[1200px] rounded-[28px] px-6 py-14 text-center md:px-16 md:py-20">
+        <h2 className="mx-auto max-w-[26ch] text-[clamp(1.9rem,4vw,2.85rem)] font-semibold tracking-[-0.035em] text-fd-foreground">
+          Ready to build better web apps?
+        </h2>
+        <p className="mx-auto mt-3 max-w-md text-[15px] text-fd-muted-foreground">
+          Join the community and start building with specta-rs today
+        </p>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <a href="/docs" className={cn(primaryButton, "px-6 py-3 text-sm")}>
+            Documentation
+            <BookOpen className="size-4" />
+          </a>
+          <a
+            href="https://discord.com/invite/JgqH8b4ycw"
+            target="_blank"
+            rel="noopener"
+            className={cn(secondaryButton, "px-6 py-3 text-sm")}
+          >
+            Join Discord
+            <ExternalLink className="size-3.5" />
+          </a>
         </div>
       </div>
     </section>
+  );
+}
+
+function SectionIntro({
+  index,
+  label,
+  title,
+  description,
+}: {
+  index: string;
+  label: string;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="mb-12 grid gap-5 md:mb-16 md:grid-cols-[1fr_minmax(0,380px)] md:items-end">
+      <div>
+        <p className="sp-eyebrow">
+          <span className="text-fd-muted-foreground/70">{index}</span>
+          {label}
+        </p>
+        <h2 className="sp-section__title mt-4">{title}</h2>
+      </div>
+      <p className="max-w-[380px] text-[14.5px] leading-relaxed text-fd-muted-foreground md:justify-self-end md:text-right">
+        {description}
+      </p>
+    </div>
   );
 }
