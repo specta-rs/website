@@ -1,0 +1,39 @@
+[
+  "index",
+  "quickstart",
+  {
+    "type": "dir",
+    "name": "server",
+    "label": "Server",
+    "collapsible": true,
+    "collapsed": true
+  },
+  {
+    "type": "dir",
+    "name": "client",
+    "label": "Client",
+    "collapsible": true,
+    "collapsed": true
+  },
+  {
+    "type": "dir",
+    "name": "integrations",
+    "label": "Integrations",
+    "collapsible": true,
+    "collapsed": true
+  },
+  {
+    "type": "dir",
+    "name": "ecosystem",
+    "label": "Ecosystem",
+    "collapsible": true,
+    "collapsed": true
+  },
+  {
+    "type": "dir",
+    "name": "alpha",
+    "label": "Alpha (1.0.0-rc.x)",
+    "collapsible": true,
+    "collapsed": true
+  }
+]

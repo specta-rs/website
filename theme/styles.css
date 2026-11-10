@@ -1,0 +1,113 @@
+@import "@fontsource-variable/inter";
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@source "../content/**/*.{tsx,mdx}";
+@source "../theme/**/*.{tsx,ts}";
+@source "../src/**/*.{tsx,ts}";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-fd-background: var(--rp-c-bg);
+  --color-fd-foreground: var(--rp-c-text-1);
+  --color-fd-muted: var(--rp-c-bg-mute);
+  --color-fd-muted-foreground: var(--rp-c-text-2);
+  --color-fd-popover: var(--rp-c-bg);
+  --color-fd-popover-foreground: var(--rp-c-text-1);
+  --color-fd-card: var(--rp-c-bg-soft);
+  --color-fd-card-foreground: var(--rp-c-text-1);
+  --color-fd-border: var(--rp-c-divider-light);
+  --color-fd-primary: var(--rp-c-text-1);
+  --color-fd-primary-foreground: var(--rp-c-bg);
+  --color-fd-secondary: var(--rp-c-bg-mute);
+  --color-fd-secondary-foreground: var(--rp-c-text-1);
+  --color-fd-accent: var(--rp-c-bg-mute);
+  --color-fd-accent-foreground: var(--rp-c-text-1);
+  --color-fd-ring: var(--rp-c-brand);
+}
+
+/* Match the neutral Fumadocs palette the old site used. */
+:root {
+  --rp-font-family-base: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --rp-c-bg: hsl(0 0% 96%);
+  --rp-c-bg-soft: hsl(0 0% 94.7%);
+  --rp-c-bg-mute: hsl(0 0% 93.1%);
+  --rp-c-bg-alt: hsl(0 0% 96%);
+  --rp-c-text-1: hsl(0 0% 9%);
+  --rp-c-text-2: hsl(0 0% 45.1%);
+  --rp-c-text-3: hsl(0 0% 55%);
+  --rp-c-text-4: hsl(0 0% 70%);
+  --rp-c-divider: hsla(0 0% 80% / 60%);
+  --rp-c-divider-light: hsla(0 0% 80% / 50%);
+  --rp-c-brand: hsl(0 0% 9%);
+  --rp-c-brand-light: hsl(0 0% 25%);
+  --rp-c-brand-lighter: hsl(0 0% 85%);
+  --rp-c-brand-dark: hsl(0 0% 9%);
+  --rp-c-brand-darker: hsl(0 0% 3.9%);
+  --rp-c-brand-tint: hsla(0 0% 9% / 10%);
+  --rp-c-link: hsl(0 0% 9%);
+}
+
+.dark,
+.rp-dark {
+  --rp-c-bg: hsl(0 0% 7.04%);
+  --rp-c-bg-soft: hsl(0 0% 9.8%);
+  --rp-c-bg-mute: hsl(0 0% 12.9%);
+  --rp-c-bg-alt: hsl(0 0% 7.04%);
+  --rp-c-text-1: hsl(0 0% 92%);
+  --rp-c-text-2: hsla(0 0% 70% / 0.8);
+  --rp-c-text-3: hsl(0 0% 60%);
+  --rp-c-text-4: hsl(0 0% 45%);
+  --rp-c-divider: hsla(0 0% 40% / 30%);
+  --rp-c-divider-light: hsla(0 0% 40% / 20%);
+  --rp-c-brand: hsl(0 0% 98%);
+  --rp-c-brand-light: hsl(0 0% 90%);
+  --rp-c-brand-lighter: hsl(0 0% 25%);
+  --rp-c-brand-dark: hsl(0 0% 98%);
+  --rp-c-brand-darker: hsl(0 0% 100%);
+  --rp-c-brand-tint: hsla(0 0% 98% / 10%);
+  --rp-c-link: hsl(0 0% 92%);
+}
+
+html {
+  font-family: var(--rp-font-family-base);
+  font-style: normal;
+  font-optical-sizing: auto;
+}
+
+body {
+  font-family: var(--rp-font-family-base);
+}
+
+/* A Fumadocs callout without a title should not reserve space for one. */
+.rp-callout__title:empty {
+  display: none;
+}
+
+.rp-callout:has(.rp-callout__title:empty) {
+  padding-top: 16px;
+}
+
+.rp-callout__content > :first-child {
+  margin-top: 0;
+}
+
+.rp-callout__content > :last-child {
+  margin-bottom: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: translateY(5%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,15 @@
+[
+  {
+    "type": "file",
+    "name": "index",
+    "label": "Overview"
+  },
+  "quickstart",
+  {
+    "type": "dir",
+    "name": "server",
+    "label": "Server",
+    "collapsible": true,
+    "collapsed": true
+  }
+]

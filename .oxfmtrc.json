@@ -15,10 +15,9 @@
     "node_modules",
     "dist",
     "build",
-    ".source",
+    "doc_build",
     ".wrangler",
-    "src/cloudflare-env.d.ts",
-    "src/pages.gen.ts",
+    "theme/site-data.json",
     "pnpm-lock.yaml",
     "content/docs/rspc/*/integrations/axum.mdx",
     "content/docs/*/typescript-api"

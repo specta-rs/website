@@ -1,14 +1,12 @@
 # deps
 /node_modules
 
-# generated content
-.source
-
 # test & build
 /coverage
 /out/
 /build
 /dist
+/doc_build
 *.tsbuildinfo
 
 # misc
@@ -33,3 +31,5 @@ next-env.d.ts
 
 # generated API reference pages (see scripts/reference/pages.mjs)
 content/docs/*/typescript-api/
+# build-time sponsors and star counts (see scripts/site-data.mjs)
+theme/site-data.json

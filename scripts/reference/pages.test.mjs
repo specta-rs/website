@@ -211,7 +211,7 @@ test("a package page carries its version switcher, sections and source links", (
     },
   });
   assert.match(page, /^---\ntitle: "@rspc\/example"/);
-  assert.match(page, /\ngenerated: true\nhidden: true\n/);
+  assert.match(page, /\ngenerated: true\nhidden: true\nsearch: false\n/);
   assert.match(
     page,
     /<ReferenceHeader packageId="ts-example" version="0\.9\.0" \/>/,
@@ -283,22 +283,17 @@ test("generated pages sit under rspc's sidebar with only the documented version 
   assert.match(client, /^---\ntitle: "@rspc\/client"/);
   assert.match(client, /\n### `createClient`\n/);
   const meta = JSON.parse(
-    await read("content/docs/rspc/typescript-api/meta.json"),
+    await read("content/docs/rspc/typescript-api/_meta.json"),
   );
-  assert.equal(meta.title, "TypeScript API");
-  assert.ok(meta.pages.includes("ts-rspc-client"));
+  assert.ok(meta.some((item) => item.name === "ts-rspc-client"));
   const scoped = JSON.parse(
-    await read("content/docs/rspc/typescript-api/ts-rspc-client/meta.json"),
+    await read("content/docs/rspc/typescript-api/ts-rspc-client/_meta.json"),
   );
-  assert.deepEqual(scoped, {
-    title: "@rspc/client",
-    collapsible: false,
-    pages: [],
-  });
+  assert.deepEqual(scoped, []);
   const older = await read(
     "content/docs/rspc/typescript-api/ts-rspc-client/0.2.4.mdx",
   );
-  assert.match(older, /\nhidden: true\n/);
+  assert.match(older, /\nhidden: true\nsearch: false\n/);
   assert.match(
     older,
     /<ReferenceHeader packageId="ts-rspc-client" version="0\.2\.4"/,
@@ -310,15 +305,15 @@ test("generated pages sit under rspc's sidebar with only the documented version 
     "content/docs/tauri-specta/rust-api",
     "content/docs/tauri-specta/typescript-api",
   ]) {
-    await assert.rejects(read(`${gone}/meta.json`), /ENOENT/);
+    await assert.rejects(read(`${gone}/_meta.json`), /ENOENT/);
   }
   // Every package in the catalog has a page and a place in the sidebar.
   const bundled = JSON.parse(await read("src/lib/reference-catalog.json"));
   const sidebar = JSON.parse(
-    await read("content/docs/rspc/typescript-api/meta.json"),
+    await read("content/docs/rspc/typescript-api/_meta.json"),
   );
   assert.deepEqual(
-    [...sidebar.pages].toSorted(),
+    sidebar.map((item) => item.name).toSorted(),
     bundled.packages.map((pkg) => pkg.id).toSorted(),
   );
   // Pinned by name, so swapping or dropping a package cannot pass on a count.

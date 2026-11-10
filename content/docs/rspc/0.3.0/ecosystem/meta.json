@@ -1,7 +1,0 @@
-{
-  "title": "Ecosystem",
-  "pages": [
-    "external:[Prisma Client Rust](https://prisma.brendonovich.dev/extra/rspc)",
-    "deployment"
-  ]
-}

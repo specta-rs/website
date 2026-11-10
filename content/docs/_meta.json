@@ -1,0 +1,25 @@
+[
+  "index",
+  {
+    "type": "section-header",
+    "label": "Frameworks"
+  },
+  {
+    "type": "dir",
+    "name": "specta",
+    "collapsible": true,
+    "collapsed": true
+  },
+  {
+    "type": "dir",
+    "name": "tauri-specta",
+    "collapsible": true,
+    "collapsed": true
+  },
+  {
+    "type": "dir",
+    "name": "rspc",
+    "collapsible": true,
+    "collapsed": true
+  }
+]

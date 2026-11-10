@@ -181,7 +181,7 @@ title: ${JSON.stringify(pkg.name)}
 description: ${JSON.stringify(
     `TypeScript API reference for ${pkg.name}, version ${version}.`,
   )}
-generated: true${hidden ? "\nhidden: true" : ""}
+generated: true${hidden ? "\nhidden: true\nsearch: false" : ""}
 ---
 
 <ReferenceHeader packageId=${JSON.stringify(pkg.id)} version=${JSON.stringify(version)} />
@@ -242,15 +242,12 @@ async function main() {
       pages += 1;
     }
     // Only the page version is listed; other releases stay reachable from the
-    // version switcher without filling the sidebar. An empty `pages` keeps the
-    // index as the folder's own link instead of a duplicated child entry.
+    // version switcher without filling the sidebar. An empty `_meta.json`
+    // keeps the index as the folder's own link instead of a duplicated child
+    // entry, and lets the folder label come from the index frontmatter title.
     await writeFile(
-      path.join(folder, "meta.json"),
-      `${JSON.stringify(
-        { title: pkg.name, collapsible: false, pages: [] },
-        null,
-        2,
-      )}\n`,
+      path.join(folder, "_meta.json"),
+      `${JSON.stringify([], null, 2)}\n`,
     );
   }
 
@@ -259,9 +256,13 @@ async function main() {
     const folder = path.join(contentDir, project, referenceFolder);
     await mkdir(folder, { recursive: true });
     await writeFile(
-      path.join(folder, "meta.json"),
+      path.join(folder, "_meta.json"),
       `${JSON.stringify(
-        { title: "TypeScript API", pages: listed.map((pkg) => pkg.id) },
+        listed.map((pkg) => ({
+          type: "dir",
+          name: pkg.id,
+          collapsible: false,
+        })),
         null,
         2,
       )}\n`,

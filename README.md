@@ -1,6 +1,6 @@
 # Specta website
 
-Website for documenting Specta projects. Built using [Waku](https://waku.gg), [Fumadocs](https://www.fumadocs.dev) and [TailwindCSS](https://tailwindcss.com).
+Website for documenting Specta projects. Built with [Rspress](https://rspress.rs), [Tailwind CSS](https://tailwindcss.com), and a small Cloudflare Worker in front of the static output.
 
 ## Usage
 
@@ -8,6 +8,12 @@ Website for documenting Specta projects. Built using [Waku](https://waku.gg), [F
 pnpm i
 pnpm dev
 ```
+
+- `content/` is the Rspress document root. Markdown lives under `content/docs`, the landing page is `content/index.tsx`, and sidebar metadata is `_meta.json`.
+- `theme/` contains the custom Rspress theme: the documentation header, project switcher, generated-reference heading treatment, and the Markdown/AI page actions.
+- `worker/` handles PostHog proxying and Markdown content negotiation (`Accept: text/markdown`, `.mdx`, and old `/llms.mdx` URLs) before falling back to the static build.
+- `scripts/reference/` generates the TypeScript API pages from the committed snapshots in `reference/`.
+- `scripts/site-data.mjs` fetches sponsors and GitHub star counts for the landing page at build time. It writes `theme/site-data.json`, which is ignored by Git and recreated by `dev`, `build`, `typecheck`, and `postinstall`.
 
 ## Formatting and linting
 
@@ -21,6 +27,18 @@ pnpm lint
 
 `content/docs/rspc/*/integrations/axum.mdx` is excluded from oxfmt: it contains a multi-line MDX comment (`{/* ... */}`), and oxfmt rewrites the `*` in the comment delimiters (to `_` or `\*`), producing invalid MDX that fails to compile. Single-line comments are unaffected. Tracked upstream by the MDX formatter work in [oxc-project/oxc#24608](https://github.com/oxc-project/oxc/issues/24608); remove the exclusion once that is fixed.
 
+## Build outputs
+
+`pnpm build` writes a static site to `doc_build/`, including:
+
+- HTML for every page;
+- a Markdown copy of every page (`*.md`) for the copy/open actions and LLM clients;
+- `llms.txt` and `llms-full.txt` with hidden drafts and deprecated releases removed;
+- `sitemap.xml` with the same visibility rules;
+- an OpenGraph image per page under the existing `/docs/<page>/og.png` paths.
+
+`pnpm start` serves that output locally. `pnpm deploy` builds and deploys the Worker plus `doc_build/` with Wrangler.
+
 ## API reference
 
 `rspc`'s TypeScript packages have a **TypeScript API** section in the sidebar, with
@@ -28,7 +46,7 @@ one page per `@rspc/*` package. Every page documents one exact release and carri
 version switcher; symbols show the published signature and link to their source.
 
 Symbols are ordinary documentation pages, so they appear in site search,
-`llms.txt` and the Markdown endpoints alongside the handwritten guides. Only the
+`llms.txt` and the Markdown copies alongside the handwritten guides. Only the
 release each page documents is listed in the sidebar and indexed; older releases are
 reachable from the version switcher and are excluded from search so one symbol cannot
 match dozens of times.

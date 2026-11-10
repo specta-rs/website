@@ -1,0 +1,22 @@
+[
+  {
+    "type": "file",
+    "name": "index",
+    "label": "Vanilla"
+  },
+  {
+    "type": "file",
+    "name": "react",
+    "label": "React"
+  },
+  {
+    "type": "file",
+    "name": "solid",
+    "label": "SolidJS"
+  },
+  {
+    "type": "file",
+    "name": "svelte",
+    "label": "Svelte"
+  }
+]
