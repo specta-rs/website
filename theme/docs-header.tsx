@@ -7,7 +7,9 @@ import { CopyMarkdownButton, ViewOptions } from "./page-actions";
 /**
  * The documentation header. Rspress normally renders a fallback `<h1>` from
  * the page title; `fallbackHeadingTitle` is disabled in the config so this
- * component can reproduce the old title, description and action row.
+ * component can lay out the breadcrumb, title, description and actions as one
+ * block. Actions sit beside the title on wide screens and wrap underneath on
+ * narrow ones.
  */
 export function DocsHeader() {
   const { page } = usePage();
@@ -19,24 +21,22 @@ export function DocsHeader() {
     : `https://github.com/specta-rs/website/blob/main/content/${page.pagePath}`;
 
   return (
-    <div className="mb-4">
+    <header className="sp-doc-head">
       <Breadcrumb />
       {deprecated ? <DeprecationBanner /> : null}
 
-      <h1 className="text-3xl font-semibold tracking-tight">{page.title}</h1>
+      <div className="sp-doc-head__grid">
+        <h1 className="sp-doc-title">{page.title}</h1>
 
-      {page.description ? (
-        <p className="mt-2 text-lg text-fd-muted-foreground">
-          {page.description}
-        </p>
-      ) : null}
-
-      <div className="mt-3 flex flex-row items-center justify-between gap-2 border-b pb-6">
-        <div className="flex flex-row items-center justify-between gap-x-2">
+        <div className="sp-doc-actions">
           <CopyMarkdownButton markdownUrl={markdownUrl} />
           <ViewOptions markdownUrl={markdownUrl} githubUrl={githubUrl} />
         </div>
+
+        {page.description ? (
+          <p className="sp-doc-deck">{page.description}</p>
+        ) : null}
       </div>
-    </div>
+    </header>
   );
 }

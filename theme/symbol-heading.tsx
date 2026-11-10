@@ -26,7 +26,7 @@ export function SymbolHeading({ children, ...props }: ComponentProps<"h3">) {
   });
 
   return (
-    <h3 {...props} className="mt-6 scroll-mt-24 text-base font-semibold">
+    <h3 {...props} className="sp-symbol-heading">
       {withoutAnchor}
     </h3>
   );

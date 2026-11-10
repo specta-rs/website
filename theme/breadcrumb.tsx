@@ -51,21 +51,27 @@ export function Breadcrumb() {
   }
 
   return (
-    <div className="mb-2 flex items-center gap-1.5 text-sm text-fd-muted-foreground">
-      {trail.map((label, index) => (
-        <Fragment key={`${index}-${label}`}>
-          {index > 0 ? <ChevronRight className="size-3.5 shrink-0" /> : null}
-          <span
-            className={
-              index === trail.length - 1
-                ? "truncate font-medium text-fd-primary"
-                : "truncate"
-            }
-          >
-            {label}
-          </span>
-        </Fragment>
-      ))}
-    </div>
+    <nav aria-label="Breadcrumb" className="sp-breadcrumb">
+      {trail.map((label, index) => {
+        const current = index === trail.length - 1;
+        return (
+          <Fragment key={`${index}-${label}`}>
+            {index > 0 ? (
+              <ChevronRight aria-hidden className="sp-breadcrumb__chevron" />
+            ) : null}
+            <span
+              aria-current={current ? "page" : undefined}
+              className={
+                current
+                  ? "sp-breadcrumb__item sp-breadcrumb__item--current"
+                  : "sp-breadcrumb__item"
+              }
+            >
+              {label}
+            </span>
+          </Fragment>
+        );
+      })}
+    </nav>
   );
 }

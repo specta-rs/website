@@ -9,12 +9,14 @@ export function Accordion({
   children: ReactNode;
 }) {
   return (
-    <details className="group rounded-lg border bg-fd-card [&::-webkit-details-marker]:hidden">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-medium hover:bg-fd-accent/50">
-        <span>{title}</span>
-        <ChevronDown className="size-4 shrink-0 text-fd-muted-foreground transition-transform group-open:rotate-180" />
+    <details className="sp-accordion group">
+      <summary className="sp-accordion__summary">
+        <span className="sp-accordion__title">{title}</span>
+        <span aria-hidden className="sp-accordion__toggle">
+          <ChevronDown />
+        </span>
       </summary>
-      <div className="border-t px-4 py-3 text-sm">{children}</div>
+      <div className="sp-accordion__content">{children}</div>
     </details>
   );
 }

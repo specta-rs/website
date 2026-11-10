@@ -1,17 +1,16 @@
 "use client";
 
 import {
+  Bot,
   Check,
   ChevronDown,
+  Code2,
   Copy,
   ExternalLink,
   MessageCircle,
+  Sparkles,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { cn } from "@/lib/utils";
-
-const buttonClass =
-  "inline-flex items-center justify-center gap-2 rounded-md border bg-fd-secondary px-2 py-1.5 text-xs font-medium text-fd-secondary-foreground transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-3.5 [&_svg]:text-fd-muted-foreground";
 
 function askUrl(base: string, params: Record<string, string>) {
   return `${base}?${new URLSearchParams(params)}`;
@@ -25,7 +24,7 @@ export function CopyMarkdownButton({ markdownUrl }: { markdownUrl: string }) {
     <button
       type="button"
       disabled={loading}
-      className={buttonClass}
+      className="sp-action-button"
       onClick={async () => {
         setLoading(true);
         try {
@@ -66,14 +65,14 @@ export function ViewOptions({
             {
               title: "Open in GitHub",
               href: githubUrl,
-              icon: <ExternalLink />,
+              icon: <Code2 />,
             },
           ]
         : []),
       {
         title: "Open in Scira AI",
         href: askUrl("https://scira.ai/", { q: query }),
-        icon: <MessageCircle />,
+        icon: <Sparkles />,
       },
       {
         title: "Open in ChatGPT",
@@ -81,7 +80,7 @@ export function ViewOptions({
           hints: "search",
           q: query,
         }),
-        icon: <MessageCircle />,
+        icon: <Bot />,
       },
       {
         title: "Open in Claude",
@@ -97,28 +96,23 @@ export function ViewOptions({
   }, [githubUrl, markdownUrl]);
 
   return (
-    <details className="group relative">
-      <summary
-        className={cn(
-          buttonClass,
-          "cursor-pointer list-none [&::-webkit-details-marker]:hidden",
-        )}
-      >
+    <details className="sp-action-menu group">
+      <summary className="sp-action-button sp-action-button--menu">
         Open
-        <ChevronDown className="size-3.5 text-fd-muted-foreground transition-transform group-open:rotate-180" />
+        <ChevronDown className="sp-action-button__chevron" />
       </summary>
-      <div className="absolute left-0 z-30 mt-1 flex w-56 flex-col rounded-lg border bg-fd-popover p-1 shadow-lg">
+      <div className="sp-action-menu__panel">
         {items.map((item) => (
           <a
             key={item.href}
             href={item.href}
             rel="noreferrer noopener"
             target="_blank"
-            className="inline-flex items-center gap-2 rounded-lg p-2 text-sm transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground [&_svg]:size-4"
+            className="sp-action-menu__item"
           >
             {item.icon}
-            {item.title}
-            <ExternalLink className="ms-auto size-3.5 text-fd-muted-foreground" />
+            <span className="sp-action-menu__label">{item.title}</span>
+            <ExternalLink className="sp-action-menu__external" />
           </a>
         ))}
       </div>

@@ -1,4 +1,4 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ChevronDown } from "lucide-react";
 import catalog from "@/lib/reference-catalog.json";
 import type { ReferencePackage } from "@/lib/reference";
 
@@ -26,30 +26,25 @@ export function ReferenceHeader({
   if (!current) return null;
 
   return (
-    <div className="not-prose my-6 flex flex-col gap-3 text-sm">
-      <div className="flex flex-wrap items-center gap-2">
-        <details className="group relative min-w-40">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-2 rounded-lg border bg-fd-secondary/50 px-3 py-1.5 font-medium transition-colors hover:bg-fd-accent [&::-webkit-details-marker]:hidden">
-            <span className="truncate">{version}</span>
-            <span
-              aria-hidden
-              className="text-fd-muted-foreground transition-transform group-open:rotate-180"
-            >
-              ▾
-            </span>
+    <div className="sp-ref-header">
+      <div className="sp-ref-header__row">
+        <details className="sp-ref-version group">
+          <summary className="sp-ref-version__summary">
+            <span className="sp-ref-version__current">{version}</span>
+            <ChevronDown aria-hidden className="sp-ref-version__chevron" />
           </summary>
-          <div className="absolute z-20 mt-1 max-h-80 w-56 overflow-y-auto rounded-lg border bg-fd-popover p-1 shadow-lg">
+          <div className="sp-ref-version__menu">
             {pkg.versions.map((release) => (
               <a
                 key={release.version}
                 href={release.href}
                 aria-current={release.version === version ? "page" : undefined}
                 title={release.unavailable}
-                className={`block rounded-md px-2.5 py-1.5 font-mono text-xs ${
+                className={`sp-ref-version__item${
                   release.version === version
-                    ? "bg-fd-accent font-semibold text-fd-accent-foreground"
-                    : "hover:bg-fd-accent"
-                } ${release.onSite ? "" : "text-fd-muted-foreground"}`}
+                    ? " sp-ref-version__item--current"
+                    : ""
+                }${release.onSite ? "" : " sp-ref-version__item--external"}`}
               >
                 {release.version}
                 {release.onSite ? "" : " ↗"}
@@ -62,15 +57,15 @@ export function ReferenceHeader({
           href={current.url}
           target="_blank"
           rel="noreferrer noopener"
-          className="inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 font-medium transition-colors hover:bg-fd-accent"
+          className="sp-ref-source"
         >
           {sourceLabel(current.url)}
-          <ArrowUpRight className="size-3.5" />
+          <ArrowUpRight aria-hidden />
         </a>
       </div>
 
       {current.unpublished || current.data ? (
-        <p className="text-fd-muted-foreground">
+        <p className="sp-ref-note">
           {current.unpublished
             ? "Generated from a pinned source commit, not a published npm release. This snapshot is deliberately pinned rather than following the branch."
             : "Generated from the published type declarations for this exact release."}
