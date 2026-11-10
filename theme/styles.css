@@ -1295,6 +1295,28 @@ summary.sp-action-button::-webkit-details-marker {
 
 /* Code blocks ------------------------------------------------------------- */
 
+/* Generated reference signatures: highlighted, but without a per-block
+ * toolbar that would cover the first line on narrow screens. */
+.rp-doc .sp-signature-pre {
+  margin: 1.25rem 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  border: 1px solid var(--sp-code-line);
+  border-radius: 11px;
+  background: var(--sp-code-bg);
+  box-shadow: var(--sp-code-shadow);
+  color: var(--rp-c-text-1);
+  font-family: var(--rp-font-family-mono);
+  font-size: var(--rp-code-font-size);
+  line-height: 1.72;
+  tab-size: 2;
+  scrollbar-width: thin;
+}
+
+.rp-doc .sp-signature-pre code {
+  white-space: pre;
+}
+
 .rp-doc-layout__container .rp-codeblock {
   overflow: hidden;
   margin: 1.25rem 0;
@@ -1829,20 +1851,6 @@ summary.sp-action-button::-webkit-details-marker {
   font-size: 1em;
   font-weight: 600;
 }
-.rp-doc pre.not-prose {
-  margin: 12px 0 0;
-  padding: 12px 14px;
-  overflow-x: auto;
-  border: 1px solid var(--sp-code-line);
-  border-radius: 9px;
-  background: var(--sp-code-bg);
-  color: var(--rp-c-text-1);
-  font-family: var(--rp-font-family-mono);
-  font-size: 12px;
-  line-height: 1.65;
-  scrollbar-width: thin;
-  box-shadow: var(--sp-code-shadow);
-}
 
 /* Outline ----------------------------------------------------------------- */
 
@@ -2143,10 +2151,6 @@ summary.sp-action-button::-webkit-details-marker {
   .rp-doc-layout__container .rp-table-scroll-container td {
     min-width: 0;
     padding: 8px 11px;
-  }
-  .rp-doc pre.not-prose {
-    overflow-x: auto;
-    white-space: pre;
   }
   .rp-doc-layout__container .rp-doc-footer {
     margin-top: 40px;

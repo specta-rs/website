@@ -44,10 +44,8 @@ function remarkFilenameToTitle() {
 }
 
 /**
- * The generated reference pages keep symbol signatures in a lightweight
- * `<pre>` so a package page does not ship hundreds of highlighted code blocks.
- * Markdown output should use a fence instead, and the version switcher is
- * navigation rather than content.
+ * The version switcher is navigation rather than content, and generated pages
+ * carry import/export syntax that does not belong in a Markdown copy.
  */
 function remarkTidyGeneratedMarkdown() {
   return (tree: any) => {
@@ -57,28 +55,11 @@ function remarkTidyGeneratedMarkdown() {
       for (const child of node.children) {
         if (child.type === "mdxjsEsm") continue;
 
-        if (child.type === "mdxJsxFlowElement") {
-          if (child.name === "ReferenceHeader") continue;
-          if (
-            child.name === "pre" &&
-            Array.isArray(child.children) &&
-            child.children.length === 1 &&
-            (child.children[0].type === "mdxFlowExpression" ||
-              child.children[0].type === "mdxTextExpression")
-          ) {
-            try {
-              const signature = JSON.parse(child.children[0].value) as string;
-              next.push({
-                type: "code",
-                lang: "ts",
-                meta: null,
-                value: signature,
-              });
-              continue;
-            } catch {
-              // Not a generated signature; fall through to the normal walk.
-            }
-          }
+        if (
+          child.type === "mdxJsxFlowElement" &&
+          child.name === "ReferenceHeader"
+        ) {
+          continue;
         }
 
         walk(child);

@@ -92,12 +92,6 @@ export function pageUrl(pkg, version, home = homeVersion(pkg)) {
   return version === home ? base : `${base}/${version}`;
 }
 
-// Signatures here are previews, and a highlighted code block plus its copy
-// button costs kilobytes each. Inline code, and a plain <pre> for multi-line
-// declarations, keeps a whole package inside the browser's budget.
-const signatureClassName =
-  "not-prose my-3 overflow-x-auto rounded-lg border bg-fd-secondary/50 p-3 text-xs leading-relaxed";
-
 /** Longest signature we render on a page; the source link carries the rest. */
 const maxSignatureLength = 1000;
 
@@ -134,16 +128,26 @@ function symbolSummary(symbol, artifact) {
   return escapeMdx(summary);
 }
 
+/**
+ * A fenced block with one more backtick than the signature's longest run, so
+ * declarations containing template literals stay intact. Rspress highlights
+ * these with Shiki like every other `ts` sample.
+ */
+function fencedSignature(signature) {
+  const runs = signature.match(/`+/g) ?? [];
+  const fence = "`".repeat(Math.max(3, ...runs.map((run) => run.length + 1)));
+  return `${fence}ts\n${signature}\n${fence}`;
+}
+
 function entry(symbol, artifact) {
   const lines = [`### \`${symbol.name}\``, ""];
-  // JSON.stringify keeps braces, backticks and template literals intact.
   const signature = symbol.signature?.trim()
     ? truncateSignature(symbol.signature.trim())
     : undefined;
   if (signature) {
     lines.push(
       signature.includes("\n") || signature.includes("`")
-        ? `<pre className="${signatureClassName}">{${JSON.stringify(signature)}}</pre>`
+        ? fencedSignature(signature)
         : `\`${signature}\``,
       "",
     );

@@ -140,9 +140,9 @@ test("an unpublished snapshot's provenance is stated once per page", () => {
   );
 });
 
-test("signatures render as lightweight code, not highlighted blocks", () => {
+test("signatures render as highlighted TypeScript code", () => {
   const single = packagePage([symbol()]);
-  // Inline code keeps hundreds of symbols on one page affordable.
+  // Short declarations stay inline so a page does not become a wall of blocks.
   assert.match(single, /\n`declare function createClient\(\): Client;`\n/);
   assert.ok(!single.includes("```"));
   const multiline = packagePage([
@@ -152,11 +152,10 @@ test("signatures render as lightweight code, not highlighted blocks", () => {
       signature: "type A = `x${string}`;\ndeclare class Client {}",
     }),
   ]);
-  // Multi-line (or backtick-bearing) declarations keep their layout without
-  // pulling in a highlighted block.
+  // Multi-line declarations use a fenced ts block so Shiki highlights them.
   assert.match(
     multiline,
-    /<pre className="[^"]*">\{"type A = `x\$\{string\}`;\\ndeclare class Client \{\}"\}<\/pre>/,
+    /```ts\ntype A = `x\$\{string\}`;\ndeclare class Client \{\}\n```/,
   );
 });
 
