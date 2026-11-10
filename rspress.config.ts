@@ -11,10 +11,10 @@ import { RouteService } from "@rspress/core/dist/node/route/RouteService.js";
 import { scanSideMeta } from "@rspress/core/dist/node/auto-nav-sidebar/normalize.js";
 import { pluginTailwindcss } from "@rsbuild/plugin-tailwindcss";
 import { ImageResponse } from "takumi-js/response";
-import { OpenGraph, logoSource, openGraphImageSize } from "./theme/og";
+import { OpenGraph, logoSource } from "./theme/og";
+import { canonical, ogRoute, openGraphImageSize } from "./theme/site-meta";
 import { projects } from "./theme/projects";
 
-const canonical = "https://specta.dev";
 const contentRoot = path.resolve("content");
 const docsRoot = path.join(contentRoot, "docs");
 const extensions = [".mdx", ".md"];
@@ -114,11 +114,6 @@ function isLLMsPage(page: PageIndexInfo) {
   return isIndexable(page) && page.frontmatter?.disableLlmsTxt !== true;
 }
 
-function ogRoute(routePath: string) {
-  if (routePath === "/" || routePath === "/docs") return "/docs/og.png";
-  return `${routePath.replace(/\/$/, "")}/og.png`;
-}
-
 function createSitePlugin(): RspressPlugin {
   const pages = new Map<string, PageIndexInfo>();
 
@@ -179,7 +174,7 @@ function createSitePlugin(): RspressPlugin {
           );
           const target = path.join(
             outDir,
-            routeToFile(ogRoute(pageData.routePath)),
+            ogRoute(pageData.routePath).replace(/^\/+/, ""),
           );
           await mkdir(path.dirname(target), { recursive: true });
           await writeFile(target, Buffer.from(await image.arrayBuffer()));
@@ -200,15 +195,6 @@ ${entries
       await writeFile(path.join(outDir, "sitemap.xml"), sitemap);
     },
   };
-}
-
-/**
- * Turn a route path (`/docs/rspc/foo`) into an output file path
- * (`docs/rspc/foo/index.html` is handled by Rspress; this is for assets we
- * write ourselves).
- */
-function routeToFile(urlPath: string) {
-  return urlPath.replace(/^\/+/, "");
 }
 
 /**

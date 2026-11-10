@@ -7,7 +7,7 @@ import {
   Shield,
   Zap,
 } from "lucide-react";
-import type { JSX } from "react";
+import type { CSSProperties, JSX } from "react";
 import { DiscordLogo, GitHubLogo } from "@/components/logos";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -78,6 +78,33 @@ function Hero() {
   );
 }
 
+const features = [
+  {
+    icon: Shield,
+    color: "#F74C00",
+    title: "Typesafety",
+    body: "Types should always be inferred end-to-end, allowing you to move quickly and collaborate while maintaining confidence that your code is correct.",
+  },
+  {
+    icon: Code2,
+    color: "#F49600",
+    title: "Developer Experience",
+    body: 'Obsessed with simplicity, while maintaining flexibility. We build tools that make doing the "right thing" the "easy thing", freeing you up to focus on the things that matter.',
+  },
+  {
+    icon: Zap,
+    color: "#CE422B",
+    title: "Modern Practices",
+    body: "Embrace the world of modern JavaScript tooling, enabling you to ship better user experiences than server-driven approaches.",
+  },
+  {
+    icon: Shield,
+    color: "#8B4513",
+    title: "Scale",
+    body: "Build codebases that scale sanely, both in performance and maintainability. Take advantage of Rust's compile-time checks and tooling to reduce risk when developing large-scale applications.",
+  },
+];
+
 function Features() {
   return (
     <section className="border-t bg-fd-secondary/20">
@@ -91,60 +118,93 @@ function Features() {
           </p>
 
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
-            <div className="space-y-4 motion-safe:animate-[fadeIn_0.3s_0s_both]">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#F74C00]/10">
-                <Shield className="h-7 w-7 text-[#F74C00]" />
-              </div>
-              <h3 className="text-xl font-semibold">Typesafety</h3>
-              <p className="text-[15px] leading-relaxed text-fd-muted-foreground">
-                Types should always be inferred end-to-end, allowing you to move
-                quickly and collaborate while maintaining confidence that your
-                code is correct.
-              </p>
-            </div>
-
-            <div className="space-y-4 motion-safe:animate-[fadeIn_0.3s_0.2s_both]">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#F49600]/10">
-                <Code2 className="h-7 w-7 text-[#F49600]" />
-              </div>
-              <h3 className="text-xl font-semibold">Developer Experience</h3>
-              <p className="text-[15px] leading-relaxed text-fd-muted-foreground">
-                Obsessed with simplicity, while maintaining flexibility. We
-                build tools that make doing the &quot;right thing&quot; the
-                &quot;easy thing&quot;, freeing you up to focus on the things
-                that matter.
-              </p>
-            </div>
-
-            <div className="space-y-4 motion-safe:animate-[fadeIn_0.3s_0.4s_both]">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#CE422B]/10">
-                <Zap className="h-7 w-7 text-[#CE422B]" />
-              </div>
-              <h3 className="text-xl font-semibold">Modern Practices</h3>
-              <p className="text-[15px] leading-relaxed text-fd-muted-foreground">
-                Embrace the world of modern JavaScript tooling, enabling you to
-                ship better user experiences than server-driven approaches.
-              </p>
-            </div>
-
-            <div className="space-y-4 motion-safe:animate-[fadeIn_0.3s_0.6s_both]">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#8B4513]/10">
-                <Shield className="h-7 w-7 text-[#8B4513]" />
-              </div>
-              <h3 className="text-xl font-semibold">Scale</h3>
-              <p className="text-[15px] leading-relaxed text-fd-muted-foreground">
-                Build codebases that scale sanely, both in performance and
-                maintainability. Take advantage of Rust&apos;s compile-time
-                checks and tooling to reduce risk when developing large-scale
-                applications.
-              </p>
-            </div>
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div
+                  key={feature.title}
+                  className="space-y-4 motion-safe:animate-[fadeIn_0.3s_both]"
+                  style={{ animationDelay: `${index * 0.2}s` }}
+                >
+                  <div
+                    className="flex h-14 w-14 items-center justify-center rounded-xl"
+                    style={{ backgroundColor: `${feature.color}1a` }}
+                  >
+                    <Icon
+                      className="h-7 w-7"
+                      style={{ color: feature.color }}
+                    />
+                  </div>
+                  <h3 className="text-xl font-semibold">{feature.title}</h3>
+                  <p className="text-[15px] leading-relaxed text-fd-muted-foreground">
+                    {feature.body}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
     </section>
   );
 }
+
+const projects = [
+  {
+    name: "Specta",
+    repo: "specta-rs/specta",
+    description:
+      "Export your Rust types to any language. The foundation for type-safe communication across your stack.",
+    docsUrl: "/docs/specta",
+    logo: (
+      <div className="relative h-14 w-14 shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 transition-transform duration-300 group-hover:scale-110">
+        <img
+          src="/assets/specta.svg"
+          alt="Specta logo"
+          className="object-contain"
+        />
+      </div>
+    ),
+    gradient: "from-[#F74C00] via-[#CC3A00]/60 to-[#F49600]/40",
+    hoverClass: "hover:border-[#F74C00]/20",
+  },
+  {
+    name: "rspc",
+    repo: "specta-rs/rspc",
+    description:
+      "A blazingly fast and typesafe RPC framework for Rust. Build web APIs with end-to-end type safety.",
+    docsUrl: "/docs/rspc",
+    logo: (
+      <div className="relative h-14 w-14 shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 transition-transform duration-300 group-hover:scale-110">
+        <img
+          src="/assets/rspc.svg"
+          alt="rspc logo"
+          className="object-contain"
+        />
+      </div>
+    ),
+    gradient: "from-[#0092DE] via-[#0092DE]/60 to-[#00A4FA]/40",
+    hoverClass: "hover:border-[#0092DE]/20",
+  },
+  {
+    name: "Tauri Specta",
+    repo: "specta-rs/tauri-specta",
+    description:
+      "Typesafe Tauri commands with Specta. Build desktop apps with full type safety between Rust and TypeScript.",
+    docsUrl: "/docs/tauri-specta",
+    logo: (
+      <div className="relative h-10 w-22 shrink-0 self-center rounded-xl bg-fd-secondary/50 p-2.5 transition-transform duration-300 group-hover:scale-110">
+        <img
+          src="/assets/tauri-specta.png"
+          alt="Tauri Specta logo"
+          className="object-contain"
+        />
+      </div>
+    ),
+    gradient: "from-[#FFC131] via-[#FFC131]/60 to-[#FFC947]/40",
+    hoverClass: "hover:border-[#FFC131]/20",
+  },
+];
 
 function Projects() {
   return (
@@ -162,62 +222,14 @@ function Projects() {
           </div>
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <ProjectCard
-              name="Specta"
-              repo="specta-rs/specta"
-              description="Export your Rust types to any language. The foundation for type-safe communication across your stack."
-              docsUrl="/docs/specta"
-              logo={
-                <div className="relative h-14 w-14 shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 transition-transform duration-300 group-hover:scale-110">
-                  <img
-                    src="/assets/specta.svg"
-                    alt="Specta logo"
-                    className="object-contain"
-                  />
-                </div>
-              }
-              gradient="from-[#F74C00] via-[#CC3A00]/60 to-[#F49600]/40"
-              accentColor="border-[#F74C00]/20"
-              className="motion-safe:animate-[fadeIn_0.3s_0s_both]"
-            />
-
-            <ProjectCard
-              name="rspc"
-              repo="specta-rs/rspc"
-              description="A blazingly fast and typesafe RPC framework for Rust. Build web APIs with end-to-end type safety."
-              docsUrl="/docs/rspc"
-              logo={
-                <div className="relative h-14 w-14 shrink-0 rounded-xl bg-fd-secondary/50 p-2.5 transition-transform duration-300 group-hover:scale-110">
-                  <img
-                    src="/assets/rspc.svg"
-                    alt="rspc logo"
-                    className="object-contain"
-                  />
-                </div>
-              }
-              gradient="from-[#0092DE] via-[#0092DE]/60 to-[#00A4FA]/40"
-              accentColor="border-[#0092DE]/20"
-              className="motion-safe:animate-[fadeIn_0.3s_0.2s_both]"
-            />
-
-            <ProjectCard
-              name="Tauri Specta"
-              repo="specta-rs/tauri-specta"
-              description="Typesafe Tauri commands with Specta. Build desktop apps with full type safety between Rust and TypeScript."
-              docsUrl="/docs/tauri-specta"
-              logo={
-                <div className="relative h-10 w-22 shrink-0 self-center rounded-xl bg-fd-secondary/50 p-2.5 transition-transform duration-300 group-hover:scale-110">
-                  <img
-                    src="/assets/tauri-specta.png"
-                    alt="Tauri Specta logo"
-                    className="object-contain"
-                  />
-                </div>
-              }
-              gradient="from-[#FFC131] via-[#FFC131]/60 to-[#FFC947]/40"
-              accentColor="border-[#FFC131]/20"
-              className="motion-safe:animate-[fadeIn_0.3s_0.4s_both]"
-            />
+            {projects.map((project, index) => (
+              <ProjectCard
+                key={project.name}
+                {...project}
+                className="motion-safe:animate-[fadeIn_0.3s_both]"
+                style={{ animationDelay: `${index * 0.2}s` }}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -232,18 +244,18 @@ function ProjectCard(props: {
   description: string;
   docsUrl?: string;
   gradient?: string;
-  accentColor?: string;
+  hoverClass: string;
   className?: string;
+  style?: CSSProperties;
 }) {
   return (
     <div
       className={cn(
         "group relative flex flex-col overflow-hidden rounded-2xl border bg-fd-card p-8 transition-all duration-300 hover:shadow-2xl",
-        props.accentColor
-          ? `hover:${props.accentColor}`
-          : "hover:border-fd-primary/20",
+        props.hoverClass,
         props.className,
       )}
+      style={props.style}
     >
       <div
         className={cn(

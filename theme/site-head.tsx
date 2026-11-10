@@ -1,12 +1,5 @@
 import { useHead, usePage } from "@rspress/core/runtime";
-
-const canonical = "https://specta.dev";
-const openGraphImageSize = [1200, 630] as const;
-
-function ogRoute(routePath: string) {
-  if (routePath === "/" || routePath === "/docs") return "/docs/og.png";
-  return `${routePath.replace(/\/$/, "")}/og.png`;
-}
+import { canonical, ogRoute, openGraphImageSize } from "./site-meta";
 
 /**
  * Adds the social metadata the old site emitted from `Meta.tsx`. Rspress only

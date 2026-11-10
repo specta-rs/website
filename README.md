@@ -13,7 +13,7 @@ pnpm dev
 - `theme/` contains the custom Rspress theme: the documentation header, project switcher, generated-reference heading treatment, and the Markdown/AI page actions.
 - `worker/` handles PostHog proxying and Markdown content negotiation (`Accept: text/markdown`, `.mdx`, and old `/llms.mdx` URLs) before falling back to the static build.
 - `scripts/reference/` generates the TypeScript API pages from the committed snapshots in `reference/`.
-- `scripts/site-data.mjs` fetches sponsors and GitHub star counts for the landing page at build time. It writes `theme/site-data.json`, which is ignored by Git and recreated by `dev`, `build`, `typecheck`, and `postinstall`.
+- `scripts/site-data.mjs` fetches sponsors and GitHub star counts for the landing page at build time. It writes `theme/site-data.json`, which is ignored by Git and recreated by the shared `prepare:content` step used by `dev`, `build`, `typecheck`, and `postinstall`.
 
 ## Formatting and linting
 

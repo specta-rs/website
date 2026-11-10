@@ -1,7 +1,5 @@
 import { createElement as h, type ReactElement } from "react";
 
-export const openGraphImageSize = [1200, 630] as const;
-
 const logoSource = "spectaLogo";
 
 /**

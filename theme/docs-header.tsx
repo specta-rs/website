@@ -1,5 +1,6 @@
 import { useFrontmatter, usePage } from "@rspress/core/runtime";
 import { Breadcrumb } from "./breadcrumb";
+import { markdownPath } from "./site-meta";
 import { DeprecationBanner } from "./deprecation-banner";
 import { CopyMarkdownButton, ViewOptions } from "./page-actions";
 
@@ -11,11 +12,8 @@ import { CopyMarkdownButton, ViewOptions } from "./page-actions";
 export function DocsHeader() {
   const { page } = usePage();
   const { frontmatter } = useFrontmatter();
-  const routePath = page.routePath.replace(/\/$/, "");
-  const markdownUrl = page.pagePath.endsWith("/index.mdx")
-    ? `${routePath}/index.md`
-    : `${routePath}.md`;
-  const deprecated = routePath.startsWith("/docs/rspc/0.3.0");
+  const markdownUrl = markdownPath(page.routePath, page.pagePath);
+  const deprecated = page.routePath.startsWith("/docs/rspc/0.3.0");
   const githubUrl = `https://github.com/specta-rs/website/blob/main/content/${page.pagePath}`;
 
   return (
