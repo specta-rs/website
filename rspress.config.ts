@@ -330,6 +330,11 @@ export default defineConfig({
     remarkPlugins: [remarkFilenameToTitle],
     image: { checkDeadImages: false },
     shiki: {
+      // Fumadocs accepted ```npm fences; map them to the shell grammar and
+      // render any future unknown language as plain text instead of failing
+      // the build.
+      langAlias: { npm: "bash" },
+      fallbackLanguage: "txt",
       langs: [
         "tsx",
         "ts",
