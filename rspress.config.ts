@@ -14,6 +14,7 @@ import { ImageResponse } from "takumi-js/response";
 import { OpenGraph, logoSource } from "./theme/og";
 import { canonical, ogRoute, openGraphImageSize } from "./theme/site-meta";
 import { projects } from "./theme/projects";
+import { remarkPackageManagerTabs } from "./scripts/remark-package-manager";
 
 const contentRoot = path.resolve("content");
 const docsRoot = path.join(contentRoot, "docs");
@@ -327,13 +328,12 @@ export default defineConfig({
     llmsUI: false,
   },
   markdown: {
-    remarkPlugins: [remarkFilenameToTitle],
+    remarkPlugins: [remarkFilenameToTitle, remarkPackageManagerTabs],
     image: { checkDeadImages: false },
     shiki: {
-      // Fumadocs accepted ```npm fences; map them to the shell grammar and
-      // render any future unknown language as plain text instead of failing
-      // the build.
-      langAlias: { npm: "bash" },
+      // Render any future unknown language as plain text instead of failing
+      // the build. `npm` fences are converted to package-manager tabs by
+      // `remarkPackageManagerTabs`.
       fallbackLanguage: "txt",
       langs: [
         "tsx",
@@ -358,6 +358,7 @@ export default defineConfig({
       path.resolve("theme/mdx/Accordions.tsx"),
       path.resolve("theme/mdx/Accordion.tsx"),
       path.resolve("theme/mdx/ReferenceHeader.tsx"),
+      path.resolve("theme/mdx/PackageManagerCommands.tsx"),
     ],
   },
   builderConfig: {
