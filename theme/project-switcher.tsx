@@ -3,6 +3,14 @@ import { useLocation } from "@rspress/core/runtime";
 import { cn } from "@/lib/utils";
 import { type Project, projects } from "./projects";
 
+/**
+ * The frame is the same size everywhere the picker renders a project, so the
+ * logos line up between the trigger and the rows. Each project's `className`
+ * scales its mark inside it.
+ */
+const frame =
+  "flex h-10 w-12 shrink-0 items-center justify-center rounded-lg border border-sp-line";
+
 function ProjectIcon({
   project,
   className,
@@ -14,7 +22,11 @@ function ProjectIcon({
     <img
       src={project.icon}
       alt={`${project.name} logo`}
-      className={cn("max-h-full max-w-full object-contain", className)}
+      className={cn(
+        "object-contain",
+        project.className ?? "h-6 w-8",
+        className,
+      )}
     />
   );
 }
@@ -55,7 +67,7 @@ export function ProjectSwitcher() {
       </p>
       <details className="group relative">
         <summary className="flex cursor-pointer list-none items-center gap-2.5 rounded-xl border border-sp-line bg-sp-panel px-2.5 py-2.5 shadow-[0_1px_2px_rgb(0_0_0/0.04)] transition-colors hover:border-sp-accent-line hover:bg-sp-panel-hover [&::-webkit-details-marker]:hidden">
-          <span className="flex h-9 w-12 shrink-0 items-center justify-center rounded-lg border border-sp-line bg-sp-panel-strong">
+          <span className={cn(frame, "bg-sp-panel-strong")}>
             <ProjectIcon project={display} />
           </span>
           <span className="min-w-0 flex-1">
@@ -84,7 +96,8 @@ export function ProjectSwitcher() {
           >
             <span
               className={cn(
-                "mt-0.5 flex h-8 w-12 shrink-0 items-center justify-center rounded-md border bg-sp-panel",
+                frame,
+                "bg-sp-panel",
                 !current ? "border-sp-accent-line" : "border-sp-line",
               )}
             >
@@ -118,10 +131,9 @@ export function ProjectSwitcher() {
                 >
                   <span
                     className={cn(
-                      "mt-0.5 flex h-8 w-12 shrink-0 items-center justify-center rounded-md border",
-                      active
-                        ? "border-sp-accent-line bg-sp-panel"
-                        : "border-sp-line bg-sp-panel",
+                      frame,
+                      "bg-sp-panel",
+                      active ? "border-sp-accent-line" : "border-sp-line",
                     )}
                   >
                     <ProjectIcon project={project} />
