@@ -4,12 +4,15 @@ import { cn } from "@/lib/utils";
 import { type Project, projects } from "./projects";
 
 /**
- * The frame is the same size everywhere the picker renders a project, so the
- * logos line up between the trigger and the rows. Each project's `className`
- * scales its mark inside it.
+ * Every row reserves the same icon column, so the name and description always
+ * start at the same x. The frame inside is per project (Tauri Specta's mark is
+ * wide, Gurafi's and FSK's fill a square frame) and stays centred in the
+ * column.
  */
+const iconColumn = "flex w-[72px] shrink-0 justify-center";
+
 const frame =
-  "flex h-10 w-12 shrink-0 items-center justify-center rounded-lg border border-sp-line";
+  "flex h-10 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-sp-line";
 
 function ProjectIcon({
   project,
@@ -67,8 +70,16 @@ export function ProjectSwitcher() {
       </p>
       <details className="group relative">
         <summary className="flex cursor-pointer list-none items-center gap-2.5 rounded-xl border border-sp-line bg-sp-panel px-2.5 py-2.5 shadow-[0_1px_2px_rgb(0_0_0/0.04)] transition-colors hover:border-sp-accent-line hover:bg-sp-panel-hover [&::-webkit-details-marker]:hidden">
-          <span className={cn(frame, "bg-sp-panel-strong")}>
-            <ProjectIcon project={display} />
+          <span className={iconColumn}>
+            <span
+              className={cn(
+                frame,
+                display.frameClassName,
+                "bg-sp-panel-strong",
+              )}
+            >
+              <ProjectIcon project={display} />
+            </span>
           </span>
           <span className="min-w-0 flex-1">
             <span className="flex items-center gap-2">
@@ -94,14 +105,17 @@ export function ProjectSwitcher() {
               !current && "bg-sp-accent-soft",
             )}
           >
-            <span
-              className={cn(
-                frame,
-                "bg-sp-panel",
-                !current ? "border-sp-accent-line" : "border-sp-line",
-              )}
-            >
-              <ProjectIcon project={ecosystem} />
+            <span className={iconColumn}>
+              <span
+                className={cn(
+                  frame,
+                  ecosystem.frameClassName,
+                  "bg-sp-panel",
+                  !current ? "border-sp-accent-line" : "border-sp-line",
+                )}
+              >
+                <ProjectIcon project={ecosystem} />
+              </span>
             </span>
             <span className="min-w-0 flex-1">
               <span className="block text-[13px] font-medium">
@@ -129,14 +143,17 @@ export function ProjectSwitcher() {
                     active && "bg-sp-accent-soft",
                   )}
                 >
-                  <span
-                    className={cn(
-                      frame,
-                      "bg-sp-panel",
-                      active ? "border-sp-accent-line" : "border-sp-line",
-                    )}
-                  >
-                    <ProjectIcon project={project} />
+                  <span className={iconColumn}>
+                    <span
+                      className={cn(
+                        frame,
+                        project.frameClassName,
+                        "bg-sp-panel",
+                        active ? "border-sp-accent-line" : "border-sp-line",
+                      )}
+                    >
+                      <ProjectIcon project={project} />
+                    </span>
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-2">

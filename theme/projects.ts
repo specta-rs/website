@@ -6,6 +6,11 @@ export type Project = {
   description: string;
   icon: string;
   className: string;
+  /**
+   * Overrides the icon frame in the project picker. The picker reserves a
+   * fixed column for the frame, so a wider frame here does not move the text.
+   */
+  frameClassName?: string;
   deprecated?: boolean;
 };
 
@@ -22,21 +27,26 @@ export const projects: Project[] = [
     name: "Tauri Specta",
     description: "Completely typesafe Tauri commands",
     icon: "/assets/tauri-specta.png",
-    className: "h-5 w-[44px]",
+    className: "h-6 w-[56px]",
+    frameClassName: "w-[72px]",
   },
   {
     id: "gurafi",
     name: "Gurafi",
     description: "A type-safe, code-first GraphQL stack for Rust",
     icon: gurafiAppIcon,
-    className: "h-8 w-8",
+    className: "h-[38px] w-[38px]",
+    frameClassName: "w-10",
   },
   {
     id: "fsk",
     name: "FSK",
     description: "Build cross-platform virtual file systems in Rust",
     icon: "/assets/fsk-app-icon.svg",
-    className: "h-8 w-8",
+    // The FSK asset carries ~10% transparent padding around its tile, so it is
+    // scaled up until the tile itself reaches the frame edges.
+    className: "h-[47px] w-[47px]",
+    frameClassName: "w-10",
   },
   {
     id: "rspc",
