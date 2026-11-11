@@ -15,7 +15,8 @@ export function DocsHeader() {
   const { page } = usePage();
   const { frontmatter } = useFrontmatter();
   const markdownUrl = markdownPath(page.routePath, page.pagePath);
-  const deprecated = page.routePath.startsWith("/docs/rspc/0.3.0");
+  const deprecated = page.routePath.startsWith("/docs/rspc");
+  const legacyDeprecation = page.routePath.startsWith("/docs/rspc/0.3.0");
   const editUrl = (frontmatter as { editUrl?: string }).editUrl;
   const githubUrl = frontmatter.generated
     ? undefined
@@ -25,7 +26,7 @@ export function DocsHeader() {
   return (
     <header className="sp-doc-head">
       <Breadcrumb />
-      {deprecated ? <DeprecationBanner /> : null}
+      {deprecated ? <DeprecationBanner legacy={legacyDeprecation} /> : null}
 
       <div className="sp-doc-head__grid">
         <h1 className="sp-doc-title">{page.title}</h1>

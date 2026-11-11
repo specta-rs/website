@@ -56,5 +56,17 @@
     "type": "section-header",
     "label": "Reference"
   },
-  "architecture"
+  "architecture",
+  {
+    "type": "custom-link",
+    "label": "GitHub",
+    "link": "https://github.com/specta-rs/gurafi",
+    "icon": "/assets/icons/github.svg"
+  },
+  {
+    "type": "custom-link",
+    "label": "crates.io",
+    "link": "https://crates.io/crates/gurafi",
+    "icon": "/assets/icons/crates-io.png"
+  }
 ]

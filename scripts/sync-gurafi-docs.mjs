@@ -204,6 +204,23 @@ function sideMeta(files) {
     entries.push(...other);
   }
 
+  // Source and registry links sit at the bottom of the sidebar, matching the
+  // other projects.
+  entries.push(
+    {
+      type: "custom-link",
+      label: "GitHub",
+      link: "https://github.com/specta-rs/gurafi",
+      icon: "/assets/icons/github.svg",
+    },
+    {
+      type: "custom-link",
+      label: "crates.io",
+      link: "https://crates.io/crates/gurafi",
+      icon: "/assets/icons/crates-io.png",
+    },
+  );
+
   return `${JSON.stringify(entries, null, 2)}\n`;
 }
 

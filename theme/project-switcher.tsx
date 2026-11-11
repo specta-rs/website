@@ -1,13 +1,13 @@
 import { Check, ChevronDown } from "lucide-react";
 import { useLocation } from "@rspress/core/runtime";
 import { cn } from "@/lib/utils";
-import { projects } from "./projects";
+import { type Project, projects } from "./projects";
 
 function ProjectIcon({
   project,
   className,
 }: {
-  project: (typeof projects)[number];
+  project: Project;
   className?: string;
 }) {
   return (
@@ -23,13 +23,13 @@ function ProjectIcon({
  * The value shown when the reader is on a docs page that does not belong to a
  * project, such as the `/docs` ecosystem overview.
  */
-const ecosystem = {
+const ecosystem: Project = {
   id: "ecosystem",
   name: "specta-rs",
   description: "Rust crates for better web apps",
   icon: "/assets/specta.png",
   className: "h-5 w-[30px]",
-} satisfies (typeof projects)[number];
+};
 
 /**
  * A small project switcher at the top of the documentation sidebar. The old
@@ -59,8 +59,13 @@ export function ProjectSwitcher() {
             <ProjectIcon project={display} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="block truncate text-[13.5px] font-semibold tracking-[-0.01em]">
-              {display.name}
+            <span className="flex items-center gap-2">
+              <span className="truncate text-[13.5px] font-semibold tracking-[-0.01em]">
+                {display.name}
+              </span>
+              {display.deprecated ? (
+                <span className="sp-deprecated-badge">Deprecated</span>
+              ) : null}
             </span>
             <span className="mt-0.5 block truncate text-[11.5px] leading-4 text-fd-muted-foreground">
               {display.description}
@@ -122,8 +127,13 @@ export function ProjectSwitcher() {
                     <ProjectIcon project={project} />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-[13px] font-medium">
-                      {project.name}
+                    <span className="flex items-center gap-2">
+                      <span className="text-[13px] font-medium">
+                        {project.name}
+                      </span>
+                      {project.deprecated ? (
+                        <span className="sp-deprecated-badge">Deprecated</span>
+                      ) : null}
                     </span>
                     <span className="mt-0.5 block text-[11px] leading-4 text-fd-muted-foreground">
                       {project.description}

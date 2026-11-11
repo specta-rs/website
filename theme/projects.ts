@@ -1,6 +1,15 @@
 import { gurafiAppIcon } from "./gurafi-icon";
 
-export const projects = [
+export type Project = {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  className: string;
+  deprecated?: boolean;
+};
+
+export const projects: Project[] = [
   {
     id: "specta",
     name: "Specta",
@@ -16,13 +25,6 @@ export const projects = [
     className: "h-5 w-[44px]",
   },
   {
-    id: "rspc",
-    name: "rspc",
-    description: "A framework for building typesafe web backends in Rust",
-    icon: "/assets/rspc.png",
-    className: "h-5 w-[20px]",
-  },
-  {
     id: "gurafi",
     name: "Gurafi",
     description: "A type-safe, code-first GraphQL stack for Rust",
@@ -35,5 +37,13 @@ export const projects = [
     description: "Build cross-platform virtual file systems in Rust",
     icon: "/assets/fsk-app-icon.svg",
     className: "h-6 w-6",
+  },
+  {
+    id: "rspc",
+    name: "rspc",
+    description: "A framework for building typesafe web backends in Rust",
+    icon: "/assets/rspc.png",
+    className: "h-5 w-[20px]",
+    deprecated: true,
   },
 ];
