@@ -206,6 +206,26 @@ function normalizeSidebarLinks(
   });
 }
 
+/**
+ * The overview sidebar lists every project, so tag each project row with its
+ * logo. Project-specific sidebars already sit inside a single project and
+ * never show this list, so they keep their text-only rows.
+ */
+function addProjectIcons(
+  items: Awaited<ReturnType<typeof scanSideMeta>>,
+): Awaited<ReturnType<typeof scanSideMeta>> {
+  const icons = new Map(
+    projects.map((project) => [`/docs/${project.id}`, project.icon]),
+  );
+  return items.map((item) => {
+    const icon =
+      "link" in item && typeof item.link === "string"
+        ? icons.get(item.link)
+        : undefined;
+    return icon ? { ...item, icon } : item;
+  });
+}
+
 async function createSidebar() {
   // `scanSideMeta` needs a RouteService to resolve page files to route paths.
   // Initialising one here (Rspress replaces it during the build) lets us read
@@ -239,13 +259,15 @@ async function createSidebar() {
 
   // The documentation landing page and the brand page share the overview
   // sidebar listing every project.
-  sidebar["/docs"] = normalizeSidebarLinks(
-    await scanSideMeta(
-      docsRoot,
-      contentRoot,
-      extensions,
-      metaFileSet,
-      mdFileSet,
+  sidebar["/docs"] = addProjectIcons(
+    normalizeSidebarLinks(
+      await scanSideMeta(
+        docsRoot,
+        contentRoot,
+        extensions,
+        metaFileSet,
+        mdFileSet,
+      ),
     ),
   );
 

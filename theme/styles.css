@@ -392,6 +392,24 @@ body:has(.sp-home) .rp-nav {
   letter-spacing: 0.01em;
 }
 
+/* Project rows in the overview sidebar carry the project logo. Only those rows
+ * have an icon, so the sizing can stay on the shared class. The faint frame
+ * keeps light-on-light marks (Gurafi) readable in the light theme. */
+.rp-sidebar-item__icon {
+  box-sizing: content-box;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  padding: 1px;
+  border: 1px solid var(--rp-c-divider-light);
+  border-radius: 5px;
+  background: var(--rp-c-bg-soft);
+}
+
+.rp-sidebar-item__left:has(> .rp-sidebar-item__icon) {
+  gap: 9px;
+}
+
 .rp-sidebar-section-header {
   margin-top: 20px;
   padding: 4px 10px;
