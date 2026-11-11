@@ -239,4 +239,20 @@ for (const file of files) {
 const written = await walk(target);
 await writeFile(path.join(target, "_meta.json"), sideMeta(written));
 
+const missingEditLink = [];
+for (const doc of written.filter((file) => file.endsWith(".md"))) {
+  const text = await readFile(path.join(target, doc), "utf8");
+  if (
+    !/^editUrl: "https:\/\/github\.com\/specta-rs\/gurafi\/blob\//m.test(text)
+  ) {
+    missingEditLink.push(doc);
+  }
+}
+if (missingEditLink.length > 0) {
+  console.error(
+    `Gurafi docs without a Gurafi editUrl: ${missingEditLink.join(", ")}`,
+  );
+  process.exit(1);
+}
+
 console.log(`Synced ${written.length} files from ${source} to ${target}`);
