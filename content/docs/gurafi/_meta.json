@@ -1,0 +1,72 @@
+[
+  {
+    "type": "file",
+    "name": "index",
+    "label": "Overview"
+  },
+  {
+    "type": "section-header",
+    "label": "Guide"
+  },
+  "guide/getting-started",
+  "guide/objects",
+  "guide/fields",
+  "guide/args",
+  "guide/context",
+  "guide/enums",
+  "guide/scalars",
+  "guide/inputs",
+  "guide/operations",
+  "guide/interfaces",
+  "guide/unions",
+  "guide/schema-builder",
+  "guide/using-plugins",
+  "guide/app-layout",
+  "guide/circular-references",
+  "guide/patterns",
+  "guide/nullability",
+  "guide/type-inference",
+  "guide/playground",
+  "guide/printing-schemas",
+  "guide/client-codegen",
+  "guide/troubleshooting",
+  "guide/writing-plugins",
+  "guide/non-goals",
+  {
+    "type": "section-header",
+    "label": "Plugins"
+  },
+  "plugins/add-graphql",
+  "plugins/complexity",
+  "plugins/dataloader",
+  "plugins/directives",
+  "plugins/errors",
+  "plugins/mocks",
+  "plugins/relay",
+  "plugins/scope-auth",
+  "plugins/simple-objects",
+  "plugins/tracing",
+  "plugins/validation",
+  {
+    "type": "section-header",
+    "label": "Server"
+  },
+  "server/suku",
+  {
+    "type": "section-header",
+    "label": "Reference"
+  },
+  "architecture",
+  {
+    "type": "custom-link",
+    "label": "GitHub",
+    "link": "https://github.com/specta-rs/gurafi",
+    "icon": "/assets/icons/github.svg"
+  },
+  {
+    "type": "custom-link",
+    "label": "crates.io",
+    "link": "https://crates.io/crates/gurafi",
+    "icon": "/assets/icons/crates-io.png"
+  }
+]

@@ -30,6 +30,27 @@ const examplePackage = {
   ],
 };
 
+/** A symbol with every field a page renders, overridable per case. */
+const symbol = (overrides = {}) => ({
+  name: "createClient",
+  kind: "function",
+  description: "",
+  signature: "declare function createClient(): Client;",
+  ...overrides,
+});
+
+/**
+ * Render the example package's page from a symbol list, plus any artifact
+ * fields or page options a case needs.
+ */
+const packagePage = (symbols, { artifact = {}, ...options } = {}) =>
+  renderPackagePage({
+    pkg: examplePackage,
+    version: "1.0.0",
+    artifact: { ...artifact, symbols },
+    ...options,
+  });
+
 test("MDX escaping neutralises markup without losing prose", () => {
   assert.equal(
     escapeMdx("Returns {a} <b> where `x: i32` is set."),
@@ -87,29 +108,28 @@ test("long declarations are trimmed at a line boundary, never emptied", () => {
 
 test("an unpublished snapshot's provenance is stated once per page", () => {
   const commit = "b".repeat(40);
-  const page = renderPackagePage({
-    pkg: examplePackage,
-    version: "1.0.0",
-    artifact: {
-      published: false,
-      sourceCommit: commit,
-      description: `Unreleased source snapshot of packages/tanstack-query at commit ${commit}; not a published npm version. The directory is documented as @rspc/tanstack-query.`,
-      symbols: [
-        {
-          name: "createHooks",
-          kind: "function",
-          description: `Unreleased source snapshot of packages/tanstack-query at commit ${commit}; not a published npm version. The directory is documented as @rspc/tanstack-query. Wraps the query client.`,
-          signature: "declare function createHooks(): Hooks;",
-        },
-        {
-          name: "silent",
-          kind: "function",
-          description: `Unreleased source snapshot of packages/tanstack-query at commit ${commit}; not a published npm version.`,
-          signature: "declare function silent(): void;",
-        },
-      ],
+  const provenance = `Unreleased source snapshot of packages/tanstack-query at commit ${commit}; not a published npm version.`;
+  const page = packagePage(
+    [
+      symbol({
+        name: "createHooks",
+        description: `${provenance} The directory is documented as @rspc/tanstack-query. Wraps the query client.`,
+        signature: "declare function createHooks(): Hooks;",
+      }),
+      symbol({
+        name: "silent",
+        description: provenance,
+        signature: "declare function silent(): void;",
+      }),
+    ],
+    {
+      artifact: {
+        published: false,
+        sourceCommit: commit,
+        description: `${provenance} The directory is documented as @rspc/tanstack-query.`,
+      },
     },
-  });
+  );
   // The page states the snapshot once; symbols keep only their own docs, with
   // no dangling fragment left behind.
   assert.equal(page.split("not a published npm version.").length - 1, 1);
@@ -120,43 +140,22 @@ test("an unpublished snapshot's provenance is stated once per page", () => {
   );
 });
 
-test("signatures render as lightweight code, not highlighted blocks", () => {
-  const single = renderPackagePage({
-    pkg: examplePackage,
-    version: "1.0.0",
-    artifact: {
-      symbols: [
-        {
-          name: "createClient",
-          kind: "function",
-          description: "",
-          signature: "declare function createClient(): Client;",
-        },
-      ],
-    },
-  });
-  // Inline code keeps hundreds of symbols on one page affordable.
+test("signatures render as highlighted TypeScript code", () => {
+  const single = packagePage([symbol()]);
+  // Short declarations stay inline so a page does not become a wall of blocks.
   assert.match(single, /\n`declare function createClient\(\): Client;`\n/);
   assert.ok(!single.includes("```"));
-  const multiline = renderPackagePage({
-    pkg: examplePackage,
-    version: "1.0.0",
-    artifact: {
-      symbols: [
-        {
-          name: "Client",
-          kind: "class",
-          description: "",
-          signature: "type A = `x${string}`;\ndeclare class Client {}",
-        },
-      ],
-    },
-  });
-  // Multi-line (or backtick-bearing) declarations keep their layout without
-  // pulling in a highlighted block.
+  const multiline = packagePage([
+    symbol({
+      name: "Client",
+      kind: "class",
+      signature: "type A = `x${string}`;\ndeclare class Client {}",
+    }),
+  ]);
+  // Multi-line declarations use a fenced ts block so Shiki highlights them.
   assert.match(
     multiline,
-    /<pre className="[^"]*">\{"type A = `x\$\{string\}`;\\ndeclare class Client \{\}"\}<\/pre>/,
+    /```ts\ntype A = `x\$\{string\}`;\ndeclare class Client \{\}\n```/,
   );
 });
 
@@ -171,7 +170,7 @@ test("symbols are grouped into documented sections and ordered", () => {
     ["Classes", "Functions", "Other"],
   );
   assert.deepEqual(
-    groups[2].symbols.map((symbol) => symbol.name),
+    groups[2].symbols.map((entry) => entry.name),
     ["b.odd"],
   );
 });
@@ -188,30 +187,24 @@ test("the documented version owns the package URL", () => {
 });
 
 test("a package page carries its version switcher, sections and source links", () => {
-  const page = renderPackagePage({
-    pkg: examplePackage,
-    version: "0.9.0",
-    artifact: {
-      symbols: [
-        {
-          name: "createClient",
-          kind: "function",
-          description: "Creates a {typed} client.",
-          signature: "declare function createClient(): Client;",
-          sourceUrl: "https://www.npmjs.com/package/@rspc/example/v/0.9.0",
-        },
-        {
-          name: "Client",
-          kind: "interface",
-          description: "A client.",
-          signature: "interface Client {}",
-          sourceUrl: "https://www.npmjs.com/package/@rspc/example/v/0.9.0",
-        },
-      ],
-    },
-  });
+  const page = packagePage(
+    [
+      symbol({
+        description: "Creates a {typed} client.",
+        sourceUrl: "https://www.npmjs.com/package/@rspc/example/v/0.9.0",
+      }),
+      symbol({
+        name: "Client",
+        kind: "interface",
+        description: "A client.",
+        signature: "interface Client {}",
+        sourceUrl: "https://www.npmjs.com/package/@rspc/example/v/0.9.0",
+      }),
+    ],
+    { version: "0.9.0" },
+  );
   assert.match(page, /^---\ntitle: "@rspc\/example"/);
-  assert.match(page, /\ngenerated: true\nhidden: true\n/);
+  assert.match(page, /\ngenerated: true\nhidden: true\nsearch: false\n/);
   assert.match(
     page,
     /<ReferenceHeader packageId="ts-example" version="0\.9\.0" \/>/,
@@ -256,25 +249,13 @@ test("a package without extractable documentation still gets an explaining page"
 });
 
 test("the documented version page is not hidden", () => {
-  const page = renderPackagePage({
-    pkg: examplePackage,
-    version: "1.0.0",
-    artifact: {
-      symbols: [
-        {
-          name: "createClient",
-          kind: "function",
-          description: "",
-          signature: "declare function createClient(): Client;",
-        },
-      ],
-    },
-  });
+  const page = packagePage([symbol()]);
   assert.match(page, /\ngenerated: true\n---\n/);
   assert.ok(!page.includes("hidden: true"));
 });
 
 const read = async (relative) => readFile(path.join(root, relative), "utf8");
+const readJson = async (relative) => JSON.parse(await read(relative));
 
 test("generated pages sit under rspc's sidebar with only the documented version listed", async () => {
   const client = await read(
@@ -282,23 +263,18 @@ test("generated pages sit under rspc's sidebar with only the documented version 
   );
   assert.match(client, /^---\ntitle: "@rspc\/client"/);
   assert.match(client, /\n### `createClient`\n/);
-  const meta = JSON.parse(
-    await read("content/docs/rspc/typescript-api/meta.json"),
+  const sidebar = await readJson("content/docs/rspc/typescript-api/_meta.json");
+  assert.ok(sidebar.some((item) => item.name === "ts-rspc-client"));
+  assert.deepEqual(
+    await readJson(
+      "content/docs/rspc/typescript-api/ts-rspc-client/_meta.json",
+    ),
+    [],
   );
-  assert.equal(meta.title, "TypeScript API");
-  assert.ok(meta.pages.includes("ts-rspc-client"));
-  const scoped = JSON.parse(
-    await read("content/docs/rspc/typescript-api/ts-rspc-client/meta.json"),
-  );
-  assert.deepEqual(scoped, {
-    title: "@rspc/client",
-    collapsible: false,
-    pages: [],
-  });
   const older = await read(
     "content/docs/rspc/typescript-api/ts-rspc-client/0.2.4.mdx",
   );
-  assert.match(older, /\nhidden: true\n/);
+  assert.match(older, /\nhidden: true\nsearch: false\n/);
   assert.match(
     older,
     /<ReferenceHeader packageId="ts-rspc-client" version="0\.2\.4"/,
@@ -310,15 +286,12 @@ test("generated pages sit under rspc's sidebar with only the documented version 
     "content/docs/tauri-specta/rust-api",
     "content/docs/tauri-specta/typescript-api",
   ]) {
-    await assert.rejects(read(`${gone}/meta.json`), /ENOENT/);
+    await assert.rejects(read(`${gone}/_meta.json`), /ENOENT/);
   }
   // Every package in the catalog has a page and a place in the sidebar.
-  const bundled = JSON.parse(await read("src/lib/reference-catalog.json"));
-  const sidebar = JSON.parse(
-    await read("content/docs/rspc/typescript-api/meta.json"),
-  );
+  const bundled = await readJson("src/lib/reference-catalog.json");
   assert.deepEqual(
-    [...sidebar.pages].toSorted(),
+    sidebar.map((item) => item.name).toSorted(),
     bundled.packages.map((pkg) => pkg.id).toSorted(),
   );
   // Pinned by name, so swapping or dropping a package cannot pass on a count.

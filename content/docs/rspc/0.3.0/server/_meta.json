@@ -1,13 +1,10 @@
-{
-  "title": "Server",
-  "pages": [
-    "router",
-    "concepts",
-    "error-handling",
-    "middleware",
-    "plugins",
-    "selection",
-    "common-errors",
-    "specta"
-  ]
-}
+[
+  "router",
+  "concepts",
+  "error-handling",
+  "middleware",
+  "plugins",
+  "selection",
+  "common-errors",
+  "specta"
+]

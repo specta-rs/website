@@ -1,0 +1,8 @@
+[
+  "axum",
+  {
+    "type": "file",
+    "name": "tauri",
+    "label": "Tauri"
+  }
+]

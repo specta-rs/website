@@ -1,0 +1,13 @@
+[
+  "basics",
+  "request",
+  "plugins",
+  "selection",
+  {
+    "type": "custom-link",
+    "label": "Specta [docs.rs]",
+    "link": "https://docs.rs/specta",
+    "icon": "/assets/icons/docs-rs.svg"
+  },
+  "advanced"
+]

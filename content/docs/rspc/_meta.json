@@ -1,0 +1,40 @@
+[
+  {
+    "type": "file",
+    "name": "index",
+    "label": "Overview"
+  },
+  {
+    "type": "dir",
+    "name": "1.0.0-rc.x",
+    "label": "1.0.0-rc.x (alpha)",
+    "collapsible": true,
+    "collapsed": false
+  },
+  {
+    "type": "dir",
+    "name": "0.3.0",
+    "label": "0.3.0 (deprecated)",
+    "collapsible": true,
+    "collapsed": true
+  },
+  {
+    "type": "dir",
+    "name": "typescript-api",
+    "label": "TypeScript API",
+    "collapsible": true,
+    "collapsed": true
+  },
+  {
+    "type": "custom-link",
+    "label": "GitHub",
+    "link": "https://github.com/specta-rs/rspc",
+    "icon": "/assets/icons/github.svg"
+  },
+  {
+    "type": "custom-link",
+    "label": "crates.io",
+    "link": "https://crates.io/crates/rspc",
+    "icon": "/assets/icons/crates-io.png"
+  }
+]

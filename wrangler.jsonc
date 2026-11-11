@@ -1,12 +1,8 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "specta-website",
-  "main": "./dist/server/serve-cloudflare.js",
+  "main": "./worker/index.ts",
   "compatibility_date": "2025-12-31",
-  "compatibility_flags": ["nodejs_compat"],
-  // https://github.com/pacocoursey/next-themes/issues/370
-  // https://opennext.js.org/cloudflare/howtos/keep_names
-  "keep_names": false,
   "route": {
     "pattern": "specta.dev",
     "custom_domain": true,
@@ -15,41 +11,19 @@
     "enabled": true,
   },
   "assets": {
-    "directory": "./dist/public",
+    "directory": "./doc_build",
+    "binding": "ASSETS",
     "html_handling": "drop-trailing-slash",
-    // Route /docs HTML pages through the Worker for `Accept: text/markdown`
-    // negotiation, but let Cloudflare serve the generated static files
-    // (og.png, llms.mdx) from the Asset Worker directly. Waku's Cloudflare
-    // adapter ignores this, so `scripts/patch-cloudflare-wrangler.mjs` applies
-    // the same value to the generated deploy config.
+    "not_found_handling": "404-page",
+    // Route documentation through the Worker so it can negotiate Markdown and
+    // keep the old `.mdx` URLs working. Static assets are served by the Asset
+    // Worker after the Worker passes the request through.
     "run_worker_first": [
+      "/ph_ebbd7f/*",
+      "/favicon.ico",
       "/docs",
       "/docs/*",
-      "!/docs/**/og.png",
-      "!/docs/**/llms.mdx",
-      "!/docs/og.png",
-      "!/docs/llms.mdx",
+      "/about",
     ],
   },
-  "rules": [
-    {
-      "type": "ESModule",
-      "globs": ["**/*.js", "**/*.mjs"],
-      "fallthrough": true,
-    },
-    {
-      "type": "Data",
-      "globs": ["**/*.ttf", "**/*.woff", "**/*.woff2"],
-      "fallthrough": true,
-    },
-    {
-      "type": "CompiledWasm",
-      "globs": ["**/*.wasm"],
-      "fallthrough": true,
-    },
-  ],
-  // TODO: We should reenable this once Waku moves to `@cloudflare/vite-plugin`.
-  // This is required to process the `` import in the OG code.
-  // Linked: https://github.com/wakujs/waku/issues/1245
-  // "no_bundle": true
 }

@@ -1,0 +1,27 @@
+[
+  {
+    "type": "file",
+    "name": "index",
+    "label": "Overview"
+  },
+  "languages",
+  "framework",
+  "core",
+  {
+    "type": "file",
+    "name": "tsrpc",
+    "label": "Typed RPC"
+  },
+  {
+    "type": "custom-link",
+    "label": "GitHub",
+    "link": "https://github.com/specta-rs/specta",
+    "icon": "/assets/icons/github.svg"
+  },
+  {
+    "type": "custom-link",
+    "label": "crates.io",
+    "link": "https://crates.io/crates/specta",
+    "icon": "/assets/icons/crates-io.png"
+  }
+]

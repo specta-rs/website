@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="fsk-app-icon-title">
+  <title id="fsk-app-icon-title">FSK app icon</title>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="#EEF3F8"/>
+  <rect x="100.5" y="100.5" width="823" height="823" rx="184.5" fill="none" stroke="#0F2E4D" stroke-opacity="0.08"/>
+  <g transform="translate(182 259) scale(5.5)">
+    <rect x="4" y="0" width="112" height="26" rx="7" fill="#8FB0D0"/>
+    <rect x="4" y="41" width="91" height="23" rx="6" fill="#2B6CB0"/>
+    <rect x="4" y="76" width="26" height="16" rx="5" fill="#0F2E4D"/>
+    <rect x="37" y="76" width="26" height="16" rx="5" fill="#0F2E4D"/>
+  </g>
+</svg>

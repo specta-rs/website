@@ -1,0 +1,58 @@
+[
+  "index",
+  "quickstart",
+  "migrations",
+  {
+    "type": "section-header",
+    "label": "Server"
+  },
+  "server/procedure",
+  "server/router",
+  "server/integrations",
+  {
+    "type": "section-header",
+    "label": "Client"
+  },
+  "client/vanilla",
+  "client/tanstack-query",
+  "client/rust",
+  {
+    "type": "section-header",
+    "label": "Integrations"
+  },
+  "integrations/http",
+  "integrations/axum",
+  "integrations/actix-web",
+  "integrations/tauri",
+  {
+    "type": "section-header",
+    "label": "Middleware"
+  },
+  "middleware/overview",
+  "middleware/tracing",
+  "middleware/cache",
+  "middleware/zer",
+  "middleware/invalidation",
+  "middleware/openapi",
+  {
+    "type": "section-header",
+    "label": "External"
+  },
+  {
+    "type": "custom-link",
+    "label": "Prisma Client Rust",
+    "link": "https://prisma.brendonovich.dev/extra/rspc"
+  },
+  {
+    "type": "custom-link",
+    "label": "docs.rs",
+    "link": "https://docs.rs/rspc",
+    "icon": "/assets/icons/docs-rs.svg"
+  },
+  {
+    "type": "custom-link",
+    "label": "npm",
+    "link": "https://www.npmjs.com/package/@rspc/client",
+    "icon": "/assets/icons/npm.svg"
+  }
+]

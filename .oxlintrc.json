@@ -11,7 +11,9 @@
     "react/react-in-jsx-scope": "off",
     // Inline SVG icons use `role="img"` with a `<title>`; that is the intended
     // accessible pattern, so this rule does not apply.
-    "jsx-a11y/prefer-tag-over-role": "off"
+    "jsx-a11y/prefer-tag-over-role": "off",
+    // Rspress exposes the source path as `_filepath` on page data.
+    "no-underscore-dangle": ["warn", { "allow": ["_filepath"] }]
   },
   "env": {
     "browser": true,
@@ -22,9 +24,13 @@
     "node_modules",
     "dist",
     "build",
-    ".source",
+    "doc_build",
     ".wrangler",
-    "src/cloudflare-env.d.ts",
-    "src/pages.gen.ts"
+    "theme/site-data.json",
+    "pnpm-lock.yaml",
+    "content/docs/rspc/*/integrations/axum.mdx",
+    "content/docs/*/typescript-api",
+    "content/docs/gurafi",
+    "docs-sources"
   ]
 }

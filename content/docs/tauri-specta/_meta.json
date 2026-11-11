@@ -1,0 +1,19 @@
+[
+  {
+    "type": "file",
+    "name": "index",
+    "label": "Overview"
+  },
+  {
+    "type": "custom-link",
+    "label": "GitHub",
+    "link": "https://github.com/specta-rs/tauri-specta",
+    "icon": "/assets/icons/github.svg"
+  },
+  {
+    "type": "custom-link",
+    "label": "crates.io",
+    "link": "https://crates.io/crates/tauri-specta",
+    "icon": "/assets/icons/crates-io.png"
+  }
+]

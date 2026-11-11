@@ -32,9 +32,8 @@ jobs:
 
       - run: pnpm typecheck
 
-      # Build the Cloudflare target so the adapter and
-      # `scripts/patch-cloudflare-wrangler.mjs` are exercised the same way the
-      # deploy is.
+      # Build the static site and the Cloudflare Worker bundle.
       - run: pnpm build
-        env:
-          CLOUDFLARE: "1"
+
+      # Validate the Worker/assets configuration without deploying.
+      - run: pnpm exec wrangler deploy --dry-run
