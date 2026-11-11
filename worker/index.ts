@@ -24,6 +24,14 @@ export default {
       return proxyPostHog(request, url);
     }
 
+    // Keep the conventional /favicon.ico URL working without putting the file
+    // back in public/, where Rsbuild would inject it into every page.
+    if (url.pathname === "/favicon.ico") {
+      const target = new URL(url);
+      target.pathname = "/assets/specta-favicon.ico";
+      return env.ASSETS.fetch(new Request(target, request));
+    }
+
     if (url.pathname.startsWith("/docs")) {
       if (url.pathname.endsWith(".md")) {
         return markdownResponse(await env.ASSETS.fetch(request));

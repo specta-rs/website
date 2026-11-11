@@ -18,6 +18,6 @@
     // Route documentation through the Worker so it can negotiate Markdown and
     // keep the old `.mdx` URLs working. Static assets are served by the Asset
     // Worker after the Worker passes the request through.
-    "run_worker_first": ["/ph_ebbd7f/*", "/docs", "/docs/*"],
+    "run_worker_first": ["/ph_ebbd7f/*", "/favicon.ico", "/docs", "/docs/*"],
   },
 }

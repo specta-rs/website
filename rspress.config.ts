@@ -261,13 +261,6 @@ export default defineConfig({
     "An ecosystem of crates focused on typesafety, developer experience, modern practices allowing you to build faster and deploy with confidence.",
   siteOrigin: canonical,
   lang: "en",
-  head: [
-    [
-      "link",
-      { rel: "shortcut icon", type: "image/x-icon", href: "/favicon.ico" },
-    ],
-    ["link", { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
-  ],
   logo: "/assets/specta.png",
   logoText: "Specta",
   logoHref: "/",

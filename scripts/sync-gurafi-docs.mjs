@@ -240,13 +240,14 @@ const written = await walk(target);
 await writeFile(path.join(target, "_meta.json"), sideMeta(written));
 
 // Brand assets travel with the docs too, but live outside the docs route:
-// favicons belong in public/, and the app icon is inlined for the project
-// switcher/landing card.
+// the route-scoped favicon belongs in public/assets/, and the app icon is
+// inlined for the project switcher/landing card.
 for (const favicon of ["favicon.ico", "favicon.svg"]) {
   const from = path.join(source, favicon);
   if (await exists(from)) {
+    const name = favicon.replace("favicon", "gurafi-favicon");
     await writeFile(
-      path.join(process.cwd(), "public", favicon),
+      path.join(process.cwd(), "public/assets", name),
       await readFile(from),
     );
   }
