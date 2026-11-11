@@ -24,6 +24,7 @@
       "/docs",
       "/docs/*",
       "/about",
+      "/consulting",
     ],
   },
 }

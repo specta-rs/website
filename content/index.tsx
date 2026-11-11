@@ -3,6 +3,7 @@ import {
   ArrowUpRight,
   BookOpen,
   Boxes,
+  Briefcase,
   Code2,
   ExternalLink,
   Heart,
@@ -229,31 +230,37 @@ const features = [
 function Features() {
   return (
     <section className="sp-section sp-section--soft">
-      <div className="mx-auto max-w-[1200px] px-6 py-20 md:py-28">
-        <SectionIntro index="01" label="Philosophy" title="Why specta-rs?" />
+      <div className="mx-auto max-w-[1200px] px-6 py-16 md:py-20">
+        <SectionIntro
+          index="01"
+          label="Philosophy"
+          title="Why specta-rs?"
+          compact
+        />
 
         <div className="sp-cells sm:grid-cols-2">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <article
-                key={feature.title}
-                className="sp-cell p-7 sm:p-8 lg:p-9"
-              >
-                <div className="mb-7 flex items-start justify-between">
-                  <span className="sp-icon-tile">
+              <article key={feature.title} className="sp-cell p-6 sm:p-7">
+                <div className="flex items-start gap-4">
+                  <span className="sp-icon-tile shrink-0">
                     <Icon className="size-5" strokeWidth={1.7} />
                   </span>
-                  <span className="font-mono text-[10px] tracking-[0.12em] text-fd-muted-foreground/60">
-                    0{index + 1}
-                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <h3 className="text-[17px] font-semibold tracking-[-0.02em]">
+                        {feature.title}
+                      </h3>
+                      <span className="font-mono text-[10px] tracking-[0.12em] text-fd-muted-foreground/60">
+                        0{index + 1}
+                      </span>
+                    </div>
+                    <p className="mt-1.5 text-[14px] leading-relaxed text-fd-muted-foreground">
+                      {feature.body}
+                    </p>
+                  </div>
                 </div>
-                <h3 className="text-[20px] font-semibold tracking-[-0.02em]">
-                  {feature.title}
-                </h3>
-                <p className="mt-2.5 max-w-[42ch] text-[14.5px] leading-relaxed text-fd-muted-foreground">
-                  {feature.body}
-                </p>
               </article>
             );
           })}
@@ -387,36 +394,42 @@ function ProjectCard({
         style={{ backgroundColor: accent }}
       />
 
-      <div className="mb-7 flex items-start justify-between gap-3">
-        <span
-          className={cn(
-            "flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-sp-line",
-            logo.frameClassName,
-          )}
-          style={{ backgroundColor: `${accent}12` }}
-        >
-          <img
-            src={logo.src}
-            alt={logo.alt}
+      <div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+        <div className="flex min-w-0 items-center gap-3.5">
+          <span
             className={cn(
-              "object-contain",
-              logo.className ?? "h-8 w-12",
-              logo.darkSrc && "dark:hidden",
+              "flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-sp-line",
+              logo.frameClassName,
             )}
-          />
-          {logo.darkSrc ? (
+            style={{ backgroundColor: `${accent}12` }}
+          >
             <img
-              src={logo.darkSrc}
+              src={logo.src}
               alt={logo.alt}
               className={cn(
-                "hidden object-contain dark:block",
+                "object-contain",
                 logo.className ?? "h-8 w-12",
+                logo.darkSrc && "dark:hidden",
               )}
             />
-          ) : null}
-        </span>
+            {logo.darkSrc ? (
+              <img
+                src={logo.darkSrc}
+                alt={logo.alt}
+                className={cn(
+                  "hidden object-contain dark:block",
+                  logo.className ?? "h-8 w-12",
+                )}
+              />
+            ) : null}
+          </span>
 
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-sp-line bg-sp-panel-strong px-2.5 py-1 font-mono text-[11px] text-fd-muted-foreground">
+          <h3 className="min-w-0 text-[21px] font-semibold tracking-[-0.025em] transition-colors group-hover:text-sp-accent">
+            {name}
+          </h3>
+        </div>
+
+        <span className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-sp-line bg-sp-panel-strong px-2.5 py-1 font-mono text-[11px] text-fd-muted-foreground">
           <Star
             aria-hidden
             className="size-3 fill-sp-accent text-sp-accent"
@@ -427,28 +440,31 @@ function ProjectCard({
         </span>
       </div>
 
-      <h3 className="text-[21px] font-semibold tracking-[-0.025em] transition-colors group-hover:text-sp-accent">
-        {name}
-      </h3>
-      <p className="mt-2 grow text-[14.5px] leading-relaxed text-fd-muted-foreground">
+      <p className="grow text-[14.5px] leading-relaxed text-fd-muted-foreground">
         {description}
       </p>
 
-      <div className="mt-8 flex flex-wrap gap-2">
+      <div className="mt-6 flex items-center justify-between border-t border-sp-line pt-4">
         {docsUrl ? (
-          <a href={docsUrl} className={cn(primaryButton, "px-4")}>
+          <a
+            href={docsUrl}
+            className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-sp-accent transition-colors hover:text-sp-accent/85"
+          >
             <BookOpen className="size-3.5" />
             Documentation
           </a>
-        ) : null}
+        ) : (
+          <span />
+        )}
         <a
           href={`https://github.com/${repo}`}
           target="_blank"
           rel="noopener"
-          className={cn(secondaryButton, "px-4", !docsUrl && "flex-1")}
+          className="inline-flex items-center gap-1.5 text-[13px] font-medium text-fd-muted-foreground transition-colors hover:text-fd-foreground"
         >
           <GitHubLogo className="size-3.5 dark:invert" />
           GitHub
+          <ArrowUpRight className="size-3" />
         </a>
       </div>
     </article>
@@ -477,7 +493,6 @@ function Support() {
               >
                 Oscar Beaumont
               </a>
-              !
             </>
           }
         />
@@ -540,27 +555,66 @@ function Support() {
             </div>
           ) : null}
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
-              href="https://github.com/sponsors/oscartbeaumont"
-              target="_blank"
-              rel="noopener"
-              className={cn(primaryButton, "px-6 py-3 text-sm")}
-            >
-              <Heart className="size-4" />
-              Become a sponsor
-            </a>
-            <span className="text-[13px] text-fd-muted-foreground">
-              or support through{" "}
+          <div className="sp-cells mt-8 sm:grid-cols-2">
+            <div className="sp-cell flex flex-col gap-5 p-6 md:p-7">
+              <span className="sp-icon-tile">
+                <Heart aria-hidden className="size-5" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-[17px] font-semibold tracking-[-0.015em]">
+                  Become a sponsor
+                </h3>
+                <p className="mt-1 text-[13.5px] leading-relaxed text-fd-muted-foreground">
+                  Fund the ongoing development of the ecosystem, or support
+                  through{" "}
+                  <a
+                    href="https://paypal.me/oscartbeaumont"
+                    target="_blank"
+                    rel="noopener"
+                    className="font-medium text-fd-foreground underline decoration-sp-accent-line underline-offset-4 transition-colors hover:text-sp-accent"
+                  >
+                    PayPal
+                  </a>
+                  .
+                </p>
+              </div>
               <a
-                href="https://paypal.me/oscartbeaumont"
+                href="https://github.com/sponsors/oscartbeaumont"
                 target="_blank"
                 rel="noopener"
-                className="font-medium text-fd-foreground underline decoration-sp-accent-line underline-offset-4 transition-colors hover:text-sp-accent"
+                className={cn(primaryButton, "mt-auto w-full shadow-none")}
               >
-                PayPal
+                <Heart className="size-4" />
+                Sponsor on GitHub
               </a>
-            </span>
+            </div>
+
+            <a
+              href="/consulting"
+              className="sp-cell group flex flex-col gap-5 p-6 md:p-7"
+            >
+              <span className="sp-icon-tile">
+                <Briefcase aria-hidden className="size-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-[17px] font-semibold tracking-[-0.015em] transition-colors group-hover:text-sp-accent">
+                  Work with me
+                </span>
+                <span className="mt-1 block text-[13.5px] leading-relaxed text-fd-muted-foreground">
+                  Contract development and team training from the creator of
+                  Specta.
+                </span>
+              </span>
+              <span
+                className={cn(secondaryButton, "mt-auto w-full text-sp-accent")}
+              >
+                Learn more
+                <ArrowUpRight
+                  aria-hidden
+                  className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                />
+              </span>
+            </a>
           </div>
         </div>
       </div>
@@ -606,14 +660,21 @@ function SectionIntro({
   label,
   title,
   description,
+  compact,
 }: {
   index: string;
   label: string;
   title: string;
   description?: ReactNode;
+  compact?: boolean;
 }) {
   return (
-    <div className="mb-12 grid gap-5 md:mb-16 md:grid-cols-[1fr_minmax(0,380px)] md:items-end">
+    <div
+      className={cn(
+        "grid gap-5 md:grid-cols-[1fr_minmax(0,380px)] md:items-end",
+        compact ? "mb-8 md:mb-10" : "mb-12 md:mb-16",
+      )}
+    >
       <div>
         <p className="sp-eyebrow">
           <span className="text-fd-muted-foreground/70">{index}</span>

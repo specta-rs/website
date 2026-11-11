@@ -8,6 +8,9 @@ interface Fetcher {
 
 const postHogPrefix = "/ph_ebbd7f/";
 
+/** Standalone content pages that also serve a Markdown copy. */
+const markdownPages = new Set(["/about", "/consulting"]);
+
 /**
  * Cloudflare Worker in front of the static Rspress build. It keeps three
  * behaviours that used to live in the Waku server:
@@ -37,7 +40,7 @@ export default {
       return Response.redirect(new URL("/docs/specta", url).toString(), 302);
     }
 
-    if (url.pathname.startsWith("/docs") || url.pathname === "/about") {
+    if (url.pathname.startsWith("/docs") || markdownPages.has(url.pathname)) {
       if (url.pathname.endsWith(".md")) {
         return markdownResponse(await env.ASSETS.fetch(request));
       }
