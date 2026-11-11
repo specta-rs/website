@@ -51,7 +51,7 @@ export function ProjectSwitcher() {
           </span>
           <ChevronDown className="size-3.5 shrink-0 text-fd-muted-foreground transition-transform group-open:rotate-180" />
         </summary>
-        <div className="absolute z-20 mt-1.5 w-full overflow-hidden rounded-xl border border-sp-line bg-fd-popover p-1.5 shadow-[0_18px_40px_-16px_rgb(0_0_0/0.45)]">
+        <div className="sp-project-switcher__panel absolute z-20 mt-1.5 w-full overflow-hidden rounded-xl border border-sp-line bg-fd-popover p-1.5 shadow-[0_18px_40px_-16px_rgb(0_0_0/0.45)]">
           {projects.map((project) => {
             const active = project.id === current.id;
             return (

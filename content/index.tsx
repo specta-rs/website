@@ -50,9 +50,9 @@ const totalStars = Object.values(stars)
   .toLocaleString("en-US");
 
 const primaryButton =
-  "inline-flex items-center justify-center gap-2 rounded-full bg-sp-cta px-5 py-2.5 text-[13px] font-semibold text-sp-cta-foreground shadow-[0_10px_30px_-12px_var(--sp-accent-glow)] transition-colors hover:bg-sp-cta-hover";
+  "sp-button sp-button--primary inline-flex items-center justify-center gap-2 rounded-full bg-sp-cta px-5 py-2.5 text-[13px] font-semibold text-sp-cta-foreground shadow-[0_10px_30px_-12px_var(--sp-accent-glow)] transition-colors hover:bg-sp-cta-hover";
 const secondaryButton =
-  "inline-flex items-center justify-center gap-2 rounded-full border border-sp-line bg-sp-panel/70 px-5 py-2.5 text-[13px] font-semibold text-fd-foreground transition-colors hover:border-sp-accent-line hover:bg-sp-accent-soft";
+  "sp-button sp-button--secondary inline-flex items-center justify-center gap-2 rounded-full border border-sp-line bg-sp-panel/70 px-5 py-2.5 text-[13px] font-semibold text-fd-foreground transition-colors hover:border-sp-accent-line hover:bg-sp-accent-soft";
 
 export default function HomePage() {
   return (
@@ -71,20 +71,22 @@ function Hero() {
     <section className="sp-hero">
       <div className="sp-hero__content mx-auto grid max-w-[1200px] items-center gap-12 px-6 py-14 md:py-20 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14 lg:py-24">
         <div className="max-w-[620px]">
-          <p className="sp-eyebrow">Open-source Rust ecosystem</p>
+          <p className="sp-eyebrow sp-hero__eyebrow">
+            Open-source Rust ecosystem
+          </p>
 
           <h1 className="sp-hero__title mt-5">
             Build better web apps with{" "}
             <span className="sp-hero__rust">Rust</span>
           </h1>
 
-          <p className="mt-6 max-w-[560px] text-[16px] leading-relaxed text-fd-muted-foreground sm:text-[17px]">
+          <p className="sp-hero__subtitle mt-6 max-w-[560px] text-[16px] leading-relaxed text-fd-muted-foreground sm:text-[17px]">
             An ecosystem of crates focused on typesafety, developer experience,
             modern practices which scales to large codebases allowing you to
             build faster and deploy with confidence.
           </p>
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="sp-hero__actions mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <a href="/docs" className={cn(primaryButton, "px-6 py-3 text-sm")}>
               Get started
               <ArrowRight className="size-4" />
@@ -100,7 +102,7 @@ function Hero() {
             </a>
           </div>
 
-          <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
+          <div className="sp-hero__stats mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
             <div className="sp-hero__stat">
               <strong>{totalStars}</strong>
               <span>GitHub stars</span>
@@ -375,7 +377,12 @@ function ProjectCard({
   className,
 }: Project & { className?: string }) {
   return (
-    <article className={cn("sp-cell group flex flex-col p-7", className)}>
+    <article
+      className={cn(
+        "sp-cell sp-project-card group flex flex-col p-7",
+        className,
+      )}
+    >
       <span
         aria-hidden
         className="absolute inset-x-0 top-0 h-[2px] opacity-70"

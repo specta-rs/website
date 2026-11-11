@@ -95,6 +95,9 @@
   --rp-radius: 1rem;
   --rp-radius-small: 0.6rem;
   --rp-radius-large: 1.5rem;
+
+  /* Strong ease-out for entrances and hover/press feedback. */
+  --sp-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .dark,
@@ -2290,6 +2293,184 @@ summary.sp-action-button::-webkit-details-marker {
 }
 
 /* ---------------------------------------------------------------------------
+ * Motion
+ *
+ * Everything here animates `transform` and `opacity` only, so it stays on the
+ * compositor and never shifts layout. Entrances are one-time and end at the
+ * element's natural state: the base rules never set `opacity: 0`, so if the
+ * animation or the stylesheet fails to load the content is simply visible.
+ * ------------------------------------------------------------------------ */
+
+@keyframes sp-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--sp-enter-distance, 8px));
+  }
+}
+
+@keyframes sp-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
+@keyframes sp-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+}
+
+/* Landing hero: a single, staggered entrance for the first screen. The delays
+ * are short enough that the headline is painted almost immediately. */
+.sp-hero__eyebrow,
+.sp-hero__title,
+.sp-hero__subtitle,
+.sp-hero__actions,
+.sp-hero__stats,
+.sp-hero .sp-code-frame {
+  animation: sp-fade-up 520ms var(--sp-ease-out) both;
+}
+
+.sp-hero__title {
+  animation-delay: 40ms;
+}
+
+.sp-hero__subtitle {
+  animation-delay: 90ms;
+}
+
+.sp-hero__actions {
+  animation-delay: 140ms;
+}
+
+.sp-hero__stats {
+  animation-delay: 190ms;
+}
+
+.sp-hero .sp-code-frame {
+  --sp-enter-distance: 12px;
+  animation-delay: 110ms;
+  animation-duration: 620ms;
+}
+
+/* Buttons: press feedback plus a small lift and glow on hover. */
+.sp-button {
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    box-shadow 220ms var(--sp-ease-out),
+    transform 140ms var(--sp-ease-out);
+}
+
+.sp-button svg {
+  transition: transform 160ms var(--sp-ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sp-button:hover {
+    transform: translateY(-1px);
+  }
+
+  .sp-button--primary:hover {
+    box-shadow: 0 14px 34px -12px var(--sp-accent-glow);
+  }
+
+  .sp-button--primary:hover svg.lucide-arrow-right {
+    transform: translateX(2px);
+  }
+
+  .sp-home a.sp-cell:hover svg.lucide-arrow-up-right {
+    transform: translate(2px, -2px);
+  }
+}
+
+.sp-button:active {
+  transform: scale(0.98);
+  transition-duration: 90ms;
+}
+
+/* Project cards lift out of the grid on hover. The container clips overflow,
+ * so the shadow stays inside the rounded frame. */
+.sp-project-card {
+  transition:
+    background-color 180ms ease,
+    box-shadow 220ms var(--sp-ease-out),
+    transform 220ms var(--sp-ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sp-project-card:hover {
+    z-index: 1;
+    transform: translateY(-2px);
+    /* The first shadow backfills the 2px the lift exposes above the grid's
+     * hairline separator; the second is the drop shadow that reads as lift. */
+    box-shadow:
+      0 2px 0 0 var(--sp-panel-hover),
+      0 18px 32px -24px rgb(0 0 0 / 55%);
+  }
+}
+
+/* Details-based menus scale out of their trigger. */
+.sp-project-switcher__panel,
+.sp-action-menu__panel {
+  transform-origin: top right;
+}
+
+.sp-ref-version__menu {
+  transform-origin: top left;
+}
+
+details[open] > .sp-project-switcher__panel,
+.sp-action-menu[open] .sp-action-menu__panel,
+.sp-ref-version[open] .sp-ref-version__menu {
+  animation: sp-menu-in 180ms var(--sp-ease-out) both;
+}
+
+/* Navigation, accordions and doc chrome. */
+.rp-nav-menu__item__container {
+  transition: color 150ms ease;
+}
+
+.sp-accordion[open] .sp-accordion__content {
+  animation: sp-fade-up 180ms var(--sp-ease-out) both;
+  --sp-enter-distance: 4px;
+}
+
+.rp-doc-layout__container .rp-tabs__content__item--active {
+  animation: sp-fade-up 160ms var(--sp-ease-out);
+  --sp-enter-distance: 2px;
+}
+
+/* A small pop when the copy button swaps to its check mark. */
+.sp-action-button svg.lucide-check {
+  animation: sp-pop-in 200ms var(--sp-ease-out);
+}
+
+/* The next-page arrow slides toward the destination on hover. */
+.rp-doc-layout__container .rp-prev-next-page__icon {
+  transition:
+    color 160ms ease,
+    transform 180ms var(--sp-ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rp-doc-layout__container
+    .rp-prev-next-page__next:hover
+    .rp-prev-next-page__icon {
+    transform: translateX(2px);
+  }
+}
+
+/* Mobile nav sheet fades and drops in rather than appearing instantly. */
+.rp-nav-screen--open {
+  transform-origin: top center;
+  animation: sp-menu-in 180ms var(--sp-ease-out);
+}
+
+/* ---------------------------------------------------------------------------
  * Final polish: shared controls, content embeds and reduced motion
  * ------------------------------------------------------------------------ */
 
@@ -2517,8 +2698,10 @@ summary.sp-action-button::-webkit-details-marker {
   *,
   *::before,
   *::after {
+    animation-delay: 0ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    transition-delay: 0ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
