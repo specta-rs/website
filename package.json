@@ -22,28 +22,33 @@
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^1.61.0",
-    "posthog-js": "^1.447.6",
+    "lucide-react": "^1.72.0",
+    "posthog-js": "^1.447.12",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tailwind-merge": "^3.7.0",
-    "takumi-js": "^2.17.1"
+    "takumi-js": "^2.20.0"
   },
   "devDependencies": {
     "@fontsource-variable/inter": "^5.3.0",
     "@rsbuild/plugin-tailwindcss": "^2.0.3",
-    "@rspress/core": "2.1.1",
-    "@rspress/plugin-llms": "2.1.1",
-    "@types/node": "^26.6.5",
+    "@rspress/core": "2.1.2",
+    "@rspress/plugin-llms": "2.1.2",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "npm-to-yarn": "^3.2.0",
-    "oxfmt": "^0.74.0",
-    "oxlint": "^1.89.0",
-    "tailwindcss": "^4.3.3",
+    "oxfmt": "^0.78.0",
+    "oxlint": "^1.93.0",
+    "tailwindcss": "^4.3.5",
     "typescript": "^7.0.2",
     "typescript-api": "npm:typescript@5.9.3",
-    "wrangler": "^4.156.1"
+    "wrangler": "^4.160.0"
   },
-  "packageManager": "pnpm@10.33.1"
+  "packageManager": "pnpm@10.33.1",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "workerd"
+    ]
+  }
 }
