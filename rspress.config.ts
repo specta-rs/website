@@ -206,26 +206,6 @@ function normalizeSidebarLinks(
   });
 }
 
-/**
- * The overview sidebar lists every project, so tag each project row with its
- * logo. Project-specific sidebars already sit inside a single project and
- * never show this list, so they keep their text-only rows.
- */
-function addProjectIcons(
-  items: Awaited<ReturnType<typeof scanSideMeta>>,
-): Awaited<ReturnType<typeof scanSideMeta>> {
-  const icons = new Map(
-    projects.map((project) => [`/docs/${project.id}`, project.icon]),
-  );
-  return items.map((item) => {
-    const icon =
-      "link" in item && typeof item.link === "string"
-        ? icons.get(item.link)
-        : undefined;
-    return icon ? { ...item, icon } : item;
-  });
-}
-
 async function createSidebar() {
   // `scanSideMeta` needs a RouteService to resolve page files to route paths.
   // Initialising one here (Rspress replaces it during the build) lets us read
@@ -243,18 +223,30 @@ async function createSidebar() {
   const mdFileSet = new Set<string>();
   const sidebar: Record<string, Awaited<ReturnType<typeof scanSideMeta>>> = {};
 
-  // A single sidebar for every docs page. The project groups stay in place and
-  // Rspress expands the one that contains the active page, so changing projects
-  // does not replace the whole navigation.
-  sidebar["/docs"] = addProjectIcons(
-    normalizeSidebarLinks(
+  // One sidebar per project keeps the navigation focused on the project the
+  // reader is in. The project switcher above the sidebar handles navigation
+  // between projects.
+  for (const project of projects) {
+    sidebar[`/docs/${project.id}`] = normalizeSidebarLinks(
       await scanSideMeta(
-        docsRoot,
+        path.join(docsRoot, project.id),
         contentRoot,
         extensions,
         metaFileSet,
         mdFileSet,
       ),
+    );
+  }
+
+  // The docs landing page has no project selected, so it only lists itself.
+  // Its `_meta.json` no longer pulls in the project directories.
+  sidebar["/docs"] = normalizeSidebarLinks(
+    await scanSideMeta(
+      docsRoot,
+      contentRoot,
+      extensions,
+      metaFileSet,
+      mdFileSet,
     ),
   );
 
