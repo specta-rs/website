@@ -44,8 +44,9 @@ export const projects: Project[] = [
     description: "Build cross-platform virtual file systems in Rust",
     icon: "/assets/fsk-app-icon.svg",
     // The FSK asset carries ~10% transparent padding around its tile, so it is
-    // scaled up until the tile itself reaches the frame edges.
-    className: "h-[47px] w-[47px]",
+    // scaled up (overriding the preflight `max-width`) until the tile reaches
+    // the frame edges.
+    className: "h-12 w-12 max-w-none shrink-0",
     frameClassName: "w-10",
   },
   {
@@ -54,6 +55,7 @@ export const projects: Project[] = [
     description: "A framework for building typesafe web backends in Rust",
     icon: "/assets/rspc.png",
     className: "h-6 w-6",
+    frameClassName: "w-10",
     deprecated: true,
   },
 ];
