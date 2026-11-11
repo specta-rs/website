@@ -1,6 +1,7 @@
 ---
 title: "Architecture"
 description: "How the portable traits, platform adapters, FSKit bridge and C ABI fit together."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/architecture.md"
 ---
 
 FSK is one crate with a portable core and three adapters. The core knows nothing about FSKit,

@@ -1,6 +1,7 @@
 ---
 title: "Testing a backend"
 description: "Test the trait without a kernel, then add live-mount and concurrency coverage."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/guide/testing.md"
 ---
 
 Most backend bugs are visible without mounting anything. Call the trait methods directly, use a

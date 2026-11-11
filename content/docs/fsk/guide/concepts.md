@@ -1,6 +1,7 @@
 ---
 title: "Core concepts"
 description: "Inodes, names, metadata, volume statistics, errors and concurrency in FSK."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/guide/concepts.md"
 ---
 
 Every backend works with the same five ideas: an inode identifies an object, a byte slice names

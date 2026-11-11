@@ -1,0 +1,79 @@
+name: Update FSK docs submodule
+
+on:
+  schedule:
+    - cron: "37 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-fsk-submodule
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require docs sync token
+        env:
+          TOKEN: ${{ secrets.DOCS_SYNC_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::DOCS_SYNC_TOKEN is not configured in this repository."
+            exit 1
+          fi
+
+      - name: Checkout website
+        uses: actions/checkout@v7
+        with:
+          token: ${{ secrets.DOCS_SYNC_TOKEN }}
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Update FSK submodule
+        id: update
+        run: |
+          set -euo pipefail
+          OLD="$(git -C docs-sources/fsk rev-parse HEAD)"
+          git -C docs-sources/fsk fetch --depth 1 origin main
+          NEW="$(git -C docs-sources/fsk rev-parse FETCH_HEAD)"
+          echo "new=$NEW" >> "$GITHUB_OUTPUT"
+
+          if [ "$OLD" = "$NEW" ]; then
+            echo "FSK is already up to date."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if git -C docs-sources/fsk diff --quiet "$OLD" "$NEW" -- docs; then
+            echo "FSK changed, but docs/ did not."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git -C docs-sources/fsk checkout --detach "$NEW"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Sync docs
+        if: steps.update.outputs.changed == 'true'
+        run: node scripts/sync-fsk-docs.mjs --source docs-sources/fsk/docs --ref main
+
+      - name: Commit and push
+        if: steps.update.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name "specta-rs docs bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs-sources/fsk content/docs/fsk
+
+          if git diff --cached --quiet; then
+            echo "Synced docs are already up to date."
+            exit 0
+          fi
+
+          git commit -m "Update FSK docs submodule to ${UPDATE_NEW:0:12}"
+          git push
+        env:
+          UPDATE_NEW: ${{ steps.update.outputs.new }}

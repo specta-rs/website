@@ -1,6 +1,7 @@
 ---
 title: "Examples"
 description: "Four complete backends: in-memory, network, GitHub and Google Drive."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/guide/examples.md"
 ---
 
 The repository ships four standalone backends. They are not part of the published `fsk` crate,

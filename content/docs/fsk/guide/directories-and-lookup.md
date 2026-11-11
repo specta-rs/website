@@ -1,6 +1,7 @@
 ---
 title: "Directories and lookup"
 description: "Name resolution, streamed directory enumeration, cookies and verifiers."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/guide/directories-and-lookup.md"
 ---
 
 A backend never returns a directory listing as a vector. It resolves one name at a time with

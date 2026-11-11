@@ -1,6 +1,7 @@
 ---
 title: "FSK"
 description: "Build cross-platform virtual filesystems in Rust."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/README.md"
 ---
 
 FSK is a Rust toolkit for building real filesystems. You implement one trait, then mount it as

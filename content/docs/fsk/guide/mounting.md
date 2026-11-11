@@ -1,6 +1,7 @@
 ---
 title: "Mounting and lifecycle"
 description: "Mount a backend, choose platform options, keep the session alive and unmount cleanly."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/guide/mounting.md"
 ---
 
 `MountSession` turns a backend into a live volume. It owns the mount and the service that

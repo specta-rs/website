@@ -1,6 +1,7 @@
 ---
 title: "Raw events"
 description: "Observe native requests with borrowed platform payloads and optional rejection."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/guide/raw-events.md"
 ---
 
 Raw events are an opt-in escape hatch. They let a backend see the platform's own request without

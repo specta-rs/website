@@ -1,6 +1,7 @@
 ---
 title: "Getting started"
 description: "Install FSK, implement a read-only filesystem, and mount it as a native volume."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/guide/getting-started.md"
 ---
 
 Mount a read-only volume with five methods. The filesystem below exposes one file,

@@ -1,6 +1,7 @@
 ---
 title: "Troubleshooting"
 description: "Symptom, cause and fix for mount, authorization and enumeration problems."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/guide/troubleshooting.md"
 ---
 
 Most problems fall into three groups: the platform component is not ready, the adapter cannot

@@ -1,6 +1,7 @@
 ---
 title: "Reading and writing"
 description: "The data path: reads, writes, sparse files, metadata updates and permissions."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/guide/reading-and-writing.md"
 ---
 
 `read` and `write` move bytes. `set_metadata` changes attributes. Everything else about

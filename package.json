@@ -17,7 +17,8 @@
     "reference:pages": "node scripts/reference/pages.mjs",
     "reference:sync": "node scripts/reference/typescript.mjs --refresh && node scripts/reference/pages.mjs",
     "deploy": "pnpm build && wrangler deploy",
-    "docs:sync:gurafi": "node scripts/sync-gurafi-docs.mjs --source docs-sources/gurafi/docs --ref main"
+    "docs:sync:gurafi": "node scripts/sync-gurafi-docs.mjs --source docs-sources/gurafi/docs --ref main",
+    "docs:sync:fsk": "node scripts/sync-fsk-docs.mjs --source docs-sources/fsk/docs --ref main"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

@@ -1,6 +1,7 @@
 ---
 title: "Implementing a filesystem"
 description: "The required methods, the defaulted mutations, and the contracts behind them."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/guide/implementing-a-filesystem.md"
 ---
 
 `Filesystem` has five required methods and ten defaulted ones. A read-only backend implements

@@ -3,3 +3,8 @@
 	url = https://github.com/specta-rs/gurafi.git
 	branch = main
 	shallow = true
+[submodule "docs-sources/fsk"]
+	path = docs-sources/fsk
+	url = https://github.com/specta-rs/fsk.git
+	branch = main
+	shallow = true

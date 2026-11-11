@@ -1,6 +1,7 @@
 ---
 title: "Network filesystems"
 description: "Lazy remote trees, materialized local files, leases and cache policy."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/guide/network-filesystems.md"
 ---
 
 A network backend implements `Filesystem` like any other, then adds `NetworkFilesystem` to

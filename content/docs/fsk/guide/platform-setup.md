@@ -1,6 +1,7 @@
 ---
 title: "Platform setup"
 description: "Install and authorize FSK.app, enable ProjFS, and check FUSE before mounting."
+editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/guide/platform-setup.md"
 ---
 
 A mount needs host software that Cargo cannot install. The crate exposes one status check and one
@@ -132,7 +133,7 @@ Enable-WindowsOptionalFeature -Online -FeatureName Client-ProjFS
 
 `authorization_status()` checks by loading `ProjectedFSLib.dll` from the system directory. When
 it is missing, `ensure_authorization()` opens `optionalfeatures.exe` and returns
-`PermissionDenied`.
+`PermissionDenied` with the exact `Enable-WindowsOptionalFeature` command.
 
 ProjFS requires an empty virtualization root, or one that is already initialized as a
 virtualization root. FSK creates the directory if it is missing, but it will not clear an
