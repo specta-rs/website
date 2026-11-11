@@ -327,6 +327,7 @@ const projects: Project[] = [
     repo: "specta-rs/fsk",
     description:
       "Build cross-platform virtual file systems with a deliberately small Rust API and native macOS, Linux and Windows backends.",
+    docsUrl: "/docs/fsk",
     logo: {
       src: "/assets/fsk-light.svg",
       darkSrc: "/assets/fsk-dark.svg",

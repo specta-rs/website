@@ -28,5 +28,12 @@
     "label": "Gurafi",
     "collapsible": true,
     "collapsed": true
+  },
+  {
+    "type": "dir",
+    "name": "fsk",
+    "label": "FSK",
+    "collapsible": true,
+    "collapsed": true
   }
 ]

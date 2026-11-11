@@ -29,4 +29,11 @@ export const projects = [
     icon: gurafiAppIcon,
     className: "h-6 w-6",
   },
+  {
+    id: "fsk",
+    name: "FSK",
+    description: "Build cross-platform virtual file systems in Rust",
+    icon: "/assets/fsk-app-icon.svg",
+    className: "h-6 w-6",
+  },
 ];
