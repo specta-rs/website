@@ -22,6 +22,11 @@ export const frontmatter = {
 
 const stars = siteData.stars as Record<string, string>;
 const sponsors = siteData.sponsors;
+const downloads = siteData.downloads as number;
+const downloadsLabel = new Intl.NumberFormat("en-US", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+}).format(downloads);
 
 /**
  * Star counts arrive from three sources: the GitHub API (`2,861`), ungh.cc
@@ -105,8 +110,10 @@ function Hero() {
               <span>GitHub stars</span>
             </div>
             <div className="sp-hero__stat">
-              <strong>{projects.length}</strong>
-              <span>open-source projects</span>
+              <strong title={`${downloads.toLocaleString("en-US")} downloads`}>
+                {downloadsLabel}
+              </strong>
+              <span>crates.io downloads</span>
             </div>
           </div>
         </div>

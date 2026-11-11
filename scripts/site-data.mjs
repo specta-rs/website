@@ -1,5 +1,6 @@
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
+import { getCrateDownloads } from "../src/lib/getCrateDownloads.ts";
 import { getGitHubStars } from "../src/lib/getGitHubStars.ts";
 import { getSponsors } from "../src/lib/sponsors.ts";
 
@@ -16,9 +17,10 @@ const repos = [
   "specta-rs/fsk",
 ];
 
-const [sponsors, stars] = await Promise.all([
+const [sponsors, stars, downloads] = await Promise.all([
   getSponsors(),
   Promise.all(repos.map(async (repo) => [repo, await getGitHubStars(repo)])),
+  getCrateDownloads(),
 ]);
 
 const output = path.resolve("theme/site-data.json");
@@ -28,6 +30,7 @@ await writeFile(
     {
       sponsors,
       stars: Object.fromEntries(stars),
+      downloads,
     },
     null,
     2,
