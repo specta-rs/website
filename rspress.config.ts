@@ -143,25 +143,23 @@ function createSitePlugin(): RspressPlugin {
         }
 
         // Every page gets its own card. The landing page writes `/og.png`.
-        {
-          const image = new ImageResponse(
-            OpenGraph({
-              title: pageData.title,
-              description: pageData.description,
-            }),
-            {
-              width: openGraphImageSize[0],
-              height: openGraphImageSize[1],
-              fonts: [
-                { name: "Inter", data: font, weight: 100, style: "normal" },
-              ],
-              images: [{ src: logoSource, data: logo }],
-            },
-          );
-          const target = path.join(outDir, ogRoute(pageData.routePath));
-          await mkdir(path.dirname(target), { recursive: true });
-          await writeFile(target, Buffer.from(await image.arrayBuffer()));
-        }
+        const image = new ImageResponse(
+          OpenGraph({
+            title: pageData.title,
+            description: pageData.description,
+          }),
+          {
+            width: openGraphImageSize[0],
+            height: openGraphImageSize[1],
+            fonts: [
+              { name: "Inter", data: font, weight: 100, style: "normal" },
+            ],
+            images: [{ src: logoSource, data: logo }],
+          },
+        );
+        const target = path.join(outDir, ogRoute(pageData.routePath));
+        await mkdir(path.dirname(target), { recursive: true });
+        await writeFile(target, Buffer.from(await image.arrayBuffer()));
       }
 
       const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
