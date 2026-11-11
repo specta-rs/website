@@ -9,18 +9,18 @@ export const projects = [
     className: "h-5 w-[30px]",
   },
   {
-    id: "rspc",
-    name: "rspc",
-    description: "A framework for building typesafe web backends in Rust",
-    icon: "/assets/rspc.png",
-    className: "h-5 w-[20px]",
-  },
-  {
     id: "tauri-specta",
     name: "Tauri Specta",
     description: "Completely typesafe Tauri commands",
     icon: "/assets/tauri-specta.png",
     className: "h-5 w-[44px]",
+  },
+  {
+    id: "rspc",
+    name: "rspc",
+    description: "A framework for building typesafe web backends in Rust",
+    icon: "/assets/rspc.png",
+    className: "h-5 w-[20px]",
   },
   {
     id: "gurafi",
