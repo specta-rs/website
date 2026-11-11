@@ -110,9 +110,7 @@ function Hero() {
               <span>GitHub stars</span>
             </div>
             <div className="sp-hero__stat">
-              <strong title={`${downloads.toLocaleString("en-US")} downloads`}>
-                {downloadsLabel}
-              </strong>
+              <strong>{downloadsLabel}</strong>
               <span>crates.io downloads</span>
             </div>
           </div>

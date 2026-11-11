@@ -20,8 +20,8 @@
   },
   {
     "type": "custom-link",
-    "label": "docs.rs",
-    "link": "https://docs.rs/specta",
-    "icon": "/assets/icons/docs-rs.svg"
+    "label": "crates.io",
+    "link": "https://crates.io/crates/specta",
+    "icon": "/assets/icons/crates-io.png"
   }
 ]
