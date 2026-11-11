@@ -23,6 +23,7 @@ Gurafi docs are sourced from the [`specta-rs/gurafi`](https://github.com/specta-
 - It fetches the latest `main`, checks whether `docs/` changed, runs `scripts/sync-gurafi-docs.mjs`, and commits the updated submodule plus the generated `content/docs/gurafi` tree. The push triggers the normal CI and Cloudflare deploy.
 - If Gurafi changed but `docs/` did not, the workflow exits without a commit.
 - Generated project docs are committed so local builds, search indexing and deployments do not require submodule initialization. Do not edit `content/docs/gurafi` directly.
+- Brand assets are not part of the sync. The Gurafi app icon, favicons and FSK logos are committed directly in both repositories when they change.
 
 Required repository secret:
 

@@ -56,7 +56,7 @@ jobs:
           git -C docs-sources/gurafi checkout --detach "$NEW"
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
-      - name: Sync docs and brand assets
+      - name: Sync docs
         if: steps.update.outputs.changed == 'true'
         run: node scripts/sync-gurafi-docs.mjs --source docs-sources/gurafi/docs --ref main
 
@@ -66,7 +66,7 @@ jobs:
           set -euo pipefail
           git config user.name "specta-rs docs bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs-sources/gurafi content/docs/gurafi public/assets/gurafi-favicon.ico public/assets/gurafi-favicon.svg theme/gurafi-icon.ts
+          git add docs-sources/gurafi content/docs/gurafi
 
           if git diff --cached --quiet; then
             echo "Synced docs are already up to date."
