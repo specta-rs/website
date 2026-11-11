@@ -13,6 +13,9 @@
 /docs/*.md
   content-type: text/markdown; charset=utf-8
 
+/about.md
+  content-type: text/markdown; charset=utf-8
+
 /llms.txt
   content-type: text/plain; charset=utf-8
 

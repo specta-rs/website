@@ -37,7 +37,7 @@ export default {
       return Response.redirect(new URL("/docs/specta", url).toString(), 302);
     }
 
-    if (url.pathname.startsWith("/docs")) {
+    if (url.pathname.startsWith("/docs") || url.pathname === "/about") {
       if (url.pathname.endsWith(".md")) {
         return markdownResponse(await env.ASSETS.fetch(request));
       }
