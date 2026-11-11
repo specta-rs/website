@@ -20,14 +20,14 @@ pnpm dev
 Project documentation can live in its own repository. Gurafi is the first source:
 
 - `specta-rs/gurafi/docs` is the source of truth for `content/docs/gurafi`.
-- The `gurafi` workflow dispatches `gurafi-docs` to this repository on every push to `main`.
-- `.github/workflows/sync-gurafi-docs.yml` checks out that commit, runs `scripts/sync-gurafi-docs.mjs`, and commits the regenerated `content/docs/gurafi` tree. The push redeploys the site.
+- `.github/workflows/sync-gurafi-docs.yml` clones the public Gurafi repository hourly (and on `workflow_dispatch`), runs `scripts/sync-gurafi-docs.mjs`, and commits the regenerated `content/docs/gurafi` tree. The push redeploys the site.
 - Generated project docs are committed for local builds and search indexing, but should not be edited directly.
 
-Required repository secrets:
-
-- `specta-rs/gurafi`: `WEBSITE_DISPATCH_TOKEN` — a PAT that can dispatch workflows in `specta-rs/website`.
-- `specta-rs/website`: `DOCS_SYNC_TOKEN` — a PAT with contents write access to this repository. It is used for the checkout and push so downstream CI and Cloudflare builds trigger.
+No repository secrets are required. The workflow reads Gurafi anonymously because it is
+public, and pushes with its own `GITHUB_TOKEN` (`contents: write`), which GitHub scopes to
+this repository. A cross-repository `workflow_dispatch` would need a PAT or a GitHub App
+instead, which we deliberately avoid; the cost of this approach is up to an hour of drift
+between a Gurafi docs change and the deployed site.
 
 To sync locally:
 

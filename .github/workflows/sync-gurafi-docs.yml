@@ -1,8 +1,13 @@
 name: Sync Gurafi docs
 
+# Docs live in specta-rs/gurafi. Rather than have that repository dispatch a
+# workflow here (which needs a cross-repository token), this repository pulls
+# the public source on a schedule. The only credential used is the workflow's
+# own GITHUB_TOKEN, scoped to this repository by GitHub.
 on:
-  repository_dispatch:
-    types: [gurafi-docs]
+  schedule:
+    # GitHub's scheduler is best effort; expect a few minutes of drift.
+    - cron: "17 * * * *"
   workflow_dispatch:
     inputs:
       ref:
@@ -21,28 +26,22 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Require docs sync token
-        env:
-          TOKEN: ${{ secrets.DOCS_SYNC_TOKEN }}
-        run: |
-          if [ -z "$TOKEN" ]; then
-            echo "::error::DOCS_SYNC_TOKEN is not configured in this repository."
-            exit 1
-          fi
-
       - name: Checkout website
         uses: actions/checkout@v7
         with:
-          token: ${{ secrets.DOCS_SYNC_TOKEN }}
           fetch-depth: 0
 
       - name: Checkout Gurafi docs
-        uses: actions/checkout@v7
-        with:
-          repository: specta-rs/gurafi
-          ref: ${{ github.event.client_payload.sha || github.event.inputs.ref || 'main' }}
-          path: .gurafi
-          token: ${{ secrets.DOCS_SYNC_TOKEN }}
+        env:
+          REF: ${{ inputs.ref || 'main' }}
+        run: |
+          set -euo pipefail
+          # Anonymous clone: Gurafi is public, and GITHUB_TOKEN cannot read
+          # another repository even when it is public.
+          git init --quiet .gurafi
+          git -C .gurafi remote add origin https://github.com/specta-rs/gurafi.git
+          git -C .gurafi fetch --quiet --depth 1 origin "$REF"
+          git -C .gurafi checkout --quiet FETCH_HEAD
 
       - uses: actions/setup-node@v7
         with:
