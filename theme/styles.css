@@ -167,8 +167,10 @@ body {
  * Global shell: nav, search, sidebar, outline
  * ------------------------------------------------------------------------ */
 
+/* Rspress derives every sticky offset from `--rp-nav-height`, so the header
+ * must follow the variable rather than hard-coding its own height. */
 .rp-nav {
-  height: 64px;
+  height: var(--rp-nav-height);
   border-bottom: 1px solid var(--rp-c-divider-light);
   background: color-mix(in srgb, var(--rp-c-bg) 80%, transparent);
   backdrop-filter: saturate(1.4) blur(16px);
@@ -227,11 +229,11 @@ body:has(.sp-home) .rp-nav {
 }
 
 .rp-search-button--mobile {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   border: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   background: transparent;
   color: var(--rp-c-text-2);
   cursor: pointer;
@@ -2042,14 +2044,27 @@ summary.sp-action-button::-webkit-details-marker {
     top: 0;
     bottom: 0;
   }
+  /* The outline is a popover at these widths, so its rows are tap targets. */
+  .rp-doc-layout__container .rp-toc-item {
+    margin-top: 2px;
+  }
+  .rp-doc-layout__container .rp-toc-item__text {
+    padding-block: 9px;
+  }
+  .rp-doc-layout__container .rp-outline__action-row {
+    min-height: 40px;
+  }
 }
 
 @media (width <= 767px) {
+  /* Shorter mobile header. This changes the variable Rspress uses for the
+   * sticky offsets as well, keeping the menu bar and anchors aligned.
+   * The extra `html` wins the cascade over Rspress' own `:root` block. */
+  html:root {
+    --rp-nav-height: 60px;
+  }
   body:has(.sp-home) .rp-nav {
     padding-inline: 18px;
-  }
-  .rp-nav {
-    height: 60px;
   }
   .rp-doc-layout__sidebar {
     padding: 18px 16px 40px;
@@ -2084,10 +2099,9 @@ summary.sp-action-button::-webkit-details-marker {
     width: auto;
     justify-self: start;
     padding-top: 2px;
+    gap: 8px;
   }
   .sp-action-button {
-    height: 32px;
-    padding: 0 13px;
     font-size: 12.5px;
   }
   .sp-action-menu__panel {
@@ -2128,9 +2142,6 @@ summary.sp-action-button::-webkit-details-marker {
   .rp-doc-layout__container .rp-tabs__label::-webkit-scrollbar {
     display: none;
   }
-  .rp-doc-layout__container .rp-tabs__label__item {
-    flex-shrink: 0;
-  }
   .sp-callout {
     gap: 10px;
     padding: 12px 13px;
@@ -2147,9 +2158,12 @@ summary.sp-action-button::-webkit-details-marker {
   .rp-doc-layout__container .rp-table-scroll-container {
     border-radius: 10px;
   }
+  /* Auto layout happily squeezes a three-column table into 340px, which turns
+   * the last column into one word per line. Keep cells readable and let the
+   * existing scroll container handle the overflow instead. */
   .rp-doc-layout__container .rp-table-scroll-container th,
   .rp-doc-layout__container .rp-table-scroll-container td {
-    min-width: 0;
+    min-width: 8.5rem;
     padding: 8px 11px;
   }
   .rp-doc-layout__container .rp-doc-footer {
@@ -2184,23 +2198,84 @@ summary.sp-action-button::-webkit-details-marker {
   }
 }
 
+/* Touch targets -----------------------------------------------------------
+ * Rspress switches the documentation chrome to its drawer layout at 768px,
+ * where pointer input is usually a finger. Bump the controls that were sized
+ * for a mouse. */
+@media (width <= 768px) {
+  .sp-action-button {
+    height: 40px;
+    padding: 0 14px;
+  }
+
+  .sp-ref-version__summary,
+  .sp-ref-source {
+    height: 36px;
+  }
+
+  .sp-ref-version__item {
+    padding: 9px 10px;
+    font-size: 12px;
+  }
+
+  .sp-deprecation__action {
+    min-height: 32px;
+    padding: 0 11px;
+  }
+
+  /* Touch devices have no hover, so the code actions are always visible and
+   * need to be comfortably tappable rather than 22px. */
+  .rp-doc-layout__container .rp-code-button-group {
+    top: 6px;
+    right: 6px;
+    padding: 3px;
+    opacity: 1;
+  }
+
+  .rp-doc-layout__container .rp-code-button-group__button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .rp-doc-layout__container .rp-code-button-group__icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .rp-doc-layout__container .rp-tabs__label__item {
+    min-height: 40px;
+    flex-shrink: 0;
+    padding: 8px 12px;
+  }
+
+  .rp-doc-layout__container .rp-doc-footer .rp-edit-link {
+    padding-block: 9px;
+  }
+}
+
 /* The mobile documentation drawer covers the menu bar, so it carries its own
- * close control. Hidden on desktop, where the drawer is permanent. */
+ * close control. Hidden on desktop, where the drawer is permanent. Rspress
+ * turns the sidebar into a drawer at 768px, so this has to match that. */
 .sp-drawer-close {
   display: none;
 }
 
-@media (width <= 767px) {
+@media (width <= 768px) {
   .sp-drawer-close {
+    position: sticky;
+    top: 8px;
+    z-index: 2;
     display: flex;
     width: fit-content;
+    min-height: 40px;
     align-items: center;
     gap: 5px;
     margin: 0 0 10px auto;
-    padding: 4px 10px;
+    padding: 4px 12px;
     border: 1px solid var(--sp-line);
     border-radius: 999px;
     background: var(--sp-panel);
+    box-shadow: var(--rp-shadow-1);
     color: var(--rp-c-text-2);
     font-size: 11.5px;
     font-weight: 500;
@@ -2304,6 +2379,44 @@ summary.sp-action-button::-webkit-details-marker {
 
   .rp-search-button--mobile {
     display: flex;
+  }
+
+  /* Rspress' mask stops one pixel before the sidebar drawer does (767px vs
+   * 768px), which leaves the tablet drawer without a backdrop. The `div`
+   * outranks the upstream base rule, which loads after this file. */
+  div.rp-sidebar-menu__mask {
+    display: block;
+  }
+
+  /* The hamburger sheet holds the only appearance toggle and social links on
+   * mobile; both were well under the 40px touch target. */
+  .rp-nav .rp-nav-hamburger {
+    padding: 10px;
+  }
+
+  .rp-nav-screen .rp-nav-screen-menu-item {
+    min-height: 44px;
+  }
+
+  /* The drawer is the primary navigation on phones; give its rows a real tap
+   * target rather than the pointer-sized desktop height. */
+  .rp-doc-layout__sidebar .rp-sidebar-item {
+    min-height: 40px;
+    padding: 8px 10px;
+  }
+
+  .rp-nav-screen .rp-switch-appearance {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .rp-nav-screen .rp-social-links__item {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
   }
 }
 

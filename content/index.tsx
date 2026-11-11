@@ -351,7 +351,12 @@ function Projects() {
             <ProjectCard
               key={project.name}
               {...project}
-              className={index < 3 ? "lg:col-span-2" : "lg:col-span-3"}
+              className={cn(
+                index < 3 ? "lg:col-span-2" : "lg:col-span-3",
+                projects.length % 2 === 1 &&
+                  index === projects.length - 1 &&
+                  "sm:col-span-2",
+              )}
             />
           ))}
         </div>
