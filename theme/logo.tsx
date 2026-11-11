@@ -20,13 +20,8 @@ export function SpectaLogo() {
           className="h-6 w-9 object-contain transition-transform duration-200 group-hover:scale-105"
         />
       </span>
-      <span className="flex flex-col leading-none">
-        <span className="text-[15px] font-semibold tracking-[-0.015em] text-fd-foreground">
-          Specta
-        </span>
-        <span className="mt-1 font-mono text-[9px] font-medium tracking-[0.14em] text-fd-muted-foreground uppercase">
-          Rust ecosystem
-        </span>
+      <span className="text-[15px] font-semibold tracking-[-0.015em] text-fd-foreground">
+        Specta
       </span>
     </a>
   );

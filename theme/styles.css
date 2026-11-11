@@ -247,18 +247,32 @@ body:has(.sp-home) .rp-nav {
   color: var(--rp-c-text-1);
 }
 
-.rp-social-links {
-  gap: 4px;
+/* Social links live in the mobile nav sheet (shown at every width when the
+ * menu opens). Give each icon a compact round hover target instead of the
+ * full-height rectangle Rspress draws by default. */
+.rp-nav-hamburger .rp-social-links,
+.rp-nav-screen .rp-social-links {
+  gap: 16px;
 }
 
-.rp-social-links__item {
-  padding: 0 6px;
-  border-radius: 7px;
-  transition: background-color 0.15s ease;
+.rp-nav-hamburger .rp-social-links__item,
+.rp-nav-screen .rp-social-links__item {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 999px;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
-.rp-social-links__item:hover {
+.rp-nav-hamburger .rp-social-links__item:hover,
+.rp-nav-screen .rp-social-links__item:hover {
   background: var(--rp-c-bg-mute);
+  color: var(--sp-accent);
 }
 
 .rp-social-links__icon {
@@ -266,13 +280,11 @@ body:has(.sp-home) .rp-nav {
   height: 18px;
 }
 
-.rp-social-links__icon:hover {
-  color: var(--sp-accent);
-}
-
-.rp-social-links__item.rp-social-links__github-stars {
-  padding-inline: 8px;
-  gap: 5px;
+.rp-nav-hamburger .rp-social-links__item.rp-social-links__github-stars,
+.rp-nav-screen .rp-social-links__item.rp-social-links__github-stars {
+  width: auto;
+  padding-inline: 12px;
+  gap: 6px;
 }
 
 .rp-social-links__github-stars-count {
@@ -2342,7 +2354,6 @@ summary.sp-action-button::-webkit-details-marker {
 
 /* Landing hero: a single, staggered entrance for the first screen. The delays
  * are short enough that the headline is painted almost immediately. */
-.sp-hero__eyebrow,
 .sp-hero__title,
 .sp-hero__subtitle,
 .sp-hero__actions,
@@ -2610,12 +2621,16 @@ details[open] > .sp-project-switcher__panel,
     border-radius: 10px;
   }
 
+  .rp-nav-hamburger .rp-social-links__item,
   .rp-nav-screen .rp-social-links__item {
-    display: inline-flex;
-    min-width: 44px;
-    min-height: 44px;
-    align-items: center;
-    justify-content: center;
+    width: 40px;
+    height: 40px;
+  }
+
+  .rp-nav-hamburger .rp-social-links__item.rp-social-links__github-stars,
+  .rp-nav-screen .rp-social-links__item.rp-social-links__github-stars {
+    width: auto;
+    padding-inline: 14px;
   }
 }
 

@@ -10,6 +10,7 @@ import {
   Star,
   Zap,
 } from "lucide-react";
+import type { ReactNode } from "react";
 import { DiscordLogo, GitHubLogo } from "@/components/logos";
 import { cn } from "@/lib/utils";
 import siteData from "../theme/site-data.json";
@@ -71,11 +72,7 @@ function Hero() {
     <section className="sp-hero">
       <div className="sp-hero__content mx-auto grid max-w-[1200px] items-center gap-12 px-6 py-14 md:py-20 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14 lg:py-24">
         <div className="max-w-[620px]">
-          <p className="sp-eyebrow sp-hero__eyebrow">
-            Open-source Rust ecosystem
-          </p>
-
-          <h1 className="sp-hero__title mt-5">
+          <h1 className="sp-hero__title">
             Build better web apps with{" "}
             <span className="sp-hero__rust">Rust</span>
           </h1>
@@ -273,6 +270,7 @@ type Project = {
     darkSrc?: string;
     alt: string;
     className?: string;
+    frameClassName?: string;
   };
   accent: string;
 };
@@ -288,15 +286,6 @@ const projects: Project[] = [
     accent: "#F4520A",
   },
   {
-    name: "rspc",
-    repo: "specta-rs/rspc",
-    description:
-      "A blazingly fast and typesafe RPC framework for Rust. Build web APIs with end-to-end type safety.",
-    docsUrl: "/docs/rspc",
-    logo: { src: "/assets/rspc.svg", alt: "rspc logo", className: "h-8 w-8" },
-    accent: "#0092DE",
-  },
-  {
     name: "Tauri Specta",
     repo: "specta-rs/tauri-specta",
     description:
@@ -305,9 +294,19 @@ const projects: Project[] = [
     logo: {
       src: "/assets/tauri-specta.png",
       alt: "Tauri Specta logo",
-      className: "h-6 w-14",
+      className: "h-9 w-20",
+      frameClassName: "w-20",
     },
     accent: "#D69A00",
+  },
+  {
+    name: "rspc",
+    repo: "specta-rs/rspc",
+    description:
+      "A blazingly fast and typesafe RPC framework for Rust. Build web APIs with end-to-end type safety.",
+    docsUrl: "/docs/rspc",
+    logo: { src: "/assets/rspc.svg", alt: "rspc logo", className: "h-8 w-8" },
+    accent: "#0092DE",
   },
   {
     name: "Gurafi",
@@ -355,7 +354,7 @@ function Projects() {
               key={project.name}
               {...project}
               className={cn(
-                index < 3 ? "lg:col-span-2" : "lg:col-span-3",
+                index < 2 ? "lg:col-span-3" : "lg:col-span-2",
                 projects.length % 2 === 1 &&
                   index === projects.length - 1 &&
                   "sm:col-span-2",
@@ -392,7 +391,10 @@ function ProjectCard({
 
       <div className="mb-7 flex items-start justify-between gap-3">
         <span
-          className="flex size-14 items-center justify-center rounded-2xl border border-sp-line"
+          className={cn(
+            "flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-sp-line",
+            logo.frameClassName,
+          )}
           style={{ backgroundColor: `${accent}12` }}
         >
           <img
@@ -466,7 +468,20 @@ function Support() {
           index="03"
           label="Supporters"
           title="Support development"
-          description="specta-rs is built and maintained by Oscar Beaumont. Sponsorships fund the time that goes into it."
+          description={
+            <>
+              specta-rs is built and maintained by{" "}
+              <a
+                href="https://otbeaumont.me"
+                target="_blank"
+                rel="noopener"
+                className="font-medium text-fd-foreground underline decoration-sp-accent-line underline-offset-4 transition-colors hover:text-sp-accent"
+              >
+                Oscar Beaumont
+              </a>
+              . Sponsorships fund the time that goes into it.
+            </>
+          }
         />
 
         <div className="mx-auto max-w-[960px]">
@@ -489,7 +504,7 @@ function Support() {
                     {sponsor.name}
                   </span>
                   <span className="mt-0.5 block font-mono text-[10px] tracking-[0.1em] text-fd-muted-foreground uppercase">
-                    Direct sponsor
+                    Previous sponsor
                   </span>
                 </span>
                 <ArrowUpRight className="size-4 text-fd-muted-foreground transition-colors group-hover:text-sp-accent" />
@@ -594,7 +609,7 @@ function SectionIntro({
   index: string;
   label: string;
   title: string;
-  description: string;
+  description: ReactNode;
 }) {
   return (
     <div className="mb-12 grid gap-5 md:mb-16 md:grid-cols-[1fr_minmax(0,380px)] md:items-end">
