@@ -12,9 +12,9 @@ Enable it per crate, or through the crate that re-exports the ones you use:
 ```toml
 [dependencies]
 gql = { version = "0.3", features = ["tracing"] }
-gurafi = { version = "0.1.0", features = ["tracing"] }
-suku = { version = "0.1.0", features = ["tracing"] }
-gurafi-relay = { version = "0.1.0", features = ["tracing"] }
+gurafi = { version = "0.1.2", features = ["tracing"] }
+suku = { version = "0.1.2", features = ["tracing"] }
+gurafi-relay = { version = "0.1.2", features = ["tracing"] }
 ```
 
 Features propagate: `gurafi/tracing` also enables `gql/tracing`, `suku/tracing` enables

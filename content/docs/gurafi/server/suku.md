@@ -38,10 +38,10 @@ directly, the protocol tests drive `ws::serve` over channels, and the Axum tests
 
 ```toml
 # Axum and uploads, no WebSocket.
-suku = { version = "0.1.0", default-features = false, features = ["axum", "multipart"] }
+suku = { version = "0.1.2", default-features = false, features = ["axum", "multipart"] }
 
 # Axum and WebSocket, no uploads.
-suku = { version = "0.1.0", default-features = false, features = ["axum", "ws"] }
+suku = { version = "0.1.2", default-features = false, features = ["axum", "ws"] }
 ```
 
 `GraphQL::websocket(false)` is a runtime switch for one mount. When WebSocket support is absent (or
@@ -291,7 +291,7 @@ The default page loads pinned React 18.3.1, ReactDOM 18.3.1 and GraphiQL 4.1.2 b
 
 ```toml
 [dependencies]
-suku = { version = "0.1.0", features = ["vendored-graphiql"] }
+suku = { version = "0.1.2", features = ["vendored-graphiql"] }
 ```
 
 The assets are pinned, MIT-licensed upstream browser builds committed under

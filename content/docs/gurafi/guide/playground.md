@@ -27,7 +27,7 @@ when a content security policy must not allow a CDN, enable the `vendored-graphi
 
 ```toml
 [dependencies]
-suku = { version = "0.1.0", features = ["vendored-graphiql"] }
+suku = { version = "0.1.2", features = ["vendored-graphiql"] }
 ```
 
 The pinned browser bundles are compiled into the crate and inlined into a single HTML response, so
