@@ -142,9 +142,8 @@ function createSitePlugin(): RspressPlugin {
           entries.push({ loc: `${canonical}${pageData.routePath}`, lastmod });
         }
 
-        // The landing page uses `/docs/og.png`, which belongs to the docs
-        // index page. Do not let `/` overwrite it with the default copy.
-        if (pageData.routePath !== "/") {
+        // Every page gets its own card. The landing page writes `/og.png`.
+        {
           const image = new ImageResponse(
             OpenGraph({
               title: pageData.title,
@@ -275,7 +274,10 @@ export default defineConfig({
   },
   themeConfig: {
     darkMode: true,
-    nav: [{ text: "Docs", link: "/docs" }],
+    nav: [
+      { text: "Docs", link: "/docs/specta" },
+      { text: "About", link: "/about" },
+    ],
     sidebar,
     lastUpdated: true,
     editLink: {

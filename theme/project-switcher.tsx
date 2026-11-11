@@ -61,6 +61,7 @@ export function ProjectSwitcher() {
   const current = projects.find((project) =>
     pathname.startsWith(`/docs/${project.id}`),
   );
+  const onAbout = pathname === "/about";
   const display = current ?? ecosystem;
 
   return (
@@ -98,11 +99,11 @@ export function ProjectSwitcher() {
         </summary>
         <div className="sp-project-switcher__panel absolute z-20 mt-1.5 w-full overflow-hidden rounded-xl border border-sp-line bg-fd-popover p-1.5 shadow-[0_18px_40px_-16px_rgb(0_0_0/0.45)]">
           <a
-            href="/docs"
-            aria-current={current ? undefined : "page"}
+            href="/about"
+            aria-current={onAbout ? "page" : undefined}
             className={cn(
               "flex items-start gap-2.5 rounded-lg px-2 py-2 transition-colors hover:bg-fd-accent",
-              !current && "bg-sp-accent-soft",
+              onAbout && "bg-sp-accent-soft",
             )}
           >
             <span className={iconColumn}>
@@ -111,7 +112,7 @@ export function ProjectSwitcher() {
                   frame,
                   ecosystem.frameClassName,
                   "bg-sp-panel",
-                  !current ? "border-sp-accent-line" : "border-sp-line",
+                  onAbout ? "border-sp-accent-line" : "border-sp-line",
                 )}
               >
                 <ProjectIcon project={ecosystem} />
@@ -125,9 +126,9 @@ export function ProjectSwitcher() {
                 {ecosystem.description}
               </span>
             </span>
-            {current ? null : (
+            {onAbout ? (
               <Check className="mt-1 size-3.5 shrink-0 text-sp-accent" />
-            )}
+            ) : null}
           </a>
 
           <div className="mt-1.5 border-t border-sp-line pt-1.5">

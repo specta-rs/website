@@ -32,6 +32,11 @@ export default {
       return env.ASSETS.fetch(new Request(target, request));
     }
 
+    if (url.pathname === "/docs" || url.pathname === "/docs/") {
+      // The docs overview was removed; the Docs entry point is Specta now.
+      return Response.redirect(new URL("/docs/specta", url).toString(), 302);
+    }
+
     if (url.pathname.startsWith("/docs")) {
       if (url.pathname.endsWith(".md")) {
         return markdownResponse(await env.ASSETS.fetch(request));
