@@ -20,16 +20,33 @@ function ProjectIcon({
 }
 
 /**
+ * The value shown when the reader is on a docs page that does not belong to a
+ * project, such as the `/docs` ecosystem overview.
+ */
+const ecosystem = {
+  id: "ecosystem",
+  name: "specta-rs",
+  description: "Rust crates for better web apps",
+  icon: "/assets/specta.png",
+  className: "h-5 w-[30px]",
+} satisfies (typeof projects)[number];
+
+/**
  * A small project switcher at the top of the documentation sidebar. The old
  * site used Fumadocs' root toggle; Rspress has no equivalent, so this keeps
  * the same "Specta / rspc / Tauri Specta" navigation.
+ *
+ * The switcher stays visible on the docs overview too. The sidebar itself is
+ * shared by every docs page (the active project expands in place), so keeping
+ * this header permanent means navigating between projects never swaps out the
+ * whole sidebar chrome.
  */
 export function ProjectSwitcher() {
   const { pathname } = useLocation();
   const current = projects.find((project) =>
     pathname.startsWith(`/docs/${project.id}`),
   );
-  if (!current) return null;
+  const display = current ?? ecosystem;
 
   return (
     <div className="mb-4 px-0.5 pt-1">
@@ -39,21 +56,21 @@ export function ProjectSwitcher() {
       <details className="group relative">
         <summary className="flex cursor-pointer list-none items-center gap-2.5 rounded-xl border border-sp-line bg-sp-panel px-2.5 py-2.5 shadow-[0_1px_2px_rgb(0_0_0/0.04)] transition-colors hover:border-sp-accent-line hover:bg-sp-panel-hover [&::-webkit-details-marker]:hidden">
           <span className="flex h-9 w-12 shrink-0 items-center justify-center rounded-lg border border-sp-line bg-sp-panel-strong">
-            <ProjectIcon project={current} />
+            <ProjectIcon project={display} />
           </span>
           <span className="min-w-0 flex-1">
             <span className="block truncate text-[13.5px] font-semibold tracking-[-0.01em]">
-              {current.name}
+              {display.name}
             </span>
             <span className="mt-0.5 block truncate text-[11.5px] leading-4 text-fd-muted-foreground">
-              {current.description}
+              {display.description}
             </span>
           </span>
           <ChevronDown className="size-3.5 shrink-0 text-fd-muted-foreground transition-transform group-open:rotate-180" />
         </summary>
         <div className="sp-project-switcher__panel absolute z-20 mt-1.5 w-full overflow-hidden rounded-xl border border-sp-line bg-fd-popover p-1.5 shadow-[0_18px_40px_-16px_rgb(0_0_0/0.45)]">
           {projects.map((project) => {
-            const active = project.id === current.id;
+            const active = project.id === current?.id;
             return (
               <a
                 key={project.id}

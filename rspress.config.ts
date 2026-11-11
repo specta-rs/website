@@ -243,22 +243,9 @@ async function createSidebar() {
   const mdFileSet = new Set<string>();
   const sidebar: Record<string, Awaited<ReturnType<typeof scanSideMeta>>> = {};
 
-  // One sidebar per project keeps the navigation focused on the project the
-  // reader is in, matching the old root toggle.
-  for (const project of projects) {
-    sidebar[`/docs/${project.id}`] = normalizeSidebarLinks(
-      await scanSideMeta(
-        path.join(docsRoot, project.id),
-        contentRoot,
-        extensions,
-        metaFileSet,
-        mdFileSet,
-      ),
-    );
-  }
-
-  // The documentation landing page and the brand page share the overview
-  // sidebar listing every project.
+  // A single sidebar for every docs page. The project groups stay in place and
+  // Rspress expands the one that contains the active page, so changing projects
+  // does not replace the whole navigation.
   sidebar["/docs"] = addProjectIcons(
     normalizeSidebarLinks(
       await scanSideMeta(
