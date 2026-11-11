@@ -772,10 +772,50 @@ body:has(.sp-home) .rp-nav {
   padding: 2px 7px;
   border: 1px solid rgb(255 255 255 / 10%);
   border-radius: 999px;
+  background: transparent;
   color: rgb(233 226 217 / 52%);
   font-family: var(--rp-font-family-mono);
   font-size: 9.5px;
   letter-spacing: 0.03em;
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.sp-code-panel__chip:hover {
+  border-color: rgb(255 255 255 / 22%);
+  color: rgb(233 226 217 / 85%);
+}
+
+.sp-code-panel__chip[aria-pressed="true"] {
+  border-color: rgb(255 116 51 / 32%);
+  background: rgb(255 116 51 / 14%);
+  color: #ff9a6b;
+}
+
+.sp-code-panel__output {
+  min-height: 177px;
+  animation: sp-code-fade 260ms var(--sp-ease-out);
+}
+
+@keyframes sp-code-fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-code-panel__output {
+    animation: none;
+  }
 }
 
 .sp-section {

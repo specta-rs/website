@@ -117,6 +117,11 @@ function createSitePlugin(): RspressPlugin {
       }
     },
     async afterBuild(config) {
+      // `rspress dev` rebuilds into `doc_build` and cleans it between builds,
+      // which races these writes. OG images and the sitemap are only needed
+      // for the deployed output.
+      if (process.env.NODE_ENV === "development") return;
+
       const outDir = path.resolve(config.outDir ?? "doc_build");
       const [logo, font] = await Promise.all([
         readFile(path.resolve("public/assets/specta.png")),

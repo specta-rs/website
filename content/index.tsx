@@ -12,6 +12,7 @@ import {
   Zap,
 } from "lucide-react";
 import type { ReactNode } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { DiscordLogo, GitHubLogo } from "@/components/logos";
 import { cn } from "@/lib/utils";
 import siteData from "../theme/site-data.json";
@@ -128,9 +129,277 @@ function Hero() {
 
 /**
  * A small, honest demonstration of the product: the example is the one from
- * the Specta getting-started guide, with its generated TypeScript output.
+ * the Specta getting-started guide, with the generated output cycling through
+ * the exporters.
  */
+type CodeToken = [
+  text: string,
+  kind?: "key" | "type" | "str" | "fn" | "punc" | "comment",
+];
+
+const token = (text: string, kind?: CodeToken[1]): CodeToken => [text, kind];
+
+const languageOutputs = [
+  {
+    id: "typescript",
+    label: "TypeScript",
+    file: "generated bindings.ts",
+    lines: [
+      [
+        token("export type", "key"),
+        token(" "),
+        token("User", "fn"),
+        token(" = {"),
+      ],
+      [
+        token("  id"),
+        token(":", "punc"),
+        token(" "),
+        token("number", "type"),
+        token(";", "punc"),
+      ],
+      [
+        token("  name"),
+        token(":", "punc"),
+        token(" "),
+        token("string", "type"),
+        token(";", "punc"),
+      ],
+      [token("};", "punc")],
+    ],
+  },
+  {
+    id: "jsdoc",
+    label: "JSDoc",
+    file: "generated bindings.js",
+    lines: [
+      [token("/**", "comment")],
+      [token(" * @typedef {Object} User", "comment")],
+      [token(" * @property {number} id", "comment")],
+      [token(" * @property {string} name", "comment")],
+      [token(" */", "comment")],
+    ],
+  },
+  {
+    id: "swift",
+    label: "Swift",
+    file: "generated Types.swift",
+    lines: [
+      [
+        token("public struct", "key"),
+        token(" "),
+        token("User", "fn"),
+        token(":", "punc"),
+        token(" Codable", "type"),
+        token(" {", "punc"),
+      ],
+      [
+        token("  public let", "key"),
+        token(" id"),
+        token(":", "punc"),
+        token(" "),
+        token("UInt32", "type"),
+      ],
+      [
+        token("  public let", "key"),
+        token(" name"),
+        token(":", "punc"),
+        token(" "),
+        token("String", "type"),
+      ],
+      [token("}", "punc")],
+    ],
+  },
+  {
+    id: "go",
+    label: "Go",
+    file: "generated bindings.go",
+    lines: [
+      [token("package", "key"), token(" bindings")],
+      [token("")],
+      [
+        token("type", "key"),
+        token(" "),
+        token("User", "fn"),
+        token(" struct", "key"),
+        token(" {", "punc"),
+      ],
+      [token("  Id   "), token("uint32", "type"), token(' `json:"id"`', "str")],
+      [
+        token("  Name "),
+        token("string", "type"),
+        token(' `json:"name"`', "str"),
+      ],
+      [token("}", "punc")],
+    ],
+  },
+  {
+    id: "kotlin",
+    label: "Kotlin",
+    file: "generated Bindings.kt",
+    lines: [
+      [
+        token("public data class", "key"),
+        token(" "),
+        token("User", "fn"),
+        token("(", "punc"),
+      ],
+      [
+        token("    val", "key"),
+        token(" id"),
+        token(":", "punc"),
+        token(" "),
+        token("kotlin.UInt", "type"),
+        token(","),
+      ],
+      [
+        token("    val", "key"),
+        token(" name"),
+        token(":", "punc"),
+        token(" "),
+        token("kotlin.String", "type"),
+      ],
+      [token(")", "punc")],
+    ],
+  },
+  {
+    id: "java",
+    label: "Java",
+    file: "generated Bindings.java",
+    lines: [
+      [
+        token("public record", "key"),
+        token(" "),
+        token("User", "fn"),
+        token("(", "punc"),
+      ],
+      [token("    "), token("java.lang.Long", "type"), token(" id,")],
+      [token("    "), token("java.lang.String", "type"), token(" name")],
+      [token(") {}", "punc")],
+    ],
+  },
+  {
+    id: "zod",
+    label: "Zod",
+    file: "generated schemas.ts",
+    lines: [
+      [
+        token("export const", "key"),
+        token(" "),
+        token("UserSchema", "fn"),
+        token(" = z.object({", "punc"),
+      ],
+      [
+        token("  id"),
+        token(":", "punc"),
+        token(" "),
+        token("z.int().min(0).max(4294967295)", "type"),
+        token(","),
+      ],
+      [
+        token("  name"),
+        token(":", "punc"),
+        token(" "),
+        token("z.string()", "type"),
+        token(","),
+      ],
+      [token("});", "punc")],
+    ],
+  },
+  {
+    id: "valibot",
+    label: "Valibot",
+    file: "generated schemas.ts",
+    lines: [
+      [
+        token("export const", "key"),
+        token(" "),
+        token("UserSchema", "fn"),
+        token(" = $spectaObject({", "punc"),
+      ],
+      [token("  id"), token(":", "punc"), token(" "), token("v.pipe(", "type")],
+      [token("    "), token("v.number(), v.integer(),", "type")],
+      [token("    "), token("v.minValue(0), v.maxValue(4294967295),", "type")],
+      [token("  ),", "punc")],
+      [
+        token("  name"),
+        token(":", "punc"),
+        token(" "),
+        token("v.string()", "type"),
+        token(","),
+      ],
+      [token("});", "punc")],
+    ],
+  },
+  {
+    id: "openapi",
+    label: "OpenAPI",
+    file: "generated openapi.json",
+    lines: [
+      [token('"User"', "str"), token(": {")],
+      [
+        token('  "type"', "str"),
+        token(": "),
+        token('"object"', "str"),
+        token(","),
+      ],
+      [token('  "properties"', "str"), token(": {")],
+      [
+        token('    "id"', "str"),
+        token(": { "),
+        token('"type"', "str"),
+        token(": "),
+        token('"integer"', "str"),
+        token(" },"),
+      ],
+      [
+        token('    "name"', "str"),
+        token(": { "),
+        token('"type"', "str"),
+        token(": "),
+        token('"string"', "str"),
+        token(" }"),
+      ],
+      [token("  }")],
+      [token("}")],
+    ],
+  },
+];
+
+function CodeLines({ lines }: { lines: CodeToken[][] }) {
+  return (
+    <>
+      {lines.map((line, lineIndex) => (
+        <Fragment key={lineIndex}>
+          {lineIndex > 0 ? "\n" : null}
+          {line.map(([text, kind], tokenIndex) =>
+            kind ? (
+              <span key={tokenIndex} className={`tok-${kind}`}>
+                {text}
+              </span>
+            ) : (
+              <Fragment key={tokenIndex}>{text}</Fragment>
+            ),
+          )}
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
 function TypeBridge() {
+  const [active, setActive] = useState(0);
+  const output = languageOutputs[active];
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const next = (active + 1) % languageOutputs.length;
+    const timer = window.setTimeout(() => setActive(next), 4000);
+
+    return () => window.clearTimeout(timer);
+  }, [active]);
+
   return (
     <figure className="sp-code-frame min-w-0">
       <div className="sp-code-panel">
@@ -168,37 +437,35 @@ function TypeBridge() {
           </code>
         </pre>
 
-        <div className="sp-code__divider">generated bindings.ts</div>
+        <div className="sp-code__divider">{output.file}</div>
 
-        <pre className="sp-code">
+        <pre className="sp-code sp-code-panel__output" key={output.id}>
           <code>
-            <span className="tok-key">export type</span>{" "}
-            <span className="tok-fn">User</span>{" "}
-            <span className="tok-punc">= {"{"}</span>
-            {"\n  "}id
-            <span className="tok-punc">:</span>{" "}
-            <span className="tok-type">number</span>
-            <span className="tok-punc">;</span>
-            {"\n  "}name
-            <span className="tok-punc">:</span>{" "}
-            <span className="tok-type">string</span>
-            <span className="tok-punc">;</span>
-            {"\n"}
-            <span className="tok-punc">{"}"};</span>
+            <CodeLines lines={output.lines} />
           </code>
         </pre>
 
-        <div className="sp-code-panel__foot">
-          <span className="sp-code-panel__chip">TypeScript</span>
-          <span className="sp-code-panel__chip">Swift</span>
-          <span className="sp-code-panel__chip">Go</span>
-          <span className="sp-code-panel__chip">JSDoc</span>
-          <span className="sp-code-panel__chip">OpenAPI</span>
+        <div
+          className="sp-code-panel__foot"
+          role="group"
+          aria-label="Generated output language"
+        >
+          {languageOutputs.map((language, index) => (
+            <button
+              key={language.id}
+              type="button"
+              aria-pressed={index === active}
+              className="sp-code-panel__chip"
+              onClick={() => setActive(index)}
+            >
+              {language.label}
+            </button>
+          ))}
         </div>
       </div>
       <figcaption className="sr-only">
-        A Rust User struct deriving Specta's Type trait, and the equivalent
-        generated TypeScript type.
+        A Rust User struct deriving Specta's Type trait, and the generated
+        bindings in TypeScript, Swift, Go, JSDoc and OpenAPI.
       </figcaption>
     </figure>
   );
