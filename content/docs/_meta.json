@@ -21,5 +21,12 @@
     "name": "rspc",
     "collapsible": true,
     "collapsed": true
+  },
+  {
+    "type": "dir",
+    "name": "gurafi",
+    "label": "Gurafi",
+    "collapsible": true,
+    "collapsed": true
   }
 ]

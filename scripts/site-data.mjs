@@ -8,7 +8,13 @@ import { getSponsors } from "../src/lib/sponsors.ts";
 // generated JSON module instead of making the page a client-side async
 // component. Both helpers fall back to committed data when GitHub is
 // unavailable, so a build without a token still succeeds.
-const repos = ["specta-rs/specta", "specta-rs/rspc", "specta-rs/tauri-specta"];
+const repos = [
+  "specta-rs/specta",
+  "specta-rs/rspc",
+  "specta-rs/tauri-specta",
+  "specta-rs/gurafi",
+  "specta-rs/fsk",
+];
 
 const [sponsors, stars] = await Promise.all([
   getSponsors(),

@@ -16,9 +16,11 @@ export function DocsHeader() {
   const { frontmatter } = useFrontmatter();
   const markdownUrl = markdownPath(page.routePath, page.pagePath);
   const deprecated = page.routePath.startsWith("/docs/rspc/0.3.0");
+  const editUrl = (frontmatter as { editUrl?: string }).editUrl;
   const githubUrl = frontmatter.generated
     ? undefined
-    : `https://github.com/specta-rs/website/blob/main/content/${page.pagePath}`;
+    : (editUrl ??
+      `https://github.com/specta-rs/website/blob/main/content/${page.pagePath}`);
 
   return (
     <header className="sp-doc-head">

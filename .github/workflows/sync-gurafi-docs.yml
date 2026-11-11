@@ -1,0 +1,68 @@
+name: Sync Gurafi docs
+
+on:
+  repository_dispatch:
+    types: [gurafi-docs]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Gurafi branch, tag or commit SHA
+        required: false
+        default: main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-gurafi-docs
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require docs sync token
+        env:
+          TOKEN: ${{ secrets.DOCS_SYNC_TOKEN }}
+        run: |
+          if [ -z "$TOKEN" ]; then
+            echo "::error::DOCS_SYNC_TOKEN is not configured in this repository."
+            exit 1
+          fi
+
+      - name: Checkout website
+        uses: actions/checkout@v7
+        with:
+          token: ${{ secrets.DOCS_SYNC_TOKEN }}
+          fetch-depth: 0
+
+      - name: Checkout Gurafi docs
+        uses: actions/checkout@v7
+        with:
+          repository: specta-rs/gurafi
+          ref: ${{ github.event.client_payload.sha || github.event.inputs.ref || 'main' }}
+          path: .gurafi
+          token: ${{ secrets.DOCS_SYNC_TOKEN }}
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Sync docs into content/docs/gurafi
+        run: |
+          set -euo pipefail
+          SOURCE_SHA="$(git -C .gurafi rev-parse HEAD)"
+          echo "SOURCE_SHA=$SOURCE_SHA" >> "$GITHUB_ENV"
+          node scripts/sync-gurafi-docs.mjs --source .gurafi/docs --ref main
+
+      - name: Commit and push
+        run: |
+          git config user.name "specta-rs docs bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/docs/gurafi
+          if git diff --cached --quiet; then
+            echo "Gurafi docs are already up to date."
+            exit 0
+          fi
+          git commit -m "Sync Gurafi docs from ${SOURCE_SHA:0:12}"
+          git push

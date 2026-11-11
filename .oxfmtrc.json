@@ -20,6 +20,7 @@
     "theme/site-data.json",
     "pnpm-lock.yaml",
     "content/docs/rspc/*/integrations/axum.mdx",
-    "content/docs/*/typescript-api"
+    "content/docs/*/typescript-api",
+    "content/docs/gurafi"
   ]
 }

@@ -15,6 +15,26 @@ pnpm dev
 - `scripts/reference/` generates the TypeScript API pages from the committed snapshots in `reference/`.
 - `scripts/site-data.mjs` fetches sponsors and GitHub star counts for the landing page at build time. It writes `theme/site-data.json`, which is ignored by Git and recreated by the shared `prepare:content` step used by `dev`, `build`, `typecheck`, and `postinstall`.
 
+## Project docs
+
+Project documentation can live in its own repository. Gurafi is the first source:
+
+- `specta-rs/gurafi/docs` is the source of truth for `content/docs/gurafi`.
+- The `gurafi` workflow dispatches `gurafi-docs` to this repository on every push to `main`.
+- `.github/workflows/sync-gurafi-docs.yml` checks out that commit, runs `scripts/sync-gurafi-docs.mjs`, and commits the regenerated `content/docs/gurafi` tree. The push redeploys the site.
+- Generated project docs are committed for local builds and search indexing, but should not be edited directly.
+
+Required repository secrets:
+
+- `specta-rs/gurafi`: `WEBSITE_DISPATCH_TOKEN` — a PAT that can dispatch workflows in `specta-rs/website`.
+- `specta-rs/website`: `DOCS_SYNC_TOKEN` — a PAT with contents write access to this repository. It is used for the checkout and push so downstream CI and Cloudflare builds trigger.
+
+To sync locally:
+
+```bash
+node scripts/sync-gurafi-docs.mjs --source ../gurafi/docs --ref main
+```
+
 ## Formatting and linting
 
 Formatting is [oxfmt](https://oxc.rs/docs/guide/usage/formatter) and linting is [oxlint](https://oxc.rs/docs/guide/usage/linter). Both run over the MDX under `content/` as well.

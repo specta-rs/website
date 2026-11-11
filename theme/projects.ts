@@ -1,3 +1,5 @@
+import { gurafiAppIcon } from "./gurafi-icon";
+
 export const projects = [
   {
     id: "specta",
@@ -19,5 +21,12 @@ export const projects = [
     description: "Completely typesafe Tauri commands",
     icon: "/assets/tauri-specta.png",
     className: "h-5 w-[44px]",
+  },
+  {
+    id: "gurafi",
+    name: "Gurafi",
+    description: "A type-safe, code-first GraphQL stack for Rust",
+    icon: gurafiAppIcon,
+    className: "h-6 w-6",
   },
 ];

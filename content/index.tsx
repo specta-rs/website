@@ -13,6 +13,7 @@ import {
 import { DiscordLogo, GitHubLogo } from "@/components/logos";
 import { cn } from "@/lib/utils";
 import siteData from "../theme/site-data.json";
+import { gurafiAppIcon } from "../theme/gurafi-icon";
 
 export const frontmatter = {
   pageType: "custom",
@@ -105,7 +106,7 @@ function Hero() {
               <span>GitHub stars</span>
             </div>
             <div className="sp-hero__stat">
-              <strong>3</strong>
+              <strong>{projects.length}</strong>
               <span>open-source projects</span>
             </div>
           </div>
@@ -264,8 +265,13 @@ type Project = {
   name: string;
   repo: string;
   description: string;
-  docsUrl: string;
-  logo: { src: string; alt: string; className?: string };
+  docsUrl?: string;
+  logo: {
+    src: string;
+    darkSrc?: string;
+    alt: string;
+    className?: string;
+  };
   accent: string;
 };
 
@@ -301,6 +307,32 @@ const projects: Project[] = [
     },
     accent: "#D69A00",
   },
+  {
+    name: "Gurafi",
+    repo: "specta-rs/gurafi",
+    description:
+      "An intuitive, type-safe, code-first GraphQL schema builder for Rust, built on the gql specification engine.",
+    docsUrl: "/docs/gurafi",
+    logo: {
+      src: gurafiAppIcon,
+      alt: "Gurafi app icon",
+      className: "h-10 w-10",
+    },
+    accent: "#D9822B",
+  },
+  {
+    name: "FSK",
+    repo: "specta-rs/fsk",
+    description:
+      "Build cross-platform virtual file systems with a deliberately small Rust API and native macOS, Linux and Windows backends.",
+    logo: {
+      src: "/assets/fsk-light.svg",
+      darkSrc: "/assets/fsk-dark.svg",
+      alt: "FSK logo",
+      className: "h-8 w-10",
+    },
+    accent: "#2B6CB0",
+  },
 ];
 
 function Projects() {
@@ -314,9 +346,13 @@ function Projects() {
           description="A collection of powerful, type-safe tools designed to work seamlessly together"
         />
 
-        <div className="sp-cells lg:grid-cols-3">
-          {projects.map((project) => (
-            <ProjectCard key={project.name} {...project} />
+        <div className="sp-cells grid-cols-1 sm:grid-cols-2 lg:grid-cols-6">
+          {projects.map((project, index) => (
+            <ProjectCard
+              key={project.name}
+              {...project}
+              className={index < 3 ? "lg:col-span-2" : "lg:col-span-3"}
+            />
           ))}
         </div>
       </div>
@@ -331,9 +367,10 @@ function ProjectCard({
   description,
   docsUrl,
   accent,
-}: Project) {
+  className,
+}: Project & { className?: string }) {
   return (
-    <article className="sp-cell group flex flex-col p-7">
+    <article className={cn("sp-cell group flex flex-col p-7", className)}>
       <span
         aria-hidden
         className="absolute inset-x-0 top-0 h-[2px] opacity-70"
@@ -348,8 +385,22 @@ function ProjectCard({
           <img
             src={logo.src}
             alt={logo.alt}
-            className={cn("object-contain", logo.className ?? "h-8 w-12")}
+            className={cn(
+              "object-contain",
+              logo.className ?? "h-8 w-12",
+              logo.darkSrc && "dark:hidden",
+            )}
           />
+          {logo.darkSrc ? (
+            <img
+              src={logo.darkSrc}
+              alt={logo.alt}
+              className={cn(
+                "hidden object-contain dark:block",
+                logo.className ?? "h-8 w-12",
+              )}
+            />
+          ) : null}
         </span>
 
         <span className="inline-flex items-center gap-1.5 rounded-full border border-sp-line bg-sp-panel-strong px-2.5 py-1 font-mono text-[11px] text-fd-muted-foreground">
@@ -371,15 +422,17 @@ function ProjectCard({
       </p>
 
       <div className="mt-8 flex flex-wrap gap-2">
-        <a href={docsUrl} className={cn(primaryButton, "px-4")}>
-          <BookOpen className="size-3.5" />
-          Documentation
-        </a>
+        {docsUrl ? (
+          <a href={docsUrl} className={cn(primaryButton, "px-4")}>
+            <BookOpen className="size-3.5" />
+            Documentation
+          </a>
+        ) : null}
         <a
           href={`https://github.com/${repo}`}
           target="_blank"
           rel="noopener"
-          className={cn(secondaryButton, "px-4")}
+          className={cn(secondaryButton, "px-4", !docsUrl && "flex-1")}
         >
           <GitHubLogo className="size-3.5 dark:invert" />
           GitHub
