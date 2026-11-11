@@ -229,12 +229,7 @@ function Features() {
   return (
     <section className="sp-section sp-section--soft">
       <div className="mx-auto max-w-[1200px] px-6 py-20 md:py-28">
-        <SectionIntro
-          index="01"
-          label="Philosophy"
-          title="Why specta-rs?"
-          description="An ecosystem of Rust crates built for typesafety, developer experience and scale."
-        />
+        <SectionIntro index="01" label="Philosophy" title="Why specta-rs?" />
 
         <div className="sp-cells sm:grid-cols-2">
           {features.map((feature, index) => {
@@ -301,8 +296,8 @@ const projects: Project[] = [
     logo: {
       src: "/assets/tauri-specta.png",
       alt: "Tauri Specta logo",
-      className: "h-9 w-20",
-      frameClassName: "w-20",
+      className: "h-14 w-[123px]",
+      frameClassName: "w-[123px]",
     },
     accent: "#D69A00",
   },
@@ -348,12 +343,7 @@ function Projects() {
   return (
     <section className="sp-section">
       <div className="mx-auto max-w-[1200px] px-6 py-20 md:py-28">
-        <SectionIntro
-          index="02"
-          label="Ecosystem"
-          title="Our Projects"
-          description="A collection of powerful, type-safe tools designed to work seamlessly together"
-        />
+        <SectionIntro index="02" label="Ecosystem" title="Our Projects" />
 
         <div className="sp-cells grid-cols-1 sm:grid-cols-2 lg:grid-cols-6">
           {projects.map((project, index) => (
@@ -477,7 +467,7 @@ function Support() {
           title="Support development"
           description={
             <>
-              specta-rs is built and maintained by{" "}
+              maintained by{" "}
               <a
                 href="https://otbeaumont.me"
                 target="_blank"
@@ -486,7 +476,7 @@ function Support() {
               >
                 Oscar Beaumont
               </a>
-              . Sponsorships fund the time that goes into it.
+              !
             </>
           }
         />
@@ -616,7 +606,7 @@ function SectionIntro({
   index: string;
   label: string;
   title: string;
-  description: ReactNode;
+  description?: ReactNode;
 }) {
   return (
     <div className="mb-12 grid gap-5 md:mb-16 md:grid-cols-[1fr_minmax(0,380px)] md:items-end">
@@ -627,9 +617,11 @@ function SectionIntro({
         </p>
         <h2 className="sp-section__title mt-4">{title}</h2>
       </div>
-      <p className="max-w-[380px] text-[14.5px] leading-relaxed text-fd-muted-foreground md:justify-self-end md:text-right">
-        {description}
-      </p>
+      {description ? (
+        <p className="max-w-[380px] text-[14.5px] leading-relaxed text-fd-muted-foreground md:justify-self-end md:text-right">
+          {description}
+        </p>
+      ) : null}
     </div>
   );
 }
