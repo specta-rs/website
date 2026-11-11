@@ -594,7 +594,7 @@ const projects: Project[] = [
     logo: {
       src: gurafiAppIcon,
       alt: "Gurafi app icon",
-      className: "h-10 w-10",
+      className: "h-[54px] w-[54px]",
     },
     accent: "#D9822B",
   },
@@ -665,7 +665,7 @@ function ProjectCard({
         <div className="flex min-w-0 items-center gap-3.5">
           <span
             className={cn(
-              "flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-sp-line",
+              "flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-sp-line",
               logo.frameClassName,
             )}
             style={{ backgroundColor: `${accent}12` }}
