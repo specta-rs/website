@@ -21,6 +21,7 @@
     "pnpm-lock.yaml",
     "content/docs/rspc/*/integrations/axum.mdx",
     "content/docs/*/typescript-api",
-    "content/docs/gurafi"
+    "content/docs/gurafi",
+    "docs-sources"
   ]
 }

@@ -16,7 +16,8 @@
     "test": "node --test scripts/reference/*.test.mjs",
     "reference:pages": "node scripts/reference/pages.mjs",
     "reference:sync": "node scripts/reference/typescript.mjs --refresh && node scripts/reference/pages.mjs",
-    "deploy": "pnpm build && wrangler deploy"
+    "deploy": "pnpm build && wrangler deploy",
+    "docs:sync:gurafi": "node scripts/sync-gurafi-docs.mjs --source docs-sources/gurafi/docs --ref main"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

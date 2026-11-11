@@ -15,9 +15,9 @@ Add the crates for the layers you need. For an HTTP server:
 
 ```toml
 [dependencies]
-gurafi = "0.0.1"
-gql = "0.2.0"
-suku = "0.0.1"
+gurafi = "0.1.0"
+gql = "0.3.0"
+suku = "0.1.0"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 ```
 

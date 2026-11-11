@@ -11,10 +11,10 @@ Enable it per crate, or through the crate that re-exports the ones you use:
 
 ```toml
 [dependencies]
-gql = { version = "0.2", features = ["tracing"] }
-gurafi = { version = "0.0.1", features = ["tracing"] }
-suku = { version = "0.0.1", features = ["tracing"] }
-gurafi-relay = { version = "0.0.1", features = ["tracing"] }
+gql = { version = "0.3", features = ["tracing"] }
+gurafi = { version = "0.1.0", features = ["tracing"] }
+suku = { version = "0.1.0", features = ["tracing"] }
+gurafi-relay = { version = "0.1.0", features = ["tracing"] }
 ```
 
 Features propagate: `gurafi/tracing` also enables `gql/tracing`, `suku/tracing` enables
@@ -186,8 +186,10 @@ body, or `Authorization` header.
   otherwise have no field spans on those paths. With no subscriber the original fast paths run
   unchanged.
 - `fast_path` on `gql.field` means the field is *eligible* for the executor's leaf shortcut (no
-  resolver and no arguments). While field tracing is active the shortcut itself is bypassed, so
-  the span is the record of the field rather than of the shortcut.
+  asynchronous resolver, no synchronous property resolver and no arguments). While field tracing
+  is active the shortcut itself is bypassed, so the span is the record of the field rather than of
+  the shortcut. `resolver` is true when the field has either kind of resolver; a field with only a
+  synchronous property resolver still runs it inline, but it is not a leaf-shortcut property.
 - `gql.execute_operation` is not a separate span; operation kind and name are fields on the
   `gql.execute`/`gql.execute_prepared` root. Selection counts are available as `subfields` on each
   field span.

@@ -17,22 +17,21 @@ pnpm dev
 
 ## Project docs
 
-Project documentation can live in its own repository. Gurafi is the first source:
+Gurafi docs are sourced from the [`specta-rs/gurafi`](https://github.com/specta-rs/gurafi) Git submodule at `docs-sources/gurafi`.
 
-- `specta-rs/gurafi/docs` is the source of truth for `content/docs/gurafi`.
-- `.github/workflows/sync-gurafi-docs.yml` clones the public Gurafi repository hourly (and on `workflow_dispatch`), runs `scripts/sync-gurafi-docs.mjs`, and commits the regenerated `content/docs/gurafi` tree. The push redeploys the site.
-- Generated project docs are committed for local builds and search indexing, but should not be edited directly.
+- `.github/workflows/update-gurafi-submodule.yml` runs daily at 04:17 UTC and can be triggered manually with `workflow_dispatch`.
+- It fetches the latest `main`, checks whether `docs/` changed, runs `scripts/sync-gurafi-docs.mjs`, and commits the updated submodule plus the generated `content/docs/gurafi` tree. The push triggers the normal CI and Cloudflare deploy.
+- If Gurafi changed but `docs/` did not, the workflow exits without a commit.
+- Generated project docs are committed so local builds, search indexing and deployments do not require submodule initialization. Do not edit `content/docs/gurafi` directly.
 
-No repository secrets are required. The workflow reads Gurafi anonymously because it is
-public, and pushes with its own `GITHUB_TOKEN` (`contents: write`), which GitHub scopes to
-this repository. A cross-repository `workflow_dispatch` would need a PAT or a GitHub App
-instead, which we deliberately avoid; the cost of this approach is up to an hour of drift
-between a Gurafi docs change and the deployed site.
+Required repository secret:
 
-To sync locally:
+- `specta-rs/website`: `DOCS_SYNC_TOKEN` — a PAT with contents write access to this repository, used for checkout and the push so downstream CI and Cloudflare builds trigger.
+
+To sync locally after `git submodule update --init docs-sources/gurafi`:
 
 ```bash
-node scripts/sync-gurafi-docs.mjs --source ../gurafi/docs --ref main
+pnpm docs:sync:gurafi
 ```
 
 ## Formatting and linting

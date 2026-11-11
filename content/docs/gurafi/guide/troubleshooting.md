@@ -63,6 +63,38 @@ A field, object or interface `.auth(...)` rule denied the request. Check the con
 and the rule's scope. Field auth is skipped by a mock plugin that replaces the resolver; object
 and interface auth is not.
 
+## Resolver panics
+
+A panic inside a resolver is caught at the resolver boundary. It cannot unwind the request,
+abort the process, or end a subscription stream. Instead it becomes a normal field error:
+
+```json
+{
+  "message": "Internal server error",
+  "locations": [{ "line": 1, "column": 3 }],
+  "path": ["field"],
+  "extensions": { "code": "INTERNAL_SERVER_ERROR" }
+}
+```
+
+This covers field resolvers (object, root, list item, abstract typed fields), subscription setup
+resolvers, every per-event subscription resolver, `resolve_type` and `is_type_of`. Sibling fields
+still complete, and null propagation follows the field's declared nullability exactly as it does
+for a resolver that returns `Err`. If a subscription setup resolver panics, `subscribe` returns
+an error response; if a per-event resolver panics, that event produces an error response and the
+remaining events keep flowing.
+
+The panic payload and backtrace are never included in the response. The process-wide panic hook
+still runs, so your logging or crash reporter sees the original panic; fix the resolver rather
+than relying on the fallback error.
+
+`mask_internal` leaves the error untouched because it carries a code, so clients can branch on
+`INTERNAL_SERVER_ERROR` instead of treating it as a generic masked failure.
+
+Isolation uses `std::panic::catch_unwind` and therefore only works while the binary unwinds. A
+release profile with `panic = "abort"` aborts the process on the first panic before the engine can
+catch it. Keep the default unwind strategy if resolver panics must be contained.
+
 ## Deep queries
 
 `gql` enforces parser depth and execution depth limits. Configure them on `suku`:

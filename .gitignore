@@ -26,8 +26,6 @@ next-env.d.ts
 # Cloudflare
 .wrangler
 
-# docs source checkout used by .github/workflows/sync-gurafi-docs.yml
-/.gurafi
 
 # local CDP before/after captures
 .captures

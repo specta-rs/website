@@ -1,0 +1,5 @@
+[submodule "docs-sources/gurafi"]
+	path = docs-sources/gurafi
+	url = https://github.com/specta-rs/gurafi.git
+	branch = main
+	shallow = true

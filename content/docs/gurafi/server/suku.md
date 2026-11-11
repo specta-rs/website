@@ -17,10 +17,36 @@ The crate is split into three layers so that HTTP frameworks never leak into exe
    bytes and a context extractor. It produces either a buffered `HttpResponse` or an `SseResponse`
    with a byte stream. It has no dependency on Axum, Tokio or a socket.
 3. **`suku::axum`** — a builder that turns a `Server` into an `axum::Router`, reads the body with a
-   limit and adapts `HttpResult` to an Axum response.
+   limit and adapts `HttpResult` to an Axum response. The same route also accepts
+   `graphql-transport-ws` upgrades.
+4. **`suku::ws`** — a framework-neutral protocol driver over a text-message stream, so the
+   WebSocket state machine is tested without a socket.
 
 This is also why `suku` can be tested without a live server: the transport tests call `handle`
-directly, and the Axum tests use `tower::ServiceExt::oneshot`.
+directly, the protocol tests drive `ws::serve` over channels, and the Axum tests use
+`tower::ServiceExt::oneshot` (plus one real socket test for the upgrade itself).
+
+## Feature flags
+
+| Feature | Default | Purpose |
+| --- | --- | --- |
+| `axum` | yes | Axum router and authentication helper. |
+| `ws` | yes | WebSocket subscriptions via `graphql-transport-ws`; implies `axum`. |
+| `multipart` | yes | Multipart file uploads; uses `multer`. |
+| `vendored-graphiql` | no | Self-contained GraphiQL page with pinned browser assets. |
+| `tracing` | no | Request spans, and `gql/tracing`. |
+
+```toml
+# Axum and uploads, no WebSocket.
+suku = { version = "0.1.0", default-features = false, features = ["axum", "multipart"] }
+
+# Axum and WebSocket, no uploads.
+suku = { version = "0.1.0", default-features = false, features = ["axum", "ws"] }
+```
+
+`GraphQL::websocket(false)` is a runtime switch for one mount. When WebSocket support is absent (or
+switched off), an upgrade request falls through to ordinary `GET` handling rather than being
+misinterpreted.
 
 ## Building a server
 
@@ -139,8 +165,9 @@ attach codes to safe messages. When that policy is wrong for an application, sup
 formatter.
 
 The formatter is called synchronously, once per error, in response order. It must be
-`Send + Sync + 'static` and deterministic. Panics are not caught: they unwind through the
-execution future, or fail the subscription stream, exactly like a resolver panic.
+`Send + Sync + 'static` and deterministic. Panics in a formatter are not caught: they unwind
+through the execution future, or end the subscription stream. This is different from a resolver
+panic, which `gql` catches and turns into a coded `INTERNAL_SERVER_ERROR` field error.
 
 ## Persisted operations
 
@@ -232,10 +259,13 @@ does for normal subscriptions.
 
 - `GET` reads `query`, `variables`, `operationName` and `extensions` from the query string.
   `variables` and `extensions` are JSON-encoded objects.
-- `POST` requires `Content-Type: application/json` (the `charset` parameter is ignored). The body
-  is either one request object or a non-empty JSON array for a batch.
+- `POST` requires `Content-Type: application/json` (the `charset` parameter is ignored), or
+  `multipart/form-data` for a GraphQL multipart request when the `multipart` feature is enabled.
+  The JSON body is either one request object or a non-empty JSON array for a batch.
+- `GET` with `Upgrade: websocket` and `Sec-WebSocket-Protocol: graphql-transport-ws` is handled as
+  a WebSocket connection when the `ws` feature is enabled; see below.
 - Any other method returns `405 Method Not Allowed` with `Allow: GET, POST`.
-- A missing or non-JSON `Content-Type` returns `415 Unsupported Media Type`.
+- A missing or unsupported `Content-Type` returns `415 Unsupported Media Type`.
 
 ### Content negotiation
 
@@ -256,9 +286,33 @@ the request, so a protected endpoint does not expose its API surface anonymously
 request path as its endpoint, so it works at any mount point. Disable it with `.graphiql(false)`
 (Axum builder) or `HttpConfig::graphiql(false)`.
 
+The default page loads pinned React 18.3.1, ReactDOM 18.3.1 and GraphiQL 4.1.2 bundles from unpkg. Enable the
+`vendored-graphiql` feature to serve a self-contained page instead:
+
+```toml
+[dependencies]
+suku = { version = "0.1.0", features = ["vendored-graphiql"] }
+```
+
+The assets are pinned, MIT-licensed upstream browser builds committed under
+`crates/suku/src/http/vendor/` and inlined by `build.rs` into one HTML response. Inlining keeps the
+feature transport-agnostic: `http::handle` and the Axum adapter need no extra routes, and the page
+makes no network request other than the GraphQL call to its own path. This is the option for
+air-gapped and egress-restricted deployments, and for policies that forbid third-party script
+origins. Because scripts and styles are inline, a CSP for the page must allow inline script/style
+(or their hashes); `connect-src 'self'` is sufficient, and fonts are `data:` URIs.
+
+To update the vendored versions, edit the version constants in
+`crates/suku/src/http/vendor/update.sh`, run it, refresh `versions.txt`, and run
+`cargo test -p suku --features vendored-graphiql`. The default build stays CDN-backed and pins exact versions; check the
+versions in `crates/suku/src/http/graphiql.html` when updating them.
+
 `GET` may only execute **queries**. Mutations and subscriptions over GET are rejected with
 `405 Method Not Allowed`, which prevents cross-site request forgery against cookie-authenticated
 endpoints. Use `POST` for mutations and `POST` + `Accept: text/event-stream` for subscriptions.
+This restriction applies to ordinary HTTP; a WebSocket connection may execute queries, mutations
+and subscriptions because the upgrade is authenticated once and is not a simple cross-site
+request.
 
 GraphiQL itself makes requests with `Accept: */*`, so the page and the API can share one URL.
 
@@ -280,6 +334,169 @@ event: complete
 Validation or setup errors are returned as a JSON response before the stream starts (status 400),
 never as a broken stream. A subscription requested without `text/event-stream` receives a clear
 GraphQL error; subscriptions cannot be batched.
+
+### WebSocket (`graphql-transport-ws`)
+
+A `GET` with `Upgrade: websocket` on the GraphQL path is upgraded when it offers the
+`graphql-transport-ws` subprotocol. The same path keeps serving GraphiQL, `GET` queries and
+`POST` requests; the upgrade is detected from the standard headers before the HTTP handler runs.
+The legacy `subscriptions-transport-ws` protocol is not implemented. A client that offers only
+that name receives `400` instead of a connection that silently speaks a different protocol.
+
+The protocol is the modern [graphql-ws](https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md)
+message set:
+
+| Message | Direction | Meaning |
+| --- | --- | --- |
+| `connection_init` | client → server | Start the connection. Required once, first. |
+| `connection_ack` | server → client | Connection accepted. |
+| `ping` / `pong` | both | Liveness; the server echoes a ping's payload. |
+| `subscribe` | client → server | Execute `payload` with a unique `id`. |
+| `next` | server → client | One execution result for an id. |
+| `error` | server → client | Request/setup failure; terminates the id, no `complete`. |
+| `complete` | both | End the operation. Client-sent means cancel. |
+
+Queries and mutations produce one `next` and then `complete`. Subscriptions produce a `next` per
+event and then `complete` when the source stream ends. If the client sends `complete`, the task is
+aborted and no further messages are sent for that id; the id may then be reused. A second
+`subscribe` for an id that is still active closes the socket with `4409`.
+
+Errors that prevent any result (parse, validation, coercion, unknown operation, depth/complexity
+limits, prepared-query rejection) are `error` messages whose payload is the GraphQL `errors` array.
+Field errors are normal execution results and arrive in a `next` payload, exactly as they do over
+HTTP. The configured error formatter runs over both.
+
+Protocol close codes are the specification's: `4400` invalid message, `4401` operation before
+acknowledgement, `4408` initialisation timeout, `4409` duplicate id and `4429` duplicate
+`connection_init`. Message size, active-operation count and initialisation timeout are controlled
+by `suku::ws::WsConfig`:
+
+| Option | Default | Meaning |
+| --- | --- | --- |
+| `connection_init_timeout` | 10s | Close `4408` if no `connection_init` arrives; `None` waits forever. |
+| `max_operations` | 32 | Concurrent operations per connection; `0` is unlimited. |
+| `max_message_bytes` | server body limit | Maximum size of one JSON message; `0` disables the check. |
+
+Every operation is executed by the same `Server` methods as HTTP, so depth, complexity, breadth,
+timeout, prepared queries, authorization and error formatting all apply unchanged.
+
+**Context extraction runs once per connection, at the upgrade.** The request snapshot contains the
+usual headers, cookies and middleware extensions; `connection_init.payload` is not an
+authentication channel. Every operation on the connection reuses that `Context`. This is what
+prevents a client from skipping the authentication that guarded the HTTP upgrade. If credentials
+expire, enforce that per operation with `gql::Authorizer` or inside resolvers.
+
+WebSocket handshakes are not subject to CORS preflight, and browsers send cookies with them. When
+authentication uses cookies, validate `Origin` (or require a bearer token) in the extractor.
+Otherwise a hostile page can open a socket and run mutations with the user's cookies; the
+query-only restriction on HTTP `GET` does not apply to messages on an upgraded connection.
+
+**Choosing between WebSocket and SSE:** SSE is an ordinary HTTP response and survives proxies,
+CDNs and gateways that do not understand upgrades; it is the better default for a subscription-only
+client. WebSocket multiplexes many operations on one connection, allows cancellation and supports
+queries/mutations, but requires proxies to forward `Upgrade`/`Connection` headers and to allow
+long-lived idle sockets. Both use the same execution path, so switching transports does not change
+results or limits.
+
+### Multipart uploads
+
+With the default `multipart` feature, a `POST` with `Content-Type: multipart/form-data` implements
+the [GraphQL multipart request specification](https://github.com/jaydenseric/graphql-multipart-request-spec).
+The body contains three kinds of field, in this order:
+
+1. `operations` — the JSON request object (or array for a batch), with each file replaced by
+   `null`;
+2. `map` — a JSON object from a file field name to an array of operations paths;
+3. one file part per map entry, named by its key.
+
+```sh
+curl http://localhost:3000/graphql \
+  -F operations='{ "query": "mutation ($file: Upload!) { uploadAvatar(file: $file) }", "variables": { "file": null } }' \
+  -F map='{ "0": ["variables.file"] }' \
+  -F 0=@avatar.png
+```
+
+Files may be nested anywhere under `variables` (`variables.input.avatar`) and lists are indexed
+(`variables.files.0`). A batch prefixes every path with the request index
+(`0.variables.file`). One file may be mapped to several paths; the byte buffer is shared. Fields
+must be ordered as above, and file field names must be listed in `map` — an unknown or duplicate
+file part is rejected rather than ignored.
+
+Paths are validated strictly. Each must be rooted at `variables`, must already exist in the
+operations JSON and must currently be `null`. Only paths listed in `map` are written; nothing is
+written outside the request's variables. The filename and content type are metadata supplied by
+the client: `Upload::filename()` is never treated as a filesystem path.
+
+The parsed files are inserted into the coerced request as `gql::Value::External(gql::Upload)`
+(`suku::Upload` is a re-export). Execution stays independent of the transport; a schema defines an
+`Upload` scalar whose `parse_value` accepts the external value:
+
+```rust no_run
+# fn build(builder: &mut gql::SchemaBuilder) {
+let upload = gql::ScalarType::new("Upload")
+    .description("A file from a multipart request.")
+    .parse_value(|value| {
+        if value.as_external::<gql::Upload>().is_some() {
+            Ok(value.clone())
+        } else {
+            Err("Upload must come from a multipart request".to_owned())
+        }
+    });
+builder.add_type(upload.into());
+# }
+```
+
+A resolver downcasts it:
+
+```rust no_run
+use gql::{GraphQLError, ResolverContext, Upload, Value};
+
+# fn resolve(context: &ResolverContext<'_>) -> Result<Value, GraphQLError> {
+let upload = context
+    .args
+    .get("file")
+    .and_then(Value::as_external::<Upload>)
+    .ok_or_else(|| GraphQLError::new("Expected an upload"))?;
+// `upload.filename()`, `upload.content_type()` and `upload.bytes()` are available here.
+# let _ = upload;
+# Ok(Value::Null)
+# }
+```
+
+With `gurafi`, `Upload` is a ready-made input scalar. Use it directly in a derived args or input
+struct; the scalar is registered when the field or input is declared:
+
+```rust
+use gurafi::{Input, NoArgs, Upload};
+
+#[derive(Input)]
+struct UploadArgs {
+    file: Upload,
+}
+
+schema.mutation(|m| {
+    m.field_result("uploadAvatar", |args: UploadArgs, ctx: &Ctx| {
+        store_avatar(&args.file, ctx)
+    });
+});
+```
+
+The resolver receives the uploaded `Upload` value with `filename`, `content_type` and `bytes`
+accessors. `Upload` is input-only: direct output use is a compile error because a file has no GraphQL
+response representation. `as_dynamic` remains an unchecked escape hatch for runtime type
+references. `schema.scalar::<gurafi::Upload>()` is available when the
+scalar should appear in the public schema without a field signature.
+
+Authentication and body-size checks run before multipart parsing. `max_multipart_parts` (default
+32, including `operations` and `map`) limits the number of fields, and `max_body_bytes` limits the
+whole body. A request over the body limit is `413`; malformed JSON, a malformed `map`, a path
+outside `variables`, a non-`null` destination, an unknown file or a missing file is `400` with a
+normal GraphQL error body. Plain `application/json` requests are completely unaffected when
+`multipart` is disabled or unused.
+
+The entire body is buffered by the Axum adapter before parsing. This implements the request field
+structure but not streaming a file directly from the socket into a resolver; bound memory with
+`max_body_bytes` and the reverse proxy's own body limit.
 
 ### Limits
 
@@ -325,6 +542,12 @@ and a `cookie(name)` helper. Returning `Err(HttpError)` short-circuits the reque
 is parsed or a resolver runs; use `HttpError::unauthorized`, `forbidden`, `internal` or `new` to
 choose the status.
 
+For a WebSocket upgrade this extractor runs once, before the socket is accepted. A rejection is a
+normal HTTP response with the `HttpError` status (for example `401`) and a GraphQL error body.
+Every operation on the accepted connection reuses the context; the `connection_init` and
+`subscribe` messages cannot replace or extend it. Authenticate at the upgrade, and use
+`Server::authorizer` for per-operation checks.
+
 ### Authorization inside execution
 
 Authentication answers *who* the caller is. For field-level authorization, install a
@@ -341,7 +564,15 @@ variable-conversion errors). Batching subscriptions is not supported.
 
 - The crate forbids `unsafe` and its request paths avoid `unwrap`/`expect`/panics.
 - SSE is streamed chunk by chunk; the server never buffers an entire subscription.
+- WebSocket subscriptions multiplex operations per connection. Size, initialisation timeout and
+  active-operation count are bounded by `suku::ws::WsConfig`; execution limits are shared with
+  HTTP. Proxies must forward `Upgrade`/`Connection` and allow idle sockets for as long as the
+  longest subscription.
+- Uploads are buffered in memory up to `max_body_bytes`. Set the same limit on the reverse proxy
+  (`client_max_body_size` in nginx) and leave room for the JSON fields and multipart framing.
+  Files are never written to disk by the transport; a resolver decides where the bytes go.
 - Errors exposed to clients are GraphQL messages, not Rust error chains. Install
   `Server::format_error` (and consider `mask_internal`) to redact resolver details while keeping
-  `extensions.code`, locations and response paths.
+  `extensions.code`, locations and response paths. The formatter applies to WebSocket `error`
+  messages and `next` payloads too.
 - CORS, tracing, compression and TLS are intentionally left to the application's HTTP framework.

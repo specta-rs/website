@@ -48,7 +48,33 @@ A subscription returns any `futures::Stream`. Topics, filtering and backpressure
 stream implementation (`tokio::sync::broadcast`, `futures::channel`, `async-broadcast`, …), not
 to the schema.
 
-See [Subscriptions](operations#subscriptions).
+`gurafi` does not choose a transport. `suku` delivers subscriptions over server-sent events
+(`Accept: text/event-stream`) or the modern `graphql-transport-ws` WebSocket protocol; both run
+the same subscription stream.
+
+See [Subscriptions](operations#subscriptions) and
+[transporting subscriptions](operations#transporting-subscriptions).
+
+## Legacy WebSocket protocols
+
+`graphql-transport-ws` is implemented. The older `graphql-ws`/`subscriptions-transport-ws`
+protocol (`connection_init`/`start`/`data`/`stop`) is not. It has different message names, a
+different acknowledgement order and a different cancellation model; supporting both on one socket
+would make auth and limit behaviour ambiguous. A client that offers only the legacy subprotocol is
+rejected at the upgrade with `400`. Use a modern client, or add an adapter outside the crate.
+
+## Streaming multipart uploads
+
+`suku` implements the GraphQL multipart request *field structure*, but the Axum adapter buffers
+the request body before parsing it. A file is not streamed from the socket directly into a
+resolver, and resolvers receive the complete `gql::Upload` byte buffer. This keeps the parser
+framework-neutral and the body bounded by `max_body_bytes`.
+
+For very large uploads, use a separate signed-URL flow: accept object metadata through GraphQL,
+upload the bytes directly to object storage, then attach the stored key through a normal input.
+That also avoids holding the whole body in memory.
+
+See [Serving over HTTP](../server/suku#multipart-uploads).
 
 ## Grafast and SubGraph
 

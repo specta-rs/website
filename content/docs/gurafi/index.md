@@ -58,7 +58,7 @@ and derives rather than with generated resolver types.
 
 ## Server
 
-- [Serving over HTTP with `suku`](server/suku)
+- [Serving over HTTP with `suku`](server/suku) — HTTP, SSE, WebSocket subscriptions, multipart uploads and GraphiQL
 - [Error formatting and masking](server/suku#error-formatting-and-masking)
 
 ## Reference

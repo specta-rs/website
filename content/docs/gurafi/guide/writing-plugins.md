@@ -84,6 +84,12 @@ impl Plugin<Ctx> for RequireScope {
 A wrapping plugin sees the same `ResolverContext` as the resolver, including arguments and
 `ResolveInfo`. Keep the future `Send` and avoid holding a lock across an `await`.
 
+Wrapping a field materializes its resolver. A field declared with `expose!` starts on a
+synchronous, allocation-free property path; the first plugin whose `wrap_resolve` returns a
+different function converts it to the boxed path, because the wrapper needs a future to call. A
+plugin that only changes metadata (or whose `wrap_resolve` returns `next` unchanged) leaves the
+synchronous path in place.
+
 `wrap_subscribe` has the same shape for subscription setup resolvers. It wraps the function that
 creates the stream, not each event.
 

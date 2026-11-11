@@ -126,6 +126,33 @@ o.expose(expose!(Giraffe::keeper::nickname));             // field `nickname`
 The macro requires an object model; it is not available on root types. For a computed or
 transformed value, use a resolver.
 
+### The synchronous property path
+
+`expose!` installs a synchronous property resolver, not an async resolver. The executor calls it
+inline on both the leaf fast path and the general completion path, so reading an exposed property
+never allocates or polls a future. A query over exposed scalar properties therefore pays only for
+the value conversion (`String` clones allocate; `i32`, `f64`, `bool` and `ID` do not), not for the
+resolver.
+
+Descriptors and metadata never leave this path: `description`, `deprecated`, `complexity`,
+`directive`, `as_type`/`returns`, `nullable`/`non_null`, `nullable_items`/`non_null_items`,
+`as_abstract`, `as_object_ref` and `as_dynamic` only change the field definition. So does a plugin
+whose `field` hook changes metadata but whose `wrap_resolve` returns `next`.
+
+A boxed async resolver is installed only when an option needs a future to run:
+
+| Option | Why it boxes |
+| --- | --- |
+| `auth` | the guard is checked before the property read, inside the field future |
+| `auth_async` | the predicate is itself a future |
+| `validate::<A>()` | the validator runs after argument coercion, inside the field future |
+| a plugin that wraps `wrap_resolve` | the wrapper needs a future to call `next` |
+
+Object- and interface-level authorization also boxes the fields it reaches, because it wraps each
+field's resolver. The conversion happens once, at build time, so only the affected fields lose the
+synchronous path. `raw_field` stays resolver-free: it has neither kind of resolver, and its value
+comes from the raw object map.
+
 ## Field options
 
 `field`, `expose` and the root variants return `FieldConfig`. Options apply when the statement

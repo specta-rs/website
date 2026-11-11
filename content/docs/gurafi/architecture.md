@@ -45,8 +45,12 @@ explicit and stable:
   share across threads and requests.
 - **Values are explicit.** Execution produces `Value`, not JSON. Transports
   decide how to serialize; tests can assert structure without a JSON round trip.
-- **No hidden panics.** Malformed input, invalid schemas and resolver failures
-  become `GraphQLError`s. Public APIs do not use `unsafe`.
+- **No hidden panics.** Malformed input, invalid schemas and failed coercion
+  become `GraphQLError`s; the engine itself does not panic on them. A panic in
+  user resolver code (a field resolver, a subscription setup resolver,
+  `resolve_type` or `is_type_of`) is caught at that boundary and reported as a
+  field error with `extensions.code` `INTERNAL_SERVER_ERROR`, so it cannot unwind
+  a request or end a subscription stream. Public APIs do not use `unsafe`.
 - **Errors are data.** `GraphQLError` carries source locations, response paths
   and extensions, and implements `serde::Serialize` when the `serde` feature is
   enabled.
@@ -76,6 +80,11 @@ only reached by a valid operation with valid variables.
 - Introspection results are descriptors, not copies of the whole schema.
 - Complexity analysis runs before execution, so expensive operations are
   rejected before any resolver or database call.
+- Fields declared with `gurafi`'s `expose!` use a synchronous property resolver.
+  The executor calls it inline on the leaf fast path and the general completion
+  path, so a plain model read allocates no future (and no path clone or batch
+  slot). A field whose options need a future — auth, async auth, validation or a
+  `wrap_resolve` plugin — is converted to the boxed path once, at build time.
 
 ## `gurafi`: developer experience
 

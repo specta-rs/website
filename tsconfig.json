@@ -20,5 +20,5 @@
     "types": ["node", "react", "react-dom"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist", "doc_build"]
+  "exclude": ["node_modules", "dist", "doc_build", "docs-sources"]
 }

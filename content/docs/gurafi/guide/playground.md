@@ -20,6 +20,23 @@ Start the server and open `http://127.0.0.1:3000/graphql`. The editor sends requ
 path; a GET request with an HTML `Accept` header returns the GraphiQL page, while a POST runs the
 operation.
 
+## Offline and air-gapped deployments
+
+By default the page loads pinned React, ReactDOM and GraphiQL bundles from unpkg. In an air-gapped environment, or
+when a content security policy must not allow a CDN, enable the `vendored-graphiql` feature:
+
+```toml
+[dependencies]
+suku = { version = "0.1.0", features = ["vendored-graphiql"] }
+```
+
+The pinned browser bundles are compiled into the crate and inlined into a single HTML response, so
+there are no asset routes and the page makes no requests except to the GraphQL endpoint it came
+from. To keep the CSP strict, allow inline script and style (or their hashes) and keep
+`connect-src 'self'`; the stylesheet embeds fonts as `data:` URIs, so no font host is needed. The
+default build is unchanged and remains CDN-backed. See
+[GraphiQL assets](../server/suku#graphiql) for the update procedure.
+
 ## Headers and authentication
 
 GraphiQL lets you set request headers. Use them for `Authorization` or a development token. The
