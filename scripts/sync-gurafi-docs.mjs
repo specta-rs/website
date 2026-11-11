@@ -238,4 +238,34 @@ for (const file of files) {
 
 const written = await walk(target);
 await writeFile(path.join(target, "_meta.json"), sideMeta(written));
+
+// Brand assets travel with the docs too, but live outside the docs route:
+// favicons belong in public/, and the app icon is inlined for the project
+// switcher/landing card.
+for (const favicon of ["favicon.ico", "favicon.svg"]) {
+  const from = path.join(source, favicon);
+  if (await exists(from)) {
+    await writeFile(
+      path.join(process.cwd(), "public", favicon),
+      await readFile(from),
+    );
+  }
+}
+
+const appIcon = path.join(source, "..", "assets", "app-icon.svg");
+if (await exists(appIcon)) {
+  const base64 = Buffer.from(await readFile(appIcon)).toString("base64");
+  await writeFile(
+    path.join(process.cwd(), "theme/gurafi-icon.ts"),
+    `/**
+ * The Gurafi app icon, inlined as a data URL so the docs project switcher and
+ * the landing page can use the same asset without a public/ round trip.
+ * Source: specta-rs/gurafi assets/app-icon.svg
+ */
+export const gurafiAppIcon =
+  "data:image/svg+xml;base64,${base64}";
+`,
+  );
+}
+
 console.log(`Synced ${written.length} files from ${source} to ${target}`);

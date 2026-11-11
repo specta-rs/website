@@ -59,7 +59,7 @@ jobs:
         run: |
           git config user.name "specta-rs docs bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add content/docs/gurafi
+          git add content/docs/gurafi public/favicon.ico public/favicon.svg theme/gurafi-icon.ts
           if git diff --cached --quiet; then
             echo "Gurafi docs are already up to date."
             exit 0
