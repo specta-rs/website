@@ -66,7 +66,7 @@ in any signature.
 
 Rust derive restrictions:
 
-- Enums with data (tuple or struct variants) are not GraphQL enums. Use an object or a union.
+- Enums with data (tuple or struct variants) are not GraphQL enums. Use an object type or a union.
 - Generic enums are not supported.
 - The variant order is the declaration order and is preserved in SDL output.
 

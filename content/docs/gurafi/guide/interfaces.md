@@ -6,8 +6,8 @@ editUrl: "https://github.com/specta-rs/gurafi/blob/main/docs/guide/interfaces.md
 An interface declares fields that several object types share. Clients can select the interface
 and use inline fragments for concrete fields.
 
-Rust models stay concrete. The executor asks the object's generated `is_type_of` check (or the
-interface's `resolve_type` hook) which GraphQL type a value belongs to.
+Backing models stay concrete. The executor asks the object type's generated `is_type_of` check
+(or the interface's `resolve_type` hook) which GraphQL type a value belongs to.
 
 ## Define an interface
 
@@ -51,8 +51,8 @@ schema.object::<User>(|o| {
 ```
 
 At build time the matching interface field supplies the type, arguments, description,
-deprecation reason and directives when the object did not set them. The build verifies that the
-resolver's argument type matches the interface declaration.
+deprecation reason and directives when the object type did not set them. The build verifies that
+the resolver's argument type matches the interface declaration.
 
 Interfaces can implement other interfaces:
 
@@ -63,7 +63,7 @@ let resource = schema.interface("Resource", |i| {
 });
 ```
 
-An object that implements `Resource` also implements `Node`; there is no need to repeat the
+An object type that implements `Resource` also implements `Node`; there is no need to repeat the
 transitive interface.
 
 ## Abstract fields
@@ -91,9 +91,9 @@ q.field_ref_type::<User, NoArgs, _>(node.type_ref(), "node", |_, _| current_user
 
 ## Resolving the concrete type
 
-The generated `ObjectModel` implementation supplies `is_type_of`, so a model that travels as
-`Value::External` is recognised without extra code. Install `resolve_type` when the value is not a
-Rust model, for example a raw map or an enum-shaped DTO:
+The generated `ObjectModel` implementation supplies `is_type_of`, so a backing model that travels
+as `Value::External` is recognised without extra code. Install `resolve_type` when the value is
+not a Rust model, for example a raw map or an enum-shaped DTO:
 
 ```rust
 let node = schema.interface("Node", |i| {
@@ -123,7 +123,7 @@ let node = schema.interface("Node", |i| {
 });
 ```
 
-All applicable rules must allow the request: the object's own rule, the field's rule, and every
+All applicable rules must allow the request: the object type's own rule, the field's rule, and every
 implemented interface's rule. See [Scope auth](../plugins/scope-auth).
 
 ## Possible types

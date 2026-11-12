@@ -25,7 +25,7 @@ struct AppContext {
 }
 ```
 
-Use the context in an object:
+Use the context in an object type:
 
 ```rust
 #[derive(Object)]

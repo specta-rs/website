@@ -75,8 +75,9 @@ type Query {
 }
 ```
 
-Every later `node` call adds a type to the same dispatcher. The object implements `Node`; an
-`id: ID!` field returning the encoded global ID is added unless the object already declares one.
+Every later `node` call adds a type to the same dispatcher. The object type implements `Node`; an
+`id: ID!` field returning the encoded global ID is added unless the object type already declares
+one.
 
 Loaders:
 

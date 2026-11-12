@@ -8,7 +8,7 @@ does not declare shared fields; clients select every field with an inline fragme
 
 ## Define a union
 
-Use `#[derive(Union)]` on an enum whose variants each hold one object model:
+Use `#[derive(Union)]` on an enum whose variants each hold one backing model:
 
 ```rust
 use gurafi::{Object, Union};
@@ -38,7 +38,7 @@ let search = schema.union("SearchResult", |u| {
 });
 ```
 
-`#[derive(Union)]` knows the member models, which is how it can convert the Rust enum to a
+`#[derive(Union)]` knows the member backing models, which is how it can convert the Rust enum to a
 GraphQL value. `schema.union` records the GraphQL member list and any description or directives.
 
 ## Return a union
@@ -50,9 +50,9 @@ schema.query(|q| {
 });
 ```
 
-The resolver returns `SearchResult`. At execution time the active variant's model travels through
-the executor as `Value::External`, and the object's `is_type_of` check selects the concrete type.
-A union may therefore contain models that also implement interfaces.
+The resolver returns `SearchResult`. At execution time the active variant's backing model travels
+through the executor as `Value::External`, and the object type's `is_type_of` check selects the
+concrete type. A union may therefore contain backing models that also implement interfaces.
 
 `member::<M>()` records a reference to `M`; forgetting `schema.object::<M>(...)` is reported at
 build time with the missing type name.
@@ -128,9 +128,9 @@ name.
 
 ## Rules
 
-- Every variant holds exactly one object model (`User(User)`).
+- Every variant holds exactly one backing model (`User(User)`).
 - No generic enums.
-- The same model cannot appear in two variants.
+- The same backing model cannot appear in two variants.
 - Union members are object types only.
 - A union cannot appear in an input position.
 

@@ -19,7 +19,7 @@ be registered like any object; the error names the missing payload and the field
 
 ### "Object type `X` is registered by more than one Rust type"
 
-Two different models claim the same GraphQL name. Rename one with
+Two different backing models claim the same GraphQL name. Rename one with
 `#[graphql(name = "...")]`, or use `object_ref::<M>("Name")` for a deliberate runtime name.
 
 ### "Field `Type.field` inherits `T` from its interface, but its resolver returns `U`"
@@ -49,8 +49,8 @@ schema (`Option<T>`).
 ### "could not be serialized"
 
 A resolver returned a value whose Rust type does not match the declared GraphQL type. This often
-comes from `as_dynamic`/`field_ref_type` declaring a scalar while returning a model. The named
-type is checked at build time, but the runtime value must still match it.
+comes from `as_dynamic`/`field_ref_type` declaring a scalar while returning a backing model. The
+named type is checked at build time, but the runtime value must still match it.
 
 ### "Invalid arguments for ..."
 

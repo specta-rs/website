@@ -19,7 +19,7 @@ o.field("friends", |g: &Giraffe, _: NoArgs, _: &Ctx| g.friends.clone());
 // Vec<User> -> [User!]!
 ```
 
-The return type of the resolver is the source of truth. The object model does not need a field
+The return type of the resolver is the source of truth. The backing model does not need a field
 with the same name; a computed field can return any supported type.
 
 ## Arguments

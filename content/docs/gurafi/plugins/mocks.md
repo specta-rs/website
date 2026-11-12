@@ -35,7 +35,7 @@ schema.query(|q| {
 ```
 
 `mock(type_name, field_name, value)` and `mock_path("Type.field", value)` are equivalent.
-`value` accepts anything implementing `Into<gql::Value>`, including models via
+`value` accepts anything implementing `Into<gql::Value>`, including backing models via
 `gql::Value::external`.
 
 ## What a mock replaces

@@ -5,7 +5,7 @@ editUrl: "https://github.com/specta-rs/gurafi/blob/main/docs/guide/fields.md"
 
 Fields for object and interface types are declared on the builder. Each field carries its
 resolver, arguments, GraphQL type and options in one place. The same options apply to root
-fields, which omit the model argument.
+fields, which omit the backing model argument.
 
 ## Scalar fields
 
@@ -30,8 +30,8 @@ type instead of a string type name.
 
 ## Resolver shapes
 
-Object fields receive the parent model, their arguments and the request context. Four shapes
-cover sync/async and fallible/infallible resolvers:
+Object fields receive the parent backing model, their arguments and the request context. Four
+shapes cover sync/async and fallible/infallible resolvers:
 
 | Method | Sync/async | Failure |
 | --- | --- | --- |
@@ -48,7 +48,7 @@ o.field_with_info("path", |g: &Giraffe, _: NoArgs, _: &Ctx, info| {
 });
 ```
 
-Root fields use the same methods without the model argument:
+Root fields use the same methods without the backing model argument:
 
 ```rust
 schema.query(|q| {
@@ -113,7 +113,7 @@ o.field_result("friends", |g: &Giraffe, args: FriendsArgs, _: &Ctx| {
 `Args` produces arguments on the field; it does not register a named input type. See [Using
 args](args) and [Input objects](inputs).
 
-## Exposing fields from the model
+## Exposing fields from the backing model
 
 `expose!` reads a property and infers both the field name and the GraphQL type:
 
@@ -123,7 +123,7 @@ o.expose(expose!(Giraffe::height_in_meters as "height")); // field `height`
 o.expose(expose!(Giraffe::keeper::nickname));             // field `nickname`
 ```
 
-The macro requires an object model; it is not available on root types. For a computed or
+The macro requires a backing model; it is not available on root types. For a computed or
 transformed value, use a resolver.
 
 ### The synchronous property path
@@ -180,7 +180,7 @@ o.expose(expose!(Giraffe::height))
 | `nullable_items` / `non_null_items` | change list-item nullability |
 | `directive(AppliedDirective)` | apply a custom directive |
 
-Type-level authorization is declared on the object or interface and inherited by every field.
+Type-level authorization is declared on the object type or interface and inherited by every field.
 See [Scope auth](../plugins/scope-auth).
 
 ## Adding fields to an existing type

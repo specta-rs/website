@@ -136,12 +136,12 @@ The generated type names are:
 - `<Parent><Field>Success`, for example `MutationCreateUserSuccess`
 - `<Parent><Field>Result`, for example `MutationCreateUserResult`
 
-`<Parent>` is the object's actual GraphQL name, including one created with
+`<Parent>` is the object type's actual GraphQL name, including one created with
 `Schema::object_ref`, so `AdminUser.createUser` produces `AdminUserCreateUserSuccess`. The field
 name is PascalCased: `createUser` becomes `CreateUser`, and `create_user` also becomes
 `CreateUser`.
 
-Reopening an object or building the same schema more than once is idempotent: the generated
+Reopening an object type or building the same schema more than once is idempotent: the generated
 types are identified by name and declaration, not appended again. A second declaration of the
 same field is still the usual duplicate-field build error.
 
@@ -165,13 +165,13 @@ type QuerySearchSuccess {
 - A custom `OutputType` can declare an interface or another abstract type, and the value it
   converts to still resolves normally.
 
-Only an `Option` loosens the success payload's non-null marker. A bare object model is nullable
+Only an `Option` loosens the success payload's non-null marker. A bare object type is nullable
 as a field type in `gurafi` generally, but a result union's success payload is present whenever
 the resolver returns `Ok`, so `data` is non-null.
 
 ## Registering error payloads
 
-Every variant holds one object model. The derive validates the enum's shape at compile time:
+Every variant holds one backing model. The derive validates the enum's shape at compile time:
 
 ```rust
 #[derive(ErrorUnion)]
@@ -204,7 +204,7 @@ twice, so that last rule is enforced before the schema is built.
 ## Errors, codes and masking
 
 A typed error payload is data, not a GraphQL error, so it is never masked by error formatters. The
-payload is whatever object model you define; a `code` field is the usual way to give clients a
+payload is whatever backing model you define; a `code` field is the usual way to give clients a
 stable discriminator:
 
 ```rust
@@ -236,7 +236,7 @@ Do not put internal diagnostics in an error payload just because it is typed.
 | `field_result_union::<T, E, ...>` | `<Parent><Field>Success` and `<Parent><Field>Result` |
 | resolver returning `Result<T, E>` | `Ok(T)` as `data`, `Err(E)` as the matching payload |
 
-Error payloads are registered like any other object, so their fields, authorization and
+Error payloads are registered like any other object type, so their fields, authorization and
 resolvers live with the rest of the schema. A missing payload is a build error rather than an
 execution-time surprise.
 
@@ -244,10 +244,10 @@ execution-time surprise.
 
 - The error enum cannot be generic. Use a concrete enum and concrete payload objects.
 - Error payload types are used under their `ObjectModel::NAME`. A runtime-named error payload
-  (`object_ref`) is not picked up automatically; register it under the name the enum's payload
+  (`object_ref`) is not picked up automatically; register it under the name the enum's backing
   model declares, or wrap the runtime-specific data in a concrete derived object.
 - Generated success objects are merged into the schema before build-time plugins run, so field
   metadata plugins see the `data` field. They do not participate in object-level authorization
-  declared on the parent, because they are not a user model.
+  declared on the parent, because they are not a user-defined backing model.
 - A field exposes exactly one success type per declaration. To return two different success
   shapes, use two fields or put the alternatives in `T` (for example a derived union).

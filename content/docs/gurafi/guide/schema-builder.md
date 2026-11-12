@@ -87,7 +87,8 @@ field, can mutate field metadata, and can wrap resolvers and subscriptions. See
 
 ## Runtime-named types
 
-Most GraphQL names are known from the Rust type. A reference separates the name from the model:
+Most GraphQL names are known from the Rust type. A reference separates the name from the backing
+model:
 
 ```rust
 let admin = schema.object_ref::<User>("AdminUser");
@@ -102,9 +103,9 @@ let search = schema.union_ref("SearchResult");
 schema.implement_union(&search, |u| { u.member::<User>(); });
 ```
 
-`ObjectRef<M>`, `InterfaceRef` and `UnionRef` are `Clone` but not `Copy`. The same name and model
-merge; a different Rust model claiming a name is a build error. Runtime names must match the
-GraphQL `Name` grammar; an invalid name is a build error.
+`ObjectRef<M>`, `InterfaceRef` and `UnionRef` are `Clone` but not `Copy`. The same GraphQL name
+and backing model merge; a different backing model claiming a name is a build error. Runtime names
+must match the GraphQL `Name` grammar; an invalid name is a build error.
 
 Return a runtime-named object:
 

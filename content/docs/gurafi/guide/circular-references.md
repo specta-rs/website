@@ -9,7 +9,7 @@ field may return a type registered later. Rust still needs a finite layout, whic
 
 ## Output cycles
 
-If two models contain each other, box one side:
+If two backing models contain each other, box one side:
 
 ```rust
 use gurafi::Object;
@@ -28,7 +28,7 @@ struct Post {
 ```
 
 `Box<T>` implements `OutputType` by forwarding to `T`, so `author` is still the `User!` GraphQL
-type. `Arc<T>` works the same way when the model is shared:
+type. `Arc<T>` works the same way when the backing model is shared:
 
 ```rust
 use std::sync::Arc;
@@ -91,8 +91,9 @@ schema.object::<User>(|o| {
 });
 ```
 
-The field declares the abstract return type with `as_abstract`; the concrete values are models.
-The executor uses `is_type_of` (or an explicit `resolve_type`) to select the type per value.
+The field declares the abstract return type with `as_abstract`; the concrete values are backing
+models. The executor uses `is_type_of` (or an explicit `resolve_type`) to select the type per
+value.
 
 ## Avoid unbounded runtime recursion
 

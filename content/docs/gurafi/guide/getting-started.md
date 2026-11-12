@@ -5,9 +5,10 @@ editUrl: "https://github.com/specta-rs/gurafi/blob/main/docs/guide/getting-start
 
 Build a schema, run a query, and serve it over HTTP.
 
-In `gurafi`, a GraphQL schema is ordinary Rust code. You derive a model, add fields with
-resolvers, and call `build()` to get a `gql::Schema`. There is no generated resolver file and no
-separate schema definition to keep in sync.
+In `gurafi`, a GraphQL schema is ordinary Rust code. Each object type has a **backing model**: a
+plain Rust type whose values its resolvers return. You derive `Object` on that model, add fields
+with resolvers, and call `build()` to get a `gql::Schema`. There is no generated resolver file and
+no separate schema definition to keep in sync.
 
 ## Install
 
@@ -39,10 +40,11 @@ schema.query(|q| {
 let schema: gql::Schema = schema.build().expect("valid schema");
 ```
 
-`Schema::<()>` means the schema has no request context. The root field takes no model argument:
-root resolvers receive `(Args, &Ctx)`. `NoArgs` is the empty arguments type.
+`Schema::<()>` means the schema has no request context. The root field takes no backing model
+argument: root resolvers receive `(Args, &Ctx)`. `NoArgs` is the empty arguments type.
 
-A model type is usually the first argument of an object field:
+Most schemas also expose application data. Derive `Object` on a Rust type to make it the backing
+model of a GraphQL object type:
 
 ```rust
 use gurafi::{NoArgs, Object, Schema, expose};
@@ -69,6 +71,11 @@ schema.query(|q| {
 
 let schema = schema.build().expect("valid schema");
 ```
+
+The struct is the backing model; `Giraffe` in the schema is the object type. They share a name by
+default, but they are separate declarations: the object type is what clients see, and the backing
+model is what your resolvers read and return. That model is the first argument of the object's
+field resolvers.
 
 Fields are declared explicitly. That keeps the resolver, argument type, authorization and
 complexity estimate next to each other. `expose!` is the shortcut for a field that reads a Rust
@@ -130,7 +137,8 @@ When you have a request-specific value, replace `Context::empty()` with your own
 
 ## Continue building
 
-- [Objects](objects) explains models, field declarations and reopening types across modules.
+- [Objects](objects) explains backing models, field declarations and reopening types across
+  modules.
 - [Fields](fields) covers sync/async resolvers, lists, nullability and field options.
 - [Using args](args) shows how a Rust struct becomes a field's arguments.
 - [Context](context) connects the server request to your resolvers.

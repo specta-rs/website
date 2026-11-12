@@ -31,8 +31,8 @@ schema.query(|q| {
 });
 ```
 
-The resolver's job is to call the service, map its error and return the model. Authorization,
-argument validation and type conversion are already handled by the builder.
+The resolver's job is to call the service, map its error and return the backing model.
+Authorization, argument validation and type conversion are already handled by the builder.
 
 ## Loaders for related data
 

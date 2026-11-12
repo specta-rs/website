@@ -30,7 +30,7 @@ Lists are non-null by default. The item type follows the Rust item type.
 
 Rust's idiomatic mapping is driven by `Option`: a non-`Option` value cannot be null, so it is
 non-null; `Option<T>` is nullable. Use `Option<T>` whenever the resolver can return `None`, and
-`non_null()` only when the model type itself requires it. The compiler and the build-time
+`non_null()` only when the backing model type itself requires it. The compiler and the build-time
 checks keep the GraphQL wrapper honest.
 
 ## Explicit overrides
@@ -68,7 +68,7 @@ Input fields use the same mapping:
 
 If a non-null field resolves to `null`, the executor propagates null to the nearest nullable
 parent, exactly as the GraphQL specification requires. Errors are collected at the field's path.
-Use `Option` in the model to make `null` a legal result rather than an error.
+Use `Option` in the backing model to make `null` a legal result rather than an error.
 
 ## Next
 

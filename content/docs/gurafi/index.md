@@ -4,13 +4,23 @@ description: "Rust crates for building GraphQL servers."
 editUrl: "https://github.com/specta-rs/gurafi/blob/main/docs/README.md"
 ---
 
-`gurafi` is a type-safe, code-first GraphQL stack for Rust. Rust types describe the schema,
-`#[derive]` macros provide the wiring, and the resulting `gql::Schema` is a normal GraphQL
-schema that can be executed directly or served over HTTP.
+`gurafi` is a type-safe, code-first GraphQL stack for Rust. Each GraphQL object type has a
+**backing model** — the Rust type whose values its resolvers return. Rust types describe the
+schema, `#[derive]` macros connect them to GraphQL types, and the resulting `gql::Schema` is a
+normal GraphQL schema that can be executed directly or served over HTTP.
 
 The documentation follows a progressive learning path: start with a schema and a query, then add
-models, fields, arguments and context. Each concept is expressed with Rust types, builder methods
-and derives rather than with generated resolver types.
+object types and their backing models, fields, arguments and context. Each concept is expressed
+with Rust types, builder methods and derives rather than with generated resolver types.
+
+## Terminology
+
+- An **object type** is the GraphQL type in the schema. Clients select it in a query.
+- A **backing model** (usually shortened to **model**) is the Rust type a resolver returns for
+  that object type. It holds application data and does not have to match the GraphQL shape.
+
+They are related but not interchangeable: one is the public API contract, the other is your Rust
+data. When a page says **model**, it means the backing model.
 
 ## Start here
 

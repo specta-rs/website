@@ -94,8 +94,8 @@ field names are build errors, so the split cannot silently overwrite a field.
 - `mod.rs` — `pub fn register(schema: &mut Schema<Ctx>)`.
 - Keep the context type in one module and import it as `crate::schema::Ctx`.
 
-There is no rule that a GraphQL type must be registered where its model is defined. Register it
-once and reopen it from the modules that add fields.
+There is no rule that a GraphQL type must be registered where its backing model is defined.
+Register it once and reopen it from the modules that add fields.
 
 ## Reopening versus duplicate definitions
 

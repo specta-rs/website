@@ -34,7 +34,7 @@ explicit and stable:
 | `introspection` | `__schema`, `__type`, `__typename` and the introspection type system |
 | `complexity` | Static query cost and depth estimation |
 | `sdl` | SDL printing |
-| `value` | Runtime input/result values, including opaque `External` model values |
+| `value` | Runtime input/result values, including opaque `External` backing model values |
 
 ### Design decisions
 
@@ -54,7 +54,7 @@ explicit and stable:
 - **Errors are data.** `GraphQLError` carries source locations, response paths
   and extensions, and implements `serde::Serialize` when the `serde` feature is
   enabled.
-- **Opaque model values.** `Value::External` lets a type-safe layer pass its own
+- **Opaque backing model values.** `Value::External` lets a type-safe layer pass its own
   Rust models (`User`, `Post`, …) between resolvers. The engine never tries to
   serialize them.
 
@@ -82,9 +82,9 @@ only reached by a valid operation with valid variables.
   rejected before any resolver or database call.
 - Fields declared with `gurafi`'s `expose!` use a synchronous property resolver.
   The executor calls it inline on the leaf fast path and the general completion
-  path, so a plain model read allocates no future (and no path clone or batch
-  slot). A field whose options need a future — auth, async auth, validation or a
-  `wrap_resolve` plugin — is converted to the boxed path once, at build time.
+  path, so a plain backing model read allocates no future (and no path clone or
+  batch slot). A field whose options need a future — auth, async auth, validation
+  or a `wrap_resolve` plugin — is converted to the boxed path once, at build time.
 
 ## `gurafi`: developer experience
 
