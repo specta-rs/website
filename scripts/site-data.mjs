@@ -15,6 +15,7 @@ const repos = [
   "specta-rs/tauri-specta",
   "specta-rs/gurafi",
   "specta-rs/fsk",
+  "specta-rs/besu",
 ];
 
 const [sponsors, stars, downloads] = await Promise.all([

@@ -8,3 +8,8 @@
 	url = https://github.com/specta-rs/fsk.git
 	branch = main
 	shallow = true
+[submodule "docs-sources/besu"]
+	path = docs-sources/besu
+	url = https://github.com/specta-rs/besu.git
+	branch = main
+	shallow = true

@@ -19,6 +19,7 @@ const crates = [
   "gql",
   "suku",
   "fsk",
+  "besu",
 ];
 
 const fallback = 10_757_635;

@@ -50,6 +50,16 @@ export const projects: Project[] = [
     frameClassName: "w-10",
   },
   {
+    id: "besu",
+    name: "Besu",
+    description: "A typesafe, async, SQL query builder for Rust",
+    icon: "/assets/besu.svg",
+    // The mark carries the artwork's own rounded frame, so it fills the
+    // picker's icon column exactly.
+    className: "h-[38px] w-[38px] max-w-none shrink-0",
+    frameClassName: "w-10",
+  },
+  {
     id: "rspc",
     name: "rspc",
     description: "A framework for building typesafe web backends in Rust",

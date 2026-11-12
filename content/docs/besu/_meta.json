@@ -1,0 +1,110 @@
+[
+  {
+    "type": "file",
+    "name": "index",
+    "label": "Overview"
+  },
+  {
+    "type": "section-header",
+    "label": "Get started"
+  },
+  "get-started/sqlite",
+  "get-started/postgresql",
+  "get-started/mysql",
+  {
+    "type": "section-header",
+    "label": "Schema"
+  },
+  "schema/declaration",
+  "schema/relations",
+  "schema/indexes-constraints",
+  "schema/views",
+  "schema/sequences",
+  "schema/schemas",
+  "schema/rls",
+  "schema/extensions",
+  "schema/column-types/postgresql",
+  "schema/column-types/mysql",
+  "schema/column-types/sqlite",
+  {
+    "type": "section-header",
+    "label": "Queries"
+  },
+  "queries/select",
+  "queries/insert",
+  "queries/update",
+  "queries/delete",
+  "queries/operators",
+  "queries/joins",
+  "queries/aliases",
+  "queries/comments",
+  "queries/sql",
+  "queries/query-utils",
+  {
+    "type": "section-header",
+    "label": "Advanced"
+  },
+  "advanced/transactions",
+  "advanced/batch-api",
+  "advanced/ctes",
+  "advanced/subqueries",
+  "advanced/set-operations",
+  "advanced/generated-columns",
+  "advanced/dynamic-query-building",
+  "advanced/custom-types",
+  "advanced/seeding",
+  "advanced/cache",
+  "advanced/read-replicas",
+  {
+    "type": "section-header",
+    "label": "Connect"
+  },
+  {
+    "type": "file",
+    "name": "connect/overview",
+    "label": "Overview"
+  },
+  "connect/sqlite",
+  "connect/postgresql",
+  "connect/mysql",
+  {
+    "type": "section-header",
+    "label": "Migrations"
+  },
+  "migrations/overview",
+  "migrations/pull",
+  "migrations/generate",
+  "migrations/push",
+  "migrations/migrate",
+  "migrations/check",
+  "migrations/custom",
+  "migrations/studio",
+  "migrations/config",
+  {
+    "type": "section-header",
+    "label": "Reference"
+  },
+  {
+    "type": "file",
+    "name": "overview",
+    "label": "What Besu is"
+  },
+  "comparison",
+  "drivers",
+  "parity",
+  "performance",
+  "roadmap",
+  "architecture",
+  {
+    "type": "custom-link",
+    "label": "GitHub",
+    "link": "https://github.com/specta-rs/besu",
+    "icon": "/assets/icons/github.svg"
+  },
+  {
+    "type": "custom-link",
+    "label": "crates.io",
+    "link": "https://crates.io/crates/besu",
+    "icon": "/assets/icons/crates-io.png"
+  }
+]
