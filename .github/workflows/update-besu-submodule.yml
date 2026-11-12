@@ -16,19 +16,13 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: Require docs sync token
-        env:
-          TOKEN: ${{ secrets.DOCS_SYNC_TOKEN }}
-        run: |
-          if [ -z "$TOKEN" ]; then
-            echo "::error::DOCS_SYNC_TOKEN is not configured in this repository."
-            exit 1
-          fi
-
       - name: Checkout website
         uses: actions/checkout@v7
         with:
-          token: ${{ secrets.DOCS_SYNC_TOKEN }}
+          # A `DOCS_SYNC_TOKEN` is only needed if the push should start other
+          # workflows; the repository token can commit the synced docs on its
+          # own, so the sync does not stop when that secret is absent.
+          token: ${{ secrets.DOCS_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
           fetch-depth: 0
           submodules: recursive
 
