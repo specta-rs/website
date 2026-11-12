@@ -11,34 +11,22 @@ setup call; everything else is a per-platform prerequisite.
 
 | Platform | Requirement                                         | Setup                                                  |
 | -------- | --------------------------------------------------- | ------------------------------------------------------ |
-| macOS    | `FSK.app` installed and its extension enabled       | `fsk::install()`, then `fsk::launch_app()`             |
+| macOS    | `FSK.app` installed and its extension enabled       | `fsk::ensure_authorization()` installs and opens it    |
 | Windows  | Projected File System (`Client-ProjFS`) enabled     | Windows Features, or `ensure_authorization()` opens it |
 | Linux    | FUSE available and `/dev/fuse` usable by the caller | Install `fuse3` and fix device permissions             |
 
 ## Check before you mount
 
-`authorization_status()` answers whether the host can mount now:
+`authorization_status()` answers whether the host can mount now. Most applications should let
+`wait_for_authorization()` run the setup flow and block until the answer is yes:
 
 ```rust
-use fsk::AuthorizationStatus;
+use std::time::Duration;
 
-match fsk::authorization_status()? {
-    AuthorizationStatus::Authorized => {}
-    AuthorizationStatus::NotInstalled => {
-        // macOS only. Blocks while it downloads and verifies the release.
-        #[cfg(target_os = "macos")]
-        {
-            let outcome = fsk::install()?;
-            println!("FSK.app: {outcome:?}");
-            fsk::launch_app()?;
-        }
-    }
-    AuthorizationStatus::NeedsApproval => {
-        // Opens FSK.app on macOS and optionalfeatures.exe on Windows.
-        // Linux has no UI, so the error names the requirement.
-        let error = fsk::ensure_authorization().unwrap_err();
-        eprintln!("setup required: {error}");
-    }
+fn wait_for_platform() -> std::io::Result<()> {
+    // Installs FSK.app on macOS when needed, opens the setup UI, and returns
+    // as soon as the extension is enabled.
+    fsk::wait_for_authorization(Duration::from_secs(600))
 }
 ```
 
@@ -48,16 +36,19 @@ match fsk::authorization_status()? {
 | `NeedsApproval` | The component exists but a user action is needed | "enable FSK in System Settings …" / FUSE / ProjFS, depending on platform |
 | `Authorized`    | The host can mount                               | `None`                                                                   |
 
-`ensure_authorization()` never installs anything. `NotInstalled` returns
-`io::ErrorKind::NotFound`; `NeedsApproval` opens the platform UI and returns
-`io::ErrorKind::PermissionDenied`. That error is an instruction to run the command again after
-the user acts, not a failure of your code.
+For finer control, `authorization_status()` plus `ensure_authorization()` is the non-waiting
+form. `ensure_authorization()` installs the matching macOS app when it is missing, launches it,
+and opens the platform setup UI. It returns `io::ErrorKind::PermissionDenied` while setup is
+still required; that error is an instruction to run the command again after the user acts, not
+a failure of your code. Installation errors are propagated unchanged. Use `install()` and
+`launch_app()` directly only when you want to control each step.
 
 On other targets `authorization_status()` returns `io::ErrorKind::Unsupported`.
 
 ## macOS
 
-`FSK.app` is a small setup utility that hosts the FSKit extension. It is installed per user at:
+The current flow is exercised on macOS 26 and macOS 27. `FSK.app` is a small setup utility that
+hosts the FSKit extension. It is installed per user at:
 
 ```text
 ~/Library/Application Support/dev.specta.fsk/FSK.app
@@ -80,25 +71,41 @@ fn install_app() -> std::io::Result<()> {
 }
 ```
 
-`install()` returns `AppInstallOutcome::{AlreadyInstalled, Installed, Updated}`.
+`install()` returns `AppInstallOutcome::{AlreadyInstalled, Installed, Updated}`. Use
+`install_with_progress()` when the caller wants to show the download, verification and
+installation phases.
 `uninstall()` returns `io::Result<bool>`, where `true` means a copy was removed. With the default
 destination, both also remove a legacy machine-wide `/Applications/FSK.app`; with
 `FSK_APP_PATH`, they leave it alone.
 
 Copying the bundle into place does not register the extension. It must be launched once, which
-is what `launch_app()` does. After that, the user enables it under **System Settings → General →
-Login Items & Extensions → File System Extensions**. macOS exposes no API for the switch, so this
-is always a manual, per-user action.
+is what `launch_app()` does. `ensure_authorization()` performs both steps: it installs the
+compatible release when the app is missing, then launches it. After that, the user enables it
+under **System Settings → General → Login Items & Extensions → File System Extensions**. macOS
+exposes no API for the switch, so this is always a manual, per-user action.
 
-### Version matching
+Approval is tied to the installed location, not just the bundle identifier. Migrating a
+machine-wide `/Applications/FSK.app` to the per-user directory therefore requires the switch to
+be enabled again, even when both apps speak the same protocol major version. `install()`
+terminates a running legacy copy first, so it cannot survive the upgrade as an orphaned
+process.
 
-The installed app must match the crate version exactly. `authorization_status()` compares
-`CFBundleShortVersionString` with the crate version and the bundle identifier with
-`dev.specta.fsk`.
+`launch_app()` validates the app at the destination before opening it. If the copy is missing or
+speaks a different protocol major, it returns an error instead of launching a stale app; call
+`install()` first (or use `ensure_authorization()`).
 
-Because the match is exact, installing an SDK built against an older release can downgrade an app
-installed by a newer one. A git build between releases reports the last released version and
-treats that release as current. Pin your dependency version if several tools share one machine.
+### Protocol compatibility
+
+The installed app does not need to share the crate's marketing version. `authorization_status()`
+reads `FSKProtocolMajor`/`FSKProtocolMinor` from the embedded extension's `Info.plist` and accepts
+any app with the same protocol major version and the bundle identifier `dev.specta.fsk`. Missing
+keys mean the app predates protocol metadata and speaks legacy protocol 1.0.
+
+Because the check is protocol-based, an app whose protocol major matches is reused regardless of
+its marketing version, and a newer SDK reuses an older app with the same major; both sides use the
+lower of their advertised minor versions. When the major version differs, the app is reported as
+not installed and `install()` replaces it. A git build between releases still downloads the last
+released version, so pin your dependency version if several tools share one machine.
 
 ### Options and environment
 
@@ -119,9 +126,9 @@ Settings. If a future macOS refuses to register extensions outside Applications,
 serialised in-process and across processes, and an interrupted install is recovered from its
 backup before any download.
 
-Release assets are validated before use: version, bundle identifier, `codesign --verify --deep
---strict`, signing identity `dev.specta.fsk` with team `68994Z5PT3`, and `spctl --assess --type
-execute`.
+Release assets are validated before use: protocol major version, bundle identifier, `codesign
+--verify --deep --strict`, signing identity `dev.specta.fsk` with team `68994Z5PT3`, and `spctl
+--assess --type execute`.
 
 ## Windows
 

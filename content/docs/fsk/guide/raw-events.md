@@ -113,7 +113,7 @@ NativeRequest::MacOS {
 little-endian `u64`, or `0` when the payload is shorter. `flags` is reserved and currently always
 `0`. `payload` is the whole IPC request body. `buffer` is always `None`, because FSKit runs out of
 process and no read or write data crosses the bridge. The payload layout is bridge-internal and
-may change between SDK versions; prefer the portable operations.
+changes incompatibly only when `PROTOCOL_MAJOR` changes; prefer the portable operations.
 
 ### Linux
 

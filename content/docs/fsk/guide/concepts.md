@@ -102,6 +102,16 @@ Timestamps come from `now_ns()`, which returns nanoseconds since the Unix epoch.
 is also `modified_ns`. Set `accessed_ns` on reads if you want atime to move, or leave it alone
 and accept a fixed value.
 
+`Metadata::file(inode, parent, size, mode)` and `Metadata::directory(inode, parent, mode)`
+build the common cases with the current user's ownership and timestamps. Use
+`current_uid()`/`current_gid()` when the values need to be explicit.
+
+The kernel caches file data. A backend whose bytes change without a `write` — a live view, a
+polled remote file, a generated file — must update `modified_ns` (and `generation` when the
+object changes identity) whenever it reports the change. On macOS, FSKit keeps serving cached
+pages until an attribute changes, so a generated file with a constant timestamp reads the same
+bytes forever.
+
 `uid` and `gid` have no meaning on Windows and are ignored there. Report the real owner on Unix
 if permissions matter.
 
@@ -138,12 +148,20 @@ wraps a positive POSIX errno:
 pub struct Error(pub i32);
 ```
 
-The five named constants cover the portable cases:
+The named constants cover the portable and common cases, so backends rarely write a bare
+integer:
 
 | Constant                     | Value | Meaning                                               |
 | ---------------------------- | ----- | ----------------------------------------------------- |
+| `Error::NOT_FOUND`           | 2     | The name does not exist (`ENOENT`)                    |
 | `Error::IO`                  | 5     | Generic I/O failure (`EIO`)                           |
+| `Error::EXISTS`              | 17    | The name is already taken (`EEXIST`)                  |
+| `Error::NOT_A_DIRECTORY`     | 20    | A path component is not a directory (`ENOTDIR`)       |
+| `Error::IS_A_DIRECTORY`      | 21    | A file operation targeted a directory (`EISDIR`)      |
 | `Error::INVALID`             | 22    | Invalid argument (`EINVAL`)                           |
+| `Error::FILE_TOO_LARGE`      | 27    | The write exceeds the backend's limit (`EFBIG`)       |
+| `Error::NO_SPACE`            | 28    | Capacity is exhausted (`ENOSPC`)                      |
+| `Error::RANGE`               | 34    | The output buffer is too small (`ERANGE`)             |
 | `Error::NOT_SUPPORTED`       | 45    | Operation is not implemented (`ENOTSUP`)              |
 | `Error::DIRECTORY_NOT_EMPTY` | 66    | Directory still has entries (`ENOTEMPTY`)             |
 | `Error::STALE`               | 70    | Cached state is invalid; retry from lookup (`ESTALE`) |
@@ -154,9 +172,10 @@ positive values pass through on Unix, which is how you return `EACCES` or `ENOEN
 
 | Code | Return                       | macOS       | Linux            | Windows                   |
 | ---- | ---------------------------- | ----------- | ---------------- | ------------------------- |
-| 2    | `Error(2)`                   | `ENOENT`    | `ENOENT`         | `ERROR_FILE_NOT_FOUND`    |
+| 2    | `Error::NOT_FOUND`           | `ENOENT`    | `ENOENT`         | `ERROR_FILE_NOT_FOUND`    |
 | 5    | `Error::IO`                  | `EIO`       | `EIO`            | `ERROR_IO_DEVICE`         |
 | 13   | `Error(13)`                  | `EACCES`    | `EACCES`         | `ERROR_ACCESS_DENIED`     |
+| 17   | `Error::EXISTS`              | `EEXIST`    | `EEXIST`         | `ERROR_FILE_EXISTS`       |
 | 22   | `Error::INVALID`             | `EINVAL`    | `EINVAL`         | `ERROR_INVALID_PARAMETER` |
 | 45   | `Error::NOT_SUPPORTED`       | `ENOTSUP`   | `ENOTSUP` (95)   | `ERROR_NOT_SUPPORTED`     |
 | 66   | `Error::DIRECTORY_NOT_EMPTY` | `ENOTEMPTY` | `ENOTEMPTY` (39) | `ERROR_DIR_NOT_EMPTY`     |

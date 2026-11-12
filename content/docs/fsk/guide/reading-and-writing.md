@@ -124,11 +124,11 @@ Return a positive errno. These are the ones you will use most:
 
 | Code                   | Use it when                                            |
 | ---------------------- | ------------------------------------------------------ |
-| `Error(2)`             | A name or inode does not exist (`ENOENT`)              |
+| `Error::NOT_FOUND`             | A name or inode does not exist (`ENOENT`)              |
 | `Error(13)`            | Permission denied (`EACCES`)                           |
-| `Error(20)`            | A path component is not a directory (`ENOTDIR`)        |
-| `Error(21)`            | The operation needs a file, not a directory (`EISDIR`) |
-| `Error(28)`            | Capacity exhausted (`ENOSPC`)                          |
+| `Error::NOT_A_DIRECTORY`            | A path component is not a directory (`ENOTDIR`)        |
+| `Error::IS_A_DIRECTORY`            | The operation needs a file, not a directory (`EISDIR`) |
+| `Error::NO_SPACE`            | Capacity exhausted (`ENOSPC`)                          |
 | `Error(30)`            | The volume or file is read-only (`EROFS`)              |
 | `Error::NOT_SUPPORTED` | The backend does not implement the operation           |
 
@@ -158,12 +158,12 @@ struct Fs {
 
 impl Filesystem for Fs {
     fn write(&self, inode: u64, offset: u64, input: &[u8]) -> Result<usize> {
-        let file = self.files.get(&inode).ok_or(Error(2))?;
+        let file = self.files.get(&inode).ok_or(Error::NOT_FOUND)?;
         let mut state = file.state.lock().unwrap();
         let start = usize::try_from(offset).map_err(|_| Error::INVALID)?;
         let end = start.checked_add(input.len()).ok_or(Error::INVALID)?;
         if u64::try_from(end).unwrap_or(u64::MAX) > self.capacity {
-            return Err(Error(28)); // ENOSPC
+            return Err(Error::NO_SPACE); // ENOSPC
         }
         if end > state.bytes.len() {
             state.bytes.resize(end, 0);

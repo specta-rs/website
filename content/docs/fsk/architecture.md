@@ -1,6 +1,6 @@
 ---
 title: "Architecture"
-description: "How the portable traits, platform adapters, FSKit bridge and C ABI fit together."
+description: "How the portable traits, platform adapters and FSKit bridge fit together."
 editUrl: "https://github.com/specta-rs/fsk/blob/main/docs/architecture.md"
 ---
 
@@ -20,7 +20,6 @@ again.
 | Linux adapter      | `src/linux.rs`                  | FUSE session and reply translation                                  |
 | Windows adapter    | `src/windows.rs`                | ProjFS projection, callbacks, eviction                              |
 | macOS mount bridge | `macos/rust/mount.rs`, `ipc.rs` | `mount(8)`, Unix socket, IPC dispatch                               |
-| macOS C ABI        | `macos/rust/ffi.rs`             | In-process bridge used by Swift and compatibility clients           |
 | Swift extension    | `macos/FSKExtension`            | FSKit volume semantics and local-file reads                         |
 | Companion app      | `macos`                         | `FSK.app`, the setup UI and extension host                          |
 
@@ -86,10 +85,12 @@ handles local-file leases. It is sandboxed to the `group.dev.specta.fsk` App Gro
 materialized files must live under `local_file_directory()`.
 
 `FSK.app` is installed per user and launched once to register the extension. The setup check
-requires an exact version match with the crate; an app from another release is reported as not
-installed. The IPC payload layout is internal to the Rust/Swift bridge and may change between SDK
-versions, so the two are versioned together. The crate's `ABI_VERSION` covers a separate
-in-process C ABI, not the extension socket.
+compares the IPC protocol major version declared by the embedded extension, not the marketing
+version, so an app that speaks a compatible protocol is reused. The IPC payload layout is internal
+to the Rust/Swift bridge: additive changes bump `PROTOCOL_MINOR`, and the two sides use the lower
+of the advertised minor versions. Incompatible changes bump `PROTOCOL_MAJOR`, and a mismatched
+major makes `authorization_status()` report `NotInstalled` so `install()` replaces the app. A
+`HELLO`-time major mismatch fails the connection with `EPROTO`.
 
 ## Linux: one process, FUSE
 
@@ -139,16 +140,6 @@ ProjFS is a projection, not a write-back filesystem. There is no portable `write
 There is no shared lock and no ordering guarantee between requests. Blocking is allowed, but a
 long call occupies the thread that dispatched it, and on Linux it also delays unmount. A panic in
 a method is caught per request on macOS and reported as `EIO`; do not rely on that elsewhere.
-
-## The C ABI
-
-`ABI_VERSION` is `2`. It describes an in-process bridge used by Swift tests and compatibility
-clients, not the extension socket.
-
-On macOS the `export_filesystem!` and `export_network_filesystem!` macros expose a backend
-through that ABI. They are not part of the normal `MountSession` flow; a backend mounted with
-`mount` or `mount_network` never sees it. The C-shaped structs re-exported for the bridge are
-internal ABI types, not part of the portable API, and the IPC frame format is not public.
 
 ## See also
 

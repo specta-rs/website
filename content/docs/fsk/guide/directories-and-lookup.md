@@ -15,8 +15,8 @@ their contracts are worth getting exactly right.
 ```rust
 fn lookup(&self, parent: u64, name: &[u8]) -> Result<(u64, FileType)> {
     let node = self.node(parent)?;
-    let directory = node.directory().ok_or(Error(20))?; // ENOTDIR
-    let inode = *directory.by_name.get(name).ok_or(Error(2))?; // ENOENT
+    let directory = node.directory().ok_or(Error::NOT_A_DIRECTORY)?; // ENOTDIR
+    let inode = *directory.by_name.get(name).ok_or(Error::NOT_FOUND)?; // ENOENT
     Ok((inode, self.kind(inode)?))
 }
 ```
@@ -25,8 +25,8 @@ Choose the error deliberately:
 
 | Situation                    | Return                                  |
 | ---------------------------- | --------------------------------------- |
-| `parent` is not a directory  | `Error(20)` (`ENOTDIR`)                 |
-| The name is not present      | `Error(2)` (`ENOENT`)                   |
+| `parent` is not a directory  | `Error::NOT_A_DIRECTORY` (`ENOTDIR`)                 |
+| The name is not present      | `Error::NOT_FOUND` (`ENOENT`)                   |
 | `parent` itself is gone      | `Error::STALE`                          |
 | The directory cannot be read | `Error::IO` or a specific positive code |
 
@@ -149,7 +149,7 @@ fn read_directory(
     let node = self.node(inode)?;
     let state = node.state.read();
     let NodeData::Directory(dir) = &state.data else {
-        return Err(Error(20)); // ENOTDIR
+        return Err(Error::NOT_A_DIRECTORY); // ENOTDIR
     };
     if verifier != 0 && verifier != dir.version {
         return Err(Error::STALE);

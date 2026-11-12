@@ -45,7 +45,7 @@ fn lookup_reports_the_same_kind_as_metadata() {
     assert_eq!(found, inode);
     assert_eq!(kind, FileType::File);
     assert_eq!(fs.metadata(inode).unwrap().kind, kind);
-    assert_eq!(fs.lookup(ROOT_INODE, b"missing").unwrap_err(), Error(2));
+    assert_eq!(fs.lookup(ROOT_INODE, b"missing").unwrap_err(), Error::NOT_FOUND);
 }
 ```
 

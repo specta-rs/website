@@ -12,24 +12,54 @@ below before changing the backend.
 
 ### `authorization_status()` says `NotInstalled` after installing
 
-The status compares `CFBundleShortVersionString` with the crate version and the bundle
-identifier with `dev.specta.fsk`. Both must match exactly. An SDK built against a different
-release, or a git build between releases, reports against the last released version.
+The status reads `FSKProtocolMajor` from the embedded extension's `Info.plist` and the bundle
+identifier `dev.specta.fsk`. The app is compatible when the protocol major matches and the
+identifier is correct; the marketing version is irrelevant. An app with no protocol keys is
+treated as legacy protocol 1.0.
 
-Use the matching crate version, or point `FSK_APP_PATH` at a development build whose marketing
-version matches.
+Point `FSK_APP_PATH` at a development build, or run `fsk::install()` to replace an app whose
+protocol major does not match the SDK.
 
-### `ensure_authorization()` returns `NotFound`
+### `ensure_authorization()` fails to install `FSK.app`
 
-Expected. `ensure_authorization()` never installs anything. Call `fsk::install()` first, then
-`fsk::launch_app()`.
+It downloads the release matching the crate version, so a git build between releases still
+downloads the last released app. Check the network, `FSK_RELEASE_BASE_URL`, and any
+`GITHUB_TOKEN` or `GH_TOKEN` used for a private release. Running `fsk::install()` directly
+surfaces the same error.
+
+### `launch_app()` says the app does not match this SDK
+
+`launch_app()` refuses to open a missing or incompatible copy so a stale app is never launched.
+Call `fsk::install()` first, or use `fsk::ensure_authorization()`, which installs and launches in
+one step.
 
 ### Status stays at `NeedsApproval`
 
 The app is installed but the extension is not enabled. `launch_app()` opens the setup window;
 the user must flip the switch in **System Settings → General → Login Items & Extensions → File
 System Extensions**. macOS exposes no API for it, so retrying before the user acts changes
-nothing.
+nothing. `fsk::wait_for_authorization(Duration::from_secs(600))` retries safely once the switch
+is on.
+
+`pluginkit` is not that switch. `pluginkit -m -p com.apple.fskit.fsmodule` printing `+` only
+shows that the extension is registered, and `pluginkit -e use -i dev.specta.fsk.extension`
+exits successfully without changing FSKit's enabled state. Do not use either to check or change
+authorization.
+
+### Approval was lost after upgrading
+
+Approval belongs to the installed bundle, not the bundle identifier. Replacing a machine-wide
+`/Applications/FSK.app` with the per-user copy in `~/Library/Application Support/dev.specta.fsk/`
+needs the switch in System Settings to be enabled again, even when the protocol major version is
+unchanged. `install()` quits a running legacy copy before removing it.
+
+### `FSKit mount failed: … Operation not permitted`
+
+`mount(8)` could not attach the volume. On current macOS the usual cause is the mount directory:
+FSKit refuses mounts inside **Desktop**, **Documents** and **Downloads** because they are
+privacy-protected. Mount under your home directory or in `/tmp` instead. The crate appends this
+hint to the error; other EPERM causes are a disabled extension or a path the extension cannot
+reach (see the next entry).
 
 ### `FSKit mount failed: …`
 

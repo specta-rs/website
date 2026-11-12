@@ -43,7 +43,7 @@ through `Metadata::size` instead.
 
 Return the attributes of one inode. The kernel can ask for any inode it has observed, with no
 preceding `lookup`, so this must not depend on a "current directory listing" cache. Return
-`Error::STALE` when the inode is no longer valid, and `Error(2)` (`ENOENT`) only when it never
+`Error::STALE` when the inode is no longer valid, and `Error::NOT_FOUND` (`ENOENT`) only when it never
 existed.
 
 Every mutation must leave `metadata` consistent: new `size`, new `modified_ns`, bumped
@@ -121,7 +121,7 @@ There is no `created_ns` field. Creation time is not settable.
 ## Creating and removing entries
 
 `create(parent, name, kind, mode)` handles regular files and directories. Return the new inode,
-and fail with `Error(17)` (`EEXIST`) if the name is taken. `kind` is `File` or `Directory`;
+and fail with `Error::EXISTS` (`EEXIST`) if the name is taken. `kind` is `File` or `Directory`;
 requests for `Symlink` go through `create_symlink` instead.
 
 `remove(parent, name, inode)` receives the inode the caller last observed. Use it to check that
@@ -207,9 +207,9 @@ struct Backend {
 impl Filesystem for Backend {
     fn write(&self, inode: u64, offset: u64, input: &[u8]) -> Result<usize> {
         let mut nodes = self.nodes.write().unwrap();
-        let node = nodes.get_mut(&inode).ok_or(Error(2))?;
+        let node = nodes.get_mut(&inode).ok_or(Error::NOT_FOUND)?;
         let NodeData::File(bytes) = &mut node.data else {
-            return Err(Error(21)); // EISDIR
+            return Err(Error::IS_A_DIRECTORY); // EISDIR
         };
         let start = usize::try_from(offset).map_err(|_| Error::INVALID)?;
         let end = start.checked_add(input.len()).ok_or(Error::INVALID)?;

@@ -25,6 +25,10 @@ FUSE session starts on Linux, and after `PrjStartVirtualizing` succeeds on Windo
 ```rust
 use fsk::MountSession;
 
+// Ask for the platform component before mounting. This returns immediately
+// when the machine is already set up.
+fsk::wait_for_authorization(std::time::Duration::from_secs(600))?;
+
 let session = MountSession::mount(MyFilesystem::new(), "/tmp/my-volume")?;
 println!("mounted at {}", session.mount_path().display());
 ```
@@ -40,6 +44,11 @@ mount stops.
 macOS additionally canonicalises the path before mounting, so `mount_path()` may differ from
 what you passed: `/tmp/my-volume` becomes `/private/tmp/my-volume`. The canonical path is what
 `diskutil` receives when the session unmounts.
+
+macOS refuses FSKit mounts inside privacy-protected folders: **Desktop**, **Documents** and
+**Downloads** (and anything below them) fail with `Operation not permitted`. Choose a directory
+under your home directory or in `/tmp`. The mount error includes the same hint, because
+`mount(8)` alone only reports the bare EPERM.
 
 macOS and Linux do not check whether the directory is empty: the session creates the path and
 mounts over it, and a busy or invalid path is reported by `mount(8)` or FUSE. Windows does:
@@ -146,8 +155,9 @@ Most failures happen before your backend is called.
 
 | Error                                                      | Cause                                                                    |
 | ---------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `NotFound`, "install FSK.app with `fsk::install()`"        | macOS has no matching app; `ensure_authorization` never installs         |
-| `PermissionDenied`, "enable FSK in the window that opened" | The extension is installed but not enabled                               |
+| `NotFound`, "FSK.app … does not match this SDK"            | `launch_app()` was called without installing a compatible app            |
+| `PermissionDenied`, "enable FSK in the window that opened" | A fresh install, or the extension is installed but not enabled           |
+| Download or verification error from `install()`            | `ensure_authorization()` could not fetch or validate the matching app    |
 | `FSKit mount failed: …`                                    | `mount(8)` rejected the mount; the message carries its stderr            |
 | "FUSE must be available"                                   | `/dev/fuse` is missing or is not a character device                      |
 | ProjFS initialization error                                | `Client-ProjFS` is missing, or the root is neither empty nor virtualized |

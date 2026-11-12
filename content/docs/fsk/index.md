@@ -75,7 +75,7 @@ debug view, and those want different answers.
 
 ## Reference
 
-- [Architecture](architecture) — how the adapters, the C ABI and the Swift extension fit together
+- [Architecture](architecture) — how the adapters, the IPC protocol and the Swift extension fit together
 
 ## Crates and examples
 

@@ -22,43 +22,35 @@ the platform `MountSession`, so a backend needs no platform-specific imports.
 
 ## Check the platform
 
-Mounting depends on host software that Cargo cannot install. Check it before you build
-anything:
+Mounting depends on host software that Cargo cannot install. Ask for it before mounting:
 
 ```rust
-use fsk::AuthorizationStatus;
+use std::time::Duration;
 
-fn platform_is_ready() -> std::io::Result<bool> {
-    match fsk::authorization_status()? {
-        AuthorizationStatus::Authorized => Ok(true),
-        AuthorizationStatus::NotInstalled => {
-            // macOS only. `install` downloads the matching FSK.app release.
-            #[cfg(target_os = "macos")]
-            {
-                fsk::install()?;
-                fsk::launch_app()?;
-            }
-            Ok(false)
-        }
-        // Opens the setup UI (macOS, Windows) and then returns an error telling
-        // the user to retry. Linux has no UI, so the error names the requirement.
-        AuthorizationStatus::NeedsApproval => {
-            fsk::ensure_authorization()?;
-            Ok(false)
-        }
-    }
+fn platform_is_ready() -> std::io::Result<()> {
+    // On macOS this installs and launches FSK.app when it is missing, opens
+    // the extension setup UI, and waits until the switch is enabled. It
+    // returns immediately on a machine that is already authorised.
+    fsk::wait_for_authorization(Duration::from_secs(600))
 }
 ```
 
-| Status          | Meaning                                      | What to do                                                       |
-| --------------- | -------------------------------------------- | ---------------------------------------------------------------- |
-| `Authorized`    | The platform can mount now                   | Nothing                                                          |
-| `NotInstalled`  | A matching `FSK.app` is missing (macOS only) | Call `fsk::install()`, then `fsk::launch_app()`                  |
-| `NeedsApproval` | The component exists but needs a user action | Call `fsk::ensure_authorization()` and retry after the user acts |
+`wait_for_authorization` runs the setup flow once, then polls until the platform can mount.
+The timeout is for CLIs and scripts; use a value that is generous for a person (ten minutes
+here) and short enough that a script does not hang forever. Call it from a background thread or
+executor when the calling thread must stay responsive.
 
-`ensure_authorization()` never installs anything. `NotInstalled` returns
-`io::ErrorKind::NotFound`; `NeedsApproval` opens the platform UI and returns
-`io::ErrorKind::PermissionDenied`. That error is the instruction to run again, not a bug.
+| Status          | Meaning                                      | What to do                                                                    |
+| --------------- | -------------------------------------------- | ----------------------------------------------------------------------------- |
+| `Authorized`    | The platform can mount now                   | Nothing                                                                       |
+| `NotInstalled`  | A matching `FSK.app` is missing (macOS only) | Call `fsk::ensure_authorization()`; it installs and launches the app          |
+| `NeedsApproval` | The component exists but needs a user action | Enable it, or wait with `fsk::wait_for_authorization()`                       |
+
+Apps that want to draw their own setup UI should use `authorization_status()` and
+`ensure_authorization()` instead: the latter installs and launches, then returns
+`io::ErrorKind::PermissionDenied` while the switch is still off. That error means "ask the user,
+then try again", not "this failed". `wait_for_authorization` is the same flow with the retry loop
+built in.
 
 On targets other than macOS, Linux and Windows, `authorization_status()` returns
 `io::ErrorKind::Unsupported`.
@@ -82,44 +74,29 @@ struct HelloFilesystem;
 impl Filesystem for HelloFilesystem {
     fn statfs(&self) -> Result<StatFs> {
         Ok(StatFs {
-            block_size: 4096,
-            io_size: 4096,
-            total_bytes: 4096,
-            free_bytes: 0,
-            available_bytes: 0,
             files: 2,
-            free_files: 0,
+            ..StatFs::with_capacity(4096, 0)
         })
     }
 
     fn metadata(&self, inode: u64) -> Result<Metadata> {
-        let (kind, size) = match inode {
-            ROOT_INODE => (FileType::Directory, 0),
-            HELLO_INODE => (FileType::File, HELLO.len() as u64),
-            _ => return Err(Error(2)), // ENOENT
-        };
-        Ok(Metadata {
-            inode,
-            parent: ROOT_INODE,
-            size,
-            allocated_size: size,
-            generation: 1,
-            created_ns: 0,
-            modified_ns: 0,
-            accessed_ns: 0,
-            mode: if kind == FileType::Directory { 0o755 } else { 0o644 },
-            uid: 0,
-            gid: 0,
-            link_count: 1,
-            kind,
-        })
+        match inode {
+            ROOT_INODE => Ok(Metadata::directory(ROOT_INODE, ROOT_INODE, 0o755)),
+            HELLO_INODE => Ok(Metadata::file(
+                HELLO_INODE,
+                ROOT_INODE,
+                HELLO.len() as u64,
+                0o644,
+            )),
+            _ => Err(Error::NOT_FOUND),
+        }
     }
 
     fn lookup(&self, parent: u64, name: &[u8]) -> Result<(u64, FileType)> {
         if parent == ROOT_INODE && name == b"hello.txt" {
             Ok((HELLO_INODE, FileType::File))
         } else {
-            Err(Error(2)) // ENOENT
+            Err(Error::NOT_FOUND)
         }
     }
 
@@ -131,7 +108,7 @@ impl Filesystem for HelloFilesystem {
         sink: &mut dyn DirectorySink,
     ) -> Result<ReadDirectoryResult> {
         if inode != ROOT_INODE {
-            return Err(Error(2)); // ENOENT
+            return Err(Error::NOT_FOUND);
         }
         if verifier != 0 && verifier != 1 {
             return Err(Error::STALE);
@@ -159,7 +136,7 @@ impl Filesystem for HelloFilesystem {
 
     fn read(&self, inode: u64, offset: u64, output: &mut [u8]) -> Result<usize> {
         if inode != HELLO_INODE {
-            return Err(Error(2)); // ENOENT
+            return Err(Error::NOT_FOUND);
         }
         let start = usize::try_from(offset).unwrap_or(usize::MAX).min(HELLO.len());
         let count = output.len().min(HELLO.len() - start);
@@ -183,9 +160,15 @@ needs interior mutability and locks.
 ## Mount it
 
 ```rust
+use std::time::Duration;
+
 use fsk::MountSession;
 
 fn main() -> std::io::Result<()> {
+    // Install and enable the platform component if needed, then continue as
+    // soon as the user has granted access.
+    fsk::wait_for_authorization(Duration::from_secs(600))?;
+
     let session = MountSession::mount(HelloFilesystem, "/tmp/fsk-hello")?;
     println!("mounted at {}", session.mount_path().display());
 
@@ -232,4 +215,5 @@ doing nothing, because the kernel assumes success.
 - [Core concepts](concepts) explains inodes, names and errors before you write a real backend.
 - [Implementing a filesystem](implementing-a-filesystem) covers every optional method.
 - [Mounting and lifecycle](mounting) covers options, unmounting and running from an app.
+- [Testing a backend](testing) verifies every method without enabling the platform extension.
 - [Examples](examples) has a complete writable in-memory backend to copy from.
