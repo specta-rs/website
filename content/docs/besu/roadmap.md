@@ -12,8 +12,8 @@ would actually require. The order is a judgement about impact versus cost, not a
 | 2 | [Custom column types](#custom-column-types) | `INTERVAL`, `INET`, ranges and the rest are DDL-only | Medium |
 | 3 | [wasm support](#wasm-support) | The builder compiles for wasm32; execution needs a browser driver | Large |
 
-The complete picture, including what is deliberately not planned, is on the
-[Drizzle parity](parity) page.
+This page is the whole list. What is deliberately absent is in
+[the comparison](comparison).
 
 ## A native database backend
 
@@ -27,6 +27,8 @@ because they change the API rather than the driver: pooling becomes Besu's probl
 becomes Besu's dependency. The issue carries the full plan.
 
 ## Custom column types
+
+Tracked as [#98](https://github.com/specta-rs/besu/issues/98).
 
 `#[besu(sql_type = "besu::Decimal<10, 2>")]` names a `SqlType` directly, so a sized `VARCHAR`,
 an exact `DECIMAL` and a user-defined marker type can all be declared and all round-trip
@@ -74,10 +76,21 @@ is the shape this half of the work was for.
 
 These are not large enough for their own section, but they are real. Each is a tracking issue.
 
-- **[#86](https://github.com/specta-rs/besu/issues/86) — operator coverage.** `IS DISTINCT
-  FROM`, regex and array operators.
-- **[#87](https://github.com/specta-rs/besu/issues/87) — query comments.** A slow-query log
-  cannot attribute a statement to a call site.
+- **[#97](https://github.com/specta-rs/besu/issues/97) — relations.** A relation object,
+  many-to-many and nested eager loading.
+- **[#98](https://github.com/specta-rs/besu/issues/98) — column types.** `INTERVAL`, `INET`,
+  ranges, spatial, `pgvector`, and decoding an exact `DECIMAL`.
+- **[#99](https://github.com/specta-rs/besu/issues/99) — indexes.** Composite, expression and
+  operator-class indexes.
+- **[#100](https://github.com/specta-rs/besu/issues/100) — check constraints.** Declaring one
+  from the derive.
+- **[#101](https://github.com/specta-rs/besu/issues/101) — row-level security.** Policies in
+  the diff rather than in migration SQL only.
+- **[#102](https://github.com/specta-rs/besu/issues/102) — MySQL enums.** Inline enum columns.
+- **[#103](https://github.com/specta-rs/besu/issues/103) — aliases.** Two aliases of one table.
+- **[#104](https://github.com/specta-rs/besu/issues/104) — composition.** Set operations as
+  subqueries, CTE handles beyond one table, and a dynamic handle.
+- **[#105](https://github.com/specta-rs/besu/issues/105) — batch.** Selects in a batch.
 
 ## Recently closed
 

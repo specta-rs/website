@@ -92,5 +92,6 @@ can be exercised end to end.
 ## Where to go next
 
 - New to Besu: [get started with SQLite](get-started/sqlite).
-- Coming from Drizzle: [the parity scoreboard](parity).
+- Coming from Drizzle: the surface follows Drizzle's, so read [queries](queries/select) in
+  order, and [the comparison](comparison) for where they differ.
 - Interested in the internals: [architecture](architecture).

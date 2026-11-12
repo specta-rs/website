@@ -151,7 +151,7 @@ against a rendering from that dialect rather than a hand-written string.
 - **A subquery as a table** is [`derived`](select#derived-table), with typed columns
   reached through the handle. There is no shorthand that infers an alias.
 
-See [Drizzle parity](../parity) for the full list.
+See [#104](https://github.com/specta-rs/besu/issues/104) for the composition gaps behind them.
 
 ## Gotchas
 

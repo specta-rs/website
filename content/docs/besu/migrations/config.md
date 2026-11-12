@@ -8,8 +8,7 @@ connection string passed with `--database` or read from `DATABASE_URL`. That is 
 configuration surface.
 
 > **Not supported yet.** A `besu.config.*` file, config discovery and per-environment
-> profiles do not exist. See the [roadmap](../roadmap) and
-> [Drizzle parity](../parity).
+> profiles do not exist.
 
 ## The connection string
 

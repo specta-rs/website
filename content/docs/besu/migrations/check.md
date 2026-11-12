@@ -4,8 +4,7 @@ editUrl: "https://github.com/specta-rs/besu/blob/main/docs/migrations/check.md"
 ---
 
 > **Not supported yet.** There is no `check` subcommand. The CLI's own commands are `pull`,
-> `push`, `generate` and `migrate`. See the [roadmap](../roadmap) and
-> [Drizzle parity](../parity).
+> `push`, `generate` and `migrate`.
 
 Drizzle Kit's `check` compares the migrations folder against the schema and reports what is
 inconsistent. Besu has no command that does that ahead of time. The equivalent checks happen

@@ -195,8 +195,8 @@ MySQL's inline `ENUM(...)` and `SET(...)` keep their native spelling, so a colum
 the dialect knows about — `GEOMETRY`, a `VECTOR` column — is `Custom` for the same reason. The
 DDL round-trips; the value cannot be decoded into Rust.
 
-Custom column types are on the [roadmap](../../roadmap); the rest of the gap against Drizzle is
-in [the scoreboard](../../parity).
+Custom column types are tracked in [#98](https://github.com/specta-rs/besu/issues/98), and
+inline enums in [#102](https://github.com/specta-rs/besu/issues/102).
 
 ## Gotchas
 

@@ -7,8 +7,9 @@ editUrl: "https://github.com/specta-rs/besu/blob/main/docs/schema/extensions.md"
 migration SQL, by design: the differ never installs, upgrades or removes an extension, and
 `push` does not know one exists.
 
-> **Not supported yet.** An extension cannot be declared in Rust or diffed. See the
-> [roadmap](../roadmap) and [Drizzle parity](../parity).
+> **Not supported yet.** An extension cannot be declared in Rust or diffed. That is the
+> design rather than a gap: an extension installs code, and what it adds afterwards is what the
+> differ should see.
 
 ```sql
 -- migrations/0001_extensions.sql

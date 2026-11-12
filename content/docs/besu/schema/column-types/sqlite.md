@@ -160,8 +160,7 @@ know — an existing `MONEY` or `GEOMETRY` column, for example. The type name is
 generated DDL round-trips, but no driver decodes it: there is no Rust type to decode into. Keep
 such a column out of your model, or read it through `sql!` and a cast.
 
-Custom column types are on the [roadmap](../../roadmap). The parity table lists the rest of the
-gaps against Drizzle in [the scoreboard](../../parity).
+Custom column types are tracked in [#98](https://github.com/specta-rs/besu/issues/98).
 
 ## Gotchas
 
