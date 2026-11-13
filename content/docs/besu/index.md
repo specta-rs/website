@@ -28,7 +28,6 @@ are in the query, and whether a bulk write was intentional.
 - [Views](schema/views)
 - [Sequences](schema/sequences) — PostgreSQL
 - [Table schemas](schema/schemas) — PostgreSQL
-- [Row-level security](schema/rls) — PostgreSQL
 - [Extensions](schema/extensions) — PostgreSQL
 - [Custom types](advanced/custom-types)
 

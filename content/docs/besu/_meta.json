@@ -21,7 +21,6 @@
   "schema/views",
   "schema/sequences",
   "schema/schemas",
-  "schema/rls",
   "schema/extensions",
   "schema/column-types/postgresql",
   "schema/column-types/mysql",

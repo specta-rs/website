@@ -29,9 +29,8 @@ besu pull --database postgres://user:pass@host/db --out schema.json
 besu pull --database sqlite:app.db > schema.json
 ```
 
-The output is `Schema` serialised with `serde_json`: tables, enum types, views, sequences and
-row-level policies where the dialect has them. Empty lists are omitted, so a SQLite snapshot
-contains only tables.
+The output is `Schema` serialised with `serde_json`: tables, enum types, views and sequences
+where the dialect has them. Empty lists are omitted, so a SQLite snapshot contains only tables.
 
 ```json
 {

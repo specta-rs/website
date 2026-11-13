@@ -16,7 +16,6 @@ pub struct Schema {
     pub enums: Vec<Enum>,
     pub views: Vec<View>,
     pub sequences: Vec<Sequence>,
-    pub policies: Vec<Policy>,
 }
 
 pub struct Table {
@@ -28,7 +27,6 @@ pub struct Table {
     pub foreign_keys: Vec<ForeignKey>,
     pub checks: Vec<Check>,
     pub comment: Option<String>,
-    pub rls: bool,
 }
 ```
 
@@ -41,11 +39,6 @@ What the differ manages:
 - **Views and sequences.** A view is compared by its definition text, after folding away the
   qualifiers and formatting a database adds; a changed one is `CREATE OR REPLACE` (or dropped and
   created, where the dialect has no `OR REPLACE`). A sequence is compared by all its options.
-- **`ENABLE ROW LEVEL SECURITY`**, in one direction only: it is turned on when declared, never
-  off.
-- **Policies are ignored.** `Schema::policies` records what is there so `besu pull` round-trips,
-  but `push` neither creates nor drops one.
-
 Three things produce a `Schema`; `diff` and `Ddl` consume it:
 
 ```text
@@ -165,9 +158,8 @@ Hand-written files, down migrations and the append-only rule are covered in
 - **`generate` writes destructive statements.** It does not filter by safety; the header
   warns, and the review is yours.
 - **The differ only manages what the snapshot names.** A view or sequence the declaration omits
-  is reported as a drop, because the default schema belongs to the application; policies and
-  extensions are invisible and are never dropped. See [views](../schema/views),
-  [row-level security](../schema/rls), [extensions](../schema/extensions) and
-  [sequences](../schema/sequences).
+  is reported as a drop, because the default schema belongs to the application; extensions are
+  invisible and are never dropped. See [views](../schema/views),
+  [extensions](../schema/extensions) and [sequences](../schema/sequences).
 - **A migration is append-only.** Fixing a typo in an applied file is refused. Add a new
   migration that corrects it.

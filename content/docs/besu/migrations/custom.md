@@ -3,9 +3,9 @@ title: "Custom migrations"
 editUrl: "https://github.com/specta-rs/besu/blob/main/docs/migrations/custom.md"
 ---
 
-A generated migration covers the changes the differ can see. Everything else — a view, a
-policy, an extension, a data backfill, a trigger — is written by hand, in the same directory
-and the same format. The runner does not care where a file came from.
+A generated migration covers the changes the differ can see. Everything else — a view, an
+extension, a data backfill, a trigger — is written by hand, in the same directory and the same
+format. The runner does not care where a file came from.
 
 ```text
 migrations/
@@ -91,7 +91,6 @@ A migration is the only home for anything the differ does not model. The linked 
 details and examples:
 
 - [views](../schema/views) — `CREATE VIEW`, `CREATE OR REPLACE VIEW`, materialised views;
-- [row-level security](../schema/rls) — `ENABLE ROW LEVEL SECURITY`, `CREATE POLICY`;
 - [extensions](../schema/extensions) — `CREATE EXTENSION` and the types it adds;
 - [sequences](../schema/sequences) — a standalone sequence and its `nextval` default.
 

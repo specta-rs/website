@@ -88,7 +88,6 @@ The CLI's equivalent is `--destructive`; the library calls it `push_destructive`
 and — when the declaration names them — views and sequences. Everything else the IR cannot
 express is left exactly as it is:
 
-- row-level security policies, see [row-level security](../schema/rls);
 - extensions, see [extensions](../schema/extensions);
 - triggers, expression indexes, `INCLUDE` indexes and exclusion constraints.
 
