@@ -9,12 +9,11 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm build` writes the static site to `doc_build/`, `pnpm start` serves it, and `pnpm deploy` deploys it with Wrangler.
+`pnpm build` builds the site, `pnpm start` previews it, and `pnpm deploy` publishes it.
 
-Content lives in `content/`: documentation is under `content/docs/` and the landing page is
-`content/index.tsx`. Gurafi, FSK and Besu docs are synced from their repositories by a scheduled
-workflow, so don't edit `content/docs/gurafi`, `content/docs/fsk` or `content/docs/besu`
-directly — run `pnpm docs:sync:<project>` after changing the submodule.
+Docs live in `content/docs/` and the landing page in `content/index.tsx`. Don't edit the Gurafi,
+FSK or Besu docs directly — they're synced from their repositories with
+`pnpm docs:sync:<project>`.
 
 ## Checks
 
