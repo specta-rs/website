@@ -24,7 +24,3 @@ pnpm lint
 pnpm typecheck
 pnpm test
 ```
-
-## Sponsors
-
-Development is funded by sponsors. [Become a sponsor](https://github.com/sponsors/oscartbeaumont) to support the project.
