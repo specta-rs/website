@@ -16,7 +16,7 @@ more nuanced, because Diesel, SeaORM and sqlx occupy three different points on t
 | Async | Native | Via `diesel-async` | Native | Native | Native (JS) |
 | Query style | Method chain that mirrors SQL | Method chain over a type-level DSL | `SeaQuery` builder | SQL strings | Object/method chain |
 | Compile-time schema check | Struct declaration | `table!` declaration | Entity declaration | Live database (`query!`) | TypeScript types |
-| Relations / eager loading | No (roadmap) | Joins only | Yes | Manual | Yes (relational queries) |
+| Relations / eager loading | No, tracked in [#97](https://github.com/specta-rs/besu/issues/97) | Joins only | Yes | Manual | Yes (relational queries) |
 | Migrations | Schema IR diff + SQL files | `diesel_migrations` | `sea-orm-cli` | `sqlx-cli` | `drizzle-kit` |
 | Backends | SQLite, PostgreSQL, MySQL | SQLite, PostgreSQL, MySQL | SQLite, PostgreSQL, MySQL | Many | PostgreSQL, MySQL, SQLite |
 | Raw SQL | `sql!` with bound parameters | `sql_query` | `Statement` | Native | `sql` template |
@@ -53,7 +53,8 @@ Where Besu differs:
 
 - **No relations.** Besu has joins, but no `Related`, no lazy loading, no `find_with_related`
   and no entity graph. You write the join and you get a tuple. This is the single biggest
-  functional gap; relations and eager loading are on the [roadmap](roadmap).
+  functional gap; relations and eager loading are tracked in
+  [#97](https://github.com/specta-rs/besu/issues/97).
 - **No ActiveModel.** An update is `set(column, value)` / `set_expr(column, expr)`, not a
   partially populated model. There is no hidden "only changed fields" behaviour.
 - **The SQL is the API.** SeaORM's builder is pleasant but it is still an abstraction over
@@ -100,8 +101,9 @@ Where Besu differs:
 - **Rust's type system is doing the work.** Drizzle's checks are TypeScript types, which are
   erased at runtime; Besu's column, table-membership and nullability checks are trait bounds
   resolved by `rustc`.
-- **No Studio.** Drizzle Studio is a database browser and query inspector; Besu has no UI
-  (see the roadmap).
+- **A smaller Studio.** Drizzle Studio is a database browser and query inspector;
+  [`besu studio`](migrations/studio) is a development-only page with a paged row browser and
+  a one-statement SQL box.
 - **Relational queries.** Drizzle has a relational query API that returns nested objects.
   Besu returns tuples and has no relations yet.
 - **Ecosystem.** Drizzle's ecosystem (adapters, Studio, community plugins) is much larger.
