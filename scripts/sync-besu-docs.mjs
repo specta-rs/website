@@ -106,13 +106,7 @@ const sections = [
   ],
   [
     "Reference",
-    [
-      "overview",
-      "comparison",
-      "drivers",
-      "performance",
-      "architecture",
-    ],
+    ["overview", "comparison", "drivers", "performance", "architecture"],
   ],
 ];
 

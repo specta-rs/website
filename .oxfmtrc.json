@@ -23,6 +23,7 @@
     "content/docs/*/typescript-api",
     "content/docs/gurafi",
     "content/docs/besu",
+    "content/docs/fsk",
     "docs-sources"
   ]
 }
