@@ -1,4 +1,5 @@
 import { useHead, usePage } from "@rspress/core/runtime";
+import { parseInlineMarkdownText } from "@rspress/core/theme-original";
 import { canonical, ogRoute, openGraphImageSize } from "./site-meta";
 
 /**
@@ -40,12 +41,16 @@ export function SiteHead() {
     { property: `${prefix}:type`, content: "image/png" },
     { property: `${prefix}:alt`, content: "Oscar Beaumont" },
   ];
+  // Titles are authored as Markdown so the sidebar can render inline code (for
+  // example `` `besu studio` ``). A tab title is plain text, so strip the
+  // markers rather than showing the backticks.
+  const title = page.title ? parseInlineMarkdownText(page.title) : undefined;
 
   useHead({
     // The old site used bare page titles. Rspress appends the site title to
     // document pages, so override it here for docs (and keep the site title on
     // the landing page).
-    ...(isDoc && page.title ? { title: page.title } : {}),
+    ...(isDoc && title ? { title } : {}),
     link: project
       ? [
           {
