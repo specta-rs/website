@@ -4,6 +4,7 @@ import {
 } from "@rspress/core/theme-original";
 import { AccessibilityFixes } from "./a11y";
 import { Analytics } from "./analytics";
+import { Diagrams } from "./diagrams";
 import { DocsHeader } from "./docs-header";
 import { DrawerClose } from "./drawer-close";
 import { NotFoundLayout } from "./not-found";
@@ -18,6 +19,7 @@ export function Layout(props: LayoutProps) {
     <>
       <Analytics />
       <AccessibilityFixes />
+      <Diagrams />
       <OriginalLayout
         {...props}
         top={<SiteHead />}

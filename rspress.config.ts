@@ -10,6 +10,7 @@ import {
 import { RouteService } from "@rspress/core/dist/node/route/RouteService.js";
 import { scanSideMeta } from "@rspress/core/dist/node/auto-nav-sidebar/normalize.js";
 import { pluginTailwindcss } from "@rsbuild/plugin-tailwindcss";
+import mermaid from "rspress-plugin-mermaid";
 import { ImageResponse } from "takumi-js/response";
 import { OpenGraph, logoSource } from "./theme/og";
 import { canonical, ogRoute, openGraphImageSize } from "./theme/site-meta";
@@ -355,6 +356,18 @@ export default defineConfig({
     },
   },
   plugins: [
+    // Renders ```mermaid fences as SVG, following the site's light/dark mode.
+    // SVG labels rather than HTML ones: the doc styles' line-height overrides
+    // the height Mermaid measures for an HTML label, which clips the last line.
+    mermaid({
+      mermaidConfig: {
+        // Root-level in Mermaid 12; `flowchart.htmlLabels` is deprecated and
+        // ignored. HTML labels get the doc styles' line-height, which is taller
+        // than the box Mermaid measures, so the last line of a node is clipped.
+        htmlLabels: false,
+        fontFamily: "Inter Variable, ui-sans-serif, system-ui, sans-serif",
+      },
+    }),
     createSitePlugin(),
     pluginLlms([
       {

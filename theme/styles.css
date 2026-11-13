@@ -1497,6 +1497,19 @@ summary.sp-action-button::-webkit-details-marker {
   color: var(--rp-c-text-3);
 }
 
+/* Diagrams ---------------------------------------------------------------- */
+
+/* `theme/diagrams.tsx` gives each diagram the width Mermaid measured. Prominent
+ * charts are wider than the doc column (the pipeline chart is ~1980px), so the
+ * wrapper scrolls rather than shrinking the labels into illegibility. */
+.rp-doc > div:has(> svg[aria-roledescription]) {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.rp-doc > div:has(> svg[aria-roledescription]) > svg {
+  min-width: 100%;
+}
+
 /* Package manager tabs ---------------------------------------------------- */
 
 .rp-doc-layout__container .rp-tabs {
