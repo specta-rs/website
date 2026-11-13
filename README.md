@@ -14,12 +14,3 @@ pnpm dev
 Docs live in `content/docs/` and the landing page in `content/index.tsx`. Don't edit the Gurafi,
 FSK or Besu docs directly — they're synced from their repositories with
 `pnpm docs:sync:<project>`.
-
-## Checks
-
-```bash
-pnpm format:check
-pnpm lint
-pnpm typecheck
-pnpm test
-```
