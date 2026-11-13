@@ -9,10 +9,6 @@ every query you write maps onto exactly the SQL you would have written by hand, 
 compiler checks the parts it can see — column names, column types, nullability, which tables
 are in the query, and whether a bulk write was intentional.
 
-The structure follows [Drizzle ORM](https://orm.drizzle.team/docs/overview), because that is
-where the design comes from. If you know Drizzle, the pages here will feel familiar; if you
-do not, read them in order.
-
 ## Fundamentals
 
 - [Overview](overview) — what Besu is, and what it deliberately is not
@@ -74,12 +70,3 @@ do not, read them in order.
 - [Writing a driver](drivers) — `Dialect`, `Driver`, `SchemaDriver`, `Ddl`, `Decode`
 - [Comparison](comparison) — Besu against Diesel, SeaORM, sqlx and Drizzle
 - [Roadmap](roadmap) — what is missing, and what it would take
-
-## How to read a page
-
-Pages are code first: a short statement of what the thing is, an example you can paste, then
-the details that are easy to get wrong. Each page ends with **What is checked** or
-**Gotchas** — the honest part, where the compiler stops helping and what still bites.
-
-Examples use SQLite because it needs no server. The same query code works with every driver;
-only the connection setup changes.
