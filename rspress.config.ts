@@ -13,7 +13,12 @@ import { pluginTailwindcss } from "@rsbuild/plugin-tailwindcss";
 import mermaid from "rspress-plugin-mermaid";
 import { ImageResponse } from "takumi-js/response";
 import { OpenGraph, logoSource } from "./theme/og";
-import { canonical, ogRoute, openGraphImageSize } from "./theme/site-meta";
+import {
+  canonical,
+  ogRoute,
+  openGraphImageSize,
+  plainTitle,
+} from "./theme/site-meta";
 import { projects } from "./theme/projects";
 import { remarkPackageManagerTabs } from "./scripts/remark-package-manager";
 
@@ -151,7 +156,7 @@ function createSitePlugin(): RspressPlugin {
         // Every page gets its own card. The landing page writes `/og.png`.
         const image = new ImageResponse(
           OpenGraph({
-            title: pageData.title,
+            title: plainTitle(pageData.title),
             description: pageData.description,
           }),
           {

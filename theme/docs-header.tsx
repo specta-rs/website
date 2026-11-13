@@ -1,4 +1,5 @@
 import { useFrontmatter, usePage } from "@rspress/core/runtime";
+import { renderInlineMarkdown } from "@rspress/core/theme-original";
 import { Breadcrumb } from "./breadcrumb";
 import { markdownPath } from "./site-meta";
 import { DeprecationBanner } from "./deprecation-banner";
@@ -29,7 +30,10 @@ export function DocsHeader() {
       {deprecated ? <DeprecationBanner legacy={legacyDeprecation} /> : null}
 
       <div className="sp-doc-head__grid">
-        <h1 className="sp-doc-title">{page.title}</h1>
+        {/* Titles are Markdown, so identifiers arrive as inline code. */}
+        <h1 className="sp-doc-title">
+          <span {...renderInlineMarkdown(page.title ?? "")} />
+        </h1>
 
         <div className="sp-doc-actions">
           <CopyMarkdownButton markdownUrl={markdownUrl} />
