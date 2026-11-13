@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "prepare:content": "node scripts/reference/pages.mjs && node --experimental-strip-types scripts/site-data.mjs",
+    "prepare:docs": "pnpm docs:sync:gurafi && pnpm docs:sync:fsk && pnpm docs:sync:besu",
     "postinstall": "pnpm prepare:content",
-    "dev": "pnpm prepare:content && rspress dev",
-    "build": "pnpm prepare:content && rspress build",
+    "dev": "pnpm prepare:docs && pnpm prepare:content && rspress dev",
+    "build": "pnpm prepare:docs && pnpm prepare:content && rspress build",
     "start": "rspress preview",
     "typecheck": "pnpm prepare:content && tsc --noEmit",
     "format": "oxfmt",

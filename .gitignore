@@ -32,5 +32,9 @@ next-env.d.ts
 
 # generated API reference pages (see scripts/reference/pages.mjs)
 content/docs/*/typescript-api/
+# docs synced from the docs-sources submodules (see `pnpm prepare:docs`)
+content/docs/besu/
+content/docs/fsk/
+content/docs/gurafi/
 # build-time sponsors and star counts (see scripts/site-data.mjs)
 theme/site-data.json

@@ -14,6 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Gurafi, FSK and Besu docs are generated from these submodules during
+          # the build.
+          submodules: recursive
 
       - uses: pnpm/action-setup@v6
 
