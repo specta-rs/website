@@ -50,9 +50,9 @@ pull requests with the repository token, so `DOCS_SYNC_TOKEN` is required: a
 fine-grained PAT with contents and pull request write access for this repository.
 Using a PAT also makes CI and previews run on those update PRs.
 
-The `main` ruleset requires pull requests (with no required approvals or status
-checks) and blocks force pushes and deletion. The `production` environment
-allows deployments from `main` only and requires a reviewer. If required
-approvals are added to the ruleset, do not enable "Allow GitHub Actions to create
-and approve pull requests" at the organization level, or replace the PAT flow
+The `main` ruleset requires pull requests and a passing `build` check, with no
+required approvals, and blocks force pushes and deletion. The `production`
+environment allows deployments from `main` only and requires a reviewer. If
+required approvals are added to the ruleset, keep the organization setting that
+lets workflows create and approve pull requests disabled, or replace the PAT flow
 with a separate reviewer.
