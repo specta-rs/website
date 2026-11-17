@@ -1,0 +1,164 @@
+name: Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    # Secrets are not available to workflows triggered by forked pull requests,
+    # and unreviewed fork code should not be deployed to our account.
+    if: >-
+      github.event.action != 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm build
+
+      - name: Publish preview
+        id: preview
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          # Machine-readable output; `--json` still prints upload progress to
+          # stdout, so parse this file instead of the command's output.
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.jsonl
+        run: |
+          set -euo pipefail
+          pnpm exec wrangler preview \
+            --name "pr-$PR_NUMBER" \
+            --message "PR #$PR_NUMBER @ ${GITHUB_SHA:0:12}"
+
+          url="$(jq -r 'select(.type == "preview") | .preview_urls[0] // ""' \
+            "$WRANGLER_OUTPUT_FILE_PATH" | tail -n 1)"
+
+          if [ -z "$url" ]; then
+            echo "::error::The preview was deployed but Cloudflare returned no URL. Preview URLs must be enabled on the Worker; the production deploy applies 'preview_urls': true." >&2
+            exit 1
+          fi
+
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      # Post the URL before probing so a still-provisioning preview is still
+      # discoverable from the pull request.
+      - name: Comment preview URL
+        uses: actions/github-script@v9
+        env:
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+        with:
+          script: |
+            const marker = "<!-- cloudflare-preview -->";
+            const body = [
+              marker,
+              "### Cloudflare preview",
+              "",
+              `**${process.env.PREVIEW_URL}**`,
+              "",
+              `Commit \`${context.payload.pull_request.head.sha.slice(0, 7)}\` · updated on every push to this pull request.`,
+            ].join("\n");
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+            const existing = comments.find(
+              (comment) =>
+                comment.user?.login === "github-actions[bot]" &&
+                comment.body?.includes(marker),
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body,
+              });
+            }
+
+      - name: Probe preview
+        env:
+          PREVIEW_URL: ${{ steps.preview.outputs.url }}
+        run: |
+          set -euo pipefail
+
+          curl --fail --silent --show-error \
+            --retry 6 --retry-all-errors --retry-delay 10 \
+            --output /dev/null "$PREVIEW_URL/"
+
+          # Check the Worker itself, not just the asset server: docs should be
+          # negotiable as Markdown on the preview.
+          content_type="$(curl --fail --silent --show-error \
+            --retry 6 --retry-all-errors --retry-delay 10 \
+            --header 'Accept: text/markdown' \
+            --output /dev/null --write-out '%{content_type}' \
+            "$PREVIEW_URL/docs/specta")"
+          case "$content_type" in
+            text/markdown*) ;;
+            *)
+              echo "Expected Markdown from the preview Worker, got: $content_type" >&2
+              exit 1
+              ;;
+          esac
+
+  cleanup:
+    if: >-
+      github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+
+      # A pull request can close before its preview ever deployed, so a missing
+      # preview is not an error.
+      - name: Delete preview
+        continue-on-error: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: pnpm exec wrangler preview delete --name "pr-$PR_NUMBER" --skip-confirmation

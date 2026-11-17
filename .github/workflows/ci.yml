@@ -7,7 +7,12 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Superseded pull request runs can be cancelled, but a run on `main` may be
+  # deploying, so let it finish and keep production deploys in order.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -41,3 +46,58 @@ jobs:
 
       # Validate the Worker/assets configuration without deploying.
       - run: pnpm exec wrangler deploy --dry-run
+
+      # The deploy job publishes exactly the assets this job validated.
+      - name: Upload build output
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: doc-build
+          path: doc_build
+          # `public/.well-known` is part of the deployed site.
+          include-hidden-files: true
+          # Allow re-running a failed workflow with the same artifact name.
+          overwrite: true
+          retention-days: 7
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://specta.dev
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # Wrangler only needs the Worker source and the built assets, so skip the
+      # content generation scripts that `postinstall` normally runs.
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: doc-build
+          path: doc_build
+
+      - name: Deploy to Cloudflare Workers
+        run: pnpm exec wrangler deploy --message "Deploy ${GITHUB_SHA:0:12}"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Smoke test
+        run: |
+          set -euo pipefail
+          for url in "https://specta.dev/" "https://specta.dev/docs/specta"; do
+            curl --fail --silent --show-error \
+              --retry 5 --retry-all-errors --retry-delay 3 \
+              --output /dev/null "$url"
+            echo "OK $url"
+          done

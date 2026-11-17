@@ -27,4 +27,10 @@
       "/consulting",
     ],
   },
+  // Pull request deployments (`wrangler preview`) run under the same Worker
+  // with the settings above, so they need no `previews` overrides. The
+  // `previews` block is still required by Wrangler, and `preview_urls` makes
+  // the `pr-<number>` workers.dev URLs available.
+  "preview_urls": true,
+  "previews": {},
 }
