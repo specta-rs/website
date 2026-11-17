@@ -8,7 +8,6 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  actions: write
 
 concurrency:
   group: update-besu-submodule
@@ -76,25 +75,21 @@ jobs:
           BRANCH: bot/update-besu-docs
         run: |
           set -euo pipefail
-          body="$(printf 'Updates the Besu docs submodule to %s.\nhttps://github.com/specta-rs/besu/commit/%s\n\nMerging this pull request deploys the site.\n' "${UPDATE_NEW:0:12}" "$UPDATE_NEW")"
+          body="$(printf 'Updates the Besu docs submodule to %s.\nhttps://github.com/specta-rs/besu/commit/%s\n\nMark this pull request as ready for review to run CI and deploy a preview.\n' "${UPDATE_NEW:0:12}" "$UPDATE_NEW")"
           existing="$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')"
 
           if [ -n "$existing" ]; then
             gh pr edit "$existing" --body "$body"
+            # Events caused by `GITHUB_TOKEN` do not start workflows. Keep the
+            # pull request in draft so marking it ready, which is a human
+            # action, runs CI and deploys the preview.
+            gh pr view "$existing" --json isDraft --jq '.isDraft' | grep -q true ||
+              gh pr ready "$existing" --undo
           else
             gh pr create \
               --base main \
               --head "$BRANCH" \
+              --draft \
               --title "Update Besu docs submodule" \
               --body "$body"
           fi
-
-      # Events caused by `GITHUB_TOKEN` do not start other workflows, so the
-      # pull request would otherwise wait forever for its required `build`
-      # check. `workflow_dispatch` is exempt from that restriction.
-      - name: Run CI on the update branch
-        if: steps.update.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: bot/update-besu-docs
-        run: gh workflow run ci.yml --ref "$BRANCH"

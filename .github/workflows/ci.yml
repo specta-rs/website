@@ -4,11 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
-    # `closed` is only used to clean up the preview deployment.
-    types: [opened, synchronize, reopened, closed]
-  # The docs bots dispatch this workflow on their update branches, because
-  # events caused by `GITHUB_TOKEN` do not start workflows on their own.
-  workflow_dispatch:
+    # `ready_for_review` lets a human trigger checks for a bot-authored draft
+    # pull request, and `closed` cleans up the preview deployment.
+    types: [opened, synchronize, reopened, ready_for_review, closed]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
