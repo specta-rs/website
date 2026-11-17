@@ -27,22 +27,13 @@ artifact in a job that targets the `preview` environment. Forked pull requests
 and Dependabot updates are not deployed because workflow secrets are unavailable
 to them.
 
-Actions are pinned to commit SHAs (Dependabot keeps them current). The
-`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets should live on the
-`production` and `preview` environments rather than at repository scope, with a
-separate token per environment:
-
-```bash
-gh secret set CLOUDFLARE_API_TOKEN --env production
-gh secret set CLOUDFLARE_ACCOUNT_ID --env production
-gh secret set CLOUDFLARE_API_TOKEN --env preview
-gh secret set CLOUDFLARE_ACCOUNT_ID --env preview
-```
-
-The token needs **Workers Scripts: Edit** for the account; resolving the
+Actions are pinned to commit SHAs (Dependabot keeps them current). Both
+workflows use the same repository-level `CLOUDFLARE_API_TOKEN` and
+`CLOUDFLARE_ACCOUNT_ID` secrets, because previews and production are the same
+Worker. The token needs **Workers Scripts: Edit** for the account; resolving the
 `specta.dev` custom domain may also need **Zone: Read** (or **Workers Routes:
-Edit** if route patterns are added). Cloudflare permissions should be scoped to
-the smallest account and zone access that works.
+Edit** if route patterns are added). The `production` environment still gates
+deployments, but that gate is independent of where the token is stored.
 
 The submodule update workflows open a pull request instead of pushing to `main`,
 so merges trigger CI and deployment. The organization does not let workflows open
