@@ -30,13 +30,29 @@ to them.
 Actions are pinned to commit SHAs (Dependabot keeps them current). The
 `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets should live on the
 `production` and `preview` environments rather than at repository scope, with a
-separate token per environment. The token needs **Workers Scripts: Edit** for the
-account; resolving the `specta.dev` custom domain may also need **Zone: Read**
-(or **Workers Routes: Edit** if route patterns are added). Cloudflare permissions
-should be scoped to the smallest account and zone access that works.
+separate token per environment:
+
+```bash
+gh secret set CLOUDFLARE_API_TOKEN --env production
+gh secret set CLOUDFLARE_ACCOUNT_ID --env production
+gh secret set CLOUDFLARE_API_TOKEN --env preview
+gh secret set CLOUDFLARE_ACCOUNT_ID --env preview
+```
+
+The token needs **Workers Scripts: Edit** for the account; resolving the
+`specta.dev` custom domain may also need **Zone: Read** (or **Workers Routes:
+Edit** if route patterns are added). Cloudflare permissions should be scoped to
+the smallest account and zone access that works.
 
 The submodule update workflows open a pull request instead of pushing to `main`,
-so merges trigger CI and deployment. Pull requests opened with the repository
-token do not trigger workflows; set the optional `DOCS_SYNC_TOKEN` secret
-(a fine-grained PAT with contents and pull request write access) to get CI and
-previews on those update PRs.
+so merges trigger CI and deployment. The organization does not let workflows open
+pull requests with the repository token, so `DOCS_SYNC_TOKEN` is required: a
+fine-grained PAT with contents and pull request write access for this repository.
+Using a PAT also makes CI and previews run on those update PRs.
+
+The `main` ruleset requires pull requests (with no required approvals or status
+checks) and blocks force pushes and deletion. The `production` environment
+allows deployments from `main` only and requires a reviewer. If required
+approvals are added to the ruleset, do not enable "Allow GitHub Actions to create
+and approve pull requests" at the organization level, or replace the PAT flow
+with a separate reviewer.

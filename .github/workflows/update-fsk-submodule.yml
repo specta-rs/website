@@ -21,10 +21,10 @@ jobs:
       - name: Checkout website
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # A `DOCS_SYNC_TOKEN` is only needed if the pull request should run
-          # workflows. Pull requests opened with the repository token do not
-          # trigger them, so add a fine-grained PAT with contents and pull
-          # request write access to get CI and previews on the update PR.
+          # The organization does not allow workflows to open pull requests
+          # with the repository token, so this requires a fine-grained PAT with
+          # contents and pull request write access. It also lets the update pull
+          # request run CI and previews.
           token: ${{ secrets.DOCS_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
           submodules: recursive
 
@@ -52,6 +52,16 @@ jobs:
           git -C docs-sources/fsk checkout --detach "$NEW"
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
+      - name: Check for the docs sync token
+        if: steps.update.outputs.changed == 'true'
+        env:
+          DOCS_SYNC_TOKEN: ${{ secrets.DOCS_SYNC_TOKEN }}
+        run: |
+          if [ -z "$DOCS_SYNC_TOKEN" ]; then
+            echo "::error::DOCS_SYNC_TOKEN is required to open the docs update pull request. Add a fine-grained personal access token with contents and pull request write access for this repository." >&2
+            exit 1
+          fi
+
       - name: Commit and push
         if: steps.update.outputs.changed == 'true'
         run: |
@@ -75,7 +85,7 @@ jobs:
       - name: Open or update pull request
         if: steps.update.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.DOCS_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.DOCS_SYNC_TOKEN }}
           UPDATE_NEW: ${{ steps.update.outputs.new }}
           BRANCH: bot/update-fsk-docs
         run: |
