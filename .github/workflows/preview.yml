@@ -12,7 +12,7 @@ concurrency:
 permissions: {}
 
 jobs:
-  build:
+  preview-build:
     # Secrets are not available to workflows triggered by forked pull requests,
     # Dependabot runs get a read-only token, and unreviewed fork code should not
     # be deployed to our account.
@@ -52,8 +52,8 @@ jobs:
           # Only the deploy job in this run needs it.
           retention-days: 1
 
-  deploy:
-    needs: build
+  preview-deploy:
+    needs: preview-build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     # The Cloudflare token is released to this job only after the build has
@@ -110,8 +110,8 @@ jobs:
 
           echo "url=$url" >> "$GITHUB_OUTPUT"
 
-  comment:
-    needs: deploy
+  preview-comment:
+    needs: preview-deploy
     runs-on: ubuntu-latest
     timeout-minutes: 5
     # This job never runs repository code, so it is the only one that gets
@@ -122,7 +122,7 @@ jobs:
       - name: Comment preview URL
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
-          PREVIEW_URL: ${{ needs.deploy.outputs.url }}
+          PREVIEW_URL: ${{ needs.preview-deploy.outputs.url }}
         with:
           script: |
             const marker = "<!-- cloudflare-preview -->";
@@ -163,7 +163,7 @@ jobs:
               });
             }
 
-  cleanup:
+  preview-cleanup:
     if: >-
       github.event.action == 'closed' &&
       github.event.pull_request.head.repo.full_name == github.repository
