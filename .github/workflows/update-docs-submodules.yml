@@ -1,0 +1,113 @@
+name: Update docs submodules
+
+on:
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    name: Update ${{ matrix.name }} docs
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      # One source failing should not block the other two.
+      fail-fast: false
+      matrix:
+        include:
+          - name: Gurafi
+            submodule: gurafi
+          - name: FSK
+            submodule: fsk
+          - name: Besu
+            submodule: besu
+    concurrency:
+      group: update-${{ matrix.submodule }}-docs
+      cancel-in-progress: true
+    steps:
+      - name: Checkout website
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+
+      - name: Update ${{ matrix.name }} submodule
+        id: update
+        env:
+          NAME: ${{ matrix.name }}
+          SUBMODULE: ${{ matrix.submodule }}
+        run: |
+          set -euo pipefail
+          OLD="$(git -C "docs-sources/$SUBMODULE" rev-parse HEAD)"
+          git -C "docs-sources/$SUBMODULE" fetch --depth 1 origin main
+          NEW="$(git -C "docs-sources/$SUBMODULE" rev-parse FETCH_HEAD)"
+          echo "new=$NEW" >> "$GITHUB_OUTPUT"
+
+          if [ "$OLD" = "$NEW" ]; then
+            echo "$NAME is already up to date."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if git -C "docs-sources/$SUBMODULE" diff --quiet "$OLD" "$NEW" -- docs; then
+            echo "$NAME changed, but docs/ did not."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git -C "docs-sources/$SUBMODULE" checkout --detach "$NEW"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push
+        if: steps.update.outputs.changed == 'true'
+        env:
+          NAME: ${{ matrix.name }}
+          SUBMODULE: ${{ matrix.submodule }}
+          UPDATE_NEW: ${{ steps.update.outputs.new }}
+          BRANCH: bot/update-${{ matrix.submodule }}-docs
+        run: |
+          set -euo pipefail
+          git config user.name "specta-rs docs bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add "docs-sources/$SUBMODULE"
+
+          if git diff --cached --quiet; then
+            echo "The submodule is already up to date."
+            exit 0
+          fi
+
+          git commit -m "Update $NAME docs submodule to ${UPDATE_NEW:0:12}"
+          git push --force origin "$BRANCH"
+
+      - name: Open or update pull request
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NAME: ${{ matrix.name }}
+          SUBMODULE: ${{ matrix.submodule }}
+          UPDATE_NEW: ${{ steps.update.outputs.new }}
+          BRANCH: bot/update-${{ matrix.submodule }}-docs
+        run: |
+          set -euo pipefail
+          body="$(printf 'Updates the %s docs submodule to %s.\nhttps://github.com/specta-rs/%s/commit/%s\n\nMark this pull request as ready for review to run CI and deploy a preview.\n' "$NAME" "${UPDATE_NEW:0:12}" "$SUBMODULE" "$UPDATE_NEW")"
+          existing="$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')"
+
+          if [ -n "$existing" ]; then
+            gh pr edit "$existing" --body "$body"
+            # Events caused by `GITHUB_TOKEN` do not start workflows. Keep the
+            # pull request in draft so marking it ready, which is a human
+            # action, runs CI and deploys the preview.
+            gh pr view "$existing" --json isDraft --jq '.isDraft' | grep -q true ||
+              gh pr ready "$existing" --undo
+          else
+            gh pr create \
+              --base main \
+              --head "$BRANCH" \
+              --draft \
+              --title "Update $NAME docs submodule" \
+              --body "$body"
+          fi
