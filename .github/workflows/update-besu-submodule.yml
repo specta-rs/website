@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 
 concurrency:
   group: update-besu-submodule
@@ -21,11 +22,6 @@ jobs:
       - name: Checkout website
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # The organization does not allow workflows to open pull requests
-          # with the repository token, so this requires a fine-grained PAT with
-          # contents and pull request write access. It also lets the update pull
-          # request run CI and previews.
-          token: ${{ secrets.DOCS_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
           submodules: recursive
 
       - name: Update Besu submodule
@@ -52,16 +48,6 @@ jobs:
           git -C docs-sources/besu checkout --detach "$NEW"
           echo "changed=true" >> "$GITHUB_OUTPUT"
 
-      - name: Check for the docs sync token
-        if: steps.update.outputs.changed == 'true'
-        env:
-          DOCS_SYNC_TOKEN: ${{ secrets.DOCS_SYNC_TOKEN }}
-        run: |
-          if [ -z "$DOCS_SYNC_TOKEN" ]; then
-            echo "::error::DOCS_SYNC_TOKEN is required to open the docs update pull request. Add a fine-grained personal access token with contents and pull request write access for this repository." >&2
-            exit 1
-          fi
-
       - name: Commit and push
         if: steps.update.outputs.changed == 'true'
         run: |
@@ -85,7 +71,7 @@ jobs:
       - name: Open or update pull request
         if: steps.update.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.DOCS_SYNC_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           UPDATE_NEW: ${{ steps.update.outputs.new }}
           BRANCH: bot/update-besu-docs
         run: |
@@ -102,3 +88,13 @@ jobs:
               --title "Update Besu docs submodule" \
               --body "$body"
           fi
+
+      # Events caused by `GITHUB_TOKEN` do not start other workflows, so the
+      # pull request would otherwise wait forever for its required `build`
+      # check. `workflow_dispatch` is exempt from that restriction.
+      - name: Run CI on the update branch
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: bot/update-besu-docs
+        run: gh workflow run ci.yml --ref "$BRANCH"
