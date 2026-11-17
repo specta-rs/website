@@ -9,7 +9,10 @@ on:
     types: [opened, synchronize, reopened, ready_for_review, closed]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # Key pull request runs by PR number. When a pull request closes, `github.ref`
+  # resolves to the base branch, so keying on the ref made the cleanup run share
+  # the production group and cancel the deploy triggered by the merge.
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   # Cancel superseded pull request runs (including a preview that is still
   # running when its pull request closes), but never interrupt a production
   # deploy, so deploys on `main` stay in order.
