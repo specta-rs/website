@@ -187,8 +187,7 @@ jobs:
         run: |
           set -euo pipefail
           output="$(pnpm exec cf previews deploy \
-            --preview-name "pr-$PR_NUMBER" \
-            --quiet)"
+            --preview-name "pr-$PR_NUMBER")"
           printf '%s\n' "$output"
           url="$(printf '%s' "$output" | jq -er '.preview_urls[0]')"
           echo "url=$url" >> "$GITHUB_OUTPUT"
