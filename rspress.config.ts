@@ -267,7 +267,7 @@ export default defineConfig({
   root: contentRoot,
   title: "specta-rs",
   description:
-    "Type-safe Rust crates built for developer experience and designed to scale to large codebases. Build faster, ship with confidence.",
+    "Type-safe Rust crates built for developer experience and designed to scale to large codebases. Build faster, ship with confidence!",
   siteOrigin: canonical,
   lang: "en",
   logo: "/assets/specta.png",

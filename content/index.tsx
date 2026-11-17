@@ -86,7 +86,7 @@ function Hero() {
 
           <p className="sp-hero__subtitle mt-6 max-w-[560px] text-[16px] leading-relaxed text-fd-muted-foreground sm:text-[17px]">
             Type-safe Rust crates built for developer experience and designed to
-            scale to large codebases. Build faster, ship with confidence.
+            scale to large codebases. Build faster, ship with confidence!
           </p>
 
           <div className="sp-hero__actions mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
