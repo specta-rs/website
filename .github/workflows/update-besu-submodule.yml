@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: update-besu-submodule
@@ -15,15 +16,16 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout website
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          # A `DOCS_SYNC_TOKEN` is only needed if the push should start other
-          # workflows; the repository token can commit the submodule bump on its
-          # own, so the bump does not stop when that secret is absent.
+          # A `DOCS_SYNC_TOKEN` is only needed if the pull request should run
+          # workflows. Pull requests opened with the repository token do not
+          # trigger them, so add a fine-grained PAT with contents and pull
+          # request write access to get CI and previews on the update PR.
           token: ${{ secrets.DOCS_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
           submodules: recursive
 
       - name: Update Besu submodule
@@ -56,6 +58,7 @@ jobs:
           set -euo pipefail
           git config user.name "specta-rs docs bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
           git add docs-sources/besu
 
           if git diff --cached --quiet; then
@@ -64,6 +67,28 @@ jobs:
           fi
 
           git commit -m "Update Besu docs submodule to ${UPDATE_NEW:0:12}"
-          git push
+          git push --force origin "$BRANCH"
         env:
           UPDATE_NEW: ${{ steps.update.outputs.new }}
+          BRANCH: bot/update-besu-docs
+
+      - name: Open or update pull request
+        if: steps.update.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.DOCS_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+          UPDATE_NEW: ${{ steps.update.outputs.new }}
+          BRANCH: bot/update-besu-docs
+        run: |
+          set -euo pipefail
+          body="$(printf 'Updates the Besu docs submodule to %s.\nhttps://github.com/specta-rs/besu/commit/%s\n\nMerging this pull request deploys the site.\n' "${UPDATE_NEW:0:12}" "$UPDATE_NEW")"
+          existing="$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')"
+
+          if [ -n "$existing" ]; then
+            gh pr edit "$existing" --body "$body"
+          else
+            gh pr create \
+              --base main \
+              --head "$BRANCH" \
+              --title "Update Besu docs submodule" \
+              --body "$body"
+          fi
