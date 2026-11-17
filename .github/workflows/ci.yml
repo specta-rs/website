@@ -86,11 +86,6 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Requires approval via the protection rules on the `production`
-    # environment before the Cloudflare token is released to the job.
-    environment:
-      name: production
-      url: https://specta.dev
     permissions:
       contents: read
     steps:
