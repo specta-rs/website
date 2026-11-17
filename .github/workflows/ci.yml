@@ -21,6 +21,9 @@ concurrency:
 # Start from no permissions and grant the minimum each job needs.
 permissions: {}
 
+env:
+  CF_SEND_TELEMETRY: "false"
+
 jobs:
   build:
     # A closed pull request only needs the cleanup job.
@@ -57,8 +60,8 @@ jobs:
       # Build the static site and the Cloudflare Worker bundle.
       - run: pnpm build
 
-      # Validate the Worker/assets configuration without deploying.
-      - run: pnpm exec wrangler deploy --dry-run
+      # Build the Worker and validate the assets without uploading anything.
+      - run: pnpm exec cf deploy --dry-run
 
       # Production deploys and preview deploys publish these exact assets.
       # Forked and Dependabot pull requests never deploy, so skip their upload.
@@ -113,7 +116,7 @@ jobs:
 
       - name: Deploy to Cloudflare Workers
         id: deploy
-        run: pnpm exec wrangler deploy --message "Deploy ${GITHUB_SHA:0:12}"
+        run: pnpm exec cf deploy --message "Deploy ${GITHUB_SHA:0:12}"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -128,12 +131,14 @@ jobs:
             echo "OK $url"
           done
 
-      # `wrangler deploy` switches traffic before the smoke test runs, so a
-      # failed probe leaves the previous version live only after rolling back.
+      # `cf deploy` switches traffic before the smoke test runs, so a failed
+      # probe leaves the previous version live only after rolling back. `cf`
+      # does not have a rollback command yet, so use the Wrangler installed as
+      # its bundler.
       - name: Roll back if the smoke test fails
         if: failure() && steps.deploy.outcome == 'success'
         continue-on-error: true
-        run: pnpm exec wrangler rollback --yes --message "Smoke test failed for ${GITHUB_SHA:0:12}"
+        run: pnpm exec wrangler rollback --name specta-website --yes --message "Smoke test failed for ${GITHUB_SHA:0:12}"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -179,24 +184,12 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          # Machine-readable output; `--json` still prints upload progress to
-          # stdout, so parse this file instead of the command's output.
-          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.jsonl
         run: |
           set -euo pipefail
-          pnpm exec wrangler preview \
-            --name "pr-$PR_NUMBER" \
-            --worker-name specta-website \
-            --message "PR #$PR_NUMBER @ ${GITHUB_SHA:0:12}"
-
-          url="$(jq -sr '[.[] | select(.type == "preview") | .preview_urls[]?] | last // ""' \
-            "$WRANGLER_OUTPUT_FILE_PATH")"
-
-          if [ -z "$url" ]; then
-            echo "::error::The preview was deployed but Cloudflare returned no URL. Preview URLs must be enabled on the Worker; the production deploy applies 'preview_urls': true." >&2
-            exit 1
-          fi
-
+          output="$(pnpm exec cf previews deploy \
+            --preview-name "pr-$PR_NUMBER")"
+          printf '%s\n' "$output"
+          url="$(printf '%s' "$output" | jq -er '.preview_urls[0]')"
           echo "url=$url" >> "$GITHUB_OUTPUT"
 
   preview-comment:
@@ -291,10 +284,10 @@ jobs:
 
           case "$status" in
             200)
-              pnpm exec wrangler preview delete \
-                --name "pr-$PR_NUMBER" \
-                --worker-name specta-website \
-                --skip-confirmation
+              pnpm exec cf previews delete \
+                "pr-$PR_NUMBER" \
+                --worker specta-website \
+                --force
               ;;
             404)
               echo "No preview exists for PR #$PR_NUMBER."

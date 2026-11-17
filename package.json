@@ -17,7 +17,7 @@
     "test": "node --test scripts/reference/*.test.mjs",
     "reference:pages": "node scripts/reference/pages.mjs",
     "reference:sync": "node scripts/reference/typescript.mjs --refresh && node scripts/reference/pages.mjs",
-    "deploy": "pnpm build && wrangler deploy",
+    "deploy": "pnpm build && cf deploy",
     "docs:sync:gurafi": "node scripts/sync-gurafi-docs.mjs --source docs-sources/gurafi/docs --ref main",
     "docs:sync:fsk": "node scripts/sync-fsk-docs.mjs --source docs-sources/fsk/docs --ref main",
     "docs:sync:besu": "node scripts/sync-besu-docs.mjs --source docs-sources/besu/docs --ref main"
@@ -41,13 +41,14 @@
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "cf": "1.0.0-rc.0",
     "npm-to-yarn": "^3.2.0",
     "oxfmt": "^0.78.0",
     "oxlint": "^1.93.0",
     "tailwindcss": "^4.3.5",
     "typescript": "^7.0.2",
     "typescript-api": "npm:typescript@5.9.3",
-    "wrangler": "^4.160.0"
+    "wrangler": "^4.163.0"
   },
   "packageManager": "pnpm@10.33.1",
   "pnpm": {
