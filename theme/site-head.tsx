@@ -14,14 +14,19 @@ import { canonical, ogRoute, openGraphImageSize } from "./site-meta";
  * every page, which would add the Specta icon to Gurafi docs. Projects without
  * an entry here keep the Specta icon.
  */
-const projectFavicons: Record<string, { shortcut: string; icon: string }> = {
+const projectFavicons: Record<
+  string,
+  { shortcut: string; icon: string; appleTouch: string }
+> = {
   gurafi: {
     shortcut: "/assets/gurafi-favicon.ico",
     icon: "/assets/gurafi-favicon.svg",
+    appleTouch: "/assets/gurafi-favicon-180.png",
   },
   besu: {
     shortcut: "/assets/besu-favicon.ico",
     icon: "/assets/besu-favicon.svg",
+    appleTouch: "/assets/besu-favicon-180.png",
   },
 };
 
@@ -63,6 +68,11 @@ export function SiteHead() {
             type: "image/svg+xml",
             href: projectFavicons[project].icon,
           },
+          {
+            rel: "apple-touch-icon",
+            sizes: "180x180",
+            href: projectFavicons[project].appleTouch,
+          },
         ]
       : [
           {
@@ -71,6 +81,11 @@ export function SiteHead() {
             href: "/assets/specta-favicon.ico",
           },
           { rel: "icon", href: "/assets/specta-favicon.ico" },
+          {
+            rel: "apple-touch-icon",
+            sizes: "180x180",
+            href: "/assets/specta-favicon-180.png",
+          },
         ],
     meta: [
       { property: "og:locale", content: "en_US" },
