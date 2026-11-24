@@ -110,6 +110,6 @@ Use explicit registration when you want a small, predictable public API. Automat
 - **`Type` is not implemented:** derive it on the custom type, enable the relevant crate feature, or provide an override that matches the wire type.
 - **Unsupported Serde attributes:** check whether the type needs directional export or an explicit wire-type override.
 - **Duplicate exported names:** rename the types or use a TypeScript layout that preserves module paths.
-- **Large integers:** JavaScript numbers cannot represent every 64-bit or 128-bit integer. Choose a wire representation that preserves the values your API accepts. A type override alone does not convert JSON numbers into strings or JavaScript `bigint` values.
+- **Large integers:** JavaScript numbers cannot represent every 64-bit or 128-bit integer. Choose a wire representation that preserves the values your API accepts. A type override alone does not convert JSON numbers into strings or JavaScript `bigint` values. The [BigInt guidance](https://docs.rs/specta-typescript/latest/specta_typescript/struct.Error.html#bigint-forbidden) lists the fixes.
 
 See the [core API reference](https://docs.rs/specta/2.0.0-rc.27/specta/) for manual `Type` implementations and datatype inspection.
