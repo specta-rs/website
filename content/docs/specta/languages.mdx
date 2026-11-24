@@ -76,9 +76,33 @@ Swift::default().export_to(
 
 See the [Swift API reference](https://docs.rs/specta-swift) for naming, indentation, optional, and generic settings. Test the generated code against the encoding and decoding rules used by your Swift client.
 
+## Effect Schema
+
+`specta-effect` exports [Effect Schema](https://effect.website/docs/schema/introduction/) values. It emits schemas only, without companion TypeScript type declarations or JSDoc, and targets Effect 4.1.
+
+```bash
+cargo add specta-effect
+```
+
+```rust copy
+use specta_effect::Effect;
+
+Effect::default().export_to(
+    "./schemas.ts",
+    &types,
+    specta_serde::Format,
+)?;
+```
+
+A Rust `User` becomes `UserSchema`. Infer its TypeScript type with `Schema.Schema.Type<typeof UserSchema>`, then validate values with `Schema.decodeUnknownSync(UserSchema)`.
+
+Generic Rust types become schema factories: `Wrapper<User>` becomes `WrapperSchema(UserSchema)`. When a generic is used as a map key, pass the additional `$key$T` schema argument. The `Layout` options match the TypeScript exporter.
+
+Serde field alias groups expand into schema unions, up to 256 combinations. Wide integer primitives are rejected by default to avoid silent JSON precision loss. Recursive schemas use `Schema.suspend`; because no companion type declarations are emitted, the recursive edge is typed as `Schema.Codec<unknown>`. Flattened maps use `Schema.StructWithRest` and retain Effect's index-signature inference rules.
+
 ## Schema and other exporters
 
-The [Specta workspace](https://github.com/specta-rs/specta) also contains exporters for OpenAPI, JSON Schema, Go, Java, Kotlin, Zod, and Valibot. Their coverage and release status differ. Read each crate's documentation before choosing it for an application.
+The [Specta workspace](https://github.com/specta-rs/specta) also contains exporters for OpenAPI, JSON Schema, Go, Java, Kotlin, Zod, Valibot, and Effect Schema. Their coverage and release status differ. Read each crate's documentation before choosing it for an application.
 
 `specta-openapi` exports reusable schemas and supports describing operations. Exporting a collection of data types alone does not discover your HTTP routes.
 
