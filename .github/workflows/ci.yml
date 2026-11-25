@@ -18,12 +18,13 @@ concurrency:
   # Key pull request runs by PR number. When a pull request closes, `github.ref`
   # resolves to the base branch, so keying on the ref made the cleanup run share
   # the production group and cancel the deploy triggered by the merge.
-  # Share the group between a PR event and the updater's explicit dispatch so
-  # the dispatch replaces any approval-required run created with GITHUB_TOKEN.
-  group: ${{ github.workflow }}-${{ inputs.pr_number || github.event.pull_request.number || github.ref }}
-  # Cancel superseded pull request runs (including a preview that is still
-  # running when its pull request closes), but never interrupt a production
-  # deploy, so deploys on `main` stay in order.
+  # Key PR events and updater dispatches by PR number so closing a PR cancels
+  # an in-flight dispatch. Concurrency cannot cancel runs waiting for approval;
+  # the dispatch bypasses those instead. Manual dispatches without a PR get
+  # their own group.
+  group: ${{ github.workflow }}-${{ inputs.pr_number || github.event.pull_request.number || (github.event_name == 'workflow_dispatch' && github.run_id) || github.ref }}
+  # Cancel superseded PR and preview-dispatch runs, but never interrupt a
+  # production deploy or a manual CI run without a PR.
   cancel-in-progress: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.pr_number != '') }}
 
 # Start from no permissions and grant the minimum each job needs.
@@ -164,7 +165,22 @@ jobs:
       url: ${{ steps.preview.outputs.url }}
     permissions:
       contents: read
+      pull-requests: read
     steps:
+      - name: Verify preview commit is current
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ inputs.pr_number || github.event.pull_request.number }}
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          read -r state head_sha < <(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" \
+            --jq '[.state, .head.sha] | @tsv')
+          if [ "$state" != "open" ] || [ "$head_sha" != "$EXPECTED_SHA" ]; then
+            echo "Pull request #$PR_NUMBER is no longer at $EXPECTED_SHA; refusing to deploy a stale preview." >&2
+            exit 1
+          fi
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
