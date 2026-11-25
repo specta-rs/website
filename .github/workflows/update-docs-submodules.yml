@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
 
@@ -93,21 +94,24 @@ jobs:
           BRANCH: bot/update-${{ matrix.submodule }}-docs
         run: |
           set -euo pipefail
-          body="$(printf 'Updates the %s docs submodule to %s.\nhttps://github.com/specta-rs/%s/commit/%s\n\nMark this pull request as ready for review to run CI and deploy a preview.\n' "$NAME" "${UPDATE_NEW:0:12}" "$SUBMODULE" "$UPDATE_NEW")"
+          body="$(printf 'Updates the %s docs submodule to %s.\nhttps://github.com/specta-rs/%s/commit/%s\n' "$NAME" "${UPDATE_NEW:0:12}" "$SUBMODULE" "$UPDATE_NEW")"
           existing="$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')"
 
           if [ -n "$existing" ]; then
             gh pr edit "$existing" --body "$body"
-            # Events caused by `GITHUB_TOKEN` do not start workflows. Keep the
-            # pull request in draft so marking it ready, which is a human
-            # action, runs CI and deploys the preview.
-            gh pr view "$existing" --json isDraft --jq '.isDraft' | grep -q true ||
-              gh pr ready "$existing" --undo
+            pr_number="$existing"
+            if [ "$(gh pr view "$existing" --json isDraft --jq '.isDraft')" = "true" ]; then
+              gh pr ready "$existing"
+            fi
           else
-            gh pr create \
+            pr_url="$(gh pr create \
               --base main \
               --head "$BRANCH" \
-              --draft \
               --title "Update $NAME docs submodule" \
-              --body "$body"
+              --body "$body")"
+            pr_number="${pr_url##*/}"
           fi
+
+          # Pull request events caused by `GITHUB_TOKEN` require approval.
+          # `workflow_dispatch` does not, so run CI directly on the PR branch.
+          gh workflow run ci.yml --ref "$BRANCH" -f pr_number="$pr_number"

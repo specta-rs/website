@@ -4,19 +4,27 @@ on:
   push:
     branches: [main]
   pull_request:
-    # `ready_for_review` lets a human trigger checks for a bot-authored draft
-    # pull request, and `closed` cleans up the preview deployment.
+    # `ready_for_review` supports human-authored draft pull requests, and
+    # `closed` cleans up the preview deployment.
     types: [opened, synchronize, reopened, ready_for_review, closed]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull request number to deploy a preview for (optional)"
+        required: false
+        type: string
 
 concurrency:
   # Key pull request runs by PR number. When a pull request closes, `github.ref`
   # resolves to the base branch, so keying on the ref made the cleanup run share
   # the production group and cancel the deploy triggered by the merge.
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  # Share the group between a PR event and the updater's explicit dispatch so
+  # the dispatch replaces any approval-required run created with GITHUB_TOKEN.
+  group: ${{ github.workflow }}-${{ inputs.pr_number || github.event.pull_request.number || github.ref }}
   # Cancel superseded pull request runs (including a preview that is still
   # running when its pull request closes), but never interrupt a production
   # deploy, so deploys on `main` stay in order.
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && inputs.pr_number != '') }}
 
 # Start from no permissions and grant the minimum each job needs.
 permissions: {}
@@ -64,12 +72,14 @@ jobs:
       - run: pnpm exec cf deploy --dry-run
 
       # Production deploys and preview deploys publish these exact assets.
-      # Forked and Dependabot pull requests never deploy, so skip their upload.
+      # Forked and Dependabot pull requests never deploy, and a manual CI run
+      # without a PR number has no preview to publish.
       - name: Upload build output
         if: >-
           github.event_name == 'push' ||
           (github.event.pull_request.head.repo.full_name == github.repository &&
-          github.actor != 'dependabot[bot]')
+          github.actor != 'dependabot[bot]') ||
+          (github.event_name == 'workflow_dispatch' && inputs.pr_number != '')
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: site-build
@@ -141,11 +151,13 @@ jobs:
   preview-deploy:
     needs: build
     # Secrets are unavailable to forked pull requests, and Dependabot runs get a
-    # read-only token, so those never deploy a preview.
+    # read-only token, so those never deploy a preview. The submodule updater
+    # dispatches this workflow with a PR number instead of creating a PR event.
     if: >-
-      github.event_name == 'pull_request' &&
+      (github.event_name == 'pull_request' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
-      github.actor != 'dependabot[bot]'
+      github.actor != 'dependabot[bot]') ||
+      (github.event_name == 'workflow_dispatch' && inputs.pr_number != '')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
@@ -178,7 +190,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_NUMBER: ${{ inputs.pr_number || github.event.pull_request.number }}
         run: |
           set -euo pipefail
           output="$(pnpm exec cf previews deploy \
@@ -199,9 +211,12 @@ jobs:
       - name: Comment preview URL
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
+          PR_NUMBER: ${{ inputs.pr_number || github.event.pull_request.number }}
           PREVIEW_URL: ${{ needs.preview-deploy.outputs.url }}
         with:
           script: |
+            const pr_number = Number(process.env.PR_NUMBER);
+            const sha = context.payload.pull_request?.head.sha ?? context.sha;
             const marker = "<!-- cloudflare-preview -->";
             const body = [
               marker,
@@ -209,14 +224,13 @@ jobs:
               "",
               `**${process.env.PREVIEW_URL}**`,
               "",
-              `Commit \`${context.payload.pull_request.head.sha.slice(0, 7)}\` · updated on every push to this pull request.`,
+              `Commit \`${sha.slice(0, 7)}\` · updated on every push to this pull request.`,
             ].join("\n");
 
             const { owner, repo } = context.repo;
-            const issue_number = context.payload.pull_request.number;
             const comments = await github.paginate(
               github.rest.issues.listComments,
-              { owner, repo, issue_number, per_page: 100 },
+              { owner, repo, issue_number: pr_number, per_page: 100 },
             );
             const existing = comments.find(
               (comment) =>
@@ -235,7 +249,7 @@ jobs:
               await github.rest.issues.createComment({
                 owner,
                 repo,
-                issue_number,
+                issue_number: pr_number,
                 body,
               });
             }
